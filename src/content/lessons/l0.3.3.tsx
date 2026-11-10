@@ -1,0 +1,173 @@
+import { Definition, Example, Remark } from "@/components/lesson/Blocks";
+import { TreeSplitViz } from "@/components/viz/TreeSplitViz";
+import type { LessonContent } from "@/lib/types";
+
+export const lesson: LessonContent = {
+  id: "l0.3.3",
+  minutes: 50,
+  links: {
+    foreshadows: ["l1.4.3", "l1.4.4", "l2.4.1"],
+  },
+
+  puzzle: (
+    <>
+      <p>
+        In the game Twenty Questions, one player thinks of an object and the other may ask up to twenty yes-or-no questions
+        to find it.
+      </p>
+      <p>
+        Why is &ldquo;Is it alive?&rdquo; a good first question and &ldquo;Is it a giraffe?&rdquo; a bad one? What makes one
+        question better than another, and could a computer choose its questions the same way?
+      </p>
+    </>
+  ),
+
+  intuition: (
+    <>
+      <p>
+        &ldquo;Is it alive?&rdquo; splits the possibilities roughly in half, whatever the answer. &ldquo;Is it a
+        giraffe?&rdquo; almost always gets &ldquo;no&rdquo; and leaves you nearly where you started. A good question is one
+        whose answer, either way, leaves you much more certain.
+      </p>
+      <p>
+        A <strong>decision tree</strong> classifies by asking questions of exactly this kind about the features: &ldquo;Is
+        income below 5?&rdquo; then, depending on the answer, &ldquo;Is debt below 4?&rdquo;. Each answer leads to another
+        question or to a final prediction. Below, you choose three thresholds for a tree that predicts whether a customer
+        will accept a loan offer.
+      </p>
+      <TreeSplitViz />
+      <p>
+        Every question cuts the space with a straight line parallel to an axis, so a tree carves the plane into boxes. With
+        well-chosen thresholds this tree makes no mistakes at all. Can you find them?
+      </p>
+    </>
+  ),
+
+  theory: (
+    <>
+      <Definition title="decision tree">
+        <p>
+          A <strong>decision tree</strong> is a sequence of yes-or-no questions arranged as a branching diagram. Each{" "}
+          <strong>internal node</strong> asks whether one feature is below a threshold. Each branch leads to another node or
+          to a <strong>leaf</strong>, which gives the prediction: the majority class of the training examples that reach it
+          (or their mean, for regression).
+        </p>
+      </Definition>
+
+      <Definition title="impurity">
+        <p>
+          A leaf is <strong>pure</strong> if all its training examples share one label. A simple measure of how impure a set
+          of examples is: the number of examples that disagree with its majority, which is the number of mistakes a leaf there
+          would make. Good questions split a set into parts that are purer than the whole.
+        </p>
+      </Definition>
+
+      <Example title="choosing the first question by hand">
+        <p>
+          The fifteen customers include six who accepted. A single leaf would predict &ldquo;no&rdquo; and make 6 mistakes.
+          Split at income 5: the left side has five customers, four of whom refused, so a leaf there makes 1 mistake. The right
+          side has five who accepted and five who refused, and makes 5. Total 6: no better yet. But the right side splits
+          perfectly by debt, which is why the second level matters. A good first question is judged by what it makes possible,
+          not only by what it fixes at once.
+        </p>
+      </Example>
+
+      <p>
+        A computer builds a tree <em>greedily</em>: at each node it tries every feature and every threshold, picks the one
+        that most reduces impurity, and repeats on each side until the leaves are pure or a size limit is reached.
+      </p>
+
+      <Remark title="readable, and easily overgrown">
+        <p>
+          A small tree can be read like a checklist, which is why trees are popular in medicine and finance, where decisions
+          must be explained. But a tree allowed to grow until every leaf is pure will carve a tiny box around every training
+          point, noise and all. That is overfitting again. Limiting the depth, or averaging many different trees, keeps them
+          honest.
+        </p>
+      </Remark>
+    </>
+  ),
+
+  practice: [
+    {
+      key: "leaf",
+      rung: "check",
+      prompt: <p>A leaf receives 7 training examples labelled yes and 3 labelled no. It predicts its majority label. How many of these 10 examples does it get wrong?</p>,
+      answer: { kind: "numeric", value: 3 },
+    },
+    {
+      key: "boxes",
+      rung: "check",
+      prompt: <p>A tree has three levels of questions, and every node at each level asks a question. How many leaves does it have?</p>,
+      answer: { kind: "numeric", value: 8 },
+    },
+    {
+      key: "split",
+      rung: "apply",
+      prompt: (
+        <p>
+          A set has 10 positive and 10 negative examples. Question P splits it into (8 positive, 2 negative) and (2 positive, 8
+          negative). Question Q splits it into (10 positive, 6 negative) and (0 positive, 4 negative). How many mistakes do the
+          leaves make after the better question?
+        </p>
+      ),
+      answer: { kind: "numeric", value: 4 },
+    },
+    {
+      key: "thresholds",
+      rung: "apply",
+      prompt: <p>In the visualisation, what is the smallest number of mistakes you can reach?</p>,
+      answer: { kind: "numeric", value: 0 },
+    },
+    {
+      key: "axis",
+      rung: "apply",
+      prompt: <p>Why are the boundaries of a decision tree always horizontal or vertical lines?</p>,
+      answer: {
+        kind: "choice",
+        options: ["Each question compares one feature with a threshold", "Trees are always trained on two features", "The loss function forces it"],
+        correct: [0],
+      },
+    },
+    {
+      key: "overgrown",
+      rung: "prove",
+      prompt: (
+        <p>
+          Explain why a decision tree grown until every leaf is pure will always have zero training error, and why that does
+          not mean it will do well on new data.
+        </p>
+      ),
+      answer: {
+        kind: "written",
+        rubric: [
+          "Notes that the tree can keep splitting until each leaf contains examples of only one label, possibly one example each, as long as no two identical inputs have different labels.",
+          "Concludes that every training example is then classified correctly: zero training error.",
+          "Explains that the tiny boxes around individual points capture noise and accidents of the sample, so predictions on new points near them are unreliable: overfitting.",
+        ],
+      },
+    },
+    {
+      key: "questions",
+      rung: "stretch",
+      prompt: (
+        <p>
+          In Twenty Questions, if every question splits the remaining possibilities exactly in half, how many objects can be
+          told apart with 20 questions? Give the answer in millions, to one decimal place.
+        </p>
+      ),
+      answer: { kind: "numeric", value: 1.0, tolerance: 0.05 },
+    },
+  ],
+
+  teachBack:
+    "Explain to a friend how a decision tree classifies by asking a series of questions, what makes a good question, and why a tree should not be allowed to grow without limit.",
+
+  glimpse: (
+    <p>
+      Next, the building block of every neural network: a single artificial neuron. In Introduction to Machine Learning you
+      will grow trees automatically and combine hundreds of them into a random forest, and in Statistical Machine Learning
+      you will meet boosting, which builds trees one after another, each correcting the last.
+    </p>
+  ),
+};
