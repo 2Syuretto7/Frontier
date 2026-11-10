@@ -1,0 +1,8281 @@
+{
+ "courses": [
+  {
+   "code": "M0",
+   "title": "Foundations of School Mathematics",
+   "track": "mathematics",
+   "tier": 0,
+   "requires": [],
+   "parallels": [
+    "E0",
+    "L0"
+   ],
+   "source": "Depth of Gelfand, Algebra and Functions and Graphs; Lang, Basic Mathematics.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Numbers",
+     "lessons": [
+      {
+       "id": "m0.1.1",
+       "title": "Counting and the natural numbers"
+      },
+      {
+       "id": "m0.1.2",
+       "title": "Integers and signed arithmetic"
+      },
+      {
+       "id": "m0.1.3",
+       "title": "Fractions, ratios and percentages"
+      },
+      {
+       "id": "m0.1.4",
+       "title": "Decimals, scientific notation and irrational numbers"
+      },
+      {
+       "id": "m0.1.5",
+       "title": "The real number line"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Algebra",
+     "lessons": [
+      {
+       "id": "m0.2.1",
+       "title": "Expressions and variables"
+      },
+      {
+       "id": "m0.2.2",
+       "title": "Linear equations"
+      },
+      {
+       "id": "m0.2.3",
+       "title": "Systems of two linear equations"
+      },
+      {
+       "id": "m0.2.4",
+       "title": "Inequalities"
+      },
+      {
+       "id": "m0.2.5",
+       "title": "Exponents and roots"
+      },
+      {
+       "id": "m0.2.6",
+       "title": "Polynomials and factoring"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Functions",
+     "lessons": [
+      {
+       "id": "m0.3.1",
+       "title": "What a function is"
+      },
+      {
+       "id": "m0.3.2",
+       "title": "Graphs"
+      },
+      {
+       "id": "m0.3.3",
+       "title": "Linear and quadratic functions"
+      },
+      {
+       "id": "m0.3.4",
+       "title": "Composition and inverses"
+      },
+      {
+       "id": "m0.3.5",
+       "title": "Transforming graphs"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Exponentials and logarithms",
+     "lessons": [
+      {
+       "id": "m0.4.1",
+       "title": "Growth and decay"
+      },
+      {
+       "id": "m0.4.2",
+       "title": "Exponential functions"
+      },
+      {
+       "id": "m0.4.3",
+       "title": "Logarithms as inverses"
+      },
+      {
+       "id": "m0.4.4",
+       "title": "Laws of logarithms"
+      },
+      {
+       "id": "m0.4.5",
+       "title": "E and continuous growth"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Geometry and trigonometry",
+     "lessons": [
+      {
+       "id": "m0.5.1",
+       "title": "Angles, triangles and Pythagoras"
+      },
+      {
+       "id": "m0.5.2",
+       "title": "Circles and radians"
+      },
+      {
+       "id": "m0.5.3",
+       "title": "Sine and cosine on the unit circle"
+      },
+      {
+       "id": "m0.5.4",
+       "title": "Trigonometric identities"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Coordinates and vectors",
+     "lessons": [
+      {
+       "id": "m0.6.1",
+       "title": "The Cartesian plane"
+      },
+      {
+       "id": "m0.6.2",
+       "title": "Distance, lines and slopes"
+      },
+      {
+       "id": "m0.6.3",
+       "title": "Vectors in the plane"
+      },
+      {
+       "id": "m0.6.4",
+       "title": "Complex numbers as points"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Sequences, sums and counting",
+     "lessons": [
+      {
+       "id": "m0.7.1",
+       "title": "Arithmetic and geometric sequences"
+      },
+      {
+       "id": "m0.7.2",
+       "title": "Sigma notation"
+      },
+      {
+       "id": "m0.7.3",
+       "title": "Induction, a first look"
+      },
+      {
+       "id": "m0.7.4",
+       "title": "Counting principles"
+      },
+      {
+       "id": "m0.7.5",
+       "title": "The binomial theorem"
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "title": "Data and chance, a first look",
+     "lessons": [
+      {
+       "id": "m0.8.1",
+       "title": "Averages and spread"
+      },
+      {
+       "id": "m0.8.2",
+       "title": "Histograms and distributions"
+      },
+      {
+       "id": "m0.8.3",
+       "title": "Probability as long-run frequency"
+      },
+      {
+       "id": "m0.8.4",
+       "title": "Expected value, a first look"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M1",
+   "title": "Proof and Logic",
+   "track": "mathematics",
+   "tier": 1,
+   "requires": [
+    "M0"
+   ],
+   "parallels": [
+    "E2"
+   ],
+   "source": "Depth of Velleman, How to Prove It; Hammack, Book of Proof.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Propositional logic",
+     "lessons": [
+      {
+       "id": "m1.1.1",
+       "title": "Statements and connectives"
+      },
+      {
+       "id": "m1.1.2",
+       "title": "Truth tables"
+      },
+      {
+       "id": "m1.1.3",
+       "title": "Logical equivalence"
+      },
+      {
+       "id": "m1.1.4",
+       "title": "Conditionals, converses and contrapositives"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Quantifiers",
+     "lessons": [
+      {
+       "id": "m1.2.1",
+       "title": "Predicates"
+      },
+      {
+       "id": "m1.2.2",
+       "title": "Universal and existential quantifiers"
+      },
+      {
+       "id": "m1.2.3",
+       "title": "Negating quantified statements"
+      },
+      {
+       "id": "m1.2.4",
+       "title": "Nested quantifiers"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Proof techniques",
+     "lessons": [
+      {
+       "id": "m1.3.1",
+       "title": "Direct proof"
+      },
+      {
+       "id": "m1.3.2",
+       "title": "Proof by contrapositive"
+      },
+      {
+       "id": "m1.3.3",
+       "title": "Proof by contradiction"
+      },
+      {
+       "id": "m1.3.4",
+       "title": "Proof by cases"
+      },
+      {
+       "id": "m1.3.5",
+       "title": "Existence and uniqueness proofs"
+      },
+      {
+       "id": "m1.3.6",
+       "title": "Writing proofs well"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Sets",
+     "lessons": [
+      {
+       "id": "m1.4.1",
+       "title": "Sets and membership"
+      },
+      {
+       "id": "m1.4.2",
+       "title": "Subsets and equality"
+      },
+      {
+       "id": "m1.4.3",
+       "title": "Operations on sets"
+      },
+      {
+       "id": "m1.4.4",
+       "title": "Indexed families"
+      },
+      {
+       "id": "m1.4.5",
+       "title": "Power sets and Cartesian products"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Induction",
+     "lessons": [
+      {
+       "id": "m1.5.1",
+       "title": "Mathematical induction"
+      },
+      {
+       "id": "m1.5.2",
+       "title": "Strong induction"
+      },
+      {
+       "id": "m1.5.3",
+       "title": "The well-ordering principle"
+      },
+      {
+       "id": "m1.5.4",
+       "title": "Recursive definitions"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Relations",
+     "lessons": [
+      {
+       "id": "m1.6.1",
+       "title": "Relations and their properties"
+      },
+      {
+       "id": "m1.6.2",
+       "title": "Equivalence relations and partitions"
+      },
+      {
+       "id": "m1.6.3",
+       "title": "Partial and total orders"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Functions",
+     "lessons": [
+      {
+       "id": "m1.7.1",
+       "title": "Functions as relations"
+      },
+      {
+       "id": "m1.7.2",
+       "title": "Injections, surjections and bijections"
+      },
+      {
+       "id": "m1.7.3",
+       "title": "Composition and inverses"
+      },
+      {
+       "id": "m1.7.4",
+       "title": "Images and preimages"
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "title": "Cardinality",
+     "lessons": [
+      {
+       "id": "m1.8.1",
+       "title": "Finite sets"
+      },
+      {
+       "id": "m1.8.2",
+       "title": "Countable sets"
+      },
+      {
+       "id": "m1.8.3",
+       "title": "Cantor's diagonal argument"
+      },
+      {
+       "id": "m1.8.4",
+       "title": "Why uncountable sets change probability"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M2",
+   "title": "Calculus",
+   "track": "mathematics",
+   "tier": 1,
+   "requires": [
+    "M0"
+   ],
+   "parallels": [
+    "L1"
+   ],
+   "source": "Depth of Spivak, Calculus; Apostol, Calculus Vol. 1.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "The real numbers",
+     "lessons": [
+      {
+       "id": "m2.1.1",
+       "title": "Field and order axioms"
+      },
+      {
+       "id": "m2.1.2",
+       "title": "Completeness and suprema"
+      },
+      {
+       "id": "m2.1.3",
+       "title": "Absolute value and inequalities"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Limits",
+     "lessons": [
+      {
+       "id": "m2.2.1",
+       "title": "Limits intuitively"
+      },
+      {
+       "id": "m2.2.2",
+       "title": "The epsilon-delta definition"
+      },
+      {
+       "id": "m2.2.3",
+       "title": "Limit laws"
+      },
+      {
+       "id": "m2.2.4",
+       "title": "One-sided and infinite limits"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Continuity",
+     "lessons": [
+      {
+       "id": "m2.3.1",
+       "title": "Continuous functions"
+      },
+      {
+       "id": "m2.3.2",
+       "title": "The intermediate value theorem"
+      },
+      {
+       "id": "m2.3.3",
+       "title": "The extreme value theorem"
+      },
+      {
+       "id": "m2.3.4",
+       "title": "Uniform continuity, a first look"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Derivatives",
+     "lessons": [
+      {
+       "id": "m2.4.1",
+       "title": "The derivative as local linear approximation"
+      },
+      {
+       "id": "m2.4.2",
+       "title": "Differentiation rules"
+      },
+      {
+       "id": "m2.4.3",
+       "title": "The chain rule"
+      },
+      {
+       "id": "m2.4.4",
+       "title": "Derivatives of exponentials, logarithms and the sigmoid"
+      },
+      {
+       "id": "m2.4.5",
+       "title": "Implicit differentiation and inverse functions"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Using derivatives",
+     "lessons": [
+      {
+       "id": "m2.5.1",
+       "title": "The mean value theorem"
+      },
+      {
+       "id": "m2.5.2",
+       "title": "Monotonicity and convexity"
+      },
+      {
+       "id": "m2.5.3",
+       "title": "Optimisation"
+      },
+      {
+       "id": "m2.5.4",
+       "title": "Newton's method"
+      },
+      {
+       "id": "m2.5.5",
+       "title": "L'Hôpital's rule"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Integrals",
+     "lessons": [
+      {
+       "id": "m2.6.1",
+       "title": "Area and Riemann sums"
+      },
+      {
+       "id": "m2.6.2",
+       "title": "The definite integral"
+      },
+      {
+       "id": "m2.6.3",
+       "title": "The fundamental theorem of calculus"
+      },
+      {
+       "id": "m2.6.4",
+       "title": "Substitution"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Techniques of integration",
+     "lessons": [
+      {
+       "id": "m2.7.1",
+       "title": "Integration by parts"
+      },
+      {
+       "id": "m2.7.2",
+       "title": "Partial fractions"
+      },
+      {
+       "id": "m2.7.3",
+       "title": "Improper integrals"
+      },
+      {
+       "id": "m2.7.4",
+       "title": "The Gaussian integral"
+      },
+      {
+       "id": "m2.7.5",
+       "title": "Numerical integration"
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "title": "Sequences and series",
+     "lessons": [
+      {
+       "id": "m2.8.1",
+       "title": "Convergence of sequences"
+      },
+      {
+       "id": "m2.8.2",
+       "title": "Series and convergence tests"
+      },
+      {
+       "id": "m2.8.3",
+       "title": "Absolute and conditional convergence"
+      },
+      {
+       "id": "m2.8.4",
+       "title": "Power series"
+      },
+      {
+       "id": "m2.8.5",
+       "title": "Taylor series and the remainder"
+      }
+     ]
+    },
+    {
+     "n": 9,
+     "title": "Approximation and asymptotics",
+     "lessons": [
+      {
+       "id": "m2.9.1",
+       "title": "Big-O and little-o"
+      },
+      {
+       "id": "m2.9.2",
+       "title": "Taylor approximations in practice"
+      },
+      {
+       "id": "m2.9.3",
+       "title": "Stirling's formula"
+      },
+      {
+       "id": "m2.9.4",
+       "title": "Comparing rates of growth"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M3",
+   "title": "Linear Algebra I",
+   "track": "mathematics",
+   "tier": 1,
+   "requires": [
+    "M0"
+   ],
+   "parallels": [
+    "E1",
+    "L1"
+   ],
+   "source": "Depth of Strang, Introduction to Linear Algebra; Lay, Linear Algebra and Its Applications.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Vectors",
+     "lessons": [
+      {
+       "id": "m3.1.1",
+       "title": "Vectors and linear combinations"
+      },
+      {
+       "id": "m3.1.2",
+       "title": "Dot product, length and angle"
+      },
+      {
+       "id": "m3.1.3",
+       "title": "Cosine similarity"
+      },
+      {
+       "id": "m3.1.4",
+       "title": "Lines and planes"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Linear systems",
+     "lessons": [
+      {
+       "id": "m3.2.1",
+       "title": "Gaussian elimination"
+      },
+      {
+       "id": "m3.2.2",
+       "title": "Row reduction and echelon forms"
+      },
+      {
+       "id": "m3.2.3",
+       "title": "Existence and uniqueness of solutions"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Matrices",
+     "lessons": [
+      {
+       "id": "m3.3.1",
+       "title": "Matrix operations"
+      },
+      {
+       "id": "m3.3.2",
+       "title": "Four ways to multiply matrices"
+      },
+      {
+       "id": "m3.3.3",
+       "title": "Inverses"
+      },
+      {
+       "id": "m3.3.4",
+       "title": "LU factorisation"
+      },
+      {
+       "id": "m3.3.5",
+       "title": "Transposes and permutations"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Vector spaces",
+     "lessons": [
+      {
+       "id": "m3.4.1",
+       "title": "Spaces and subspaces"
+      },
+      {
+       "id": "m3.4.2",
+       "title": "Null space and column space"
+      },
+      {
+       "id": "m3.4.3",
+       "title": "Linear independence"
+      },
+      {
+       "id": "m3.4.4",
+       "title": "Basis and dimension"
+      },
+      {
+       "id": "m3.4.5",
+       "title": "The four fundamental subspaces"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Orthogonality",
+     "lessons": [
+      {
+       "id": "m3.5.1",
+       "title": "Orthogonal vectors and subspaces"
+      },
+      {
+       "id": "m3.5.2",
+       "title": "Projections"
+      },
+      {
+       "id": "m3.5.3",
+       "title": "Least squares"
+      },
+      {
+       "id": "m3.5.4",
+       "title": "Gram-Schmidt and QR"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Determinants",
+     "lessons": [
+      {
+       "id": "m3.6.1",
+       "title": "Properties of determinants"
+      },
+      {
+       "id": "m3.6.2",
+       "title": "Cofactors and formulas"
+      },
+      {
+       "id": "m3.6.3",
+       "title": "Determinants as volume"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Eigenvalues",
+     "lessons": [
+      {
+       "id": "m3.7.1",
+       "title": "Eigenvalues and eigenvectors"
+      },
+      {
+       "id": "m3.7.2",
+       "title": "Diagonalisation"
+      },
+      {
+       "id": "m3.7.3",
+       "title": "Powers of matrices and Markov matrices"
+      },
+      {
+       "id": "m3.7.4",
+       "title": "Symmetric matrices"
+      },
+      {
+       "id": "m3.7.5",
+       "title": "Positive definite matrices"
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "title": "Linear transformations",
+     "lessons": [
+      {
+       "id": "m3.8.1",
+       "title": "Transformations as matrices"
+      },
+      {
+       "id": "m3.8.2",
+       "title": "Change of basis"
+      },
+      {
+       "id": "m3.8.3",
+       "title": "The singular value decomposition"
+      },
+      {
+       "id": "m3.8.4",
+       "title": "Low-rank approximation, a first look"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M4",
+   "title": "Discrete Mathematics",
+   "track": "mathematics",
+   "tier": 1,
+   "requires": [
+    "M1"
+   ],
+   "parallels": [
+    "E2"
+   ],
+   "source": "Depth of Rosen, Discrete Mathematics and Its Applications; Lehman, Leighton and Meyer, Mathematics for Computer Science.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Counting",
+     "lessons": [
+      {
+       "id": "m4.1.1",
+       "title": "Sum and product rules"
+      },
+      {
+       "id": "m4.1.2",
+       "title": "Permutations and combinations"
+      },
+      {
+       "id": "m4.1.3",
+       "title": "Binomial identities"
+      },
+      {
+       "id": "m4.1.4",
+       "title": "The pigeonhole principle"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Advanced counting",
+     "lessons": [
+      {
+       "id": "m4.2.1",
+       "title": "Inclusion-exclusion"
+      },
+      {
+       "id": "m4.2.2",
+       "title": "Recurrence relations"
+      },
+      {
+       "id": "m4.2.3",
+       "title": "Generating functions"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Graphs",
+     "lessons": [
+      {
+       "id": "m4.3.1",
+       "title": "Graphs and terminology"
+      },
+      {
+       "id": "m4.3.2",
+       "title": "Paths and connectivity"
+      },
+      {
+       "id": "m4.3.3",
+       "title": "Trees"
+      },
+      {
+       "id": "m4.3.4",
+       "title": "Directed acyclic graphs and topological order"
+      },
+      {
+       "id": "m4.3.5",
+       "title": "Colouring"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Number theory for computing",
+     "lessons": [
+      {
+       "id": "m4.4.1",
+       "title": "Divisibility"
+      },
+      {
+       "id": "m4.4.2",
+       "title": "Gcd and Euclid's algorithm"
+      },
+      {
+       "id": "m4.4.3",
+       "title": "Modular arithmetic"
+      },
+      {
+       "id": "m4.4.4",
+       "title": "Hashing, a first look"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Algorithms",
+     "lessons": [
+      {
+       "id": "m4.5.1",
+       "title": "What an algorithm is"
+      },
+      {
+       "id": "m4.5.2",
+       "title": "Big-O notation"
+      },
+      {
+       "id": "m4.5.3",
+       "title": "Recursion and divide and conquer"
+      },
+      {
+       "id": "m4.5.4",
+       "title": "P and NP, a first look"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Discrete probability",
+     "lessons": [
+      {
+       "id": "m4.6.1",
+       "title": "Sample spaces"
+      },
+      {
+       "id": "m4.6.2",
+       "title": "Conditional probability"
+      },
+      {
+       "id": "m4.6.3",
+       "title": "Expectation"
+      },
+      {
+       "id": "m4.6.4",
+       "title": "The probabilistic method"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M5",
+   "title": "Multivariable and Matrix Calculus",
+   "track": "mathematics",
+   "tier": 2,
+   "requires": [
+    "M2",
+    "M3"
+   ],
+   "parallels": [
+    "E5",
+    "L3"
+   ],
+   "source": "Depth of Hubbard and Hubbard, Vector Calculus, Linear Algebra, and Differential Forms; Magnus and Neudecker, Matrix Differential Calculus.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Space and functions",
+     "lessons": [
+      {
+       "id": "m5.1.1",
+       "title": "Euclidean space and norms"
+      },
+      {
+       "id": "m5.1.2",
+       "title": "Scalar fields and level sets"
+      },
+      {
+       "id": "m5.1.3",
+       "title": "Curves and parametrisation"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Differentiation",
+     "lessons": [
+      {
+       "id": "m5.2.1",
+       "title": "Partial derivatives"
+      },
+      {
+       "id": "m5.2.2",
+       "title": "The derivative as a linear map"
+      },
+      {
+       "id": "m5.2.3",
+       "title": "The Jacobian"
+      },
+      {
+       "id": "m5.2.4",
+       "title": "Gradients and directional derivatives"
+      },
+      {
+       "id": "m5.2.5",
+       "title": "The chain rule as a product of Jacobians"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Computational graphs",
+     "lessons": [
+      {
+       "id": "m5.3.1",
+       "title": "Functions as graphs"
+      },
+      {
+       "id": "m5.3.2",
+       "title": "Forward-mode differentiation"
+      },
+      {
+       "id": "m5.3.3",
+       "title": "Reverse-mode differentiation"
+      },
+      {
+       "id": "m5.3.4",
+       "title": "Vector-Jacobian and Jacobian-vector products"
+      },
+      {
+       "id": "m5.3.5",
+       "title": "Why backpropagation is cheap"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Matrix calculus",
+     "lessons": [
+      {
+       "id": "m5.4.1",
+       "title": "Differentials and layout conventions"
+      },
+      {
+       "id": "m5.4.2",
+       "title": "Gradients of linear and quadratic forms"
+      },
+      {
+       "id": "m5.4.3",
+       "title": "Gradients of norms, traces and determinants"
+      },
+      {
+       "id": "m5.4.4",
+       "title": "Gradients of softmax, log-sum-exp and cross-entropy"
+      },
+      {
+       "id": "m5.4.5",
+       "title": "Backpropagating through matrix products"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Higher derivatives",
+     "lessons": [
+      {
+       "id": "m5.5.1",
+       "title": "Taylor's theorem in several variables"
+      },
+      {
+       "id": "m5.5.2",
+       "title": "The Hessian"
+      },
+      {
+       "id": "m5.5.3",
+       "title": "Minima, maxima and saddles"
+      },
+      {
+       "id": "m5.5.4",
+       "title": "Hessian-vector products"
+      },
+      {
+       "id": "m5.5.5",
+       "title": "Lagrange multipliers"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Inverse and implicit functions",
+     "lessons": [
+      {
+       "id": "m5.6.1",
+       "title": "The inverse function theorem"
+      },
+      {
+       "id": "m5.6.2",
+       "title": "The implicit function theorem"
+      },
+      {
+       "id": "m5.6.3",
+       "title": "Differentiating through solvers and fixed points"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Multiple integrals",
+     "lessons": [
+      {
+       "id": "m5.7.1",
+       "title": "Double and triple integrals"
+      },
+      {
+       "id": "m5.7.2",
+       "title": "Fubini's theorem"
+      },
+      {
+       "id": "m5.7.3",
+       "title": "Change of variables and the Jacobian determinant"
+      },
+      {
+       "id": "m5.7.4",
+       "title": "Integrals in high dimensions"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M6",
+   "title": "Linear Algebra II: Matrix Analysis",
+   "track": "mathematics",
+   "tier": 2,
+   "requires": [
+    "M3",
+    "M1"
+   ],
+   "parallels": [
+    "L11",
+    "L2",
+    "L4"
+   ],
+   "source": "Depth of Axler, Linear Algebra Done Right; Horn and Johnson, Matrix Analysis (selected); Strang, Linear Algebra and Learning from Data.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Abstract vector spaces",
+     "lessons": [
+      {
+       "id": "m6.1.1",
+       "title": "Spaces over the reals and complexes"
+      },
+      {
+       "id": "m6.1.2",
+       "title": "Linear maps"
+      },
+      {
+       "id": "m6.1.3",
+       "title": "Null spaces and ranges"
+      },
+      {
+       "id": "m6.1.4",
+       "title": "Quotient and dual spaces"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Inner product spaces",
+     "lessons": [
+      {
+       "id": "m6.2.1",
+       "title": "Inner products and norms"
+      },
+      {
+       "id": "m6.2.2",
+       "title": "Orthonormal bases"
+      },
+      {
+       "id": "m6.2.3",
+       "title": "Orthogonal complements"
+      },
+      {
+       "id": "m6.2.4",
+       "title": "Minimisation problems"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Spectral theory",
+     "lessons": [
+      {
+       "id": "m6.3.1",
+       "title": "Invariant subspaces"
+      },
+      {
+       "id": "m6.3.2",
+       "title": "Adjoints"
+      },
+      {
+       "id": "m6.3.3",
+       "title": "The spectral theorem"
+      },
+      {
+       "id": "m6.3.4",
+       "title": "Positive operators"
+      },
+      {
+       "id": "m6.3.5",
+       "title": "The Rayleigh quotient and Courant-Fischer"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "The SVD in depth",
+     "lessons": [
+      {
+       "id": "m6.4.1",
+       "title": "The SVD from the spectral theorem"
+      },
+      {
+       "id": "m6.4.2",
+       "title": "The polar decomposition"
+      },
+      {
+       "id": "m6.4.3",
+       "title": "Eckart-Young"
+      },
+      {
+       "id": "m6.4.4",
+       "title": "The pseudoinverse and minimum-norm solutions"
+      },
+      {
+       "id": "m6.4.5",
+       "title": "Principal component analysis"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Norms and perturbation",
+     "lessons": [
+      {
+       "id": "m6.5.1",
+       "title": "Vector norms and duality"
+      },
+      {
+       "id": "m6.5.2",
+       "title": "Operator, Frobenius and nuclear norms"
+      },
+      {
+       "id": "m6.5.3",
+       "title": "Weyl and Davis-Kahan perturbation bounds"
+      },
+      {
+       "id": "m6.5.4",
+       "title": "Condition numbers"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Structured matrices",
+     "lessons": [
+      {
+       "id": "m6.6.1",
+       "title": "Projections"
+      },
+      {
+       "id": "m6.6.2",
+       "title": "Orthogonal and unitary matrices"
+      },
+      {
+       "id": "m6.6.3",
+       "title": "Circulant and Toeplitz matrices and convolution"
+      },
+      {
+       "id": "m6.6.4",
+       "title": "Low-rank plus diagonal"
+      },
+      {
+       "id": "m6.6.5",
+       "title": "Kronecker products"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Multilinear algebra",
+     "lessons": [
+      {
+       "id": "m6.7.1",
+       "title": "Bilinear and quadratic forms"
+      },
+      {
+       "id": "m6.7.2",
+       "title": "Tensors and tensor products"
+      },
+      {
+       "id": "m6.7.3",
+       "title": "Einsum notation"
+      },
+      {
+       "id": "m6.7.4",
+       "title": "Tensor decompositions, a first look"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M7",
+   "title": "Probability",
+   "track": "mathematics",
+   "tier": 2,
+   "requires": [
+    "M2",
+    "M4"
+   ],
+   "parallels": [
+    "L2"
+   ],
+   "source": "Depth of Blitzstein and Hwang, Introduction to Probability; Ross, A First Course in Probability.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Foundations",
+     "lessons": [
+      {
+       "id": "m7.1.1",
+       "title": "The axioms"
+      },
+      {
+       "id": "m7.1.2",
+       "title": "Naive probability and counting"
+      },
+      {
+       "id": "m7.1.3",
+       "title": "Conditional probability"
+      },
+      {
+       "id": "m7.1.4",
+       "title": "Bayes' rule"
+      },
+      {
+       "id": "m7.1.5",
+       "title": "Independence"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Discrete random variables",
+     "lessons": [
+      {
+       "id": "m7.2.1",
+       "title": "Distributions"
+      },
+      {
+       "id": "m7.2.2",
+       "title": "Bernoulli, binomial, geometric, Poisson and categorical"
+      },
+      {
+       "id": "m7.2.3",
+       "title": "Expectation and linearity"
+      },
+      {
+       "id": "m7.2.4",
+       "title": "Variance"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Continuous random variables",
+     "lessons": [
+      {
+       "id": "m7.3.1",
+       "title": "Densities"
+      },
+      {
+       "id": "m7.3.2",
+       "title": "Uniform, normal and exponential"
+      },
+      {
+       "id": "m7.3.3",
+       "title": "Universality of the uniform"
+      },
+      {
+       "id": "m7.3.4",
+       "title": "Transformations of random variables"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Moments and inequalities",
+     "lessons": [
+      {
+       "id": "m7.4.1",
+       "title": "Moment generating functions"
+      },
+      {
+       "id": "m7.4.2",
+       "title": "Markov, Chebyshev and Jensen inequalities"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Joint distributions",
+     "lessons": [
+      {
+       "id": "m7.5.1",
+       "title": "Joint, marginal and conditional distributions"
+      },
+      {
+       "id": "m7.5.2",
+       "title": "Covariance and correlation"
+      },
+      {
+       "id": "m7.5.3",
+       "title": "Covariance matrices"
+      },
+      {
+       "id": "m7.5.4",
+       "title": "The multivariate normal"
+      },
+      {
+       "id": "m7.5.5",
+       "title": "Conditioning Gaussians"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Conditional expectation",
+     "lessons": [
+      {
+       "id": "m7.6.1",
+       "title": "Conditional expectation"
+      },
+      {
+       "id": "m7.6.2",
+       "title": "The laws of total expectation and variance"
+      },
+      {
+       "id": "m7.6.3",
+       "title": "Prediction and mean squared error"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Limit theorems",
+     "lessons": [
+      {
+       "id": "m7.7.1",
+       "title": "The law of large numbers"
+      },
+      {
+       "id": "m7.7.2",
+       "title": "The central limit theorem"
+      },
+      {
+       "id": "m7.7.3",
+       "title": "Monte Carlo estimation"
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "title": "Markov chains",
+     "lessons": [
+      {
+       "id": "m7.8.1",
+       "title": "Transition matrices"
+      },
+      {
+       "id": "m7.8.2",
+       "title": "Stationary distributions"
+      },
+      {
+       "id": "m7.8.3",
+       "title": "Convergence and mixing"
+      },
+      {
+       "id": "m7.8.4",
+       "title": "Random walks"
+      },
+      {
+       "id": "m7.8.5",
+       "title": "Metropolis-Hastings, a first look"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M8",
+   "title": "Real Analysis",
+   "track": "mathematics",
+   "tier": 2,
+   "requires": [
+    "M1",
+    "M2"
+   ],
+   "parallels": [],
+   "source": "Depth of Abbott, Understanding Analysis; Rudin, Principles of Mathematical Analysis, chapters 1 to 7.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "The reals revisited",
+     "lessons": [
+      {
+       "id": "m8.1.1",
+       "title": "Constructing the reals"
+      },
+      {
+       "id": "m8.1.2",
+       "title": "Equivalent forms of completeness"
+      },
+      {
+       "id": "m8.1.3",
+       "title": "Countability and uncountability"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Sequences",
+     "lessons": [
+      {
+       "id": "m8.2.1",
+       "title": "Limit theorems"
+      },
+      {
+       "id": "m8.2.2",
+       "title": "Monotone convergence"
+      },
+      {
+       "id": "m8.2.3",
+       "title": "Bolzano-Weierstrass"
+      },
+      {
+       "id": "m8.2.4",
+       "title": "Cauchy sequences"
+      },
+      {
+       "id": "m8.2.5",
+       "title": "Limsup and liminf"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Series",
+     "lessons": [
+      {
+       "id": "m8.3.1",
+       "title": "Convergence tests proved"
+      },
+      {
+       "id": "m8.3.2",
+       "title": "Rearrangements"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Topology of the line",
+     "lessons": [
+      {
+       "id": "m8.4.1",
+       "title": "Open and closed sets"
+      },
+      {
+       "id": "m8.4.2",
+       "title": "Compactness and Heine-Borel"
+      },
+      {
+       "id": "m8.4.3",
+       "title": "Connected sets"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Continuity",
+     "lessons": [
+      {
+       "id": "m8.5.1",
+       "title": "Functional limits"
+      },
+      {
+       "id": "m8.5.2",
+       "title": "Continuity and compactness"
+      },
+      {
+       "id": "m8.5.3",
+       "title": "Uniform continuity"
+      },
+      {
+       "id": "m8.5.4",
+       "title": "Lipschitz continuity"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Differentiation",
+     "lessons": [
+      {
+       "id": "m8.6.1",
+       "title": "The derivative"
+      },
+      {
+       "id": "m8.6.2",
+       "title": "Mean value theorems"
+      },
+      {
+       "id": "m8.6.3",
+       "title": "Taylor's theorem with remainder"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "The Riemann integral",
+     "lessons": [
+      {
+       "id": "m8.7.1",
+       "title": "Darboux sums"
+      },
+      {
+       "id": "m8.7.2",
+       "title": "Integrability criteria"
+      },
+      {
+       "id": "m8.7.3",
+       "title": "The fundamental theorem proved"
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "title": "Sequences of functions",
+     "lessons": [
+      {
+       "id": "m8.8.1",
+       "title": "Pointwise and uniform convergence"
+      },
+      {
+       "id": "m8.8.2",
+       "title": "Interchanging limits, derivatives and integrals"
+      },
+      {
+       "id": "m8.8.3",
+       "title": "Power series"
+      },
+      {
+       "id": "m8.8.4",
+       "title": "The Weierstrass approximation theorem"
+      },
+      {
+       "id": "m8.8.5",
+       "title": "Universal approximation as a corollary"
+      }
+     ]
+    },
+    {
+     "n": 9,
+     "title": "Metric spaces, a first look",
+     "lessons": [
+      {
+       "id": "m8.9.1",
+       "title": "Metrics and normed spaces"
+      },
+      {
+       "id": "m8.9.2",
+       "title": "Completeness"
+      },
+      {
+       "id": "m8.9.3",
+       "title": "The contraction mapping theorem"
+      },
+      {
+       "id": "m8.9.4",
+       "title": "Fixed-point iterations in algorithms"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M9",
+   "title": "Mathematical Statistics",
+   "track": "mathematics",
+   "tier": 2,
+   "requires": [
+    "M7",
+    "M5"
+   ],
+   "parallels": [
+    "L10",
+    "L2"
+   ],
+   "source": "Depth of Casella and Berger, Statistical Inference; Wasserman, All of Statistics.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Sampling",
+     "lessons": [
+      {
+       "id": "m9.1.1",
+       "title": "Random samples"
+      },
+      {
+       "id": "m9.1.2",
+       "title": "Sampling distributions"
+      },
+      {
+       "id": "m9.1.3",
+       "title": "Order statistics"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Estimation",
+     "lessons": [
+      {
+       "id": "m9.2.1",
+       "title": "Method of moments"
+      },
+      {
+       "id": "m9.2.2",
+       "title": "Maximum likelihood"
+      },
+      {
+       "id": "m9.2.3",
+       "title": "Bayesian estimators"
+      },
+      {
+       "id": "m9.2.4",
+       "title": "Bias, variance and mean squared error"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Efficiency",
+     "lessons": [
+      {
+       "id": "m9.3.1",
+       "title": "Sufficiency"
+      },
+      {
+       "id": "m9.3.2",
+       "title": "Exponential families"
+      },
+      {
+       "id": "m9.3.3",
+       "title": "Fisher information"
+      },
+      {
+       "id": "m9.3.4",
+       "title": "The Cramér-Rao bound"
+      },
+      {
+       "id": "m9.3.5",
+       "title": "Asymptotic normality of maximum likelihood"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Testing",
+     "lessons": [
+      {
+       "id": "m9.4.1",
+       "title": "Hypothesis tests"
+      },
+      {
+       "id": "m9.4.2",
+       "title": "The Neyman-Pearson lemma"
+      },
+      {
+       "id": "m9.4.3",
+       "title": "Likelihood ratio tests"
+      },
+      {
+       "id": "m9.4.4",
+       "title": "P-values and their misuse"
+      },
+      {
+       "id": "m9.4.5",
+       "title": "Multiple testing"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Intervals and resampling",
+     "lessons": [
+      {
+       "id": "m9.5.1",
+       "title": "Confidence intervals"
+      },
+      {
+       "id": "m9.5.2",
+       "title": "The bootstrap"
+      },
+      {
+       "id": "m9.5.3",
+       "title": "Permutation tests"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Linear models",
+     "lessons": [
+      {
+       "id": "m9.6.1",
+       "title": "Regression"
+      },
+      {
+       "id": "m9.6.2",
+       "title": "Least squares as projection"
+      },
+      {
+       "id": "m9.6.3",
+       "title": "Inference for regression"
+      },
+      {
+       "id": "m9.6.4",
+       "title": "Ridge and shrinkage"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Bayesian statistics",
+     "lessons": [
+      {
+       "id": "m9.7.1",
+       "title": "Priors and posteriors"
+      },
+      {
+       "id": "m9.7.2",
+       "title": "Conjugacy"
+      },
+      {
+       "id": "m9.7.3",
+       "title": "MAP versus full Bayes"
+      },
+      {
+       "id": "m9.7.4",
+       "title": "Hierarchical models"
+      },
+      {
+       "id": "m9.7.5",
+       "title": "The posterior predictive"
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "title": "Statistics for ML experiments",
+     "lessons": [
+      {
+       "id": "m9.8.1",
+       "title": "Comparing models on a benchmark"
+      },
+      {
+       "id": "m9.8.2",
+       "title": "Variance across seeds"
+      },
+      {
+       "id": "m9.8.3",
+       "title": "Paired tests"
+      },
+      {
+       "id": "m9.8.4",
+       "title": "Power and sample size"
+      },
+      {
+       "id": "m9.8.5",
+       "title": "Designing controlled experiments"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M10",
+   "title": "Convex Optimisation",
+   "track": "mathematics",
+   "tier": 3,
+   "requires": [
+    "M5",
+    "M6",
+    "M8"
+   ],
+   "parallels": [
+    "L2",
+    "L3"
+   ],
+   "source": "Depth of Boyd and Vandenberghe, Convex Optimization; Nesterov, Lectures on Convex Optimization (selected).",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Convex sets",
+     "lessons": [
+      {
+       "id": "m10.1.1",
+       "title": "Convex sets and cones"
+      },
+      {
+       "id": "m10.1.2",
+       "title": "Operations that preserve convexity"
+      },
+      {
+       "id": "m10.1.3",
+       "title": "Separating and supporting hyperplanes"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Convex functions",
+     "lessons": [
+      {
+       "id": "m10.2.1",
+       "title": "Definitions"
+      },
+      {
+       "id": "m10.2.2",
+       "title": "First- and second-order conditions"
+      },
+      {
+       "id": "m10.2.3",
+       "title": "Operations that preserve convexity"
+      },
+      {
+       "id": "m10.2.4",
+       "title": "Conjugate functions"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Convex problems",
+     "lessons": [
+      {
+       "id": "m10.3.1",
+       "title": "Linear and quadratic programs"
+      },
+      {
+       "id": "m10.3.2",
+       "title": "Second-order cone and semidefinite programs"
+      },
+      {
+       "id": "m10.3.3",
+       "title": "Equivalent reformulations"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Duality",
+     "lessons": [
+      {
+       "id": "m10.4.1",
+       "title": "The Lagrangian"
+      },
+      {
+       "id": "m10.4.2",
+       "title": "Weak and strong duality"
+      },
+      {
+       "id": "m10.4.3",
+       "title": "KKT conditions"
+      },
+      {
+       "id": "m10.4.4",
+       "title": "Sensitivity and interpretation"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Gradient methods",
+     "lessons": [
+      {
+       "id": "m10.5.1",
+       "title": "Gradient descent and the descent lemma"
+      },
+      {
+       "id": "m10.5.2",
+       "title": "Smoothness and strong convexity"
+      },
+      {
+       "id": "m10.5.3",
+       "title": "Convergence rates"
+      },
+      {
+       "id": "m10.5.4",
+       "title": "The condition number and zigzagging"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Acceleration and second order",
+     "lessons": [
+      {
+       "id": "m10.6.1",
+       "title": "Momentum"
+      },
+      {
+       "id": "m10.6.2",
+       "title": "Nesterov acceleration"
+      },
+      {
+       "id": "m10.6.3",
+       "title": "Newton's method"
+      },
+      {
+       "id": "m10.6.4",
+       "title": "Quasi-Newton methods and L-BFGS"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Non-smooth optimisation",
+     "lessons": [
+      {
+       "id": "m10.7.1",
+       "title": "Subgradients"
+      },
+      {
+       "id": "m10.7.2",
+       "title": "Proximal operators"
+      },
+      {
+       "id": "m10.7.3",
+       "title": "The L1 norm and sparsity"
+      },
+      {
+       "id": "m10.7.4",
+       "title": "Mirror descent"
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "title": "Constrained and splitting methods",
+     "lessons": [
+      {
+       "id": "m10.8.1",
+       "title": "Projected gradient descent"
+      },
+      {
+       "id": "m10.8.2",
+       "title": "Frank-Wolfe"
+      },
+      {
+       "id": "m10.8.3",
+       "title": "ADMM"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M11",
+   "title": "Numerical Linear Algebra and Scientific Computing",
+   "track": "mathematics",
+   "tier": 3,
+   "requires": [
+    "M6",
+    "E1"
+   ],
+   "parallels": [
+    "E14",
+    "E3",
+    "E7",
+    "E9"
+   ],
+   "source": "Depth of Trefethen and Bau, Numerical Linear Algebra; Higham, Accuracy and Stability of Numerical Algorithms (selected).",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Floating point",
+     "lessons": [
+      {
+       "id": "m11.1.1",
+       "title": "IEEE 754"
+      },
+      {
+       "id": "m11.1.2",
+       "title": "Rounding and machine epsilon"
+      },
+      {
+       "id": "m11.1.3",
+       "title": "Cancellation"
+      },
+      {
+       "id": "m11.1.4",
+       "title": "FP16, BF16, FP8, FP4 and microscaling formats"
+      },
+      {
+       "id": "m11.1.5",
+       "title": "Stochastic rounding"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Conditioning and stability",
+     "lessons": [
+      {
+       "id": "m11.2.1",
+       "title": "Condition numbers of problems"
+      },
+      {
+       "id": "m11.2.2",
+       "title": "Backward stability"
+      },
+      {
+       "id": "m11.2.3",
+       "title": "Stable softmax, log-sum-exp and running variance"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Factorisations",
+     "lessons": [
+      {
+       "id": "m11.3.1",
+       "title": "LU with pivoting"
+      },
+      {
+       "id": "m11.3.2",
+       "title": "Cholesky"
+      },
+      {
+       "id": "m11.3.3",
+       "title": "QR by Householder reflections"
+      },
+      {
+       "id": "m11.3.4",
+       "title": "Why the normal equations are unstable"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Eigenvalue algorithms",
+     "lessons": [
+      {
+       "id": "m11.4.1",
+       "title": "Power and inverse iteration"
+      },
+      {
+       "id": "m11.4.2",
+       "title": "The QR algorithm"
+      },
+      {
+       "id": "m11.4.3",
+       "title": "Lanczos and Hessian spectra"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Iterative methods",
+     "lessons": [
+      {
+       "id": "m11.5.1",
+       "title": "Krylov subspaces"
+      },
+      {
+       "id": "m11.5.2",
+       "title": "Conjugate gradient"
+      },
+      {
+       "id": "m11.5.3",
+       "title": "Preconditioning"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Randomised numerical linear algebra",
+     "lessons": [
+      {
+       "id": "m11.6.1",
+       "title": "Random projections"
+      },
+      {
+       "id": "m11.6.2",
+       "title": "Randomised SVD"
+      },
+      {
+       "id": "m11.6.3",
+       "title": "Sketching"
+      },
+      {
+       "id": "m11.6.4",
+       "title": "Hutchinson's trace estimator"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Matrix functions",
+     "lessons": [
+      {
+       "id": "m11.7.1",
+       "title": "The matrix exponential"
+      },
+      {
+       "id": "m11.7.2",
+       "title": "Matrix square roots and inverse roots"
+      },
+      {
+       "id": "m11.7.3",
+       "title": "Newton-Schulz iteration"
+      },
+      {
+       "id": "m11.7.4",
+       "title": "The polar factor and orthogonalisation"
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "title": "Numerical ODEs",
+     "lessons": [
+      {
+       "id": "m11.8.1",
+       "title": "Euler and Runge-Kutta methods"
+      },
+      {
+       "id": "m11.8.2",
+       "title": "Stiffness"
+      },
+      {
+       "id": "m11.8.3",
+       "title": "ODE solvers as samplers"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M12",
+   "title": "Information Theory",
+   "track": "mathematics",
+   "tier": 3,
+   "requires": [
+    "M7"
+   ],
+   "parallels": [
+    "E11",
+    "L5",
+    "L7"
+   ],
+   "source": "Depth of Cover and Thomas, Elements of Information Theory; MacKay, Information Theory, Inference, and Learning Algorithms.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Entropy",
+     "lessons": [
+      {
+       "id": "m12.1.1",
+       "title": "Surprise"
+      },
+      {
+       "id": "m12.1.2",
+       "title": "Entropy"
+      },
+      {
+       "id": "m12.1.3",
+       "title": "Joint and conditional entropy"
+      },
+      {
+       "id": "m12.1.4",
+       "title": "The chain rule"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Divergences",
+     "lessons": [
+      {
+       "id": "m12.2.1",
+       "title": "KL divergence"
+      },
+      {
+       "id": "m12.2.2",
+       "title": "Cross-entropy"
+      },
+      {
+       "id": "m12.2.3",
+       "title": "Mutual information"
+      },
+      {
+       "id": "m12.2.4",
+       "title": "The data processing inequality"
+      },
+      {
+       "id": "m12.2.5",
+       "title": "F-divergences"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Source coding",
+     "lessons": [
+      {
+       "id": "m12.3.1",
+       "title": "Typical sets"
+      },
+      {
+       "id": "m12.3.2",
+       "title": "The Kraft inequality"
+      },
+      {
+       "id": "m12.3.3",
+       "title": "Huffman coding"
+      },
+      {
+       "id": "m12.3.4",
+       "title": "Arithmetic coding"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Prediction is compression",
+     "lessons": [
+      {
+       "id": "m12.4.1",
+       "title": "Compressing with a predictor"
+      },
+      {
+       "id": "m12.4.2",
+       "title": "Perplexity and bits per byte"
+      },
+      {
+       "id": "m12.4.3",
+       "title": "Minimum description length"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Channels",
+     "lessons": [
+      {
+       "id": "m12.5.1",
+       "title": "Channel capacity"
+      },
+      {
+       "id": "m12.5.2",
+       "title": "The noisy channel coding theorem in outline"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Information and inference",
+     "lessons": [
+      {
+       "id": "m12.6.1",
+       "title": "Maximum entropy"
+      },
+      {
+       "id": "m12.6.2",
+       "title": "Exponential families revisited"
+      },
+      {
+       "id": "m12.6.3",
+       "title": "Rate-distortion"
+      },
+      {
+       "id": "m12.6.4",
+       "title": "The information bottleneck, read critically"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M13",
+   "title": "Stochastic Processes and Monte Carlo",
+   "track": "mathematics",
+   "tier": 3,
+   "requires": [
+    "M7",
+    "M8"
+   ],
+   "parallels": [
+    "L6",
+    "L7"
+   ],
+   "source": "Depth of Grimmett and Stirzaker, Probability and Random Processes; Owen, Monte Carlo Theory, Methods and Examples.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Monte Carlo",
+     "lessons": [
+      {
+       "id": "m13.1.1",
+       "title": "Estimators and their variance"
+      },
+      {
+       "id": "m13.1.2",
+       "title": "Control variates"
+      },
+      {
+       "id": "m13.1.3",
+       "title": "Importance sampling"
+      },
+      {
+       "id": "m13.1.4",
+       "title": "Effective sample size"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Sampling algorithms",
+     "lessons": [
+      {
+       "id": "m13.2.1",
+       "title": "Inverse CDF sampling"
+      },
+      {
+       "id": "m13.2.2",
+       "title": "Rejection sampling"
+      },
+      {
+       "id": "m13.2.3",
+       "title": "The Gumbel-max trick"
+      },
+      {
+       "id": "m13.2.4",
+       "title": "Reparameterisation"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Markov chains in depth",
+     "lessons": [
+      {
+       "id": "m13.3.1",
+       "title": "Ergodicity"
+      },
+      {
+       "id": "m13.3.2",
+       "title": "Detailed balance"
+      },
+      {
+       "id": "m13.3.3",
+       "title": "Mixing times"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "MCMC",
+     "lessons": [
+      {
+       "id": "m13.4.1",
+       "title": "Metropolis-Hastings"
+      },
+      {
+       "id": "m13.4.2",
+       "title": "Gibbs sampling"
+      },
+      {
+       "id": "m13.4.3",
+       "title": "Hamiltonian Monte Carlo"
+      },
+      {
+       "id": "m13.4.4",
+       "title": "Langevin dynamics"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Continuous-time processes",
+     "lessons": [
+      {
+       "id": "m13.5.1",
+       "title": "The Poisson process"
+      },
+      {
+       "id": "m13.5.2",
+       "title": "Brownian motion, a first look"
+      },
+      {
+       "id": "m13.5.3",
+       "title": "From random walks to diffusions"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Gradient estimators",
+     "lessons": [
+      {
+       "id": "m13.6.1",
+       "title": "The score-function estimator"
+      },
+      {
+       "id": "m13.6.2",
+       "title": "The pathwise estimator"
+      },
+      {
+       "id": "m13.6.3",
+       "title": "Variance trade-offs between them"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M14",
+   "title": "Optimisation for Deep Learning",
+   "track": "mathematics",
+   "tier": 4,
+   "requires": [
+    "M10",
+    "M13",
+    "L3"
+   ],
+   "parallels": [
+    "E13",
+    "L8"
+   ],
+   "source": "Depth of Bottou, Curtis and Nocedal, Optimization Methods for Large-Scale Machine Learning; Garrigos and Gower, Handbook of Convergence Theorems for SGD; primary papers.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Stochastic gradient descent",
+     "lessons": [
+      {
+       "id": "m14.1.1",
+       "title": "Convergence for convex and non-convex objectives"
+      },
+      {
+       "id": "m14.1.2",
+       "title": "Gradient noise and batch size"
+      },
+      {
+       "id": "m14.1.3",
+       "title": "The critical batch size"
+      },
+      {
+       "id": "m14.1.4",
+       "title": "Learning-rate scaling rules"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Adaptive methods",
+     "lessons": [
+      {
+       "id": "m14.2.1",
+       "title": "AdaGrad"
+      },
+      {
+       "id": "m14.2.2",
+       "title": "RMSProp"
+      },
+      {
+       "id": "m14.2.3",
+       "title": "Adam"
+      },
+      {
+       "id": "m14.2.4",
+       "title": "AdamW and decoupled weight decay"
+      },
+      {
+       "id": "m14.2.5",
+       "title": "Where Adam fails"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "The geometry of updates",
+     "lessons": [
+      {
+       "id": "m14.3.1",
+       "title": "Steepest descent under different norms"
+      },
+      {
+       "id": "m14.3.2",
+       "title": "Preconditioning"
+      },
+      {
+       "id": "m14.3.3",
+       "title": "Shampoo and SOAP"
+      },
+      {
+       "id": "m14.3.4",
+       "title": "Muon and orthogonalised updates"
+      },
+      {
+       "id": "m14.3.5",
+       "title": "Modular norms"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Schedules",
+     "lessons": [
+      {
+       "id": "m14.4.1",
+       "title": "Warmup"
+      },
+      {
+       "id": "m14.4.2",
+       "title": "Cosine decay"
+      },
+      {
+       "id": "m14.4.3",
+       "title": "Warmup-stable-decay"
+      },
+      {
+       "id": "m14.4.4",
+       "title": "Schedule-free methods"
+      },
+      {
+       "id": "m14.4.5",
+       "title": "Why decaying the learning rate helps"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Landscapes",
+     "lessons": [
+      {
+       "id": "m14.5.1",
+       "title": "Saddles and plateaus"
+      },
+      {
+       "id": "m14.5.2",
+       "title": "Sharpness and flatness"
+      },
+      {
+       "id": "m14.5.3",
+       "title": "The edge of stability"
+      },
+      {
+       "id": "m14.5.4",
+       "title": "Loss of plasticity"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Stability at scale",
+     "lessons": [
+      {
+       "id": "m14.6.1",
+       "title": "Gradient clipping"
+      },
+      {
+       "id": "m14.6.2",
+       "title": "The mathematics of loss spikes"
+      },
+      {
+       "id": "m14.6.3",
+       "title": "Logit growth and z-loss"
+      },
+      {
+       "id": "m14.6.4",
+       "title": "Normalisation and scale invariance"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M15",
+   "title": "High-Dimensional Probability and Statistics",
+   "track": "mathematics",
+   "tier": 4,
+   "requires": [
+    "M9",
+    "M8",
+    "M6"
+   ],
+   "parallels": [
+    "L10",
+    "L11"
+   ],
+   "source": "Depth of Vershynin, High-Dimensional Probability; Wainwright, High-Dimensional Statistics.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Concentration",
+     "lessons": [
+      {
+       "id": "m15.1.1",
+       "title": "Sub-Gaussian and sub-exponential variables"
+      },
+      {
+       "id": "m15.1.2",
+       "title": "Hoeffding and Bernstein inequalities"
+      },
+      {
+       "id": "m15.1.3",
+       "title": "Bounded differences and McDiarmid"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Geometry of high dimensions",
+     "lessons": [
+      {
+       "id": "m15.2.1",
+       "title": "Concentration of the norm"
+      },
+      {
+       "id": "m15.2.2",
+       "title": "Near-orthogonality of random vectors"
+      },
+      {
+       "id": "m15.2.3",
+       "title": "Where volume lives"
+      },
+      {
+       "id": "m15.2.4",
+       "title": "The Johnson-Lindenstrauss lemma"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Random matrices",
+     "lessons": [
+      {
+       "id": "m15.3.1",
+       "title": "Covariance estimation"
+      },
+      {
+       "id": "m15.3.2",
+       "title": "Spectra of random matrices"
+      },
+      {
+       "id": "m15.3.3",
+       "title": "Marchenko-Pastur"
+      },
+      {
+       "id": "m15.3.4",
+       "title": "Spectral norms of random matrices"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Suprema of processes",
+     "lessons": [
+      {
+       "id": "m15.4.1",
+       "title": "Epsilon-nets"
+      },
+      {
+       "id": "m15.4.2",
+       "title": "Chaining"
+      },
+      {
+       "id": "m15.4.3",
+       "title": "Gaussian width"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "High-dimensional estimation",
+     "lessons": [
+      {
+       "id": "m15.5.1",
+       "title": "Sparse recovery and the lasso"
+      },
+      {
+       "id": "m15.5.2",
+       "title": "Low-rank matrix recovery"
+      },
+      {
+       "id": "m15.5.3",
+       "title": "Benign overfitting"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M16",
+   "title": "Statistical Learning Theory",
+   "track": "mathematics",
+   "tier": 4,
+   "requires": [
+    "M15",
+    "M10"
+   ],
+   "parallels": [
+    "L10",
+    "L6"
+   ],
+   "source": "Depth of Shalev-Shwartz and Ben-David, Understanding Machine Learning; Bach, Learning Theory from First Principles.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "The learning problem",
+     "lessons": [
+      {
+       "id": "m16.1.1",
+       "title": "PAC learning"
+      },
+      {
+       "id": "m16.1.2",
+       "title": "Empirical risk minimisation"
+      },
+      {
+       "id": "m16.1.3",
+       "title": "No free lunch"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Uniform convergence",
+     "lessons": [
+      {
+       "id": "m16.2.1",
+       "title": "Finite hypothesis classes"
+      },
+      {
+       "id": "m16.2.2",
+       "title": "VC dimension"
+      },
+      {
+       "id": "m16.2.3",
+       "title": "The fundamental theorem of learning"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Complexity",
+     "lessons": [
+      {
+       "id": "m16.3.1",
+       "title": "Rademacher complexity"
+      },
+      {
+       "id": "m16.3.2",
+       "title": "Margin bounds"
+      },
+      {
+       "id": "m16.3.3",
+       "title": "Covering numbers"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Stability and regularisation",
+     "lessons": [
+      {
+       "id": "m16.4.1",
+       "title": "Algorithmic stability"
+      },
+      {
+       "id": "m16.4.2",
+       "title": "Regularised risk minimisation"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Kernels",
+     "lessons": [
+      {
+       "id": "m16.5.1",
+       "title": "Reproducing kernel Hilbert spaces"
+      },
+      {
+       "id": "m16.5.2",
+       "title": "The representer theorem"
+      },
+      {
+       "id": "m16.5.3",
+       "title": "Kernel ridge regression"
+      },
+      {
+       "id": "m16.5.4",
+       "title": "Random features"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Online learning and bandits",
+     "lessons": [
+      {
+       "id": "m16.6.1",
+       "title": "Regret"
+      },
+      {
+       "id": "m16.6.2",
+       "title": "Online gradient descent"
+      },
+      {
+       "id": "m16.6.3",
+       "title": "Multiplicative weights"
+      },
+      {
+       "id": "m16.6.4",
+       "title": "UCB and Thompson sampling with guarantees"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Modern generalisation",
+     "lessons": [
+      {
+       "id": "m16.7.1",
+       "title": "Double descent"
+      },
+      {
+       "id": "m16.7.2",
+       "title": "Interpolation"
+      },
+      {
+       "id": "m16.7.3",
+       "title": "The implicit bias of gradient descent"
+      },
+      {
+       "id": "m16.7.4",
+       "title": "PAC-Bayes bounds"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M17",
+   "title": "Theory of Deep Learning",
+   "track": "mathematics",
+   "tier": 4,
+   "requires": [
+    "M16",
+    "L4"
+   ],
+   "parallels": [
+    "L10",
+    "L11",
+    "L8"
+   ],
+   "source": "Depth of Roberts and Yaida, The Principles of Deep Learning Theory; Telgarsky, Deep Learning Theory lecture notes; Yang, Tensor Programs papers.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Expressivity",
+     "lessons": [
+      {
+       "id": "m17.1.1",
+       "title": "Universal approximation"
+      },
+      {
+       "id": "m17.1.2",
+       "title": "Depth separation"
+      },
+      {
+       "id": "m17.1.3",
+       "title": "Transformers as computation and formal languages"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Signal propagation",
+     "lessons": [
+      {
+       "id": "m17.2.1",
+       "title": "Mean-field initialisation"
+      },
+      {
+       "id": "m17.2.2",
+       "title": "The edge of chaos"
+      },
+      {
+       "id": "m17.2.3",
+       "title": "Dynamical isometry"
+      },
+      {
+       "id": "m17.2.4",
+       "title": "Scaling residual branches"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Infinite width",
+     "lessons": [
+      {
+       "id": "m17.3.1",
+       "title": "The Gaussian process limit"
+      },
+      {
+       "id": "m17.3.2",
+       "title": "The neural tangent kernel and lazy training"
+      },
+      {
+       "id": "m17.3.3",
+       "title": "Where the lazy regime fails"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Feature learning",
+     "lessons": [
+      {
+       "id": "m17.4.1",
+       "title": "The maximal update parametrisation"
+      },
+      {
+       "id": "m17.4.2",
+       "title": "Hyperparameter transfer across width and depth"
+      },
+      {
+       "id": "m17.4.3",
+       "title": "The ideas of Tensor Programs"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Theories of scaling",
+     "lessons": [
+      {
+       "id": "m17.5.1",
+       "title": "Power laws from the data distribution"
+      },
+      {
+       "id": "m17.5.2",
+       "title": "Variance-limited and resolution-limited regimes"
+      },
+      {
+       "id": "m17.5.3",
+       "title": "Models of compute-optimal scaling"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Learning dynamics",
+     "lessons": [
+      {
+       "id": "m17.6.1",
+       "title": "Saddle-to-saddle dynamics"
+      },
+      {
+       "id": "m17.6.2",
+       "title": "Grokking"
+      },
+      {
+       "id": "m17.6.3",
+       "title": "Theories of in-context learning"
+      },
+      {
+       "id": "m17.6.4",
+       "title": "Implicit bias in deep networks"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M18",
+   "title": "Measure-Theoretic Probability",
+   "track": "mathematics",
+   "tier": 5,
+   "requires": [
+    "M8",
+    "M7"
+   ],
+   "parallels": [
+    "M19"
+   ],
+   "source": "Depth of Durrett, Probability: Theory and Examples; Williams, Probability with Martingales.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Measure",
+     "lessons": [
+      {
+       "id": "m18.1.1",
+       "title": "Sigma-algebras"
+      },
+      {
+       "id": "m18.1.2",
+       "title": "Measures and outer measure"
+      },
+      {
+       "id": "m18.1.3",
+       "title": "Lebesgue measure"
+      },
+      {
+       "id": "m18.1.4",
+       "title": "Measurable functions"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Integration",
+     "lessons": [
+      {
+       "id": "m18.2.1",
+       "title": "The Lebesgue integral"
+      },
+      {
+       "id": "m18.2.2",
+       "title": "Monotone and dominated convergence"
+      },
+      {
+       "id": "m18.2.3",
+       "title": "Fatou's lemma"
+      },
+      {
+       "id": "m18.2.4",
+       "title": "Product measures and Fubini-Tonelli"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Probability spaces",
+     "lessons": [
+      {
+       "id": "m18.3.1",
+       "title": "Random variables"
+      },
+      {
+       "id": "m18.3.2",
+       "title": "Independence"
+      },
+      {
+       "id": "m18.3.3",
+       "title": "The Borel-Cantelli lemmas"
+      },
+      {
+       "id": "m18.3.4",
+       "title": "Modes of convergence"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Densities and change of measure",
+     "lessons": [
+      {
+       "id": "m18.4.1",
+       "title": "Absolute continuity"
+      },
+      {
+       "id": "m18.4.2",
+       "title": "The Radon-Nikodym theorem"
+      },
+      {
+       "id": "m18.4.3",
+       "title": "KL divergence revisited"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Martingales",
+     "lessons": [
+      {
+       "id": "m18.5.1",
+       "title": "Conditional expectation via measure"
+      },
+      {
+       "id": "m18.5.2",
+       "title": "Martingales"
+      },
+      {
+       "id": "m18.5.3",
+       "title": "Optional stopping"
+      },
+      {
+       "id": "m18.5.4",
+       "title": "Martingale convergence"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Limit theorems in depth",
+     "lessons": [
+      {
+       "id": "m18.6.1",
+       "title": "The strong law"
+      },
+      {
+       "id": "m18.6.2",
+       "title": "Characteristic functions"
+      },
+      {
+       "id": "m18.6.3",
+       "title": "The Lindeberg-Feller central limit theorem"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M19",
+   "title": "Stochastic Calculus and the Mathematics of Diffusion",
+   "track": "mathematics",
+   "tier": 5,
+   "requires": [
+    "M18",
+    "M13"
+   ],
+   "parallels": [
+    "L12",
+    "M18"
+   ],
+   "source": "Depth of Øksendal, Stochastic Differential Equations; Särkkä and Solin, Applied Stochastic Differential Equations.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Brownian motion",
+     "lessons": [
+      {
+       "id": "m19.1.1",
+       "title": "Construction"
+      },
+      {
+       "id": "m19.1.2",
+       "title": "Quadratic variation"
+      },
+      {
+       "id": "m19.1.3",
+       "title": "The Markov property"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "The Itô integral",
+     "lessons": [
+      {
+       "id": "m19.2.1",
+       "title": "Construction"
+      },
+      {
+       "id": "m19.2.2",
+       "title": "The Itô isometry"
+      },
+      {
+       "id": "m19.2.3",
+       "title": "Itô's formula"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Stochastic differential equations",
+     "lessons": [
+      {
+       "id": "m19.3.1",
+       "title": "Existence and uniqueness"
+      },
+      {
+       "id": "m19.3.2",
+       "title": "The Ornstein-Uhlenbeck process"
+      },
+      {
+       "id": "m19.3.3",
+       "title": "The Fokker-Planck equation"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Time reversal",
+     "lessons": [
+      {
+       "id": "m19.4.1",
+       "title": "Reverse-time SDEs"
+      },
+      {
+       "id": "m19.4.2",
+       "title": "Score functions"
+      },
+      {
+       "id": "m19.4.3",
+       "title": "Denoising score matching derived"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Flows and transport",
+     "lessons": [
+      {
+       "id": "m19.5.1",
+       "title": "The probability flow ODE"
+      },
+      {
+       "id": "m19.5.2",
+       "title": "The continuity equation"
+      },
+      {
+       "id": "m19.5.3",
+       "title": "The mathematics of flow matching"
+      },
+      {
+       "id": "m19.5.4",
+       "title": "Stochastic interpolants"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Numerics",
+     "lessons": [
+      {
+       "id": "m19.6.1",
+       "title": "Euler-Maruyama"
+      },
+      {
+       "id": "m19.6.2",
+       "title": "Higher-order samplers"
+      },
+      {
+       "id": "m19.6.3",
+       "title": "Discretisation error and step schedules"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M20",
+   "title": "Optimal Transport",
+   "track": "mathematics",
+   "tier": 5,
+   "requires": [
+    "M10",
+    "M18"
+   ],
+   "parallels": [
+    "L12"
+   ],
+   "source": "Depth of Peyré and Cuturi, Computational Optimal Transport; Santambrogio, Optimal Transport for Applied Mathematicians.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Formulations",
+     "lessons": [
+      {
+       "id": "m20.1.1",
+       "title": "Monge's problem"
+      },
+      {
+       "id": "m20.1.2",
+       "title": "Kantorovich's relaxation and couplings"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Duality",
+     "lessons": [
+      {
+       "id": "m20.2.1",
+       "title": "Kantorovich duality"
+      },
+      {
+       "id": "m20.2.2",
+       "title": "C-transforms"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Wasserstein geometry",
+     "lessons": [
+      {
+       "id": "m20.3.1",
+       "title": "Wasserstein distances"
+      },
+      {
+       "id": "m20.3.2",
+       "title": "Displacement interpolation"
+      },
+      {
+       "id": "m20.3.3",
+       "title": "Gradient flows, a first look"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Computation",
+     "lessons": [
+      {
+       "id": "m20.4.1",
+       "title": "Entropic regularisation"
+      },
+      {
+       "id": "m20.4.2",
+       "title": "The Sinkhorn algorithm"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Transport in ML",
+     "lessons": [
+      {
+       "id": "m20.5.1",
+       "title": "Wasserstein GANs"
+      },
+      {
+       "id": "m20.5.2",
+       "title": "Optimal-transport couplings in flow matching"
+      },
+      {
+       "id": "m20.5.3",
+       "title": "Distances between datasets"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M21",
+   "title": "Geometry and Symmetry in Deep Learning",
+   "track": "mathematics",
+   "tier": 5,
+   "requires": [
+    "M6",
+    "L4"
+   ],
+   "parallels": [
+    "L12",
+    "L4"
+   ],
+   "source": "Depth of Bronstein, Bruna, Cohen and Veličković, Geometric Deep Learning; Artin, Algebra (groups and representations).",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Groups and symmetry",
+     "lessons": [
+      {
+       "id": "m21.1.1",
+       "title": "Groups"
+      },
+      {
+       "id": "m21.1.2",
+       "title": "Group actions and orbits"
+      },
+      {
+       "id": "m21.1.3",
+       "title": "Invariance and equivariance"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Representations",
+     "lessons": [
+      {
+       "id": "m21.2.1",
+       "title": "Representations"
+      },
+      {
+       "id": "m21.2.2",
+       "title": "Irreducible representations"
+      },
+      {
+       "id": "m21.2.3",
+       "title": "Fourier analysis on groups"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Equivariant architectures",
+     "lessons": [
+      {
+       "id": "m21.3.1",
+       "title": "Convolution as translation equivariance"
+      },
+      {
+       "id": "m21.3.2",
+       "title": "Group convolutions"
+      },
+      {
+       "id": "m21.3.3",
+       "title": "Graph networks and permutation equivariance"
+      },
+      {
+       "id": "m21.3.4",
+       "title": "Transformers as set functions"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Geometry of learning",
+     "lessons": [
+      {
+       "id": "m21.4.1",
+       "title": "Manifolds, a first look"
+      },
+      {
+       "id": "m21.4.2",
+       "title": "Riemannian metrics"
+      },
+      {
+       "id": "m21.4.3",
+       "title": "The Fisher metric and natural gradient"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Applications",
+     "lessons": [
+      {
+       "id": "m21.5.1",
+       "title": "Molecules and proteins"
+      },
+      {
+       "id": "m21.5.2",
+       "title": "Three-dimensional and physical systems"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "M22",
+   "title": "Causality and Decision Theory",
+   "track": "mathematics",
+   "tier": 5,
+   "requires": [
+    "M9"
+   ],
+   "parallels": [
+    "L13",
+    "L14"
+   ],
+   "source": "Depth of Pearl, Causality; Peters, Janzing and Schölkopf, Elements of Causal Inference.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Causal models",
+     "lessons": [
+      {
+       "id": "m22.1.1",
+       "title": "Causal graphs"
+      },
+      {
+       "id": "m22.1.2",
+       "title": "Structural causal models"
+      },
+      {
+       "id": "m22.1.3",
+       "title": "Interventions"
+      },
+      {
+       "id": "m22.1.4",
+       "title": "The do-calculus"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Identification",
+     "lessons": [
+      {
+       "id": "m22.2.1",
+       "title": "Backdoor and frontdoor adjustment"
+      },
+      {
+       "id": "m22.2.2",
+       "title": "Instrumental variables"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Counterfactuals",
+     "lessons": [
+      {
+       "id": "m22.3.1",
+       "title": "Potential outcomes"
+      },
+      {
+       "id": "m22.3.2",
+       "title": "Counterfactual reasoning"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Causal discovery",
+     "lessons": [
+      {
+       "id": "m22.4.1",
+       "title": "Independence-based discovery"
+      },
+      {
+       "id": "m22.4.2",
+       "title": "Score-based discovery"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Decisions",
+     "lessons": [
+      {
+       "id": "m22.5.1",
+       "title": "Expected utility"
+      },
+      {
+       "id": "m22.5.2",
+       "title": "Newcomb's problem and decision theories"
+      },
+      {
+       "id": "m22.5.3",
+       "title": "Causal influence diagrams and agent incentives"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "L0",
+   "title": "How Machines Learn: A First Look",
+   "track": "machine-learning",
+   "tier": 0,
+   "requires": [],
+   "parallels": [
+    "E0",
+    "M0"
+   ],
+   "source": "Depth of Russell and Norvig, Artificial Intelligence: A Modern Approach, chapters 1 and 19 (selected); Mitchell, Machine Learning, chapter 1.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "What learning is",
+     "lessons": [
+      {
+       "id": "l0.1.1",
+       "title": "Rules versus examples"
+      },
+      {
+       "id": "l0.1.2",
+       "title": "Data, models and losses"
+      },
+      {
+       "id": "l0.1.3",
+       "title": "Generalisation versus memorisation"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "A tour of tasks",
+     "lessons": [
+      {
+       "id": "l0.2.1",
+       "title": "Classification"
+      },
+      {
+       "id": "l0.2.2",
+       "title": "Regression"
+      },
+      {
+       "id": "l0.2.3",
+       "title": "Clustering"
+      },
+      {
+       "id": "l0.2.4",
+       "title": "Generation"
+      },
+      {
+       "id": "l0.2.5",
+       "title": "Decision-making"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Learning by hand",
+     "lessons": [
+      {
+       "id": "l0.3.1",
+       "title": "Fitting a line by eye"
+      },
+      {
+       "id": "l0.3.2",
+       "title": "Nearest neighbours by hand"
+      },
+      {
+       "id": "l0.3.3",
+       "title": "A decision tree by hand"
+      },
+      {
+       "id": "l0.3.4",
+       "title": "A single neuron by hand"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "A short history of AI",
+     "lessons": [
+      {
+       "id": "l0.4.1",
+       "title": "Symbolic AI"
+      },
+      {
+       "id": "l0.4.2",
+       "title": "Perceptrons and the AI winters"
+      },
+      {
+       "id": "l0.4.3",
+       "title": "The deep learning revolution"
+      },
+      {
+       "id": "l0.4.4",
+       "title": "Transformers and scale"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Frontier AI today",
+     "lessons": [
+      {
+       "id": "l0.5.1",
+       "title": "What a frontier lab does"
+      },
+      {
+       "id": "l0.5.2",
+       "title": "Pretraining, post-training and deployment"
+      },
+      {
+       "id": "l0.5.3",
+       "title": "Reading the field carefully"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "L1",
+   "title": "Introduction to Machine Learning",
+   "track": "machine-learning",
+   "tier": 1,
+   "requires": [
+    "L0",
+    "M0"
+   ],
+   "parallels": [
+    "E1",
+    "M2",
+    "M3"
+   ],
+   "source": "Depth of James, Witten, Hastie, Tibshirani and Taylor, An Introduction to Statistical Learning with Python; Géron, Hands-On Machine Learning, part I.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "The learning problem",
+     "lessons": [
+      {
+       "id": "l1.1.1",
+       "title": "Tasks, experience and performance"
+      },
+      {
+       "id": "l1.1.2",
+       "title": "Training and test error"
+      },
+      {
+       "id": "l1.1.3",
+       "title": "Overfitting"
+      },
+      {
+       "id": "l1.1.4",
+       "title": "The train, validation and test discipline"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Linear regression",
+     "lessons": [
+      {
+       "id": "l1.2.1",
+       "title": "Least squares"
+      },
+      {
+       "id": "l1.2.2",
+       "title": "Interpreting coefficients"
+      },
+      {
+       "id": "l1.2.3",
+       "title": "Polynomial features"
+      },
+      {
+       "id": "l1.2.4",
+       "title": "Gradient descent, a first look"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Classification",
+     "lessons": [
+      {
+       "id": "l1.3.1",
+       "title": "Logistic regression"
+      },
+      {
+       "id": "l1.3.2",
+       "title": "Decision boundaries"
+      },
+      {
+       "id": "l1.3.3",
+       "title": "Confusion matrices"
+      },
+      {
+       "id": "l1.3.4",
+       "title": "Precision, recall and ROC curves"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Neighbours and trees",
+     "lessons": [
+      {
+       "id": "l1.4.1",
+       "title": "K-nearest neighbours"
+      },
+      {
+       "id": "l1.4.2",
+       "title": "The curse of dimensionality, a first look"
+      },
+      {
+       "id": "l1.4.3",
+       "title": "Decision trees"
+      },
+      {
+       "id": "l1.4.4",
+       "title": "Random forests"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Model selection",
+     "lessons": [
+      {
+       "id": "l1.5.1",
+       "title": "Bias and variance"
+      },
+      {
+       "id": "l1.5.2",
+       "title": "Cross-validation"
+      },
+      {
+       "id": "l1.5.3",
+       "title": "Ridge and lasso regularisation"
+      },
+      {
+       "id": "l1.5.4",
+       "title": "Hyperparameter search"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Unsupervised learning",
+     "lessons": [
+      {
+       "id": "l1.6.1",
+       "title": "K-means"
+      },
+      {
+       "id": "l1.6.2",
+       "title": "Hierarchical clustering"
+      },
+      {
+       "id": "l1.6.3",
+       "title": "Principal components, a first look"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "The practice of ML",
+     "lessons": [
+      {
+       "id": "l1.7.1",
+       "title": "Features and preprocessing"
+      },
+      {
+       "id": "l1.7.2",
+       "title": "Leakage"
+      },
+      {
+       "id": "l1.7.3",
+       "title": "Baselines"
+      },
+      {
+       "id": "l1.7.4",
+       "title": "Error analysis"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "L2",
+   "title": "Statistical Machine Learning",
+   "track": "machine-learning",
+   "tier": 2,
+   "requires": [
+    "L1",
+    "M5",
+    "M7"
+   ],
+   "parallels": [
+    "M10",
+    "M6",
+    "M7",
+    "M9"
+   ],
+   "source": "Depth of Bishop, Pattern Recognition and Machine Learning; Hastie, Tibshirani and Friedman, The Elements of Statistical Learning; Murphy, Probabilistic Machine Learning: An Introduction.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "The probabilistic view",
+     "lessons": [
+      {
+       "id": "l2.1.1",
+       "title": "Likelihood"
+      },
+      {
+       "id": "l2.1.2",
+       "title": "Maximum likelihood and least squares"
+      },
+      {
+       "id": "l2.1.3",
+       "title": "MAP estimation and regularisation"
+      },
+      {
+       "id": "l2.1.4",
+       "title": "Decision theory and loss functions"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Linear models in depth",
+     "lessons": [
+      {
+       "id": "l2.2.1",
+       "title": "Linear regression derived"
+      },
+      {
+       "id": "l2.2.2",
+       "title": "Bayesian linear regression"
+      },
+      {
+       "id": "l2.2.3",
+       "title": "Logistic and softmax regression"
+      },
+      {
+       "id": "l2.2.4",
+       "title": "Generalised linear models"
+      },
+      {
+       "id": "l2.2.5",
+       "title": "Newton's method and IRLS"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Kernel methods",
+     "lessons": [
+      {
+       "id": "l2.3.1",
+       "title": "Support vector machines and margins"
+      },
+      {
+       "id": "l2.3.2",
+       "title": "The dual and the kernel trick"
+      },
+      {
+       "id": "l2.3.3",
+       "title": "Gaussian processes"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Trees and ensembles",
+     "lessons": [
+      {
+       "id": "l2.4.1",
+       "title": "CART derived"
+      },
+      {
+       "id": "l2.4.2",
+       "title": "Bagging"
+      },
+      {
+       "id": "l2.4.3",
+       "title": "Boosting and AdaBoost"
+      },
+      {
+       "id": "l2.4.4",
+       "title": "Gradient boosting"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Latent variables",
+     "lessons": [
+      {
+       "id": "l2.5.1",
+       "title": "Mixture models"
+      },
+      {
+       "id": "l2.5.2",
+       "title": "Expectation-maximisation"
+      },
+      {
+       "id": "l2.5.3",
+       "title": "The evidence lower bound"
+      },
+      {
+       "id": "l2.5.4",
+       "title": "Hidden Markov models and the forward-backward algorithm"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Dimensionality reduction",
+     "lessons": [
+      {
+       "id": "l2.6.1",
+       "title": "PCA derived"
+      },
+      {
+       "id": "l2.6.2",
+       "title": "Probabilistic PCA"
+      },
+      {
+       "id": "l2.6.3",
+       "title": "Factor analysis"
+      },
+      {
+       "id": "l2.6.4",
+       "title": "T-SNE and UMAP, read responsibly"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Graphical models",
+     "lessons": [
+      {
+       "id": "l2.7.1",
+       "title": "Bayesian networks"
+      },
+      {
+       "id": "l2.7.2",
+       "title": "Markov random fields"
+      },
+      {
+       "id": "l2.7.3",
+       "title": "Inference, a first look"
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "title": "Probabilistic evaluation",
+     "lessons": [
+      {
+       "id": "l2.8.1",
+       "title": "Proper scoring rules"
+      },
+      {
+       "id": "l2.8.2",
+       "title": "Calibration"
+      },
+      {
+       "id": "l2.8.3",
+       "title": "Predictive uncertainty"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "L3",
+   "title": "Neural Networks from Scratch",
+   "track": "machine-learning",
+   "tier": 2,
+   "requires": [
+    "L1",
+    "M5"
+   ],
+   "parallels": [
+    "E4",
+    "E5",
+    "M10",
+    "M5"
+   ],
+   "source": "Depth of Goodfellow, Bengio and Courville, Deep Learning, parts I and II; Prince, Understanding Deep Learning; Karpathy, Neural Networks: Zero to Hero.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Neurons",
+     "lessons": [
+      {
+       "id": "l3.1.1",
+       "title": "The perceptron and its limits"
+      },
+      {
+       "id": "l3.1.2",
+       "title": "Multilayer perceptrons"
+      },
+      {
+       "id": "l3.1.3",
+       "title": "Activations from ReLU to SwiGLU"
+      },
+      {
+       "id": "l3.1.4",
+       "title": "Universal approximation, intuitively"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Backpropagation",
+     "lessons": [
+      {
+       "id": "l3.2.1",
+       "title": "Computational graphs revisited"
+      },
+      {
+       "id": "l3.2.2",
+       "title": "Backpropagation by hand"
+      },
+      {
+       "id": "l3.2.3",
+       "title": "Backpropagation for a matrix layer"
+      },
+      {
+       "id": "l3.2.4",
+       "title": "Gradient checking"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Loss functions",
+     "lessons": [
+      {
+       "id": "l3.3.1",
+       "title": "Squared error"
+      },
+      {
+       "id": "l3.3.2",
+       "title": "Softmax and cross-entropy"
+      },
+      {
+       "id": "l3.3.3",
+       "title": "Label smoothing"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Initialisation",
+     "lessons": [
+      {
+       "id": "l3.4.1",
+       "title": "Variance preservation"
+      },
+      {
+       "id": "l3.4.2",
+       "title": "Xavier and He initialisation"
+      },
+      {
+       "id": "l3.4.3",
+       "title": "Dead units and saturation"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Making depth work",
+     "lessons": [
+      {
+       "id": "l3.5.1",
+       "title": "Vanishing and exploding gradients"
+      },
+      {
+       "id": "l3.5.2",
+       "title": "Batch, layer and RMS normalisation"
+      },
+      {
+       "id": "l3.5.3",
+       "title": "Residual connections"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Optimisers in practice",
+     "lessons": [
+      {
+       "id": "l3.6.1",
+       "title": "SGD and momentum"
+      },
+      {
+       "id": "l3.6.2",
+       "title": "Adam and AdamW"
+      },
+      {
+       "id": "l3.6.3",
+       "title": "Learning-rate schedules and warmup"
+      },
+      {
+       "id": "l3.6.4",
+       "title": "Batch size"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Regularisation",
+     "lessons": [
+      {
+       "id": "l3.7.1",
+       "title": "Weight decay"
+      },
+      {
+       "id": "l3.7.2",
+       "title": "Dropout"
+      },
+      {
+       "id": "l3.7.3",
+       "title": "Data augmentation"
+      },
+      {
+       "id": "l3.7.4",
+       "title": "Early stopping"
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "title": "Diagnosing training",
+     "lessons": [
+      {
+       "id": "l3.8.1",
+       "title": "Overfitting a single batch"
+      },
+      {
+       "id": "l3.8.2",
+       "title": "Reading loss curves"
+      },
+      {
+       "id": "l3.8.3",
+       "title": "Activation and gradient statistics"
+      },
+      {
+       "id": "l3.8.4",
+       "title": "Ablations"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "L4",
+   "title": "Deep Learning Architectures",
+   "track": "machine-learning",
+   "tier": 3,
+   "requires": [
+    "L3"
+   ],
+   "parallels": [
+    "E6",
+    "M21",
+    "M6"
+   ],
+   "source": "Depth of Prince, Understanding Deep Learning; Zhang, Lipton, Li and Smola, Dive into Deep Learning.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Convolutional networks",
+     "lessons": [
+      {
+       "id": "l4.1.1",
+       "title": "Convolution and translation equivariance"
+      },
+      {
+       "id": "l4.1.2",
+       "title": "Pooling and receptive fields"
+      },
+      {
+       "id": "l4.1.3",
+       "title": "From LeNet to ResNet"
+      },
+      {
+       "id": "l4.1.4",
+       "title": "What CNNs learn"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Representation learning",
+     "lessons": [
+      {
+       "id": "l4.2.1",
+       "title": "Embeddings"
+      },
+      {
+       "id": "l4.2.2",
+       "title": "Word2vec"
+      },
+      {
+       "id": "l4.2.3",
+       "title": "Autoencoders"
+      },
+      {
+       "id": "l4.2.4",
+       "title": "Contrastive learning and InfoNCE"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Recurrent networks",
+     "lessons": [
+      {
+       "id": "l4.3.1",
+       "title": "N-gram language models"
+      },
+      {
+       "id": "l4.3.2",
+       "title": "An MLP language model"
+      },
+      {
+       "id": "l4.3.3",
+       "title": "RNNs and backpropagation through time"
+      },
+      {
+       "id": "l4.3.4",
+       "title": "LSTMs and GRUs"
+      },
+      {
+       "id": "l4.3.5",
+       "title": "Sequence to sequence"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Attention",
+     "lessons": [
+      {
+       "id": "l4.4.1",
+       "title": "Attention as soft lookup"
+      },
+      {
+       "id": "l4.4.2",
+       "title": "Sequence to sequence with attention"
+      },
+      {
+       "id": "l4.4.3",
+       "title": "Self-attention"
+      },
+      {
+       "id": "l4.4.4",
+       "title": "Multi-head attention"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Graphs and sets",
+     "lessons": [
+      {
+       "id": "l4.5.1",
+       "title": "Permutation invariance"
+      },
+      {
+       "id": "l4.5.2",
+       "title": "Message passing"
+      },
+      {
+       "id": "l4.5.3",
+       "title": "Graph neural networks"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Vision at scale",
+     "lessons": [
+      {
+       "id": "l4.6.1",
+       "title": "Patches and vision transformers"
+      },
+      {
+       "id": "l4.6.2",
+       "title": "Modern convolutional networks"
+      },
+      {
+       "id": "l4.6.3",
+       "title": "Inductive bias versus scale"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "L5",
+   "title": "Transformers and Language Models",
+   "track": "machine-learning",
+   "tier": 3,
+   "requires": [
+    "L4"
+   ],
+   "parallels": [
+    "E11",
+    "M12"
+   ],
+   "source": "Depth of Jurafsky and Martin, Speech and Language Processing (3rd edition draft); Stanford CS336, Language Modeling from Scratch.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Text as data",
+     "lessons": [
+      {
+       "id": "l5.1.1",
+       "title": "Tokenisation and byte-pair encoding"
+      },
+      {
+       "id": "l5.1.2",
+       "title": "Vocabulary trade-offs"
+      },
+      {
+       "id": "l5.1.3",
+       "title": "Embeddings and unembeddings"
+      },
+      {
+       "id": "l5.1.4",
+       "title": "Weight tying"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "The transformer block",
+     "lessons": [
+      {
+       "id": "l5.2.1",
+       "title": "Scaled dot-product attention and why we scale"
+      },
+      {
+       "id": "l5.2.2",
+       "title": "Causal masking"
+      },
+      {
+       "id": "l5.2.3",
+       "title": "Positional information from sinusoids to RoPE"
+      },
+      {
+       "id": "l5.2.4",
+       "title": "The MLP and the residual stream"
+      },
+      {
+       "id": "l5.2.5",
+       "title": "Pre-norm versus post-norm"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Building GPT",
+     "lessons": [
+      {
+       "id": "l5.3.1",
+       "title": "Assembling a GPT"
+      },
+      {
+       "id": "l5.3.2",
+       "title": "The training loop"
+      },
+      {
+       "id": "l5.3.3",
+       "title": "Counting parameters and FLOPs"
+      },
+      {
+       "id": "l5.3.4",
+       "title": "The KV cache, a first look"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Transformer families",
+     "lessons": [
+      {
+       "id": "l5.4.1",
+       "title": "Encoders and BERT"
+      },
+      {
+       "id": "l5.4.2",
+       "title": "Encoder-decoders and T5"
+      },
+      {
+       "id": "l5.4.3",
+       "title": "Decoder-only models"
+      },
+      {
+       "id": "l5.4.4",
+       "title": "Why decoder-only won"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Generation",
+     "lessons": [
+      {
+       "id": "l5.5.1",
+       "title": "Greedy and beam search"
+      },
+      {
+       "id": "l5.5.2",
+       "title": "Temperature, top-k, top-p and min-p"
+      },
+      {
+       "id": "l5.5.3",
+       "title": "Constrained and structured decoding"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "What language models learn",
+     "lessons": [
+      {
+       "id": "l5.6.1",
+       "title": "In-context learning"
+      },
+      {
+       "id": "l5.6.2",
+       "title": "Induction heads, a first look"
+      },
+      {
+       "id": "l5.6.3",
+       "title": "Memorisation and factual recall"
+      },
+      {
+       "id": "l5.6.4",
+       "title": "Limits and failure modes"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "L6",
+   "title": "Reinforcement Learning",
+   "track": "machine-learning",
+   "tier": 3,
+   "requires": [
+    "L3",
+    "M7"
+   ],
+   "parallels": [
+    "M13",
+    "M16"
+   ],
+   "source": "Depth of Sutton and Barto, Reinforcement Learning: An Introduction; Agarwal, Jiang, Kakade and Sun, Reinforcement Learning: Theory and Algorithms (selected).",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Bandits",
+     "lessons": [
+      {
+       "id": "l6.1.1",
+       "title": "Explore and exploit"
+      },
+      {
+       "id": "l6.1.2",
+       "title": "Epsilon-greedy"
+      },
+      {
+       "id": "l6.1.3",
+       "title": "Upper confidence bounds"
+      },
+      {
+       "id": "l6.1.4",
+       "title": "Thompson sampling"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Markov decision processes",
+     "lessons": [
+      {
+       "id": "l6.2.1",
+       "title": "States, actions and rewards"
+      },
+      {
+       "id": "l6.2.2",
+       "title": "Returns and discounting"
+      },
+      {
+       "id": "l6.2.3",
+       "title": "Policies and value functions"
+      },
+      {
+       "id": "l6.2.4",
+       "title": "The Bellman equations"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Dynamic programming",
+     "lessons": [
+      {
+       "id": "l6.3.1",
+       "title": "Policy evaluation"
+      },
+      {
+       "id": "l6.3.2",
+       "title": "Policy iteration"
+      },
+      {
+       "id": "l6.3.3",
+       "title": "Value iteration"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Model-free learning",
+     "lessons": [
+      {
+       "id": "l6.4.1",
+       "title": "Monte Carlo methods"
+      },
+      {
+       "id": "l6.4.2",
+       "title": "Temporal-difference learning"
+      },
+      {
+       "id": "l6.4.3",
+       "title": "TD(lambda)"
+      },
+      {
+       "id": "l6.4.4",
+       "title": "SARSA"
+      },
+      {
+       "id": "l6.4.5",
+       "title": "Q-learning"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Deep value-based methods",
+     "lessons": [
+      {
+       "id": "l6.5.1",
+       "title": "Function approximation"
+      },
+      {
+       "id": "l6.5.2",
+       "title": "DQN"
+      },
+      {
+       "id": "l6.5.3",
+       "title": "The deadly triad"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Policy gradients",
+     "lessons": [
+      {
+       "id": "l6.6.1",
+       "title": "The policy gradient theorem"
+      },
+      {
+       "id": "l6.6.2",
+       "title": "REINFORCE"
+      },
+      {
+       "id": "l6.6.3",
+       "title": "Baselines and advantages"
+      },
+      {
+       "id": "l6.6.4",
+       "title": "Generalised advantage estimation"
+      },
+      {
+       "id": "l6.6.5",
+       "title": "Actor-critic methods"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Trust regions",
+     "lessons": [
+      {
+       "id": "l6.7.1",
+       "title": "Natural policy gradients"
+      },
+      {
+       "id": "l6.7.2",
+       "title": "TRPO"
+      },
+      {
+       "id": "l6.7.3",
+       "title": "PPO"
+      },
+      {
+       "id": "l6.7.4",
+       "title": "KL-regularised reinforcement learning"
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "title": "Planning and search",
+     "lessons": [
+      {
+       "id": "l6.8.1",
+       "title": "Model-based reinforcement learning"
+      },
+      {
+       "id": "l6.8.2",
+       "title": "Monte Carlo tree search"
+      },
+      {
+       "id": "l6.8.3",
+       "title": "AlphaZero"
+      },
+      {
+       "id": "l6.8.4",
+       "title": "Learned world models"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "L7",
+   "title": "Probabilistic Deep Learning and Generative Models",
+   "track": "machine-learning",
+   "tier": 3,
+   "requires": [
+    "L4",
+    "M13",
+    "M12"
+   ],
+   "parallels": [
+    "M12",
+    "M13"
+   ],
+   "source": "Depth of Murphy, Probabilistic Machine Learning: Advanced Topics; Tomczak, Deep Generative Modeling.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Generative modelling",
+     "lessons": [
+      {
+       "id": "l7.1.1",
+       "title": "What it means to model a distribution"
+      },
+      {
+       "id": "l7.1.2",
+       "title": "Likelihood-based and implicit models"
+      },
+      {
+       "id": "l7.1.3",
+       "title": "Evaluating generative models"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Autoregressive models",
+     "lessons": [
+      {
+       "id": "l7.2.1",
+       "title": "The chain rule of probability"
+      },
+      {
+       "id": "l7.2.2",
+       "title": "PixelCNN and WaveNet"
+      },
+      {
+       "id": "l7.2.3",
+       "title": "Tokenising everything"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Variational autoencoders",
+     "lessons": [
+      {
+       "id": "l7.3.1",
+       "title": "The ELBO revisited"
+      },
+      {
+       "id": "l7.3.2",
+       "title": "The reparameterisation trick"
+      },
+      {
+       "id": "l7.3.3",
+       "title": "Posterior collapse"
+      },
+      {
+       "id": "l7.3.4",
+       "title": "VQ-VAE and discrete tokenisers"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Normalising flows",
+     "lessons": [
+      {
+       "id": "l7.4.1",
+       "title": "Change of variables"
+      },
+      {
+       "id": "l7.4.2",
+       "title": "Coupling layers"
+      },
+      {
+       "id": "l7.4.3",
+       "title": "Continuous-time flows"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Adversarial models",
+     "lessons": [
+      {
+       "id": "l7.5.1",
+       "title": "The GAN minimax game"
+      },
+      {
+       "id": "l7.5.2",
+       "title": "Training pathologies"
+      },
+      {
+       "id": "l7.5.3",
+       "title": "The Wasserstein GAN"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Energy and score",
+     "lessons": [
+      {
+       "id": "l7.6.1",
+       "title": "Energy-based models"
+      },
+      {
+       "id": "l7.6.2",
+       "title": "Score matching"
+      },
+      {
+       "id": "l7.6.3",
+       "title": "Langevin sampling"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Bayesian deep learning",
+     "lessons": [
+      {
+       "id": "l7.7.1",
+       "title": "Kinds of uncertainty"
+      },
+      {
+       "id": "l7.7.2",
+       "title": "Deep ensembles"
+      },
+      {
+       "id": "l7.7.3",
+       "title": "Approximate Bayesian inference"
+      },
+      {
+       "id": "l7.7.4",
+       "title": "Calibration of deep networks"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "L8",
+   "title": "Pretraining Large Language Models",
+   "track": "machine-learning",
+   "tier": 4,
+   "requires": [
+    "L5",
+    "E6"
+   ],
+   "parallels": [
+    "E10",
+    "E11",
+    "E13",
+    "M14",
+    "M17"
+   ],
+   "source": "Depth of Stanford CS336; Austin et al., How to Scale Your Model; the Chinchilla, Llama 3 and DeepSeek-V3 technical reports.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Objective and data",
+     "lessons": [
+      {
+       "id": "l8.1.1",
+       "title": "Next-token prediction as compression"
+      },
+      {
+       "id": "l8.1.2",
+       "title": "Data quality and mixtures"
+      },
+      {
+       "id": "l8.1.3",
+       "title": "Repetition and data constraints"
+      },
+      {
+       "id": "l8.1.4",
+       "title": "Code and mathematics data"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Modern architecture",
+     "lessons": [
+      {
+       "id": "l8.2.1",
+       "title": "RMSNorm, SwiGLU and RoPE together"
+      },
+      {
+       "id": "l8.2.2",
+       "title": "Grouped-query and multi-head latent attention"
+      },
+      {
+       "id": "l8.2.3",
+       "title": "QK-norm and stability"
+      },
+      {
+       "id": "l8.2.4",
+       "title": "Ablating architecture choices"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Mixture of experts",
+     "lessons": [
+      {
+       "id": "l8.3.1",
+       "title": "Routing"
+      },
+      {
+       "id": "l8.3.2",
+       "title": "Load balancing with and without auxiliary losses"
+      },
+      {
+       "id": "l8.3.3",
+       "title": "Capacity and token dropping"
+      },
+      {
+       "id": "l8.3.4",
+       "title": "Fine-grained and shared experts"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Scaling laws",
+     "lessons": [
+      {
+       "id": "l8.4.1",
+       "title": "Power laws and how to fit them"
+      },
+      {
+       "id": "l8.4.2",
+       "title": "Kaplan scaling"
+      },
+      {
+       "id": "l8.4.3",
+       "title": "Compute-optimal training"
+      },
+      {
+       "id": "l8.4.4",
+       "title": "Inference-aware scaling and over-training"
+      },
+      {
+       "id": "l8.4.5",
+       "title": "Predicting downstream performance"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Hyperparameters at scale",
+     "lessons": [
+      {
+       "id": "l8.5.1",
+       "title": "The maximal update parametrisation in practice"
+      },
+      {
+       "id": "l8.5.2",
+       "title": "Scaling batch size and learning rate"
+      },
+      {
+       "id": "l8.5.3",
+       "title": "Warmup-stable-decay schedules"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Training dynamics",
+     "lessons": [
+      {
+       "id": "l8.6.1",
+       "title": "Reading loss curves"
+      },
+      {
+       "id": "l8.6.2",
+       "title": "Spikes and divergences"
+      },
+      {
+       "id": "l8.6.3",
+       "title": "Emergence or measurement artefact"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Mid-training and long context",
+     "lessons": [
+      {
+       "id": "l8.7.1",
+       "title": "Annealing on high-quality data"
+      },
+      {
+       "id": "l8.7.2",
+       "title": "Context extension"
+      },
+      {
+       "id": "l8.7.3",
+       "title": "Evaluating long context"
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "title": "Efficient architectures",
+     "lessons": [
+      {
+       "id": "l8.8.1",
+       "title": "Linear attention"
+      },
+      {
+       "id": "l8.8.2",
+       "title": "State space models"
+      },
+      {
+       "id": "l8.8.3",
+       "title": "Hybrid architectures"
+      },
+      {
+       "id": "l8.8.4",
+       "title": "Sparse and sliding-window attention"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "L9",
+   "title": "Post-Training and Alignment",
+   "track": "machine-learning",
+   "tier": 4,
+   "requires": [
+    "L8",
+    "L6"
+   ],
+   "parallels": [
+    "E12",
+    "L14"
+   ],
+   "source": "Depth of Lambert, Reinforcement Learning from Human Feedback; the InstructGPT, DPO, Constitutional AI and DeepSeek-R1 papers.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Supervised fine-tuning",
+     "lessons": [
+      {
+       "id": "l9.1.1",
+       "title": "Instruction data"
+      },
+      {
+       "id": "l9.1.2",
+       "title": "Chat templates"
+      },
+      {
+       "id": "l9.1.3",
+       "title": "The dynamics of fine-tuning"
+      },
+      {
+       "id": "l9.1.4",
+       "title": "LoRA and parameter-efficient fine-tuning"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Distillation",
+     "lessons": [
+      {
+       "id": "l9.2.1",
+       "title": "Logit distillation"
+      },
+      {
+       "id": "l9.2.2",
+       "title": "Sequence-level distillation"
+      },
+      {
+       "id": "l9.2.3",
+       "title": "On-policy distillation"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Reward models",
+     "lessons": [
+      {
+       "id": "l9.3.1",
+       "title": "Preference data"
+      },
+      {
+       "id": "l9.3.2",
+       "title": "The Bradley-Terry model"
+      },
+      {
+       "id": "l9.3.3",
+       "title": "Reward over-optimisation"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "RLHF",
+     "lessons": [
+      {
+       "id": "l9.4.1",
+       "title": "PPO for language models"
+      },
+      {
+       "id": "l9.4.2",
+       "title": "The KL penalty"
+      },
+      {
+       "id": "l9.4.3",
+       "title": "Implementation details that matter"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Direct preference methods",
+     "lessons": [
+      {
+       "id": "l9.5.1",
+       "title": "DPO derived"
+      },
+      {
+       "id": "l9.5.2",
+       "title": "IPO, KTO and relatives"
+      },
+      {
+       "id": "l9.5.3",
+       "title": "Online versus offline preferences"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "AI feedback",
+     "lessons": [
+      {
+       "id": "l9.6.1",
+       "title": "Constitutional AI"
+      },
+      {
+       "id": "l9.6.2",
+       "title": "Reinforcement learning from AI feedback"
+      },
+      {
+       "id": "l9.6.3",
+       "title": "Models as judges and as rewards"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "RL with verifiable rewards",
+     "lessons": [
+      {
+       "id": "l9.7.1",
+       "title": "Verifiers for mathematics and code"
+      },
+      {
+       "id": "l9.7.2",
+       "title": "GRPO and its variants"
+      },
+      {
+       "id": "l9.7.3",
+       "title": "The emergence of long reasoning"
+      },
+      {
+       "id": "l9.7.4",
+       "title": "Length, cost and test-time compute"
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "title": "Character and behaviour",
+     "lessons": [
+      {
+       "id": "l9.8.1",
+       "title": "Model specifications and constitutions"
+      },
+      {
+       "id": "l9.8.2",
+       "title": "Honesty and sycophancy"
+      },
+      {
+       "id": "l9.8.3",
+       "title": "Refusals and over-refusals"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "L10",
+   "title": "Evaluation and the Science of Deep Learning",
+   "track": "machine-learning",
+   "tier": 4,
+   "requires": [
+    "L8",
+    "M9"
+   ],
+   "parallels": [
+    "E13",
+    "L14",
+    "M15",
+    "M16",
+    "M17",
+    "M9"
+   ],
+   "source": "Depth of the HELM papers; Miller, Adding Error Bars to Evals; primary papers.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Benchmarks",
+     "lessons": [
+      {
+       "id": "l10.1.1",
+       "title": "What makes a good benchmark"
+      },
+      {
+       "id": "l10.1.2",
+       "title": "Saturation"
+      },
+      {
+       "id": "l10.1.3",
+       "title": "Contamination"
+      },
+      {
+       "id": "l10.1.4",
+       "title": "Goodhart's law"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Statistics of evaluation",
+     "lessons": [
+      {
+       "id": "l10.2.1",
+       "title": "Error bars for evals"
+      },
+      {
+       "id": "l10.2.2",
+       "title": "Paired comparisons"
+      },
+      {
+       "id": "l10.2.3",
+       "title": "Clustered standard errors"
+      },
+      {
+       "id": "l10.2.4",
+       "title": "Power"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Evaluating generation",
+     "lessons": [
+      {
+       "id": "l10.3.1",
+       "title": "Pass@k"
+      },
+      {
+       "id": "l10.3.2",
+       "title": "Models as judges and their biases"
+      },
+      {
+       "id": "l10.3.3",
+       "title": "Human evaluation"
+      },
+      {
+       "id": "l10.3.4",
+       "title": "Pairwise arenas"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Evaluating agents and reasoning",
+     "lessons": [
+      {
+       "id": "l10.4.1",
+       "title": "Agentic task suites"
+      },
+      {
+       "id": "l10.4.2",
+       "title": "Long-horizon tasks"
+      },
+      {
+       "id": "l10.4.3",
+       "title": "Task time horizons"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Capability and safety evaluations",
+     "lessons": [
+      {
+       "id": "l10.5.1",
+       "title": "Dangerous-capability evaluations"
+      },
+      {
+       "id": "l10.5.2",
+       "title": "Elicitation"
+      },
+      {
+       "id": "l10.5.3",
+       "title": "Sandbagging"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "The science of deep learning",
+     "lessons": [
+      {
+       "id": "l10.6.1",
+       "title": "Memorisation versus generalisation"
+      },
+      {
+       "id": "l10.6.2",
+       "title": "Grokking"
+      },
+      {
+       "id": "l10.6.3",
+       "title": "Double descent"
+      },
+      {
+       "id": "l10.6.4",
+       "title": "Lottery tickets and mode connectivity"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Running experiments",
+     "lessons": [
+      {
+       "id": "l10.7.1",
+       "title": "Forming hypotheses"
+      },
+      {
+       "id": "l10.7.2",
+       "title": "Ablations and controls"
+      },
+      {
+       "id": "l10.7.3",
+       "title": "Small-scale proxies"
+      },
+      {
+       "id": "l10.7.4",
+       "title": "Reporting negative results"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "L11",
+   "title": "Interpretability",
+   "track": "machine-learning",
+   "tier": 4,
+   "requires": [
+    "L5",
+    "M6"
+   ],
+   "parallels": [
+    "M15",
+    "M17",
+    "M6"
+   ],
+   "source": "Depth of Anthropic, Transformer Circuits thread; the ARENA curriculum; primary papers.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Foundations",
+     "lessons": [
+      {
+       "id": "l11.1.1",
+       "title": "What interpretability is for"
+      },
+      {
+       "id": "l11.1.2",
+       "title": "Probing"
+      },
+      {
+       "id": "l11.1.3",
+       "title": "The logit lens and tuned lens"
+      },
+      {
+       "id": "l11.1.4",
+       "title": "Attribution and saliency, and how they fail"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Mechanistic basics",
+     "lessons": [
+      {
+       "id": "l11.2.1",
+       "title": "The residual stream as a communication channel"
+      },
+      {
+       "id": "l11.2.2",
+       "title": "QK and OV circuits"
+      },
+      {
+       "id": "l11.2.3",
+       "title": "Induction heads"
+      },
+      {
+       "id": "l11.2.4",
+       "title": "Activation patching and causal interventions"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Superposition",
+     "lessons": [
+      {
+       "id": "l11.3.1",
+       "title": "Toy models of superposition"
+      },
+      {
+       "id": "l11.3.2",
+       "title": "Polysemanticity"
+      },
+      {
+       "id": "l11.3.3",
+       "title": "The geometry of features"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Dictionary learning",
+     "lessons": [
+      {
+       "id": "l11.4.1",
+       "title": "Sparse autoencoders"
+      },
+      {
+       "id": "l11.4.2",
+       "title": "Transcoders and crosscoders"
+      },
+      {
+       "id": "l11.4.3",
+       "title": "Evaluating features"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Circuits at scale",
+     "lessons": [
+      {
+       "id": "l11.5.1",
+       "title": "Attribution graphs and circuit tracing"
+      },
+      {
+       "id": "l11.5.2",
+       "title": "Case studies in large models"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Using interpretability",
+     "lessons": [
+      {
+       "id": "l11.6.1",
+       "title": "Steering vectors"
+      },
+      {
+       "id": "l11.6.2",
+       "title": "Representation engineering"
+      },
+      {
+       "id": "l11.6.3",
+       "title": "Model diffing"
+      },
+      {
+       "id": "l11.6.4",
+       "title": "Auditing for hidden objectives"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "L12",
+   "title": "Diffusion and Multimodal Models",
+   "track": "machine-learning",
+   "tier": 5,
+   "requires": [
+    "L7",
+    "L8"
+   ],
+   "parallels": [
+    "M19",
+    "M20",
+    "M21"
+   ],
+   "source": "Depth of Karras et al., Elucidating the Design Space of Diffusion-Based Generative Models; Lipman et al., Flow Matching; the CLIP and LLaVA papers.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Diffusion",
+     "lessons": [
+      {
+       "id": "l12.1.1",
+       "title": "Denoising diffusion"
+      },
+      {
+       "id": "l12.1.2",
+       "title": "The score-based SDE view"
+      },
+      {
+       "id": "l12.1.3",
+       "title": "DDIM and the probability flow"
+      },
+      {
+       "id": "l12.1.4",
+       "title": "The EDM design space"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Flow matching",
+     "lessons": [
+      {
+       "id": "l12.2.1",
+       "title": "Flow matching"
+      },
+      {
+       "id": "l12.2.2",
+       "title": "Rectified flow"
+      },
+      {
+       "id": "l12.2.3",
+       "title": "Optimal-transport couplings"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Guidance and conditioning",
+     "lessons": [
+      {
+       "id": "l12.3.1",
+       "title": "Classifier guidance"
+      },
+      {
+       "id": "l12.3.2",
+       "title": "Classifier-free guidance"
+      },
+      {
+       "id": "l12.3.3",
+       "title": "Latent diffusion"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Scaling diffusion",
+     "lessons": [
+      {
+       "id": "l12.4.1",
+       "title": "Diffusion transformers"
+      },
+      {
+       "id": "l12.4.2",
+       "title": "Video generation"
+      },
+      {
+       "id": "l12.4.3",
+       "title": "Scaling behaviour"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Vision and language",
+     "lessons": [
+      {
+       "id": "l12.5.1",
+       "title": "Contrastive image-text models"
+      },
+      {
+       "id": "l12.5.2",
+       "title": "Vision-language models"
+      },
+      {
+       "id": "l12.5.3",
+       "title": "Image tokenisers"
+      },
+      {
+       "id": "l12.5.4",
+       "title": "Natively multimodal models"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Speech and audio",
+     "lessons": [
+      {
+       "id": "l12.6.1",
+       "title": "Audio tokenisers"
+      },
+      {
+       "id": "l12.6.2",
+       "title": "Speech recognition"
+      },
+      {
+       "id": "l12.6.3",
+       "title": "Speech synthesis"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Beyond images",
+     "lessons": [
+      {
+       "id": "l12.7.1",
+       "title": "Discrete diffusion for text, a first look"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "L13",
+   "title": "Reasoning, Agents and Tool Use",
+   "track": "machine-learning",
+   "tier": 5,
+   "requires": [
+    "L9"
+   ],
+   "parallels": [
+    "E12",
+    "M22"
+   ],
+   "source": "Depth of the ReAct, Toolformer, SWE-bench and DeepSeek-R1 papers; primary papers.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Reasoning",
+     "lessons": [
+      {
+       "id": "l13.1.1",
+       "title": "Chain of thought"
+      },
+      {
+       "id": "l13.1.2",
+       "title": "Self-consistency"
+      },
+      {
+       "id": "l13.1.3",
+       "title": "Scaling test-time compute"
+      },
+      {
+       "id": "l13.1.4",
+       "title": "Process reward models"
+      },
+      {
+       "id": "l13.1.5",
+       "title": "Best-of-n and tree search"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Tool use",
+     "lessons": [
+      {
+       "id": "l13.2.1",
+       "title": "Function calling"
+      },
+      {
+       "id": "l13.2.2",
+       "title": "Code execution"
+      },
+      {
+       "id": "l13.2.3",
+       "title": "Retrieval-augmented generation"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Agents",
+     "lessons": [
+      {
+       "id": "l13.3.1",
+       "title": "The agent loop"
+      },
+      {
+       "id": "l13.3.2",
+       "title": "Planning and memory"
+      },
+      {
+       "id": "l13.3.3",
+       "title": "Computer use"
+      },
+      {
+       "id": "l13.3.4",
+       "title": "Multi-agent systems"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Training agents",
+     "lessons": [
+      {
+       "id": "l13.4.1",
+       "title": "Environments"
+      },
+      {
+       "id": "l13.4.2",
+       "title": "Long-horizon reinforcement learning"
+      },
+      {
+       "id": "l13.4.3",
+       "title": "Reward design and reward hacking in agentic settings"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Evaluating agents",
+     "lessons": [
+      {
+       "id": "l13.5.1",
+       "title": "Software-engineering benchmarks"
+      },
+      {
+       "id": "l13.5.2",
+       "title": "Reliability"
+      },
+      {
+       "id": "l13.5.3",
+       "title": "Cost"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "L14",
+   "title": "AI Safety and Alignment Research",
+   "track": "machine-learning",
+   "tier": 5,
+   "requires": [
+    "L9",
+    "L11"
+   ],
+   "parallels": [
+    "L10",
+    "L9",
+    "M22"
+   ],
+   "source": "Depth of Hendrycks, Introduction to AI Safety, Ethics and Society; primary papers from frontier labs.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "The problem",
+     "lessons": [
+      {
+       "id": "l14.1.1",
+       "title": "Specification gaming"
+      },
+      {
+       "id": "l14.1.2",
+       "title": "Goal misgeneralisation"
+      },
+      {
+       "id": "l14.1.3",
+       "title": "Arguments about deceptive alignment"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Scalable oversight",
+     "lessons": [
+      {
+       "id": "l14.2.1",
+       "title": "Debate"
+      },
+      {
+       "id": "l14.2.2",
+       "title": "Recursive reward modelling"
+      },
+      {
+       "id": "l14.2.3",
+       "title": "Weak-to-strong generalisation"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Robustness",
+     "lessons": [
+      {
+       "id": "l14.3.1",
+       "title": "Adversarial examples"
+      },
+      {
+       "id": "l14.3.2",
+       "title": "Jailbreaks"
+      },
+      {
+       "id": "l14.3.3",
+       "title": "Red-teaming"
+      },
+      {
+       "id": "l14.3.4",
+       "title": "Adversarial training"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Model organisms and control",
+     "lessons": [
+      {
+       "id": "l14.4.1",
+       "title": "Alignment-faking studies"
+      },
+      {
+       "id": "l14.4.2",
+       "title": "AI control protocols"
+      },
+      {
+       "id": "l14.4.3",
+       "title": "Monitoring chains of thought"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Safety in practice",
+     "lessons": [
+      {
+       "id": "l14.5.1",
+       "title": "Responsible scaling policies"
+      },
+      {
+       "id": "l14.5.2",
+       "title": "Capability thresholds"
+      },
+      {
+       "id": "l14.5.3",
+       "title": "Safety cases"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "L15",
+   "title": "Research and Thesis",
+   "track": "machine-learning",
+   "tier": 5,
+   "requires": [
+    "L8",
+    "L11"
+   ],
+   "parallels": [
+    "E15"
+   ],
+   "source": "",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Reading research",
+     "lessons": [
+      {
+       "id": "l15.1.1",
+       "title": "Reading a paper in three passes"
+      },
+      {
+       "id": "l15.1.2",
+       "title": "Reproducing a result"
+      },
+      {
+       "id": "l15.1.3",
+       "title": "Mapping a subfield"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Doing research",
+     "lessons": [
+      {
+       "id": "l15.2.1",
+       "title": "Choosing a problem worth solving"
+      },
+      {
+       "id": "l15.2.2",
+       "title": "De-risking with small experiments"
+      },
+      {
+       "id": "l15.2.3",
+       "title": "Research engineering habits"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Writing",
+     "lessons": [
+      {
+       "id": "l15.3.1",
+       "title": "Writing a paper"
+      },
+      {
+       "id": "l15.3.2",
+       "title": "Figures that explain"
+      },
+      {
+       "id": "l15.3.3",
+       "title": "Parton as referee"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Thesis",
+     "lessons": [
+      {
+       "id": "l15.4.1",
+       "title": "A proposal"
+      },
+      {
+       "id": "l15.4.2",
+       "title": "A reproduction"
+      },
+      {
+       "id": "l15.4.3",
+       "title": "An extension with one new idea"
+      },
+      {
+       "id": "l15.4.4",
+       "title": "A paper and a final defence against Parton's hardest questions"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "E0",
+   "title": "Programming from Zero",
+   "track": "engineering",
+   "tier": 0,
+   "requires": [],
+   "parallels": [
+    "L0",
+    "M0"
+   ],
+   "source": "Depth of Downey, Think Python; Sweigart, Automate the Boring Stuff with Python.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "First programs",
+     "lessons": [
+      {
+       "id": "e0.1.1",
+       "title": "What a program is"
+      },
+      {
+       "id": "e0.1.2",
+       "title": "Values, types and variables"
+      },
+      {
+       "id": "e0.1.3",
+       "title": "Expressions"
+      },
+      {
+       "id": "e0.1.4",
+       "title": "Input and output"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Control flow",
+     "lessons": [
+      {
+       "id": "e0.2.1",
+       "title": "Conditionals"
+      },
+      {
+       "id": "e0.2.2",
+       "title": "Loops"
+      },
+      {
+       "id": "e0.2.3",
+       "title": "Tracing a program by hand"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Functions",
+     "lessons": [
+      {
+       "id": "e0.3.1",
+       "title": "Defining functions"
+      },
+      {
+       "id": "e0.3.2",
+       "title": "Parameters and return values"
+      },
+      {
+       "id": "e0.3.3",
+       "title": "Scope"
+      },
+      {
+       "id": "e0.3.4",
+       "title": "Breaking a problem into functions"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Data structures",
+     "lessons": [
+      {
+       "id": "e0.4.1",
+       "title": "Lists"
+      },
+      {
+       "id": "e0.4.2",
+       "title": "Dictionaries"
+      },
+      {
+       "id": "e0.4.3",
+       "title": "Strings"
+      },
+      {
+       "id": "e0.4.4",
+       "title": "Tuples and sets"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Files and errors",
+     "lessons": [
+      {
+       "id": "e0.5.1",
+       "title": "Reading and writing files"
+      },
+      {
+       "id": "e0.5.2",
+       "title": "CSV data"
+      },
+      {
+       "id": "e0.5.3",
+       "title": "Errors and exceptions"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Thinking like a programmer",
+     "lessons": [
+      {
+       "id": "e0.6.1",
+       "title": "Debugging by experiment"
+      },
+      {
+       "id": "e0.6.2",
+       "title": "Testing by hand"
+      },
+      {
+       "id": "e0.6.3",
+       "title": "Reading error messages"
+      },
+      {
+       "id": "e0.6.4",
+       "title": "A first small project"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "E1",
+   "title": "Python, NumPy and the Command Line",
+   "track": "engineering",
+   "tier": 1,
+   "requires": [
+    "E0"
+   ],
+   "parallels": [
+    "L1",
+    "M3"
+   ],
+   "source": "Depth of Ramalho, Fluent Python (selected); VanderPlas, Python Data Science Handbook; MIT, The Missing Semester.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "The shell",
+     "lessons": [
+      {
+       "id": "e1.1.1",
+       "title": "The terminal"
+      },
+      {
+       "id": "e1.1.2",
+       "title": "Files and processes"
+      },
+      {
+       "id": "e1.1.3",
+       "title": "Pipes and scripts"
+      },
+      {
+       "id": "e1.1.4",
+       "title": "SSH and remote machines"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Git and GitHub",
+     "lessons": [
+      {
+       "id": "e1.2.1",
+       "title": "Commits"
+      },
+      {
+       "id": "e1.2.2",
+       "title": "Branches and merges"
+      },
+      {
+       "id": "e1.2.3",
+       "title": "Pull requests and review"
+      },
+      {
+       "id": "e1.2.4",
+       "title": "Reading history"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Python deeply",
+     "lessons": [
+      {
+       "id": "e1.3.1",
+       "title": "The data model"
+      },
+      {
+       "id": "e1.3.2",
+       "title": "Functions, closures and decorators"
+      },
+      {
+       "id": "e1.3.3",
+       "title": "Classes and special methods"
+      },
+      {
+       "id": "e1.3.4",
+       "title": "Iterators, generators and context managers"
+      },
+      {
+       "id": "e1.3.5",
+       "title": "Type hints and dataclasses"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Environments",
+     "lessons": [
+      {
+       "id": "e1.4.1",
+       "title": "Packages and modules"
+      },
+      {
+       "id": "e1.4.2",
+       "title": "Virtual environments and uv"
+      },
+      {
+       "id": "e1.4.3",
+       "title": "Pinning dependencies"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "NumPy",
+     "lessons": [
+      {
+       "id": "e1.5.1",
+       "title": "Arrays, shapes and dtypes"
+      },
+      {
+       "id": "e1.5.2",
+       "title": "Vectorisation"
+      },
+      {
+       "id": "e1.5.3",
+       "title": "Broadcasting"
+      },
+      {
+       "id": "e1.5.4",
+       "title": "Indexing, views and copies"
+      },
+      {
+       "id": "e1.5.5",
+       "title": "Einsum"
+      },
+      {
+       "id": "e1.5.6",
+       "title": "Strides and memory layout"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Visualisation",
+     "lessons": [
+      {
+       "id": "e1.6.1",
+       "title": "Plotting from scratch"
+      },
+      {
+       "id": "e1.6.2",
+       "title": "Designing an honest chart"
+      },
+      {
+       "id": "e1.6.3",
+       "title": "Interactive visualisations"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Data handling",
+     "lessons": [
+      {
+       "id": "e1.7.1",
+       "title": "Dataframes"
+      },
+      {
+       "id": "e1.7.2",
+       "title": "Loading and cleaning data"
+      },
+      {
+       "id": "e1.7.3",
+       "title": "SQL basics"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "E2",
+   "title": "Data Structures and Algorithms",
+   "track": "engineering",
+   "tier": 1,
+   "requires": [
+    "E1"
+   ],
+   "parallels": [
+    "M1",
+    "M4"
+   ],
+   "source": "Depth of Cormen, Leiserson, Rivest and Stein, Introduction to Algorithms (selected); Skiena, The Algorithm Design Manual.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Analysis",
+     "lessons": [
+      {
+       "id": "e2.1.1",
+       "title": "Asymptotic analysis"
+      },
+      {
+       "id": "e2.1.2",
+       "title": "Amortised analysis"
+      },
+      {
+       "id": "e2.1.3",
+       "title": "Benchmarking honestly"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Linear structures",
+     "lessons": [
+      {
+       "id": "e2.2.1",
+       "title": "Arrays and dynamic arrays"
+      },
+      {
+       "id": "e2.2.2",
+       "title": "Linked lists"
+      },
+      {
+       "id": "e2.2.3",
+       "title": "Stacks and queues"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Hashing",
+     "lessons": [
+      {
+       "id": "e2.3.1",
+       "title": "Hash tables"
+      },
+      {
+       "id": "e2.3.2",
+       "title": "Collisions and load factors"
+      },
+      {
+       "id": "e2.3.3",
+       "title": "Bloom filters"
+      },
+      {
+       "id": "e2.3.4",
+       "title": "MinHash, a first look"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Trees and heaps",
+     "lessons": [
+      {
+       "id": "e2.4.1",
+       "title": "Binary search trees"
+      },
+      {
+       "id": "e2.4.2",
+       "title": "Balanced trees"
+      },
+      {
+       "id": "e2.4.3",
+       "title": "Heaps and priority queues"
+      },
+      {
+       "id": "e2.4.4",
+       "title": "Tries"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Sorting and searching",
+     "lessons": [
+      {
+       "id": "e2.5.1",
+       "title": "Merge sort and quicksort"
+      },
+      {
+       "id": "e2.5.2",
+       "title": "Binary search"
+      },
+      {
+       "id": "e2.5.3",
+       "title": "Selection and top-k"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Graphs",
+     "lessons": [
+      {
+       "id": "e2.6.1",
+       "title": "Breadth-first and depth-first search"
+      },
+      {
+       "id": "e2.6.2",
+       "title": "Topological sort"
+      },
+      {
+       "id": "e2.6.3",
+       "title": "Shortest paths"
+      },
+      {
+       "id": "e2.6.4",
+       "title": "Minimum spanning trees"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Paradigms",
+     "lessons": [
+      {
+       "id": "e2.7.1",
+       "title": "Divide and conquer"
+      },
+      {
+       "id": "e2.7.2",
+       "title": "Greedy algorithms"
+      },
+      {
+       "id": "e2.7.3",
+       "title": "Dynamic programming"
+      },
+      {
+       "id": "e2.7.4",
+       "title": "Beam search"
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "title": "Strings",
+     "lessons": [
+      {
+       "id": "e2.8.1",
+       "title": "String matching"
+      },
+      {
+       "id": "e2.8.2",
+       "title": "Suffix arrays"
+      },
+      {
+       "id": "e2.8.3",
+       "title": "Edit distance"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "E3",
+   "title": "Computer Systems",
+   "track": "engineering",
+   "tier": 2,
+   "requires": [
+    "E2"
+   ],
+   "parallels": [
+    "M11"
+   ],
+   "source": "Depth of Bryant and O'Hallaron, Computer Systems: A Programmer's Perspective; Arpaci-Dusseau, Operating Systems: Three Easy Pieces.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Data representation",
+     "lessons": [
+      {
+       "id": "e3.1.1",
+       "title": "Bits and integers"
+      },
+      {
+       "id": "e3.1.2",
+       "title": "Floating point in hardware"
+      },
+      {
+       "id": "e3.1.3",
+       "title": "Bitwise tricks"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Programs on the machine",
+     "lessons": [
+      {
+       "id": "e3.2.1",
+       "title": "C for Python programmers"
+      },
+      {
+       "id": "e3.2.2",
+       "title": "Memory and pointers"
+      },
+      {
+       "id": "e3.2.3",
+       "title": "Assembly, a first look"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "The memory hierarchy",
+     "lessons": [
+      {
+       "id": "e3.3.1",
+       "title": "Caches"
+      },
+      {
+       "id": "e3.3.2",
+       "title": "Locality"
+      },
+      {
+       "id": "e3.3.3",
+       "title": "Virtual memory"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Operating systems",
+     "lessons": [
+      {
+       "id": "e3.4.1",
+       "title": "Processes and threads"
+      },
+      {
+       "id": "e3.4.2",
+       "title": "Scheduling"
+      },
+      {
+       "id": "e3.4.3",
+       "title": "File systems and I/O"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Concurrency",
+     "lessons": [
+      {
+       "id": "e3.5.1",
+       "title": "Threads and locks"
+      },
+      {
+       "id": "e3.5.2",
+       "title": "Race conditions"
+      },
+      {
+       "id": "e3.5.3",
+       "title": "Asynchronous I/O"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Networking",
+     "lessons": [
+      {
+       "id": "e3.6.1",
+       "title": "Sockets"
+      },
+      {
+       "id": "e3.6.2",
+       "title": "TCP/IP"
+      },
+      {
+       "id": "e3.6.3",
+       "title": "RPC and HTTP APIs"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "E4",
+   "title": "Software Engineering for ML Research",
+   "track": "engineering",
+   "tier": 2,
+   "requires": [
+    "E1"
+   ],
+   "parallels": [
+    "L3"
+   ],
+   "source": "Depth of Huyen, Designing Machine Learning Systems (selected); Beck, Test-Driven Development.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Correct code",
+     "lessons": [
+      {
+       "id": "e4.1.1",
+       "title": "Testing with pytest"
+      },
+      {
+       "id": "e4.1.2",
+       "title": "Property-based testing"
+      },
+      {
+       "id": "e4.1.3",
+       "title": "Testing numerical code with tolerances"
+      },
+      {
+       "id": "e4.1.4",
+       "title": "Asserting shapes and invariants"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Debugging",
+     "lessons": [
+      {
+       "id": "e4.2.1",
+       "title": "Debugging as science"
+      },
+      {
+       "id": "e4.2.2",
+       "title": "Minimal reproductions"
+      },
+      {
+       "id": "e4.2.3",
+       "title": "Debuggers and bisection"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Reproducible experiments",
+     "lessons": [
+      {
+       "id": "e4.3.1",
+       "title": "Seeds and determinism"
+      },
+      {
+       "id": "e4.3.2",
+       "title": "Configuration management"
+      },
+      {
+       "id": "e4.3.3",
+       "title": "Experiment tracking"
+      },
+      {
+       "id": "e4.3.4",
+       "title": "The lab notebook"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Code design",
+     "lessons": [
+      {
+       "id": "e4.4.1",
+       "title": "Research code versus production code"
+      },
+      {
+       "id": "e4.4.2",
+       "title": "Modularity"
+      },
+      {
+       "id": "e4.4.3",
+       "title": "Code review"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Performance in Python",
+     "lessons": [
+      {
+       "id": "e4.5.1",
+       "title": "Profiling"
+      },
+      {
+       "id": "e4.5.2",
+       "title": "Memory profiling"
+      },
+      {
+       "id": "e4.5.3",
+       "title": "Multiprocessing and the GIL"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Working with others",
+     "lessons": [
+      {
+       "id": "e4.6.1",
+       "title": "Documentation"
+      },
+      {
+       "id": "e4.6.2",
+       "title": "Continuous integration"
+      },
+      {
+       "id": "e4.6.3",
+       "title": "Finding your way in a large codebase"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "E5",
+   "title": "Build a Deep Learning Framework",
+   "track": "engineering",
+   "tier": 2,
+   "requires": [
+    "E1",
+    "M5"
+   ],
+   "parallels": [
+    "L3",
+    "M5"
+   ],
+   "source": "Depth of Karpathy, micrograd; Carnegie Mellon, Deep Learning Systems (Needle).",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Scalar autograd",
+     "lessons": [
+      {
+       "id": "e5.1.1",
+       "title": "A value with a computation graph"
+      },
+      {
+       "id": "e5.1.2",
+       "title": "Topological sort and the backward pass"
+      },
+      {
+       "id": "e5.1.3",
+       "title": "Neurons, layers and an MLP"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Tensor autograd",
+     "lessons": [
+      {
+       "id": "e5.2.1",
+       "title": "A tensor class over NumPy"
+      },
+      {
+       "id": "e5.2.2",
+       "title": "Gradients under broadcasting"
+      },
+      {
+       "id": "e5.2.3",
+       "title": "Matmul, reductions and reshapes"
+      },
+      {
+       "id": "e5.2.4",
+       "title": "Fused stable softmax cross-entropy"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Training machinery",
+     "lessons": [
+      {
+       "id": "e5.3.1",
+       "title": "Modules and parameters"
+      },
+      {
+       "id": "e5.3.2",
+       "title": "Optimisers"
+      },
+      {
+       "id": "e5.3.3",
+       "title": "Data loaders"
+      },
+      {
+       "id": "e5.3.4",
+       "title": "Initialisation"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Testing a framework",
+     "lessons": [
+      {
+       "id": "e5.4.1",
+       "title": "Gradient checking"
+      },
+      {
+       "id": "e5.4.2",
+       "title": "Matching PyTorch to the last digit"
+      },
+      {
+       "id": "e5.4.3",
+       "title": "Numerical edge cases"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Under the hood",
+     "lessons": [
+      {
+       "id": "e5.5.1",
+       "title": "A strided array backend in C"
+      },
+      {
+       "id": "e5.5.2",
+       "title": "Operator dispatch"
+      },
+      {
+       "id": "e5.5.3",
+       "title": "A GPU backend, a first look"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "E6",
+   "title": "PyTorch and JAX in Depth",
+   "track": "engineering",
+   "tier": 3,
+   "requires": [
+    "E5"
+   ],
+   "parallels": [
+    "L4"
+   ],
+   "source": "Depth of the PyTorch internals documentation; the JAX documentation.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Tensors",
+     "lessons": [
+      {
+       "id": "e6.1.1",
+       "title": "Devices and dtypes"
+      },
+      {
+       "id": "e6.1.2",
+       "title": "Strides and contiguity"
+      },
+      {
+       "id": "e6.1.3",
+       "title": "Views and copies"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Autograd internals",
+     "lessons": [
+      {
+       "id": "e6.2.1",
+       "title": "The autograd graph and hooks"
+      },
+      {
+       "id": "e6.2.2",
+       "title": "Custom autograd functions"
+      },
+      {
+       "id": "e6.2.3",
+       "title": "Higher-order gradients"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Training machinery",
+     "lessons": [
+      {
+       "id": "e6.3.1",
+       "title": "Modules, parameters and buffers"
+      },
+      {
+       "id": "e6.3.2",
+       "title": "Data loading throughput"
+      },
+      {
+       "id": "e6.3.3",
+       "title": "Checkpointing and exact resumption"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Speed and memory",
+     "lessons": [
+      {
+       "id": "e6.4.1",
+       "title": "Mixed precision"
+      },
+      {
+       "id": "e6.4.2",
+       "title": "Compilation with torch.compile"
+      },
+      {
+       "id": "e6.4.3",
+       "title": "Activation checkpointing"
+      },
+      {
+       "id": "e6.4.4",
+       "title": "Memory budgeting"
+      },
+      {
+       "id": "e6.4.5",
+       "title": "The profiler"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "JAX",
+     "lessons": [
+      {
+       "id": "e6.5.1",
+       "title": "Functional programming for ML"
+      },
+      {
+       "id": "e6.5.2",
+       "title": "Jit"
+      },
+      {
+       "id": "e6.5.3",
+       "title": "Grad and vmap"
+      },
+      {
+       "id": "e6.5.4",
+       "title": "Sharding with named meshes"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Debugging training",
+     "lessons": [
+      {
+       "id": "e6.6.1",
+       "title": "Hunting NaNs"
+      },
+      {
+       "id": "e6.6.2",
+       "title": "Silent bugs"
+      },
+      {
+       "id": "e6.6.3",
+       "title": "Monitoring a run"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "E7",
+   "title": "Computer Architecture and Accelerators",
+   "track": "engineering",
+   "tier": 3,
+   "requires": [
+    "E3"
+   ],
+   "parallels": [
+    "M11"
+   ],
+   "source": "Depth of Hennessy and Patterson, Computer Architecture: A Quantitative Approach; Hwu, Kirk and El Hajj, Programming Massively Parallel Processors, chapters 1 to 6.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Performance fundamentals",
+     "lessons": [
+      {
+       "id": "e7.1.1",
+       "title": "Latency and bandwidth"
+      },
+      {
+       "id": "e7.1.2",
+       "title": "Amdahl's law"
+      },
+      {
+       "id": "e7.1.3",
+       "title": "Benchmarking"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "The CPU",
+     "lessons": [
+      {
+       "id": "e7.2.1",
+       "title": "Pipelines"
+      },
+      {
+       "id": "e7.2.2",
+       "title": "SIMD"
+      },
+      {
+       "id": "e7.2.3",
+       "title": "Caches revisited"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "The GPU",
+     "lessons": [
+      {
+       "id": "e7.3.1",
+       "title": "Streaming multiprocessors, warps and threads"
+      },
+      {
+       "id": "e7.3.2",
+       "title": "HBM, L2, shared memory and registers"
+      },
+      {
+       "id": "e7.3.3",
+       "title": "Tensor cores"
+      },
+      {
+       "id": "e7.3.4",
+       "title": "Occupancy"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Performance models",
+     "lessons": [
+      {
+       "id": "e7.4.1",
+       "title": "FLOPs and bytes"
+      },
+      {
+       "id": "e7.4.2",
+       "title": "Arithmetic intensity"
+      },
+      {
+       "id": "e7.4.3",
+       "title": "The roofline model"
+      },
+      {
+       "id": "e7.4.4",
+       "title": "Model FLOPs utilisation"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "The accelerator landscape",
+     "lessons": [
+      {
+       "id": "e7.5.1",
+       "title": "TPUs and systolic arrays"
+      },
+      {
+       "id": "e7.5.2",
+       "title": "Other accelerators"
+      },
+      {
+       "id": "e7.5.3",
+       "title": "Interconnects"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Transformer arithmetic",
+     "lessons": [
+      {
+       "id": "e7.6.1",
+       "title": "The FLOPs of a transformer"
+      },
+      {
+       "id": "e7.6.2",
+       "title": "Memory for training"
+      },
+      {
+       "id": "e7.6.3",
+       "title": "Memory for inference"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "E8",
+   "title": "Parallel and Distributed Computing",
+   "track": "engineering",
+   "tier": 3,
+   "requires": [
+    "E3"
+   ],
+   "parallels": [
+    "E10"
+   ],
+   "source": "Depth of Kleppmann, Designing Data-Intensive Applications (selected); Grama, Gupta, Karypis and Kumar, Introduction to Parallel Computing.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Parallel programming models",
+     "lessons": [
+      {
+       "id": "e8.1.1",
+       "title": "Shared versus distributed memory"
+      },
+      {
+       "id": "e8.1.2",
+       "title": "Message passing"
+      },
+      {
+       "id": "e8.1.3",
+       "title": "Single program, multiple data"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Collectives",
+     "lessons": [
+      {
+       "id": "e8.2.1",
+       "title": "Broadcast and reduce"
+      },
+      {
+       "id": "e8.2.2",
+       "title": "All-reduce, all-gather and reduce-scatter"
+      },
+      {
+       "id": "e8.2.3",
+       "title": "All-to-all"
+      },
+      {
+       "id": "e8.2.4",
+       "title": "Ring and tree algorithms"
+      },
+      {
+       "id": "e8.2.5",
+       "title": "The alpha-beta cost model"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Distributed systems",
+     "lessons": [
+      {
+       "id": "e8.3.1",
+       "title": "Failure models"
+      },
+      {
+       "id": "e8.3.2",
+       "title": "Consensus, a first look"
+      },
+      {
+       "id": "e8.3.3",
+       "title": "Distributed storage"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Large-scale data processing",
+     "lessons": [
+      {
+       "id": "e8.4.1",
+       "title": "Map-reduce"
+      },
+      {
+       "id": "e8.4.2",
+       "title": "Stream processing"
+      },
+      {
+       "id": "e8.4.3",
+       "title": "Object stores"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Clusters",
+     "lessons": [
+      {
+       "id": "e8.5.1",
+       "title": "Schedulers"
+      },
+      {
+       "id": "e8.5.2",
+       "title": "Containers"
+      },
+      {
+       "id": "e8.5.3",
+       "title": "Observability"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "E9",
+   "title": "GPU Programming",
+   "track": "engineering",
+   "tier": 4,
+   "requires": [
+    "E7",
+    "E6"
+   ],
+   "parallels": [
+    "M11"
+   ],
+   "source": "Depth of Hwu, Kirk and El Hajj, Programming Massively Parallel Processors; the Triton documentation; the FlashAttention papers.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "CUDA fundamentals",
+     "lessons": [
+      {
+       "id": "e9.1.1",
+       "title": "Grids, blocks and threads"
+      },
+      {
+       "id": "e9.1.2",
+       "title": "Memory coalescing"
+      },
+      {
+       "id": "e9.1.3",
+       "title": "Shared memory and tiling"
+      },
+      {
+       "id": "e9.1.4",
+       "title": "Reductions and warp primitives"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Matrix multiplication",
+     "lessons": [
+      {
+       "id": "e9.2.1",
+       "title": "From naive to tiled"
+      },
+      {
+       "id": "e9.2.2",
+       "title": "Tensor cores"
+      },
+      {
+       "id": "e9.2.3",
+       "title": "The ideas behind CUTLASS"
+      },
+      {
+       "id": "e9.2.4",
+       "title": "Benchmarking kernels"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Triton",
+     "lessons": [
+      {
+       "id": "e9.3.1",
+       "title": "The Triton programming model"
+      },
+      {
+       "id": "e9.3.2",
+       "title": "Fused elementwise and normalisation kernels"
+      },
+      {
+       "id": "e9.3.3",
+       "title": "Autotuning"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Attention kernels",
+     "lessons": [
+      {
+       "id": "e9.4.1",
+       "title": "Online softmax"
+      },
+      {
+       "id": "e9.4.2",
+       "title": "FlashAttention forward"
+      },
+      {
+       "id": "e9.4.3",
+       "title": "FlashAttention backward"
+      },
+      {
+       "id": "e9.4.4",
+       "title": "Using the newest GPU features"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Low-precision kernels",
+     "lessons": [
+      {
+       "id": "e9.5.1",
+       "title": "FP8 matrix multiplication"
+      },
+      {
+       "id": "e9.5.2",
+       "title": "Quantised kernels"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Integration",
+     "lessons": [
+      {
+       "id": "e9.6.1",
+       "title": "Custom operators in PyTorch"
+      },
+      {
+       "id": "e9.6.2",
+       "title": "Testing kernels"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "E10",
+   "title": "Distributed Training",
+   "track": "engineering",
+   "tier": 4,
+   "requires": [
+    "E8",
+    "E6",
+    "L5"
+   ],
+   "parallels": [
+    "E8",
+    "L8"
+   ],
+   "source": "Depth of Austin et al., How to Scale Your Model; Hugging Face, The Ultra-Scale Playbook; the Megatron-LM and ZeRO papers.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Why distribute",
+     "lessons": [
+      {
+       "id": "e10.1.1",
+       "title": "Memory accounting"
+      },
+      {
+       "id": "e10.1.2",
+       "title": "Compute accounting"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Data parallelism",
+     "lessons": [
+      {
+       "id": "e10.2.1",
+       "title": "Distributed data parallel"
+      },
+      {
+       "id": "e10.2.2",
+       "title": "Gradient bucketing and overlap"
+      },
+      {
+       "id": "e10.2.3",
+       "title": "Gradient accumulation"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Sharded data parallelism",
+     "lessons": [
+      {
+       "id": "e10.3.1",
+       "title": "ZeRO stages one to three"
+      },
+      {
+       "id": "e10.3.2",
+       "title": "Fully sharded data parallel"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Tensor and sequence parallelism",
+     "lessons": [
+      {
+       "id": "e10.4.1",
+       "title": "Megatron tensor parallelism"
+      },
+      {
+       "id": "e10.4.2",
+       "title": "Sequence parallelism"
+      },
+      {
+       "id": "e10.4.3",
+       "title": "Context parallelism and ring attention"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Pipeline parallelism",
+     "lessons": [
+      {
+       "id": "e10.5.1",
+       "title": "GPipe"
+      },
+      {
+       "id": "e10.5.2",
+       "title": "One-forward-one-backward"
+      },
+      {
+       "id": "e10.5.3",
+       "title": "Interleaved and zero-bubble schedules"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Expert parallelism",
+     "lessons": [
+      {
+       "id": "e10.6.1",
+       "title": "Dispatch and all-to-all for mixture of experts"
+      },
+      {
+       "id": "e10.6.2",
+       "title": "Load imbalance"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Composing parallelism",
+     "lessons": [
+      {
+       "id": "e10.7.1",
+       "title": "Combining the dimensions"
+      },
+      {
+       "id": "e10.7.2",
+       "title": "Choosing a device mesh"
+      },
+      {
+       "id": "e10.7.3",
+       "title": "Sharding annotations"
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "title": "Reliability",
+     "lessons": [
+      {
+       "id": "e10.8.1",
+       "title": "Distributed checkpointing"
+      },
+      {
+       "id": "e10.8.2",
+       "title": "Failures and elastic training"
+      },
+      {
+       "id": "e10.8.3",
+       "title": "Stragglers"
+      },
+      {
+       "id": "e10.8.4",
+       "title": "Determinism at scale"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "E11",
+   "title": "Data Engineering for Foundation Models",
+   "track": "engineering",
+   "tier": 4,
+   "requires": [
+    "E8",
+    "M12",
+    "L5"
+   ],
+   "parallels": [
+    "L5",
+    "L8",
+    "M12"
+   ],
+   "source": "Depth of the FineWeb, Dolma and DataComp-LM papers; Stanford CS336 data lectures.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Sources",
+     "lessons": [
+      {
+       "id": "e11.1.1",
+       "title": "Web crawls"
+      },
+      {
+       "id": "e11.1.2",
+       "title": "Code"
+      },
+      {
+       "id": "e11.1.3",
+       "title": "Books and papers"
+      },
+      {
+       "id": "e11.1.4",
+       "title": "Licensed and synthetic data"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Extraction",
+     "lessons": [
+      {
+       "id": "e11.2.1",
+       "title": "HTML to text"
+      },
+      {
+       "id": "e11.2.2",
+       "title": "Documents and PDFs"
+      },
+      {
+       "id": "e11.2.3",
+       "title": "Language identification"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Filtering",
+     "lessons": [
+      {
+       "id": "e11.3.1",
+       "title": "Heuristic filters"
+      },
+      {
+       "id": "e11.3.2",
+       "title": "Model-based quality classifiers"
+      },
+      {
+       "id": "e11.3.3",
+       "title": "Toxicity and personal data"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Deduplication",
+     "lessons": [
+      {
+       "id": "e11.4.1",
+       "title": "Exact deduplication"
+      },
+      {
+       "id": "e11.4.2",
+       "title": "MinHash and locality-sensitive hashing"
+      },
+      {
+       "id": "e11.4.3",
+       "title": "Semantic deduplication"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Tokenisers",
+     "lessons": [
+      {
+       "id": "e11.5.1",
+       "title": "Unicode and UTF-8"
+      },
+      {
+       "id": "e11.5.2",
+       "title": "Training BPE from scratch"
+      },
+      {
+       "id": "e11.5.3",
+       "title": "Tokeniser trade-offs"
+      },
+      {
+       "id": "e11.5.4",
+       "title": "Byte-level and tokeniser-free models"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Mixtures",
+     "lessons": [
+      {
+       "id": "e11.6.1",
+       "title": "Domain weighting"
+      },
+      {
+       "id": "e11.6.2",
+       "title": "Learned mixture weights"
+      },
+      {
+       "id": "e11.6.3",
+       "title": "Small-scale data ablations"
+      },
+      {
+       "id": "e11.6.4",
+       "title": "Data for mid-training"
+      }
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Synthetic data",
+     "lessons": [
+      {
+       "id": "e11.7.1",
+       "title": "Generation"
+      },
+      {
+       "id": "e11.7.2",
+       "title": "Filtering by rejection and verification"
+      },
+      {
+       "id": "e11.7.3",
+       "title": "The risk of model collapse"
+      }
+     ]
+    },
+    {
+     "n": 8,
+     "title": "Pipelines",
+     "lessons": [
+      {
+       "id": "e11.8.1",
+       "title": "Sharded datasets"
+      },
+      {
+       "id": "e11.8.2",
+       "title": "Streaming loaders"
+      },
+      {
+       "id": "e11.8.3",
+       "title": "Decontamination against benchmarks"
+      },
+      {
+       "id": "e11.8.4",
+       "title": "Data cards"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "E12",
+   "title": "Inference, Serving and RL Infrastructure",
+   "track": "engineering",
+   "tier": 4,
+   "requires": [
+    "E9",
+    "L5"
+   ],
+   "parallels": [
+    "L13",
+    "L9"
+   ],
+   "source": "Depth of the vLLM, SGLang, EAGLE, GPTQ and AWQ papers.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Inference workloads",
+     "lessons": [
+      {
+       "id": "e12.1.1",
+       "title": "Prefill and decode"
+      },
+      {
+       "id": "e12.1.2",
+       "title": "The memory of the KV cache"
+      },
+      {
+       "id": "e12.1.3",
+       "title": "Attention variants for inference"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Batching",
+     "lessons": [
+      {
+       "id": "e12.2.1",
+       "title": "Static, dynamic and continuous batching"
+      },
+      {
+       "id": "e12.2.2",
+       "title": "Paged attention"
+      },
+      {
+       "id": "e12.2.3",
+       "title": "Prefix caching"
+      },
+      {
+       "id": "e12.2.4",
+       "title": "Chunked prefill and disaggregation"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Faster decoding",
+     "lessons": [
+      {
+       "id": "e12.3.1",
+       "title": "Speculative decoding"
+      },
+      {
+       "id": "e12.3.2",
+       "title": "Draft heads"
+      },
+      {
+       "id": "e12.3.3",
+       "title": "Parallel decoding"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Quantisation",
+     "lessons": [
+      {
+       "id": "e12.4.1",
+       "title": "Scales, zero points and granularity"
+      },
+      {
+       "id": "e12.4.2",
+       "title": "Weight-only quantisation"
+      },
+      {
+       "id": "e12.4.3",
+       "title": "Activation outliers"
+      },
+      {
+       "id": "e12.4.4",
+       "title": "KV cache quantisation"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Serving systems",
+     "lessons": [
+      {
+       "id": "e12.5.1",
+       "title": "Serving architecture"
+      },
+      {
+       "id": "e12.5.2",
+       "title": "Latency, throughput and cost"
+      },
+      {
+       "id": "e12.5.3",
+       "title": "Autoscaling and load balancing"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "RL infrastructure",
+     "lessons": [
+      {
+       "id": "e12.6.1",
+       "title": "Rollouts at scale"
+      },
+      {
+       "id": "e12.6.2",
+       "title": "Synchronising weights between trainer and generator"
+      },
+      {
+       "id": "e12.6.3",
+       "title": "Asynchronous RL"
+      },
+      {
+       "id": "e12.6.4",
+       "title": "Sandboxed environments"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "E13",
+   "title": "Large-Scale Training Operations",
+   "track": "engineering",
+   "tier": 5,
+   "requires": [
+    "E10",
+    "E11",
+    "L8"
+   ],
+   "parallels": [
+    "L10",
+    "L8",
+    "M14"
+   ],
+   "source": "Depth of the OPT-175B logbook; the infrastructure sections of the Llama 3 report; primary postmortems.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Planning a run",
+     "lessons": [
+      {
+       "id": "e13.1.1",
+       "title": "The compute budget"
+      },
+      {
+       "id": "e13.1.2",
+       "title": "Clusters and topology"
+      },
+      {
+       "id": "e13.1.3",
+       "title": "Proxy runs"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Observability",
+     "lessons": [
+      {
+       "id": "e13.2.1",
+       "title": "Metrics that matter"
+      },
+      {
+       "id": "e13.2.2",
+       "title": "Dashboards"
+      },
+      {
+       "id": "e13.2.3",
+       "title": "Alerting"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Stability",
+     "lessons": [
+      {
+       "id": "e13.3.1",
+       "title": "Loss-spike postmortems"
+      },
+      {
+       "id": "e13.3.2",
+       "title": "FP8 training at scale"
+      },
+      {
+       "id": "e13.3.3",
+       "title": "Numerical debugging"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Fault tolerance",
+     "lessons": [
+      {
+       "id": "e13.4.1",
+       "title": "Hardware failures"
+      },
+      {
+       "id": "e13.4.2",
+       "title": "Checkpoint strategy"
+      },
+      {
+       "id": "e13.4.3",
+       "title": "Silent data corruption"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Evaluation infrastructure",
+     "lessons": [
+      {
+       "id": "e13.5.1",
+       "title": "Evaluation harnesses"
+      },
+      {
+       "id": "e13.5.2",
+       "title": "Continuous evaluation during training"
+      }
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Postmortems",
+     "lessons": [
+      {
+       "id": "e13.6.1",
+       "title": "Writing a postmortem"
+      },
+      {
+       "id": "e13.6.2",
+       "title": "Learning from public run logs"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "E14",
+   "title": "ML Compilers",
+   "track": "engineering",
+   "tier": 5,
+   "requires": [
+    "E9"
+   ],
+   "parallels": [
+    "M11"
+   ],
+   "source": "Depth of the XLA, TVM and Triton papers; the TorchInductor and MLIR documentation.",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Graphs and IRs",
+     "lessons": [
+      {
+       "id": "e14.1.1",
+       "title": "Tracing and graph capture"
+      },
+      {
+       "id": "e14.1.2",
+       "title": "Intermediate representations"
+      },
+      {
+       "id": "e14.1.3",
+       "title": "SSA form"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Optimisation passes",
+     "lessons": [
+      {
+       "id": "e14.2.1",
+       "title": "Operator fusion"
+      },
+      {
+       "id": "e14.2.2",
+       "title": "Layout transformation"
+      },
+      {
+       "id": "e14.2.3",
+       "title": "Memory planning"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Code generation",
+     "lessons": [
+      {
+       "id": "e14.3.1",
+       "title": "Tiling and scheduling"
+      },
+      {
+       "id": "e14.3.2",
+       "title": "Autotuning"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Compiler stacks",
+     "lessons": [
+      {
+       "id": "e14.4.1",
+       "title": "XLA"
+      },
+      {
+       "id": "e14.4.2",
+       "title": "TorchInductor"
+      },
+      {
+       "id": "e14.4.3",
+       "title": "MLIR"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Automatic parallelism",
+     "lessons": [
+      {
+       "id": "e14.5.1",
+       "title": "Sharding propagation"
+      },
+      {
+       "id": "e14.5.2",
+       "title": "Searching for parallel layouts"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "code": "E15",
+   "title": "Capstone: A Frontier Model in Miniature",
+   "track": "engineering",
+   "tier": 5,
+   "requires": [
+    "E13",
+    "E12",
+    "L9"
+   ],
+   "parallels": [
+    "L15"
+   ],
+   "source": "",
+   "chapters": [
+    {
+     "n": 1,
+     "title": "Design",
+     "lessons": [
+      {
+       "id": "e15.1.1",
+       "title": "The design document"
+      },
+      {
+       "id": "e15.1.2",
+       "title": "Compute and data budgets"
+      },
+      {
+       "id": "e15.1.3",
+       "title": "The evaluation plan"
+      }
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Data",
+     "lessons": [
+      {
+       "id": "e15.2.1",
+       "title": "Building the corpus"
+      },
+      {
+       "id": "e15.2.2",
+       "title": "Training the tokeniser"
+      }
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Pretraining",
+     "lessons": [
+      {
+       "id": "e15.3.1",
+       "title": "A scaling ladder"
+      },
+      {
+       "id": "e15.3.2",
+       "title": "The main run"
+      },
+      {
+       "id": "e15.3.3",
+       "title": "Mid-training"
+      }
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Post-training",
+     "lessons": [
+      {
+       "id": "e15.4.1",
+       "title": "Supervised fine-tuning"
+      },
+      {
+       "id": "e15.4.2",
+       "title": "Preference optimisation"
+      },
+      {
+       "id": "e15.4.3",
+       "title": "RL with verifiable rewards"
+      }
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Shipping",
+     "lessons": [
+      {
+       "id": "e15.5.1",
+       "title": "Serving with your inference engine"
+      },
+      {
+       "id": "e15.5.2",
+       "title": "The evaluation report"
+      },
+      {
+       "id": "e15.5.3",
+       "title": "An interpretability study"
+      },
+      {
+       "id": "e15.5.4",
+       "title": "The technical report"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
