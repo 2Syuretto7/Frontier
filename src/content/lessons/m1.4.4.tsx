@@ -152,7 +152,7 @@ print(sorted(set.intersection(*A.values())))`}</Code>
         <>
           <Code>{`family = [set(range(k, 3 * k + 1)) for k in range(1, 5)]
 print(sorted(set.intersection(*family)), len(set.union(*family)))`}</Code>
-          <p>The family A_k = {k, …, 3k} for k = 1 … 4. What do the big intersection and big union give?</p>
+          <p>The family A_k = {'{k, …, 3k}'} for k = 1 … 4. What do the big intersection and big union give?</p>
         </>
       ),
       answer: { kind: "choice", options: ["[] 12", "[3, 4] 12", "[3] 12", "[] 9"], correct: [0] },
