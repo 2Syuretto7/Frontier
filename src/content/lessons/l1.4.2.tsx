@@ -149,6 +149,18 @@ for d in (2, 1000):
       answer: { kind: "choice", options: ["Close to 1", "Close to 0", "Exactly 0.5", "Greater than 1"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`for d in (1, 2, 10):
+    print(d, round(1 - 0.9 ** d, 4), round(0.1 ** (1 / d), 4))`}</Code>
+          <p>In the unit cube: the share of volume within 0.05 of the boundary, and the edge of a sub-cube holding 10 per cent of the volume. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1 0.1 0.1\n2 0.19 0.3162\n10 0.6513 0.7943", "1 0.1 0.1\n2 0.19 0.05\n10 0.6513 0.01", "1 0.1 0.1\n2 0.2 0.3162\n10 1.0 0.7943", "1 0.9 0.1\n2 0.81 0.3162\n10 0.3487 0.7943"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -175,6 +187,55 @@ def fraction_in_ball(d, n, seed):
           { name: "2d", code: `import numpy as np
 assert abs(fraction_in_ball(2, 100000, 0) - np.pi / 4) < 0.01, 'In 2D the disc covers π/4 of the square.'` },
           { name: "high", code: `assert fraction_in_ball(10, 100000, 0) < 0.01, 'In 10D the ball covers under 1% of the cube.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>distance_contrast(d, n, seed)</C>: draw n points and one query uniformly in [0, 1]^d with <C>np.random.default_rng(seed)</C> (points first, then the query) and return (max distance − min distance)/min distance from the query, which shrinks as d grows. Then write <C>knn_accuracy_vs_dim(dims, n, seed)</C>: for each d, with a fresh generator seeded by seed, draw 2n points in [0, 1]^d labelled by whether the first coordinate exceeds ½ (the other coordinates are noise), and return the 1-nearest-neighbour accuracy on the second half using the first half for training.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def distance_contrast(d, n, seed):
+    return 1.0
+
+def knn_accuracy_vs_dim(dims, n, seed):
+    return [1.0 for _ in dims]
+`,
+        solution: `import numpy as np
+
+def distance_contrast(d, n, seed):
+    rng = np.random.default_rng(seed)
+    P = rng.uniform(size=(n, d)); q = rng.uniform(size=d)
+    dist = np.linalg.norm(P - q, axis=1)
+    return float((dist.max() - dist.min()) / dist.min())
+
+def knn_accuracy_vs_dim(dims, n, seed):
+    out = []
+    for d in dims:
+        rng = np.random.default_rng(seed)
+        X = rng.uniform(size=(2 * n, d)); y = X[:, 0] > 0.5
+        D = ((X[n:, None, :] - X[None, :n, :]) ** 2).sum(-1)
+        out.append(float(np.mean(y[:n][D.argmin(1)] == y[n:])))
+    return out
+`,
+        tests: [
+          { name: "contrast", code: `c = [distance_contrast(d, 500, 0) for d in (2, 10, 100, 1000)]
+assert c[0] > 10 and c[0] > c[1] > c[2] > c[3] and c[3] < 0.3, 'In high dimensions the nearest and farthest points are almost equally far.'` },
+          { name: "seeded", code: `import numpy as np
+rng = np.random.default_rng(4); P = rng.uniform(size=(5, 3)); q = rng.uniform(size=3)
+dd = np.linalg.norm(P - q, axis=1)
+assert abs(distance_contrast(3, 5, 4) - (dd.max() - dd.min()) / dd.min()) < 1e-12, 'Points first, then the query.'` },
+          { name: "knn", code: `acc = knn_accuracy_vs_dim([1, 5, 50], 300, 1)
+assert acc[0] > 0.97 and acc[0] > acc[1] > acc[2] and acc[2] < 0.75, 'Noise dimensions drown the one useful coordinate.'` },
         ],
       },
     },

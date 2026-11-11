@@ -143,6 +143,21 @@ for step in range(3):
       answer: { kind: "choice", options: ["2.5 3.75 4.375 ", "5.0 5.0 5.0 ", "2.5 5.0 7.5 ", "1.25 2.5 3.75 "], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`w, lr = 0.0, 0.3
+for _ in range(3):
+    grad = 2 * (w - 3)
+    w -= lr * grad
+    print(round(w, 4))`}</Code>
+          <p>Three gradient steps on (w − 3)². What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1.8\n2.52\n2.808", "1.8\n3.6\n2.88", "0.9\n1.53\n1.971", "1.8\n2.52\n2.88"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -174,6 +189,77 @@ rng = np.random.default_rng(0)
 X = rng.normal(size=(200, 3)); y = X @ np.array([1.0, -2.0, 0.5])
 w = gd_linear(X, y, 0.1, 500)
 assert np.allclose(w, [1, -2, 0.5], atol=1e-3), 'Step against the gradient (2/n) Xᵀ(Xw − y).'` },
+          { name: "one step", code: `import numpy as np
+w = gd_linear(np.array([[1.0], [2.0]]), np.array([1.0, 2.0]), 0.1, 1)
+assert np.allclose(w, [0.5]) and np.allclose(gd_linear(np.eye(2), np.ones(2), 0.1, 0), [0, 0]), 'From 0 the gradient is (2/2)·(−5) = −5, so w = 0.5.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>max_stable_lr(X)</C> for gradient descent on the mean squared error (1/n)‖Xw − y‖²: the Hessian is (2/n)XᵀX and descent converges exactly when the learning rate is below 2 divided by its largest eigenvalue, that is below n/λ_max(XᵀX). Then write <C>minibatch_sgd(X, y, lr, epochs, batch, seed)</C>: from w = 0, for each epoch take <C>rng.permutation(n)</C> from one <C>np.random.default_rng(seed)</C>, walk through it in consecutive batches (the last may be shorter) and step with the batch gradient (2/b)X_bᵀ(X_bw − y_b). Return w.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def max_stable_lr(X):
+    return 1.0
+
+def minibatch_sgd(X, y, lr, epochs, batch, seed):
+    return np.zeros(X.shape[1])
+`,
+        solution: `import numpy as np
+
+def max_stable_lr(X):
+    return len(X) / np.linalg.eigvalsh(X.T @ X)[-1]
+
+def minibatch_sgd(X, y, lr, epochs, batch, seed):
+    rng = np.random.default_rng(seed)
+    n = len(X)
+    w = np.zeros(X.shape[1])
+    for _ in range(epochs):
+        order = rng.permutation(n)
+        for s in range(0, n, batch):
+            b = order[s:s + batch]
+            w = w - lr * (2 / len(b)) * X[b].T @ (X[b] @ w - y[b])
+    return w
+`,
+        tests: [
+          { name: "edge", code: `import numpy as np
+rng = np.random.default_rng(0)
+X = rng.normal(size=(100, 3)) * [1, 3, 0.5]; y = X @ [1.0, 1.0, 1.0]
+L = max_stable_lr(X)
+def gd(lr, steps=3000):
+    w = np.zeros(3)
+    for _ in range(steps):
+        w = w - lr * (2 / 100) * X.T @ (X @ w - y)
+    return w
+assert np.allclose(gd(0.95 * L), [1, 1, 1], atol=1e-6) and np.linalg.norm(gd(1.05 * L, 500)) > 1e6, 'Just below the limit converges; just above blows up.'` },
+          { name: "full batch", code: `import numpy as np
+rng = np.random.default_rng(1)
+X = rng.normal(size=(20, 2)); y = X @ [2.0, -1.0]
+w = minibatch_sgd(X, y, 0.1, 1, 20, 0)
+assert np.allclose(w, 0.1 * (2 / 20) * X.T @ y), 'One full batch is one gradient step.'` },
+          { name: "order", code: `import numpy as np
+X = np.arange(1.0, 6.0)[:, None]; y = 2 * X[:, 0]
+w = minibatch_sgd(X, y, 0.01, 1, 2, 3)
+order = np.random.default_rng(3).permutation(5)
+v = np.zeros(1)
+for s in range(0, 5, 2):
+    b = order[s:s + 2]
+    v = v - 0.01 * (2 / len(b)) * X[b].T @ (X[b] @ v - y[b])
+assert np.allclose(w, v), 'Batches in permutation order; the last batch has one row.'` },
+          { name: "converge", code: `import numpy as np
+rng = np.random.default_rng(2)
+X = rng.normal(size=(500, 4)); y = X @ [1.0, -2.0, 3.0, 0.5]
+assert np.allclose(minibatch_sgd(X, y, 0.05, 30, 16, 0), [1, -2, 3, 0.5], atol=1e-4), 'Noise-free data: SGD reaches the solution.'` },
         ],
       },
     },

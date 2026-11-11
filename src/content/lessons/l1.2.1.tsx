@@ -147,6 +147,22 @@ print(np.linalg.solve(X.T @ X, X.T @ y))`}</Code>
       answer: { kind: "choice", options: ["[1. 2.]", "[2. 1.]", "[0. 2.]", "[1. 3.]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+X = np.array([[1, 0], [1, 1], [1, 2]], dtype=float)
+y = np.array([1.0, 2.0, 2.0])
+w = np.linalg.solve(X.T @ X, X.T @ y)
+r = y - X @ w
+print(np.round(w, 4), np.round(np.abs(X.T @ r), 10))`}</Code>
+          <p>The normal equations, and the residuals checked against the columns. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[1.1667 0.5   ] [0. 0.]", "[1.  0.5] [0. 0.]", "[1.1667 0.5   ] [0.3333 0.    ]", "[0.5    1.1667] [0. 0.]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -181,6 +197,75 @@ rng = np.random.default_rng(0)
 X = rng.normal(size=(100, 2)); y = 3 + X @ np.array([2.0, -1.0])
 w = least_squares(X, y)
 assert np.allclose(w, [3, 2, -1]) and np.allclose(predict(w, X), y), 'Prepend a column of ones so the intercept is fitted too.'` },
+          { name: "polyfit", code: `import numpy as np
+rng = np.random.default_rng(1)
+x = rng.normal(size=50); y = 4 - 2 * x + rng.normal(size=50)
+w = least_squares(x[:, None], y)
+assert np.allclose(w, np.polyfit(x, y, 1)[::-1]) and predict(w, np.array([[0.0], [1.0]])).shape == (2,), 'One feature: the same as fitting a line.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Leave-one-out error for least squares needs no refitting. With an intercept column added, the hat matrix is H = A(AᵀA)⁻¹Aᵀ, and the residual at row i when that row is left out is rᵢ/(1 − hᵢᵢ). Write <C>hat_diagonal(X)</C>, the leverages hᵢᵢ computed from a thin QR of A (hᵢᵢ is the squared norm of row i of Q), without forming H. Then write <C>loo_residuals(X, y)</C> by the shortcut and <C>loo_residuals_brute(X, y)</C> by refitting n times with <C>np.linalg.lstsq</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def hat_diagonal(X):
+    return np.zeros(len(X))
+
+def loo_residuals(X, y):
+    return np.zeros(len(X))
+
+def loo_residuals_brute(X, y):
+    return np.zeros(len(X))
+`,
+        solution: `import numpy as np
+
+def _A(X):
+    return np.column_stack([np.ones(len(X)), X])
+
+def hat_diagonal(X):
+    Q, _ = np.linalg.qr(_A(X))
+    return (Q ** 2).sum(1)
+
+def loo_residuals(X, y):
+    A = _A(X)
+    w = np.linalg.lstsq(A, y, rcond=None)[0]
+    return (y - A @ w) / (1 - hat_diagonal(X))
+
+def loo_residuals_brute(X, y):
+    A = _A(X)
+    out = np.empty(len(X))
+    for i in range(len(X)):
+        m = np.arange(len(X)) != i
+        w = np.linalg.lstsq(A[m], y[m], rcond=None)[0]
+        out[i] = y[i] - A[i] @ w
+    return out
+`,
+        tests: [
+          { name: "leverage", code: `import numpy as np
+h = hat_diagonal(np.array([[0.0], [1.0], [2.0], [10.0]]))
+assert abs(h.sum() - 2) < 1e-12 and h.argmax() == 3 and h[3] > 0.9, 'Leverages sum to the number of coefficients; the far point dominates.'` },
+          { name: "agree", code: `import numpy as np
+rng = np.random.default_rng(0)
+X = rng.normal(size=(40, 3)); y = X @ [1.0, 2.0, -1.0] + rng.normal(size=40)
+assert np.allclose(loo_residuals(X, y), loo_residuals_brute(X, y)), 'The shortcut equals refitting.'` },
+          { name: "sklearn", code: `import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import cross_val_predict, LeaveOneOut
+rng = np.random.default_rng(1)
+X = rng.normal(size=(25, 2)); y = X[:, 0] - X[:, 1] + rng.normal(size=25)
+ref = y - cross_val_predict(LinearRegression(), X, y, cv=LeaveOneOut())
+assert np.allclose(loo_residuals(X, y), ref), 'Agree with scikit-learn leave-one-out.'` },
         ],
       },
     },

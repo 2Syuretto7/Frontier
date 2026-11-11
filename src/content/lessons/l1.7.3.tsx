@@ -153,6 +153,21 @@ print(np.mean(np.abs(y - y.mean())), np.mean(np.abs(y - np.median(y))))`}</Code>
       answer: { kind: "choice", options: ["5.92 4.4", "4.4 5.92", "5.92 5.92", "0.0 0.0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+from sklearn.dummy import DummyClassifier
+y = np.array([0, 0, 0, 1, 0, 1, 0, 0])
+m = DummyClassifier(strategy="most_frequent").fit(np.zeros((8, 1)), y)
+print(m.predict(np.zeros((2, 1))).tolist(), m.score(np.zeros((8, 1)), y))`}</Code>
+          <p>The majority-class baseline in scikit-learn. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0, 0] 0.75", "[0, 1] 0.75", "[0, 0] 0.25", "[1, 1] 0.25"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -180,6 +195,60 @@ def baselines(y_train, y_test):
           { name: "values", code: `import numpy as np
 b = baselines(np.array([1.0, 2.0, 3.0, 10.0]), np.array([11.0, 12.0]))
 assert abs(b['mean'] - ((11 - 4) ** 2 + (12 - 4) ** 2) / 2) < 1e-9 and abs(b['median'] - ((11 - 2.5) ** 2 + (12 - 2.5) ** 2) / 2) < 1e-9 and abs(b['last'] - 1.0) < 1e-9, 'For a trend, predicting the last value is a hard baseline to beat.'` },
+          { name: "types", code: `import numpy as np
+b = baselines(np.array([3.0, 1.0, 2.0]), np.array([5.0]))
+assert set(b) == {'mean', 'median', 'last'} and all(isinstance(v, float) for v in b.values()) and b['mean'] == 9 and b['median'] == 9 and b['last'] == 9, 'With one test value, last uses the final training value, 2.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Forecasting baselines. Write <C>seasonal_naive(y_train, y_test, period)</C>, the test MSE of predicting each value by the actual value one period earlier (reaching back into the training data where needed); <C>moving_average(y_train, y_test, window)</C>, the test MSE of predicting each value by the mean of the previous <C>window</C> actual values (one step ahead); and <C>skill(model_mse, baseline_mse)</C> = 1 − model/baseline, which is positive only when the model beats the baseline.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def seasonal_naive(y_train, y_test, period):
+    return float(np.mean((y_test - y_train.mean()) ** 2))
+
+def moving_average(y_train, y_test, window):
+    return float(np.mean((y_test - y_train.mean()) ** 2))
+
+def skill(model_mse, baseline_mse):
+    return 0.0
+`,
+        solution: `import numpy as np
+
+def seasonal_naive(y_train, y_test, period):
+    full = np.concatenate([y_train, y_test])
+    n = len(y_train)
+    pred = full[n - period:len(full) - period]
+    return float(np.mean((y_test - pred) ** 2))
+
+def moving_average(y_train, y_test, window):
+    full = np.concatenate([y_train, y_test])
+    n = len(y_train)
+    pred = np.array([full[i - window:i].mean() for i in range(n, len(full))])
+    return float(np.mean((y_test - pred) ** 2))
+
+def skill(model_mse, baseline_mse):
+    return 1 - model_mse / baseline_mse
+`,
+        tests: [
+          { name: "seasonal", code: `import numpy as np
+t = np.arange(48); y = np.sin(2 * np.pi * t / 12) * 10 + t * 0
+assert seasonal_naive(y[:36], y[36:], 12) < 1e-20 and seasonal_naive(y[:36], y[36:], 6) > 100, 'A perfectly seasonal series is predicted exactly by the right period.'
+assert seasonal_naive(np.array([1.0, 2, 3]), np.array([4.0, 5]), 1) == 1.0` },
+          { name: "moving", code: `import numpy as np
+assert moving_average(np.array([1.0, 2.0, 3.0]), np.array([4.0, 6.0]), 2) == ((4 - 2.5) ** 2 + (6 - 3.5) ** 2) / 2, 'One step ahead, using actual values.'` },
+          { name: "skill", code: `assert skill(5, 10) == 0.5 and skill(10, 10) == 0 and skill(20, 10) == -1, 'Worse than the baseline means negative skill.'` },
         ],
       },
     },

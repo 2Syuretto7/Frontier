@@ -144,6 +144,20 @@ print(len(list(product(*grid.values()))))`}</Code>
       answer: { kind: "numeric", value: 12 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from itertools import product
+grid = {"lr": [0.1, 0.01], "depth": [2, 4, 8], "l2": [0, 1]}
+combos = list(product(*grid.values()))
+print(len(combos), combos[0], combos[-1])`}</Code>
+          <p>Counting the points of a hyperparameter grid. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["12 (0.1, 2, 0) (0.01, 8, 1)", "7 (0.1, 2, 0) (0.01, 8, 1)", "12 (0.01, 8, 1) (0.1, 2, 0)", "12 (0.1, 2, 0) (0.1, 8, 1)"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -181,6 +195,94 @@ grid = {'max_depth': [1, 3, 6], 'min_samples_leaf': [1, 10]}
 params, score = grid_search(lambda **kw: DecisionTreeClassifier(random_state=0, **kw), grid, X, y)
 ref = GridSearchCV(DecisionTreeClassifier(random_state=0), grid, cv=3).fit(X, y)
 assert params == ref.best_params_ and abs(score - ref.best_score_) < 1e-9, 'Try every combination and keep the best cross-validated score.'` },
+          { name: "every combination", code: `from sklearn.tree import DecisionTreeClassifier
+from sklearn.datasets import make_classification
+X, y = make_classification(90, random_state=1)
+seen = []
+def make(**kw):
+    seen.append(tuple(sorted(kw.items())))
+    return DecisionTreeClassifier(random_state=0, **kw)
+params, score = grid_search(make, {'max_depth': [1, 2], 'min_samples_leaf': [1, 5, 9]}, X, y)
+assert sorted(set(seen)) == sorted(set(tuple(sorted({'max_depth': a, 'min_samples_leaf': b}.items())) for a in [1, 2] for b in [1, 5, 9])) and set(params) == {'max_depth', 'min_samples_leaf'}, 'All six combinations, passed as keyword arguments.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>random_search(objective, space, n, seed)</C>, which minimises <C>objective(params)</C> over n random draws: <C>space</C> maps each name, in order, to (<C>"log"</C>, lo, hi) (draw 10^u with u uniform between log₁₀ lo and log₁₀ hi), (<C>"int"</C>, lo, hi) (<C>rng.integers(lo, hi + 1)</C>) or (<C>"choice"</C>, options) (<C>options[rng.integers(len(options))]</C>), all from one <C>np.random.default_rng(seed)</C>. Return (best params, best value), the first on ties. Then write <C>successive_halving(configs, evaluate, budget, eta)</C>: evaluate every config with <C>evaluate(config, budget)</C> (lower is better), keep the best len/eta (at least 1, ties in input order), multiply the budget by eta, and repeat until one remains. Return (winner, total budget spent).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def random_search(objective, space, n, seed):
+    return {}, float('inf')
+
+def successive_halving(configs, evaluate, budget, eta):
+    return configs[0], 0
+`,
+        solution: `import numpy as np
+
+def random_search(objective, space, n, seed):
+    rng = np.random.default_rng(seed)
+    best = (None, float('inf'))
+    for _ in range(n):
+        params = {}
+        for name, spec in space.items():
+            if spec[0] == 'log':
+                params[name] = float(10 ** rng.uniform(np.log10(spec[1]), np.log10(spec[2])))
+            elif spec[0] == 'int':
+                params[name] = int(rng.integers(spec[1], spec[2] + 1))
+            else:
+                params[name] = spec[1][rng.integers(len(spec[1]))]
+        v = objective(params)
+        if v < best[1]:
+            best = (params, v)
+    return best
+
+def successive_halving(configs, evaluate, budget, eta):
+    alive = list(configs)
+    spent = 0
+    while len(alive) > 1:
+        scores = [evaluate(c, budget) for c in alive]
+        spent += budget * len(alive)
+        order = sorted(range(len(alive)), key=lambda i: (scores[i], i))
+        alive = [alive[i] for i in order[:max(1, len(alive) // eta)]]
+        budget *= eta
+    return alive[0], spent
+`,
+        tests: [
+          { name: "draws", code: `import numpy as np
+space = {'lr': ('log', 1e-4, 1e-1), 'depth': ('int', 2, 5), 'act': ('choice', ['relu', 'tanh'])}
+seen = []
+def obj(p):
+    seen.append(p)
+    return (np.log10(p['lr']) + 2) ** 2 + (p['depth'] - 3) ** 2
+best, v = random_search(obj, space, 200, 0)
+assert len(seen) == 200 and all(1e-4 <= p['lr'] <= 1e-1 and 2 <= p['depth'] <= 5 and p['act'] in ('relu', 'tanh') for p in seen), 'Every draw is inside the space.'
+assert best['depth'] == 3 and abs(np.log10(best['lr']) + 2) < 0.1 and v == min(obj(p) for p in list(seen)), 'The best of the draws.'
+rng = np.random.default_rng(0)
+assert abs(seen[0]['lr'] - 10 ** rng.uniform(-4, -1)) < 1e-15 and seen[0]['depth'] == rng.integers(2, 6), 'Draw the parameters in order from one generator.'` },
+          { name: "log scale", code: `import numpy as np
+space = {'c': ('log', 1e-6, 1.0)}
+vals = []
+random_search(lambda p: vals.append(p['c']) or 0, space, 3000, 1)
+assert 0.45 < np.mean(np.array(vals) < 1e-3) < 0.55, 'Half the orders of magnitude lie below 10⁻³.'` },
+          { name: "halving", code: `calls = []
+def ev(c, b):
+    calls.append((c, b))
+    return abs(c - 7) + 1 / b
+win, spent = successive_halving(list(range(16)), ev, 1, 2)
+assert win == 7 and spent == 16 + 16 + 16 + 16 and [b for c, b in calls if c == 7] == [1, 2, 4, 8], 'Halve the field and double the budget each round.'
+assert successive_halving(['only'], ev, 1, 3) == ('only', 0)` },
+          { name: "ties", code: `win, spent = successive_halving(['a', 'b', 'c'], lambda c, b: 0, 1, 3)
+assert win == 'a' and spent == 3, 'Ties keep the earlier configuration.'` },
         ],
       },
     },

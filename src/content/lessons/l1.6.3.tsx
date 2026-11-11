@@ -156,6 +156,21 @@ print(round(float(s[0] ** 2 / (s ** 2).sum()), 2))`}</Code>
       answer: { kind: "choice", options: ["1.0", "0.5", "0.8", "0.67"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+X = np.array([[1.0, 1.0], [2.0, 2.0], [3.0, 3.0]])
+Xc = X - X.mean(0)
+U, s, Vt = np.linalg.svd(Xc, full_matrices=False)
+print(np.round(s ** 2 / (s ** 2).sum(), 4), np.round(np.abs(Vt[0]), 4))`}</Code>
+          <p>PCA of three points on a diagonal line via the SVD. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[1. 0.] [0.7071 0.7071]", "[0.5 0.5] [0.7071 0.7071]", "[1. 0.] [1. 0.]", "[1. 0.] [0.5 0.5]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -192,6 +207,68 @@ rng = np.random.default_rng(1)
 X = rng.normal(size=(100, 3))
 V, Z, r = pca(X, 3)
 assert np.allclose(Z @ V + X.mean(0), X), 'With all components, projecting and mapping back recovers X.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>pca_fit(X)</C>, returning (mean, components, explained variance) from the SVD of the centred data, with components as rows ordered by decreasing variance and variance = s²/(n − 1). Then write <C>reconstruct(X, k)</C>, the projection of X onto the first k components and back (mean added), and <C>whiten(X, k)</C>, the k-dimensional scores divided by the square roots of their variances, so they have identity covariance. Signs of components may differ from scikit-learn&rsquo;s.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def pca_fit(X):
+    return X.mean(0), np.eye(X.shape[1]), X.var(0)
+
+def reconstruct(X, k):
+    return X
+
+def whiten(X, k):
+    return X[:, :k]
+`,
+        solution: `import numpy as np
+
+def pca_fit(X):
+    m = X.mean(0)
+    U, s, Vt = np.linalg.svd(X - m, full_matrices=False)
+    return m, Vt, s ** 2 / (len(X) - 1)
+
+def reconstruct(X, k):
+    m, V, _ = pca_fit(X)
+    Z = (X - m) @ V[:k].T
+    return Z @ V[:k] + m
+
+def whiten(X, k):
+    m, V, var = pca_fit(X)
+    return (X - m) @ V[:k].T / np.sqrt(var[:k])
+`,
+        tests: [
+          { name: "sklearn", code: `import numpy as np
+from sklearn.decomposition import PCA
+rng = np.random.default_rng(0)
+X = rng.normal(size=(100, 4)) @ rng.normal(size=(4, 4))
+m, V, var = pca_fit(X)
+ref = PCA().fit(X)
+assert np.allclose(var, ref.explained_variance_) and np.allclose(np.abs(np.sum(V * ref.components_, 1)), 1), 'Same variances; same components up to sign.'` },
+          { name: "error", code: `import numpy as np
+rng = np.random.default_rng(1)
+X = rng.normal(size=(60, 5)) * [5, 3, 1, 0.5, 0.1]
+m, V, var = pca_fit(X)
+for k in range(6):
+    err = np.sum((X - reconstruct(X, k)) ** 2)
+    assert abs(err - (len(X) - 1) * var[k:].sum()) < 1e-8, 'Reconstruction error is the discarded variance.'` },
+          { name: "whiten", code: `import numpy as np
+rng = np.random.default_rng(2)
+X = rng.normal(size=(500, 3)) @ [[2, 1, 0], [0, 1, 0], [0, 0, 0.2]]
+Z = whiten(X, 2)
+assert Z.shape == (500, 2) and np.allclose(np.cov(Z.T), np.eye(2)), 'Whitened scores have identity covariance.'` },
         ],
       },
     },

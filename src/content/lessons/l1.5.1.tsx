@@ -149,6 +149,20 @@ print(round(np.mean(preds) - 0.0, 1) > 0, np.var(preds) < 0.05)`}</Code>
       answer: { kind: "choice", options: ["True True", "True False", "False True", "False False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+preds = np.array([2.0, 4.0, 3.0, 5.0])
+truth = 3.0
+print(np.mean((preds - truth) ** 2), (preds.mean() - truth) ** 2 + preds.var())`}</Code>
+          <p>Mean squared error of four predictions of the same quantity, against bias² + variance. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1.5 1.5", "1.5 1.25", "1.25 1.5", "6.0 1.5"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -181,6 +195,64 @@ def bias_variance(degree, x0, trials, seed):
           { name: "trade-off", code: `b1, v1 = bias_variance(1, 0.5, 400, 0)
 b5, v5 = bias_variance(5, 0.5, 400, 0)
 assert b1 > b5 and v5 > v1, 'Simple models have more bias; flexible ones have more variance.'` },
+          { name: "seeded", code: `a = bias_variance(3, 0.2, 50, 1); b = bias_variance(3, 0.2, 50, 1)
+assert a == b and all(isinstance(v, float) and v >= 0 for v in a), 'Seeded, non-negative floats.'` },
+          { name: "flexible", code: `b7, v7 = bias_variance(7, 0.0, 300, 2)
+b0, v0 = bias_variance(0, 0.9, 300, 2)
+assert b7 < 0.01 and b0 > 0.1, 'A degree-7 fit is nearly unbiased; a constant is badly biased where sin(3x) is far from its average.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>decompose(preds, truth, noise_var)</C> for a matrix of predictions (rows are repeated trainings, columns are test points) and the true function values at those points: return (bias², variance, expected error), each averaged over points, where expected error = bias² + variance + noise. Then write <C>bagging_variance(preds, B, seed)</C>, which estimates the variance of an average of B models: draw, with one <C>np.random.default_rng(seed)</C>, 2000 groups of B row indices (<C>rng.integers</C>, shape (2000, B)), average each group&rsquo;s rows, and return the mean over points of the variance of those averages.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def decompose(preds, truth, noise_var):
+    return 0.0, 0.0, noise_var
+
+def bagging_variance(preds, B, seed):
+    return 0.0
+`,
+        solution: `import numpy as np
+
+def decompose(preds, truth, noise_var):
+    preds = np.asarray(preds, float)
+    b2 = float(np.mean((preds.mean(0) - truth) ** 2))
+    v = float(np.mean(preds.var(0)))
+    return b2, v, b2 + v + noise_var
+
+def bagging_variance(preds, B, seed):
+    rng = np.random.default_rng(seed)
+    idx = rng.integers(0, len(preds), (2000, B))
+    avg = np.asarray(preds, float)[idx].mean(1)
+    return float(np.mean(avg.var(0)))
+`,
+        tests: [
+          { name: "values", code: `import numpy as np
+b2, v, e = decompose(np.array([[2.0, 0.0], [4.0, 2.0]]), np.array([3.0, 0.0]), 0.5)
+assert b2 == (0 + 1) / 2 and v == 1 and e == 2, 'Point 1 is unbiased with variance 1; point 2 has bias 1 and variance 1.'` },
+          { name: "monte carlo", code: `import numpy as np
+rng = np.random.default_rng(0)
+truth = np.sin(np.linspace(0, 3, 20)); preds = truth + 0.3 + rng.normal(0, 0.5, (5000, 20))
+b2, v, e = decompose(preds, truth, 0.1)
+assert abs(b2 - 0.09) < 0.005 and abs(v - 0.25) < 0.01 and abs(e - (b2 + v + 0.1)) < 1e-12` },
+          { name: "bagging", code: `import numpy as np
+rng = np.random.default_rng(1)
+preds = rng.normal(0, 1, (3000, 10))
+v1, v10 = bagging_variance(preds, 1, 0), bagging_variance(preds, 10, 0)
+assert abs(v1 - 1) < 0.1 and abs(v10 - 0.1) < 0.02, 'Averaging B independent models divides the variance by B.'
+same = np.tile(rng.normal(0, 1, (1, 10)), (3000, 1)) + rng.normal(0, 0.01, (3000, 10))
+assert bagging_variance(same, 10, 0) < 1e-3, 'Identical models gain nothing from averaging.'` },
         ],
       },
     },

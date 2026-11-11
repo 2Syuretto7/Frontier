@@ -146,6 +146,20 @@ print(df.groupby("len")["correct"].mean().round(2).to_dict())`}</Code>
       answer: { kind: "choice", options: ["{'long': 0.33, 'short': 1.0}", "{'short': 1.0, 'long': 0.33}", "{'long': 0.67, 'short': 1.0}", "{'long': 0.33, 'short': 0.5}"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import pandas as pd
+df = pd.DataFrame({"len": [3, 12, 7, 15, 2], "correct": [1, 0, 1, 0, 1]})
+df["bucket"] = pd.cut(df["len"], [0, 5, 10, 20])
+print(df.groupby("bucket", observed=True)["correct"].mean().tolist())`}</Code>
+          <p>Accuracy by input-length bucket. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[1.0, 1.0, 0.0]", "[1.0, 0.5, 0.0]", "[0.5, 1.0, 0.0]", "[1.0, 1.0, 0.5]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -169,6 +183,62 @@ print(df.groupby("len")["correct"].mean().round(2).to_dict())`}</Code>
           { name: "slices", code: `import pandas as pd
 df = pd.DataFrame({'lang': ['en'] * 10 + ['hi'] * 6 + ['ta'] * 2, 'correct': [1] * 9 + [0] + [1, 0, 0, 1, 0, 0] + [0, 0]})
 assert worst_slices(df, 'lang', 2) == [('hi', 2 / 6, 6), ('en', 0.9, 10)], 'Ignore slices too small to trust, like ta with 2 rows.'` },
+          { name: "all", code: `import pandas as pd
+df = pd.DataFrame({'g': ['a'] * 5 + ['b'] * 4 + ['c'] * 7, 'correct': [1, 1, 0, 1, 1] + [0] * 4 + [1] * 7})
+out = worst_slices(df, 'g', 10)
+assert out == [('a', 0.8, 5), ('c', 1.0, 7)] and isinstance(out[0][1], float) and isinstance(out[0][2], int), 'Exactly 5 rows is enough; 4 is not.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>top_confusions(y, p, top)</C>, the most frequent (true, predicted) pairs among the mistakes, as a list of ((true, predicted), count) sorted by count then by pair. Then write <C>error_rates_wilson(df, by)</C> for a DataFrame with a 0/1 column <C>correct</C>: for each group, return (error rate, low, high) in a dict, where the 95% Wilson interval for k errors in n rows with p̂ = k/n and z = 1.96 is (p̂ + z²/2n ± z√(p̂(1 − p̂)/n + z²/4n²))/(1 + z²/n).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def top_confusions(y, p, top):
+    return []
+
+def error_rates_wilson(df, by):
+    return {}
+`,
+        solution: `import numpy as np
+
+from collections import Counter
+
+def top_confusions(y, p, top):
+    c = Counter((a, b) for a, b in zip(y, p) if a != b)
+    return sorted(c.items(), key=lambda t: (-t[1], t[0]))[:top]
+
+def error_rates_wilson(df, by):
+    out = {}
+    z = 1.96
+    for g, sub in df.groupby(by):
+        n = len(sub); k = int((sub['correct'] == 0).sum()); ph = k / n
+        mid = ph + z * z / (2 * n)
+        half = z * np.sqrt(ph * (1 - ph) / n + z * z / (4 * n * n))
+        out[g] = (ph, (mid - half) / (1 + z * z / n), (mid + half) / (1 + z * z / n))
+    return out
+`,
+        tests: [
+          { name: "pairs", code: `y = ['cat', 'dog', 'cat', 'bird', 'dog', 'cat', 'bird']
+p = ['dog', 'cat', 'dog', 'bird', 'cat', 'cat', 'cat']
+assert top_confusions(y, p, 2) == [(('cat', 'dog'), 2), (('dog', 'cat'), 2)] and top_confusions(y, p, 9)[-1] == (('bird', 'cat'), 1), 'Count only mistakes; break ties by pair.'` },
+          { name: "wilson", code: `import pandas as pd
+from scipy.stats import binomtest
+df = pd.DataFrame({'g': ['a'] * 20 + ['b'] * 5, 'correct': [1] * 17 + [0] * 3 + [0] * 5})
+r = error_rates_wilson(df, 'g')
+ci = binomtest(3, 20).proportion_ci(0.95, method='wilson'); lo, hi = ci.low, ci.high
+assert abs(r['a'][0] - 0.15) < 1e-12 and abs(r['a'][1] - lo) < 1e-3 and abs(r['a'][2] - hi) < 1e-3, 'Agree with scipy.'
+assert r['b'][0] == 1 and r['b'][2] <= 1 + 1e-12 and r['b'][1] < 0.6, 'Even 5 errors out of 5 leaves a wide interval.'` },
         ],
       },
     },

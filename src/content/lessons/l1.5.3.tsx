@@ -159,6 +159,22 @@ print(int((Lasso(alpha=0.1).fit(X, y).coef_ == 0).sum()), int((Ridge(alpha=10).f
       answer: { kind: "choice", options: ["4 0", "0 4", "4 4", "5 0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+X = np.array([[1.0, 0], [0, 1], [1, 1]])
+y = np.array([1.0, 2.0, 3.0])
+for lam in (0.0, 1.0):
+    w = np.linalg.solve(X.T @ X + lam * np.eye(2), X.T @ y)
+    print(lam, np.round(w, 4))`}</Code>
+          <p>Ridge regression with and without a penalty. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.0 [1. 2.]\n1.0 [0.875 1.375]", "0.0 [1. 2.]\n1.0 [0.5 1. ]", "0.0 [1. 2.]\n1.0 [1.25 1.75]", "0.0 [1.5 2. ]\n1.0 [0.875 1.375]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -190,6 +206,67 @@ assert np.allclose(ridge(X, y, 5.0), Ridge(alpha=5.0, fit_intercept=False).fit(X
 rng = np.random.default_rng(1)
 X = rng.normal(size=(50, 4)); y = X @ [1, 2, 0, -1]
 assert np.linalg.norm(ridge(X, y, 100.0)) < np.linalg.norm(ridge(X, y, 0.1)), 'More regularisation, smaller weights.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>soft_threshold(z, g)</C> = sign(z)·max(|z| − g, 0), and <C>lasso_cd(X, y, lam, iters)</C>, the lasso without intercept, minimising (1/2n)‖y − Xw‖² + λ‖w‖₁ by cyclic coordinate descent from w = 0: for each j, with the partial residual r = y − Xw + xⱼwⱼ, set wⱼ = S(xⱼ·r/n, λ)/(‖xⱼ‖²/n). Then write <C>lambda_max(X, y)</C> = max |Xᵀy|/n, the smallest λ at which every coefficient is 0.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def soft_threshold(z, g):
+    return z
+
+def lasso_cd(X, y, lam, iters):
+    return np.linalg.lstsq(X, y, rcond=None)[0]
+
+def lambda_max(X, y):
+    return 0.0
+`,
+        solution: `import numpy as np
+
+def soft_threshold(z, g):
+    return np.sign(z) * np.maximum(np.abs(z) - g, 0.0)
+
+def lasso_cd(X, y, lam, iters):
+    n, p = X.shape
+    w = np.zeros(p)
+    sq = (X ** 2).sum(0) / n
+    for _ in range(iters):
+        for j in range(p):
+            r = y - X @ w + X[:, j] * w[j]
+            w[j] = soft_threshold(X[:, j] @ r / n, lam) / sq[j]
+    return w
+
+def lambda_max(X, y):
+    return float(np.max(np.abs(X.T @ y)) / len(X))
+`,
+        tests: [
+          { name: "soft", code: `import numpy as np
+assert np.allclose(soft_threshold(np.array([-3.0, -0.5, 0.0, 0.5, 3.0]), 1.0), [-2, 0, 0, 0, 2])` },
+          { name: "sklearn", code: `import numpy as np
+from sklearn.linear_model import Lasso
+rng = np.random.default_rng(0)
+X = rng.normal(size=(100, 8)); y = X @ [3, 0, 0, -2, 0, 0, 0, 1.0] + rng.normal(0, 0.5, 100)
+for lam in (0.01, 0.1, 0.5):
+    ref = Lasso(alpha=lam, fit_intercept=False, tol=1e-12, max_iter=100000).fit(X, y).coef_
+    assert np.allclose(lasso_cd(X, y, lam, 500), ref, atol=1e-6), f'Agree with scikit-learn at λ = {lam}.'` },
+          { name: "sparse", code: `import numpy as np
+rng = np.random.default_rng(1)
+X = rng.normal(size=(200, 20)); y = X[:, 3] * 2 - X[:, 7] + rng.normal(0, 0.3, 200)
+w = lasso_cd(X, y, 0.1, 200)
+assert set(np.nonzero(np.abs(w) > 1e-10)[0].tolist()) == {3, 7}, 'The lasso keeps only the real features.'
+L = lambda_max(X, y)
+assert np.all(lasso_cd(X, y, L, 50) == 0) and np.any(lasso_cd(X, y, 0.99 * L, 50) != 0), 'λ_max is exactly where the first coefficient appears.'` },
         ],
       },
     },

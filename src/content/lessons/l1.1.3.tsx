@@ -133,6 +133,22 @@ for deg in (1, 7):
       answer: { kind: "numeric", value: 0.0, tolerance: 0.001 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+x = np.linspace(-1, 1, 6)
+y = np.array([0.1, -0.2, 0.05, 0.0, 0.15, -0.1])
+for d in (0, 5):
+    c = np.polyfit(x, y, d)
+    print(d, round(float(np.mean((np.polyval(c, x) - y) ** 2)), 6))`}</Code>
+          <p>A constant and a degree-5 polynomial fitted to six noisy points. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0 0.014167\n5 0.0", "0 0.085\n5 0.0", "0 0.014167\n5 0.014167", "0 0.0\n5 0.014167"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -173,6 +189,65 @@ x = rng.uniform(-1, 1, 40); y = x ** 3 - x + rng.normal(0, 0.1, 40)
 res = poly_errors(x[:20], y[:20], x[20:], y[20:], [1, 3, 15])
 trs = [r[1] for r in res]
 assert trs[0] > trs[1] > trs[2] and best(res) == 3, 'Training error always falls with degree; test error is lowest at the true degree.'` },
+          { name: "best", code: `assert best([(1, 0.5, 0.3), (2, 0.1, 0.2), (3, 0.0, 0.4)]) == 2, 'Choose by test error, not training error.'` },
+          { name: "line", code: `import numpy as np
+x = np.linspace(0, 1, 10); y = 2 * x + 1
+res = poly_errors(x, y, x + 2, 2 * (x + 2) + 1, [1])
+assert res[0][0] == 1 and res[0][1] < 1e-20 and res[0][2] < 1e-18, 'A line fits a line exactly, even outside the training range.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Early stopping fights overfitting. Write <C>early_stopping(X_tr, y_tr, X_val, y_val, lr, max_steps, patience)</C>: run gradient descent on the training mean squared error of a linear model without intercept from w = 0 (gradient (2/n)Xᵀ(Xw − y)); after each step compute the validation MSE; remember the weights with the lowest validation MSE so far; stop once <C>patience</C> consecutive steps fail to improve on it, or after <C>max_steps</C>. Return (best_w, best_step, val_curve), with steps counted from 1 and val_curve the list of validation errors computed.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def early_stopping(X_tr, y_tr, X_val, y_val, lr, max_steps, patience):
+    return np.zeros(X_tr.shape[1]), 0, []
+`,
+        solution: `import numpy as np
+
+def early_stopping(X_tr, y_tr, X_val, y_val, lr, max_steps, patience):
+    n = len(X_tr)
+    w = np.zeros(X_tr.shape[1])
+    best_w, best_step, best = w.copy(), 0, np.inf
+    curve, since = [], 0
+    for step in range(1, max_steps + 1):
+        w = w - lr * (2 / n) * X_tr.T @ (X_tr @ w - y_tr)
+        v = float(np.mean((X_val @ w - y_val) ** 2))
+        curve.append(v)
+        if v < best:
+            best, best_w, best_step, since = v, w.copy(), step, 0
+        else:
+            since += 1
+            if since >= patience:
+                break
+    return best_w, best_step, curve
+`,
+        tests: [
+          { name: "clean", code: `import numpy as np
+rng = np.random.default_rng(0)
+X = rng.normal(size=(100, 3)); y = X @ [1.0, -1.0, 2.0]
+w, step, curve = early_stopping(X[:60], y[:60], X[60:], y[60:], 0.1, 80, 10)
+assert np.allclose(w, [1, -1, 2], atol=1e-4) and len(curve) == 80 and step == 80, 'Without noise, validation error keeps falling.'` },
+          { name: "stops", code: `import numpy as np
+rng = np.random.default_rng(1)
+X = rng.normal(size=(60, 40)); y = X[:, 0] + rng.normal(0, 1, 60)
+w, step, curve = early_stopping(X[:30], y[:30], X[30:], y[30:], 0.01, 5000, 25)
+assert len(curve) == step + 25 and curve[step - 1] == min(curve) and step < 5000, 'Stop patience steps after the best validation error.'
+assert np.mean((X[30:] @ w - y[30:]) ** 2) == min(curve), 'Return the best weights, not the last.'` },
+          { name: "one step", code: `import numpy as np
+w, step, curve = early_stopping(np.array([[1.0]]), np.array([2.0]), np.array([[1.0]]), np.array([2.0]), 0.25, 1, 5)
+assert np.allclose(w, [1.0]) and step == 1 and np.allclose(curve, [1.0])` },
         ],
       },
     },

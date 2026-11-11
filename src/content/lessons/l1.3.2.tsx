@@ -136,6 +136,21 @@ print([w[0] * x + w[1] * y + b > 0 for x, y in pts])`}</Code>
       answer: { kind: "choice", options: ["[True, False, False]", "[True, False, True]", "[False, True, False]", "[True, True, False]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+w, b = np.array([2.0, -1.0]), 1.0
+P = np.array([[0, 0], [1, 4], [-1, 0], [0, 1]])
+s = P @ w + b
+print(s, (s > 0).astype(int), np.round(np.abs(s) / np.linalg.norm(w), 3))`}</Code>
+          <p>Scores, predicted classes and distances to the line 2x − y + 1 = 0. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[ 1. -1. -1.  0.] [1 0 0 0] [0.447 0.447 0.447 0.   ]", "[ 1. -1. -1.  0.] [1 0 0 1] [0.447 0.447 0.447 0.   ]", "[ 1.  3. -1.  0.] [1 1 0 0] [0.447 1.342 0.447 0.   ]", "[ 1. -1. -1.  0.] [1 0 0 0] [1. 1. 1. 0.]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -164,6 +179,62 @@ def margin(w, b, point):
         tests: [
           { name: "boundary", code: `assert abs(boundary_y([1, -1], 0, 3) - 3) < 1e-9 and abs(boundary_y([2, 1], -4, 1) - 2) < 1e-9, 'Solve w₀x + w₁y + b = 0 for y.'` },
           { name: "distance", code: `assert abs(margin([3, 4], -5, (3, 4)) - 4) < 1e-9, 'Divide the score by the length of w.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>margin_stats(w, b, X, y)</C> for labels ±1: the signed distances yᵢ(w·xᵢ + b)/‖w‖, returned as (smallest signed distance, number of misclassified points (distance ≤ 0), index of the point with the smallest distance). Then write <C>max_margin_1d(xs, ys)</C> for points on a line with labels ±1: if every −1 lies below every +1, return the threshold halfway between the largest −1 and the smallest +1 and the margin (half the gap); if every +1 lies below every −1, do the same with the classes swapped; otherwise return <C>None</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def margin_stats(w, b, X, y):
+    return 0.0, 0, 0
+
+def max_margin_1d(xs, ys):
+    return None
+`,
+        solution: `import numpy as np
+
+def margin_stats(w, b, X, y):
+    d = np.asarray(y) * (np.asarray(X) @ np.asarray(w) + b) / np.linalg.norm(w)
+    return float(d.min()), int((d <= 0).sum()), int(d.argmin())
+
+def max_margin_1d(xs, ys):
+    xs, ys = np.asarray(xs, float), np.asarray(ys)
+    neg, pos = xs[ys == -1], xs[ys == 1]
+    if neg.max() < pos.min():
+        return ((neg.max() + pos.min()) / 2, (pos.min() - neg.max()) / 2)
+    if pos.max() < neg.min():
+        return ((pos.max() + neg.min()) / 2, (neg.min() - pos.max()) / 2)
+    return None
+`,
+        tests: [
+          { name: "stats", code: `import numpy as np
+X = np.array([[0, 0], [1, 4], [-1, 0], [3, 0]]); y = np.array([1, -1, 1, 1])
+m, k, i = margin_stats([2.0, -1.0], 1.0, X, y)
+assert abs(m + 1 / np.sqrt(5)) < 1e-12 and k == 1 and i == 2, 'The point (−1, 0) is on the wrong side by 1/√5.'` },
+          { name: "scale", code: `import numpy as np
+rng = np.random.default_rng(0)
+X = rng.normal(size=(30, 3)); y = np.sign(X[:, 0] + 0.1)
+a = margin_stats([1.0, 0, 0], 0.1, X, y); b = margin_stats([7.0, 0, 0], 0.7, X, y)
+assert np.allclose(a[0], b[0]) and a[1:] == b[1:], 'Rescaling w and b does not change the geometry.'` },
+          { name: "1d", code: `assert max_margin_1d([1, 2, 6, 9], [-1, -1, 1, 1]) == (4.0, 2.0) and max_margin_1d([1, 2, 6], [1, -1, -1]) == (1.5, 0.5) and max_margin_1d([1, 2, 3], [-1, 1, -1]) is None, 'Halfway across the gap.'` },
+          { name: "svm", code: `import numpy as np
+from sklearn.svm import SVC
+rng = np.random.default_rng(1)
+xs = np.r_[rng.uniform(0, 3, 20), rng.uniform(5, 9, 20)]; ys = np.r_[-np.ones(20), np.ones(20)]
+t, m = max_margin_1d(xs, ys)
+s = SVC(kernel='linear', C=1e6).fit(xs[:, None], ys)
+assert abs(-s.intercept_[0] / s.coef_[0, 0] - t) < 1e-3 and abs(1 / s.coef_[0, 0] - m) < 1e-3, 'The same answer as a hard-margin SVM.'` },
         ],
       },
     },

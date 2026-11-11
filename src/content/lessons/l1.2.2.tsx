@@ -138,6 +138,20 @@ print(round(w[1]), abs(w[2]) < 5)`}</Code>
       answer: { kind: "choice", options: ["2 True", "2 False", "0 True", "60 False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+x1 = np.array([1.0, 2, 3, 4])
+X = np.column_stack([np.ones(4), x1, 2 * x1])
+print(np.linalg.matrix_rank(X), np.linalg.matrix_rank(X[:, :2]))`}</Code>
+          <p>A feature and an exact copy of it in other units. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2 2", "3 2", "3 3", "2 1"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -169,6 +183,74 @@ X = np.column_stack([rng.normal(0, 1, 200), rng.normal(0, 1000, 200)])
 y = X[:, 0] + X[:, 1] / 1000
 c = standardised_coefs(X, y)
 assert np.allclose(c, [X[:, 0].std(), X[:, 1].std() / 1000], rtol=1e-6) and abs(c[0] / c[1] - 1) < 0.2, 'After standardising, both features have similar effects.'` },
+          { name: "rescale", code: `import numpy as np
+rng = np.random.default_rng(2)
+X = rng.normal(size=(100, 3)); y = X @ [1.0, 2.0, 3.0] + rng.normal(size=100)
+c1 = standardised_coefs(X, y)
+c2 = standardised_coefs(X * [1, 1000, 0.01] + [5, -7, 100], y)
+assert np.allclose(c1, c2), 'Changing units or adding constants does not change standardised coefficients.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Coefficients come with uncertainty. Write <C>ols_inference(X, y)</C> for least squares with an intercept: return (w, se, t), where w are the coefficients (intercept first), σ̂² = RSS/(n − p − 1) with p the number of features, se are the square roots of the diagonal of σ̂²(AᵀA)⁻¹, and t = w/se. Then write <C>conf_int(X, y, level)</C>, the intervals w ± q·se as an array of shape (p + 1, 2), with q the <C>scipy.stats.t</C> quantile at (1 + level)/2 on n − p − 1 degrees of freedom.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def ols_inference(X, y):
+    p = X.shape[1] + 1
+    return np.zeros(p), np.ones(p), np.zeros(p)
+
+def conf_int(X, y, level):
+    return np.zeros((X.shape[1] + 1, 2))
+`,
+        solution: `import numpy as np
+
+from scipy import stats
+
+def ols_inference(X, y):
+    A = np.column_stack([np.ones(len(X)), X])
+    n, k = A.shape
+    w = np.linalg.lstsq(A, y, rcond=None)[0]
+    s2 = np.sum((y - A @ w) ** 2) / (n - k)
+    se = np.sqrt(s2 * np.diag(np.linalg.inv(A.T @ A)))
+    return w, se, w / se
+
+def conf_int(X, y, level):
+    w, se, _ = ols_inference(X, y)
+    q = stats.t.ppf((1 + level) / 2, len(X) - X.shape[1] - 1)
+    return np.column_stack([w - q * se, w + q * se])
+`,
+        tests: [
+          { name: "linregress", code: `import numpy as np
+from scipy.stats import linregress
+rng = np.random.default_rng(0)
+x = rng.normal(size=30); y = 2 + 3 * x + rng.normal(size=30)
+w, se, t = ols_inference(x[:, None], y)
+r = linregress(x, y)
+assert np.allclose(w, [r.intercept, r.slope]) and np.allclose(se, [r.intercept_stderr, r.stderr]), 'Agree with scipy for one feature.'` },
+          { name: "coverage", code: `import numpy as np
+rng = np.random.default_rng(1)
+hits = 0
+for _ in range(400):
+    X = rng.normal(size=(20, 2)); y = 1 + X @ [0.5, -2.0] + rng.normal(size=20)
+    ci = conf_int(X, y, 0.9)
+    hits += ci[2, 0] <= -2.0 <= ci[2, 1]
+assert 0.86 < hits / 400 < 0.94, f'A 90% interval should contain the truth about 90% of the time; got {hits / 400}.'` },
+          { name: "noise feature", code: `import numpy as np
+rng = np.random.default_rng(2)
+X = rng.normal(size=(200, 2)); y = 3 * X[:, 0] + rng.normal(size=200)
+w, se, t = ols_inference(X, y)
+assert abs(t[1]) > 20 and abs(t[2]) < 3.5, 'A real effect has a large t; pure noise does not.'` },
         ],
       },
     },
