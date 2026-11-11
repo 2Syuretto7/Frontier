@@ -157,7 +157,7 @@ print(len(power), len(list(product(A, A))))`}</Code>
 S = 'abc'
 P = [set(c) for r in range(4) for c in combinations(S, r)]
 print(len(P), len(list(product(S, repeat=2))), len(list(product(S, 'xy'))))`}</Code>
-          <p>The power set of {a, b, c} and some Cartesian products. What does this print?</p>
+          <p>The power set of {'{a, b, c}'} and some Cartesian products. What does this print?</p>
         </>
       ),
       answer: { kind: "choice", options: ["8 9 6", "7 9 6", "8 6 6", "8 9 5"], correct: [0] },

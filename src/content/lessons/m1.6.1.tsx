@@ -147,7 +147,7 @@ print(all((a, a) in R for a in A), any((a, b) in R and (b, a) in R and a != b fo
           <Code>{`A = range(1, 5)
 R = {(a, b) for a in A for b in A if a % b == 0}
 print(len(R), all((a, a) in R for a in A), any((a, b) in R and (b, a) in R and a != b for a in A for b in A))`}</Code>
-          <p>The relation 'b divides a' on {1, 2, 3, 4}. How many pairs, is it reflexive, and is it ever symmetric between different elements?</p>
+          <p>The relation 'b divides a' on {'{1, 2, 3, 4}'}. How many pairs, is it reflexive, and is it ever symmetric between different elements?</p>
         </>
       ),
       answer: { kind: "choice", options: ["8 True False", "8 True True", "7 True False", "10 False False"], correct: [0] },
