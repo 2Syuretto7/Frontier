@@ -174,6 +174,23 @@ print(round((f(x + h) - f(x - h)) / (2 * h), 4), round(2 * x * math.cos(x ** 2),
       answer: { kind: "numeric", value: 1.0806, tolerance: 0.0002 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+g = lambda x: x * x
+f = math.sin
+df_g = lambda x: math.cos(g(x)) * 2 * x
+h = 1e-6
+num = (f(g(1.5 + h)) - f(g(1.5 - h))) / (2 * h)
+print(round(df_g(1.5), 6), abs(num - df_g(1.5)) < 1e-8)`}</Code>
+          <p>The chain rule for sin(x²) at 1.5, checked numerically. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["-1.884521 True", "0.778073 True", "-1.884521 False", "-0.628174 True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -198,6 +215,65 @@ assert abs(d(1.0) - 2 * math.cos(1.0)) < 1e-12, 'Evaluate the outer derivative a
           { name: "exp of linear", code: `import math
 d = compose_derivative(math.exp, math.exp, lambda x: 3 * x, lambda x: 3)
 assert abs(d(0.5) - 3 * math.exp(1.5)) < 1e-9, 'd/dx e^(3x) = 3e^(3x).'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Backpropagation is the chain rule run backwards. Write <C>backprop(xs, fs, dfs)</C> for a chain of one-variable functions y = fₖ(…f₂(f₁(x))…): run forward storing each intermediate value, then go backwards multiplying local derivatives, and return (y, dy/dx). Then write <C>grad_check(fs, dfs, x)</C>, the relative error |analytic − numeric| / max(1, |numeric|) against a central difference with h = 10⁻⁶.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def backprop(x, fs, dfs):
+    y = x
+    for f in fs:
+        y = f(y)
+    return (y, 1.0)
+
+def grad_check(fs, dfs, x):
+    return 0.0
+`,
+        solution: `def backprop(x, fs, dfs):
+    vals = [x]
+    for f in fs:
+        vals.append(f(vals[-1]))
+    g = 1.0
+    for k in range(len(fs) - 1, -1, -1):
+        g *= dfs[k](vals[k])
+    return (vals[-1], g)
+
+def grad_check(fs, dfs, x):
+    def run(t):
+        for f in fs:
+            t = f(t)
+        return t
+    h = 1e-6
+    num = (run(x + h) - run(x - h)) / (2 * h)
+    ana = backprop(x, fs, dfs)[1]
+    return abs(ana - num) / max(1.0, abs(num))
+`,
+        tests: [
+          { name: "chain", code: `import math
+y, d = backprop(1.5, [lambda x: x * x, math.sin], [lambda x: 2 * x, math.cos])
+assert abs(y - math.sin(2.25)) < 1e-15 and abs(d - math.cos(2.25) * 3) < 1e-12, 'Multiply the local derivatives at the stored values.'` },
+          { name: "deep", code: `import math
+fs = [math.tanh] * 20
+dfs = [lambda x: 1 - math.tanh(x) ** 2] * 20
+y, d = backprop(0.3, fs, dfs)
+assert grad_check(fs, dfs, 0.3) < 1e-7 and 0 < d < 1, 'Twenty tanh layers.'` },
+          { name: "sigmoid net", code: `import math
+s = lambda x: 1 / (1 + math.exp(-x))
+ds = lambda x: s(x) * (1 - s(x))
+fs = [lambda x: 3 * x - 1, s, lambda x: x * x, math.log]
+dfs = [lambda x: 3, ds, lambda x: 2 * x, lambda x: 1 / x]
+assert grad_check(fs, dfs, 0.4) < 1e-7, 'Agree with the numerical slope.'` },
+          { name: "detects", code: `assert grad_check([lambda x: x ** 3], [lambda x: 2 * x * x], 1.0) > 0.1, 'A wrong derivative must show up.'` },
         ],
       },
     },

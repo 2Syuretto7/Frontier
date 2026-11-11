@@ -253,6 +253,21 @@ print(round(1 / math.exp(y), 4))`}</Code>
       answer: { kind: "numeric", value: 0.2 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+f = lambda x: x ** 3 + x
+f_inv_slope = lambda y, x: 1 / (3 * x * x + 1)
+x0 = 2.0
+print(f(x0), f_inv_slope(f(x0), x0), round(1 / math.cos(0.5) ** 2, 4))`}</Code>
+          <p>The inverse of x³ + x at y = 10 has slope 1/f′(2). What does this print (the last value is the derivative of tan at 0.5)?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["10.0 0.07692307692307693 1.2984", "10.0 13.0 1.2984", "10.0 0.07692307692307693 0.7702", "8.0 0.07692307692307693 1.2984"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -274,6 +289,63 @@ print(round(1 / math.exp(y), 4))`}</Code>
           { name: "square root", code: `assert abs(inverse_slope(lambda x: 2 * x, lambda y: y ** 0.5, 9) - 1 / 6) < 1e-12, 'The slope of √y at 9 is 1/6: evaluate f′ at f⁻¹(y) = 3.'` },
           { name: "arctan", code: `import math
 assert abs(inverse_slope(lambda x: 1 / math.cos(x) ** 2, math.atan, 1.0) - 0.5) < 1e-12, 'The slope of arctan at 1 is 1/2.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>implicit_slope(F, Fx, Fy, x, y)</C>, the slope dy/dx = −F_x/F_y of a curve F(x, y) = 0 at a point on it, raising <C>ValueError</C> if |F_y| &lt; 1e−12 (a vertical tangent). Then write <C>trace_curve(F, Fx, Fy, x0, y0, x1, steps)</C>, which follows the curve from (x0, y0) to x = x1 using an Euler step with the implicit slope followed by two Newton corrections in y (y ← y − F/F_y) at each step, and returns the final y.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def implicit_slope(F, Fx, Fy, x, y):
+    return Fx(x, y) / Fy(x, y)
+
+def trace_curve(F, Fx, Fy, x0, y0, x1, steps):
+    return y0
+`,
+        solution: `def implicit_slope(F, Fx, Fy, x, y):
+    fy = Fy(x, y)
+    if abs(fy) < 1e-12:
+        raise ValueError('vertical tangent')
+    return -Fx(x, y) / fy
+
+def trace_curve(F, Fx, Fy, x0, y0, x1, steps):
+    h = (x1 - x0) / steps
+    x, y = x0, y0
+    for _ in range(steps):
+        y += h * implicit_slope(F, Fx, Fy, x, y)
+        x += h
+        for _ in range(2):
+            y -= F(x, y) / Fy(x, y)
+    return y
+`,
+        tests: [
+          { name: "circle", code: `F = lambda x, y: x * x + y * y - 25
+Fx = lambda x, y: 2 * x
+Fy = lambda x, y: 2 * y
+assert abs(implicit_slope(F, Fx, Fy, 3, 4) + 0.75) < 1e-12, 'On x² + y² = 25 at (3, 4) the slope is −3/4.'` },
+          { name: "vertical", code: `F = lambda x, y: x * x + y * y - 25
+try:
+    implicit_slope(F, lambda x, y: 2 * x, lambda x, y: 2 * y, 5, 0)
+    ok = False
+except ValueError:
+    ok = True
+assert ok, 'At (5, 0) the tangent is vertical.'` },
+          { name: "trace", code: `F = lambda x, y: x * x + y * y - 25
+y = trace_curve(F, lambda x, y: 2 * x, lambda x, y: 2 * y, 0, 5, 4, 40)
+assert abs(y - 3) < 1e-10, 'Follow the circle from (0, 5) to x = 4.'` },
+          { name: "folium", code: `F = lambda x, y: x ** 3 + y ** 3 - 6 * x * y
+Fx = lambda x, y: 3 * x * x - 6 * y
+Fy = lambda x, y: 3 * y * y - 6 * x
+y = trace_curve(F, Fx, Fy, 3, 3, 2.5, 50)
+assert abs(F(2.5, y)) < 1e-9 and y > 2.5, 'Stay on the folium of Descartes.'` },
         ],
       },
     },

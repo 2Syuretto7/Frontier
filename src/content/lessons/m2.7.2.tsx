@@ -137,6 +137,25 @@ print(sp.apart(1 / (x ** 2 - 1)))`}</Code>
       answer: { kind: "choice", options: ["−1/(2(x + 1)) + 1/(2(x − 1))", "1/(x − 1) + 1/(x + 1)", "1/(x − 1) − 1/(x + 1)", "1/(2x)"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`roots = [1, 2, 4]
+A = []
+for i, r in enumerate(roots):
+    prod = 1
+    for j, s in enumerate(roots):
+        if j != i:
+            prod *= r - s
+    A.append(1 / prod)
+print(A, abs(sum(A)) < 1e-12)`}</Code>
+          <p>Partial fraction coefficients of 1/((x − 1)(x − 2)(x − 4)), and whether they sum to zero. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0.3333333333333333, -0.5, 0.16666666666666666] True", "[0.3333333333333333, -0.5, 0.16666666666666666] False", "[3.0, -2.0, 6.0] False", "[0.3333333333333333, 0.5, 0.16666666666666666] False"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -165,6 +184,68 @@ print(sp.apart(1 / (x ** 2 - 1)))`}</Code>
           { name: "two", code: `assert [round(a, 12) for a in coefficients([1, -1])] == [0.5, -0.5], '1/(x² − 1) = (1/2)/(x − 1) − (1/2)/(x + 1).'` },
           { name: "check at a point", code: `rs = [0, 1, 3]; A = coefficients(rs); x = 7.0
 assert abs(sum(a / (x - r) for a, r in zip(A, rs)) - 1 / ((x - 0) * (x - 1) * (x - 3))) < 1e-12, 'The decomposition must agree with the original at any x.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>partial_fractions(num, roots)</C> for a proper rational function num(x)/∏(x − rᵢ) with distinct real roots and a numerator given as coefficients highest power first: return the list of coefficients Aᵢ = num(rᵢ)/∏ⱼ≠ᵢ(rᵢ − rⱼ). Then write <C>integrate_rational(num, roots, a, b)</C>, the integral over an interval [a, b] containing none of the roots, as Σ Aᵢ log|(b − rᵢ)/(a − rᵢ)|.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def partial_fractions(num, roots):
+    return [1.0] * len(roots)
+
+def integrate_rational(num, roots, a, b):
+    return 0.0
+`,
+        solution: `import math
+
+def ev(p, x):
+    r = 0.0
+    for c in p:
+        r = r * x + c
+    return r
+
+def partial_fractions(num, roots):
+    out = []
+    for i, r in enumerate(roots):
+        d = 1.0
+        for j, s in enumerate(roots):
+            if j != i:
+                d *= r - s
+        out.append(ev(num, r) / d)
+    return out
+
+def integrate_rational(num, roots, a, b):
+    A = partial_fractions(num, roots)
+    return sum(c * math.log(abs((b - r) / (a - r))) for c, r in zip(A, roots))
+`,
+        tests: [
+          { name: "simple", code: `A = partial_fractions([1], [1, 2, 4])
+assert all(abs(a - b) < 1e-15 for a, b in zip(A, [1 / 3, -1 / 2, 1 / 6])), '1/((x − 1)(x − 2)(x − 4)).'` },
+          { name: "numerator", code: `A = partial_fractions([2, 3], [-1, 1])
+assert all(abs(a - b) < 1e-15 for a, b in zip(A, [-0.5, 2.5])), '(2x + 3)/((x + 1)(x − 1)).'` },
+          { name: "identity", code: `import random
+random.seed(1)
+num, roots = [3, -1, 2], [0.5, -2, 3, 7]
+A = partial_fractions(num, roots)
+for _ in range(20):
+    x = random.uniform(-5, 10)
+    if min(abs(x - r) for r in roots) > 0.1:
+        lhs = (3 * x * x - x + 2) / ((x - 0.5) * (x + 2) * (x - 3) * (x - 7))
+        assert abs(lhs - sum(a / (x - r) for a, r in zip(A, roots))) < 1e-9 * max(1, abs(lhs))` },
+          { name: "integral", code: `import math
+v = integrate_rational([1], [-1, 1], 2, 5)
+assert abs(v - 0.5 * math.log((4 / 6) / (1 / 3))) < 1e-15, 'The integral of 1/(x² − 1) on [2, 5].'` },
         ],
       },
     },

@@ -150,6 +150,23 @@ print(round(a, 12))`}</Code>
       answer: { kind: "numeric", value: 1.414213562373, tolerance: 1e-12 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`a = lambda n: (1 + 1 / n) ** n
+eps = 1e-3
+import math
+n = 1
+while abs(a(n) - math.e) >= eps:
+    n += 1
+print(n)`}</Code>
+          <p>How far must one go before (1 + 1/n)ⁿ is within 0.001 of e?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 1359 },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -173,6 +190,56 @@ print(round(a, 12))`}</Code>
         tests: [
           { name: "reciprocal", code: `assert first_index(lambda n: 1 / n, 0, 0.01) == 101, '1/n < 0.01 first holds at n = 101.'` },
           { name: "geometric", code: `assert first_index(lambda n: 0.5 ** n, 0, 1e-3) == 10, '2⁻ⁿ < 0.001 first holds at n = 10.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>aitken(xs)</C>, Aitken&rsquo;s Δ² acceleration of a sequence: from each three consecutive terms produce xₙ − (xₙ₊₁ − xₙ)²/(xₙ₊₂ − 2xₙ₊₁ + xₙ), skipping a term (producing nothing) when the denominator is exactly 0. Then write <C>leibniz_pi(n, times)</C>, which takes the first n partial sums of 4(1 − 1/3 + 1/5 − …) and applies <C>aitken</C> <C>times</C> times, returning the last value. Three rounds on 20 terms should give π to about 9 digits, where the raw partial sum is wrong in the second decimal place.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def aitken(xs):
+    return list(xs)
+
+def leibniz_pi(n, times):
+    s, out = 0.0, []
+    for k in range(n):
+        s += 4 * (-1) ** k / (2 * k + 1)
+        out.append(s)
+    return out[-1]
+`,
+        solution: `def aitken(xs):
+    out = []
+    for i in range(len(xs) - 2):
+        d = xs[i + 2] - 2 * xs[i + 1] + xs[i]
+        if d != 0:
+            out.append(xs[i] - (xs[i + 1] - xs[i]) ** 2 / d)
+    return out
+
+def leibniz_pi(n, times):
+    s, out = 0.0, []
+    for k in range(n):
+        s += 4 * (-1) ** k / (2 * k + 1)
+        out.append(s)
+    for _ in range(times):
+        out = aitken(out)
+    return out[-1]
+`,
+        tests: [
+          { name: "geometric", code: `xs = [1 - 0.5 ** k for k in range(10)]
+assert all(abs(v - 1) < 1e-12 for v in aitken(xs)), 'Aitken is exact for a geometric error.'` },
+          { name: "length", code: `assert len(aitken([1, 2, 4, 8, 16])) == 3 and aitken([1, 1, 1]) == [], 'Each output needs three inputs; skip a zero denominator.'` },
+          { name: "pi", code: `import math
+raw = leibniz_pi(20, 0)
+acc = leibniz_pi(20, 3)
+assert abs(raw - math.pi) > 0.04 and abs(acc - math.pi) < 1e-8, f'Accelerated value {acc!r}.'` },
         ],
       },
     },

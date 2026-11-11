@@ -183,6 +183,19 @@ for d in [0.1, 0.01, 0.001]:
       answer: { kind: "choice", options: ["They grow, so f is not uniformly continuous on (0, 1)", "They shrink to 0", "They stay the same", "They are all 0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = lambda x: 1 / x
+for a in (1.0, 0.1, 0.01):
+    print(round(f(a) - f(a + 0.001), 3))`}</Code>
+          <p>The same gap 0.001 in x near different points for 1/x. What is the last value printed?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["9.091", "0.001", "0.099", "90.909"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -204,6 +217,55 @@ for d in [0.1, 0.01, 0.001]:
         tests: [
           { name: "square", code: `assert abs(worst_gap(lambda x: x * x, 0, 1, 0.01) - (1 - 0.99 ** 2)) < 1e-9, 'For x² on [0, 1] the worst gap is at the right end.'` },
           { name: "reciprocal", code: `assert worst_gap(lambda x: 1 / x, 0.001, 1, 0.001) > 400, 'For 1/x near 0 the worst gap is large.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>needed_delta(f, a, b, eps, n)</C>, the largest δ from the list 2⁻¹, 2⁻², …, 2⁻⁴⁰ such that |f(x) − f(y)| &lt; ε for every pair of grid points x, y of [a, b] (n + 1 points) with |x − y| ≤ δ, or <C>None</C>. Use the fact that the worst gap within distance δ can be found with sliding windows. Then write <C>uniform_profile(f, a, b, eps)</C>, the list of <C>needed_delta</C> values on [a + 2⁻ᵏ, b] for k = 1 … 4 with n = 4000, which stays bounded away from 0 for a uniformly continuous f and shrinks for one like 1/x on (0, 1].
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def needed_delta(f, a, b, eps, n):
+    return 0.5
+
+def uniform_profile(f, a, b, eps):
+    return [0.5] * 4
+`,
+        solution: `def worst(ys, w):
+    best = 0.0
+    for i in range(len(ys)):
+        seg = ys[i:i + w + 1]
+        best = max(best, max(seg) - min(seg))
+    return best
+
+def needed_delta(f, a, b, eps, n):
+    h = (b - a) / n
+    ys = [f(a + i * h) for i in range(n + 1)]
+    for k in range(1, 41):
+        d = 2.0 ** -k
+        w = int(d / h + 1e-9)
+        if worst(ys, w) < eps:
+            return d
+    return None
+
+def uniform_profile(f, a, b, eps):
+    return [needed_delta(f, a + 2.0 ** -k, b, eps, 4000) for k in range(1, 5)]
+`,
+        tests: [
+          { name: "linear", code: `d = needed_delta(lambda x: 10 * x, 0, 1, 0.5, 1000)
+assert d == 2 ** -5, '10δ < 0.5 needs δ < 0.05; the largest power of ½ is 1/32.'` },
+          { name: "sine", code: `import math
+prof = uniform_profile(math.sin, 0, 3, 0.1)
+assert len(set(prof)) == 1, 'sin is uniformly continuous: δ does not depend on the interval.'` },
+          { name: "reciprocal", code: `prof = uniform_profile(lambda x: 1 / x, 0, 1, 0.1)
+assert all(a > b for a, b in zip(prof, prof[1:])), '1/x needs smaller and smaller δ near 0.'` },
         ],
       },
     },

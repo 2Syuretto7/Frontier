@@ -151,6 +151,19 @@ export const lesson: LessonContent = {
       answer: { kind: "numeric", value: 1.0 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+for p in (0.5, 2):
+    print(p, [round((b ** (1 - p) - 1) / (1 - p), 3) for b in (10, 1e4, 1e8)])`}</Code>
+          <p>The integral of 1/xᵖ from 1 to b for growing b: which p converges? What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.5 [4.325, 198.0, 19998.0] / 2 [0.9, 1.0, 1.0]", "0.5 [4.325, 198.0, 19998.0] / 2 [0.9, 0.9999, 1.0]", "0.5 [0.9, 1.0, 1.0] / 2 [4.325, 198.0, 19998.0]", "0.5 [4.325, 198.0, 19998.0] / 2 [1.1, 1.0, 1.0]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -178,6 +191,61 @@ def converges(p):
           { name: "square", code: `assert abs(tail(2, 1000) - 0.999) < 1e-12, 'The integral of 1/x² from 1 to 1000 is 1 − 1/1000.'` },
           { name: "root", code: `assert abs(tail(0.5, 100) - 18) < 1e-9, 'The integral of 1/√x from 1 to 100 is 2(10 − 1) = 18.'` },
           { name: "which", code: `assert converges(2) and converges(1.01) and not converges(0.5), 'It converges exactly when p > 1.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>improper(f, a, tol)</C>, the integral of f over [a, ∞) for a decaying f, computed by integrating over the blocks [a, a + 1], [a + 1, a + 3], [a + 3, a + 7], … (doubling lengths) with Simpson&rsquo;s rule on 1000 strips each, stopping when a block contributes less than tol in absolute value, and returning (value, number of blocks). Also write <C>diverges(f, a)</C>, which returns <C>True</C> if 30 blocks have not met the stopping rule for tol = 1e−10.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def improper(f, a, tol):
+    return (0.0, 0)
+
+def diverges(f, a):
+    return False
+`,
+        solution: `def simpson(f, a, b, n=1000):
+    h = (b - a) / n
+    s = f(a) + f(b)
+    for i in range(1, n):
+        s += (4 if i % 2 else 2) * f(a + i * h)
+    return s * h / 3
+
+def improper(f, a, tol, max_blocks=60):
+    total, lo, length, k = 0.0, a, 1.0, 0
+    while k < max_blocks:
+        piece = simpson(f, lo, lo + length)
+        total += piece
+        k += 1
+        if abs(piece) < tol:
+            break
+        lo += length
+        length *= 2
+    return (total, k)
+
+def diverges(f, a):
+    v, k = improper(f, a, 1e-10, 30)
+    return k >= 30
+`,
+        tests: [
+          { name: "power", code: `v, k = improper(lambda x: 1 / x ** 2, 1, 1e-12)
+assert abs(v - 1) < 1e-9, 'The integral of 1/x² from 1 is 1.'` },
+          { name: "exp", code: `import math
+v, k = improper(lambda x: math.exp(-x), 0, 1e-14)
+assert abs(v - 1) < 1e-12 and k < 10, 'e⁻ˣ decays fast: few blocks.'` },
+          { name: "gauss", code: `import math
+v, k = improper(lambda x: math.exp(-x * x / 2), 0, 1e-15)
+assert abs(v - math.sqrt(math.pi / 2)) < 1e-12, 'Half the Gaussian integral.'` },
+          { name: "diverges", code: `import math
+assert diverges(lambda x: 1 / x, 1) and diverges(lambda x: 1 / math.sqrt(x), 1) and not diverges(lambda x: x ** -3, 1), '1/x has a divergent tail; 1/x³ does not.'` },
         ],
       },
     },

@@ -133,6 +133,21 @@ print(sorted(['n^3', '2^n', 'n log n', 'n!'], key=lambda s: {'n^3': 3 * math.log
       answer: { kind: "choice", options: ["n log n, n^3, 2^n, n!", "n log n, 2^n, n^3, n!", "n^3, n log n, 2^n, n!", "n log n, n^3, n!, 2^n"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+n = 2
+while 2 ** n <= n ** 10:
+    n += 1
+print(n, 2 ** n > n ** 10)`}</Code>
+          <p>Exponentials beat polynomials eventually. For n ≥ 2, when does 2ⁿ first exceed n¹⁰ (after the early region)?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 59 },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -159,6 +174,43 @@ print(sorted(['n^3', '2^n', 'n log n', 'n!'], key=lambda s: {'n^3': 3 * math.log
 assert crossover(lambda n: n * math.log(2), lambda n: 3 * math.log(n)) == 10, '2ⁿ > n³ for every n ≥ 10.'` },
           { name: "exp beats tenth power", code: `import math
 assert crossover(lambda n: n * math.log(2), lambda n: 10 * math.log(n)) == 59, '2ⁿ overtakes n¹⁰ for good at 59.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>sort_by_growth(fs)</C>, which orders a dict of named functions from slowest to fastest growing by comparing log f(n) at n = 10¹⁰⁰, where each function is given by its logarithm <C>logf(n)</C> (so huge values never appear), and <C>dominates(logf, logg, n0)</C>, which checks that log f − log g is increasing and positive at n = n0, 2n0, 4n0, …, 2²⁰n0. The tests sort functions such as n!, 2ⁿ, n¹⁰⁰, n^(log n), (log n)¹⁰⁰⁰ and n log n.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def sort_by_growth(fs):
+    return sorted(fs)
+
+def dominates(logf, logg, n0):
+    return True
+`,
+        solution: `def sort_by_growth(fs):
+    N = 10.0 ** 100
+    return sorted(fs, key=lambda name: fs[name](N))
+
+def dominates(logf, logg, n0):
+    ds = [logf(n0 * 2.0 ** k) - logg(n0 * 2.0 ** k) for k in range(21)]
+    return all(d > 0 for d in ds) and all(b > a for a, b in zip(ds, ds[1:]))
+`,
+        tests: [
+          { name: "sort", code: `import math
+fs = {'n!': lambda n: n * math.log(n) - n, '2^n': lambda n: n * math.log(2), 'n^100': lambda n: 100 * math.log(n), 'n^log n': lambda n: math.log(n) ** 2, '(log n)^1000': lambda n: 1000 * math.log(math.log(n)), 'n log n': lambda n: math.log(n) + math.log(math.log(n))}
+assert sort_by_growth(fs) == ['n log n', '(log n)^1000', 'n^100', 'n^log n', '2^n', 'n!'], 'Compare logarithms far out.'` },
+          { name: "dominates", code: `import math
+assert dominates(lambda n: n * math.log(2), lambda n: 10 * math.log(n), 64) and not dominates(lambda n: n * math.log(2), lambda n: 10 * math.log(n), 2), '2ⁿ beats n¹⁰ from n = 59 on, not from n = 2.'` },
+          { name: "equal rate", code: `import math
+assert not dominates(lambda n: math.log(3) + 2 * math.log(n), lambda n: 2 * math.log(n), 10), '3n² does not dominate n² in growth.'` },
         ],
       },
     },

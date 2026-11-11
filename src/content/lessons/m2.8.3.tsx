@@ -148,6 +148,19 @@ print(round(s, 4), round(math.log(2), 4))`}</Code>
       answer: { kind: "numeric", value: 0.6931, tolerance: 0.0002 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+terms = [(-1) ** (k + 1) / k for k in range(1, 100001)]
+print(round(sum(terms), 5), round(math.log(2), 5), round(sum(abs(t) for t in terms), 2))`}</Code>
+          <p>The alternating harmonic series converges to log 2, but the series of absolute values does not converge. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.69314 0.69315 12.09", "0.69315 0.69315 12.09", "0.69314 0.69315 0.69", "0.69314 0.69315 inf"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -176,6 +189,57 @@ print(round(s, 4), round(math.log(2), 4))`}</Code>
         tests: [
           { name: "one and a half", code: `assert abs(rearranged(1.5, 200000) - 1.5) < 1e-3, 'The same terms can be rearranged to sum to 1.5.'` },
           { name: "zero", code: `assert abs(rearranged(0.0, 200000)) < 1e-3, 'Or to 0.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>pringsheim(p, q, N)</C>: rearrange the alternating harmonic series by taking p positive terms (1, 1/3, 1/5, …) then q negative terms (−1/2, −1/4, …), repeatedly, and return the sum of the first N full blocks. Its limit is log 2 + ½ log(p/q). Then write <C>alternating_bound(a, n)</C>, the partial sum Sₙ = Σₖ₌₁ⁿ (−1)ᵏ⁺¹aₖ of an alternating series with decreasing terms together with the guaranteed error bound aₙ₊₁, as a pair.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def pringsheim(p, q, N):
+    return math.log(2)
+
+def alternating_bound(a, n):
+    return (0.0, 1.0)
+`,
+        solution: `import math
+
+def pringsheim(p, q, N):
+    s, odd, even = 0.0, 1, 2
+    for _ in range(N):
+        for _ in range(p):
+            s += 1 / odd
+            odd += 2
+        for _ in range(q):
+            s -= 1 / even
+            even += 2
+    return s
+
+def alternating_bound(a, n):
+    s = math.fsum((-1) ** (k + 1) * a(k) for k in range(1, n + 1))
+    return (s, a(n + 1))
+`,
+        tests: [
+          { name: "usual", code: `import math
+assert abs(pringsheim(1, 1, 100000) - math.log(2)) < 1e-5, 'One of each gives log 2.'` },
+          { name: "rearranged", code: `import math
+assert abs(pringsheim(2, 1, 100000) - 1.5 * math.log(2)) < 1e-5 and abs(pringsheim(1, 4, 50000) - 0) < 1e-4, 'Two positives then one negative gives (3/2) log 2; one then four gives 0.'` },
+          { name: "bound", code: `import math
+s, b = alternating_bound(lambda k: 1 / k, 50)
+assert abs(s - math.log(2)) <= b and b == 1 / 51, 'The error is at most the next term.'` },
+          { name: "bound tight", code: `import math
+s, b = alternating_bound(lambda k: 1 / math.factorial(k - 1), 10)
+assert abs(s - math.exp(-1)) <= b < 1e-6, 'Σ(−1)ᵏ⁺¹/(k − 1)! = 1/e.'` },
         ],
       },
     },

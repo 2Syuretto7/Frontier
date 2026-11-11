@@ -145,6 +145,21 @@ print(abs(math.sin(x) - approx) < x ** 7 / math.factorial(7))`}</Code>
       answer: { kind: "choice", options: ["True", "False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+x = 0.1
+p3 = x - x ** 3 / 6
+err = abs(math.sin(x) - p3)
+print(f"{err:.2e}", f"{x ** 5 / 120:.2e}")`}</Code>
+          <p>The error of the cubic Taylor polynomial of sin at 0.1 and the Lagrange bound x⁵/5!. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["8.33e-08 8.33e-08", "8.33e-08 1.67e-04", "1.67e-04 8.33e-08", "0.00e+00 8.33e-08"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -179,6 +194,66 @@ def degree_needed(x, tol):
           { name: "value", code: `assert abs(taylor_exp(1, 10) - math.e) < 1e-7, 'Degree 10 at x = 1 is within 10⁻⁷ of e.'` },
           { name: "degree", code: `assert degree_needed(1, 1e-6) == 9, 'Degree 9 is the first to get e within 10⁻⁶.'` },
           { name: "further out", code: `assert degree_needed(5, 1e-6) > degree_needed(1, 1e-6), 'Further from 0 needs more terms.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>taylor_coeffs(derivs, a)</C>, the Taylor coefficients f⁽ᵏ⁾(a)/k! from a list of derivative functions, and <C>taylor_eval(coeffs, a, x)</C>. Then write <C>degree_for(f_bound, a, x, tol)</C>, the smallest n for which the Lagrange bound M_{"{n+1}"}|x − a|ⁿ⁺¹/(n + 1)! is below tol, where <C>f_bound(k)</C> gives a bound on |f⁽ᵏ⁾| between a and x. Check in the tests that the actual error is within the bound.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def taylor_coeffs(derivs, a):
+    return [d(a) for d in derivs]
+
+def taylor_eval(coeffs, a, x):
+    return coeffs[0]
+
+def degree_for(f_bound, a, x, tol):
+    return 1
+`,
+        solution: `import math
+
+def taylor_coeffs(derivs, a):
+    return [d(a) / math.factorial(k) for k, d in enumerate(derivs)]
+
+def taylor_eval(coeffs, a, x):
+    r = 0.0
+    for c in reversed(coeffs):
+        r = r * (x - a) + c
+    return r
+
+def degree_for(f_bound, a, x, tol):
+    n = 0
+    while f_bound(n + 1) * abs(x - a) ** (n + 1) / math.factorial(n + 1) >= tol:
+        n += 1
+    return n
+`,
+        tests: [
+          { name: "sin", code: `import math
+ds = [math.sin, math.cos, lambda x: -math.sin(x), lambda x: -math.cos(x)] * 3
+c = taylor_coeffs(ds, 0)
+assert abs(taylor_eval(c, 0, 0.5) - math.sin(0.5)) < 1e-11, 'Degree 11 at 0.5.'` },
+          { name: "shifted", code: `import math
+ds = [math.exp] * 15
+c = taylor_coeffs(ds, 1.0)
+assert abs(taylor_eval(c, 1.0, 1.5) - math.exp(1.5)) < 1e-14, 'Expand eˣ about 1.'` },
+          { name: "degree", code: `import math
+n = degree_for(lambda k: math.e, 0, 1, 1e-10)
+assert n == 13 and math.e / math.factorial(14) < 1e-10 <= math.e / math.factorial(13), 'For eˣ on [0, 1] use M = e.'` },
+          { name: "within", code: `import math
+n = degree_for(lambda k: 1, 0, 2.0, 1e-8)
+ds = [math.cos, lambda x: -math.sin(x), lambda x: -math.cos(x), math.sin] * 10
+c = taylor_coeffs(ds[:n + 1], 0)
+assert abs(taylor_eval(c, 0, 2.0) - math.cos(2.0)) < 1e-8, 'The actual error is within the bound.'` },
         ],
       },
     },

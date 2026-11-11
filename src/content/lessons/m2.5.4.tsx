@@ -156,6 +156,20 @@ print(round(x, 10))`}</Code>
       answer: { kind: "numeric", value: 1.4142135624, tolerance: 1e-10 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`x = 1.0
+for _ in range(4):
+    x = x - (x * x - 2) / (2 * x)
+    print(f"{x:.12f}")`}</Code>
+          <p>Newton's method for √2 from 1. How many correct decimal places does the third iterate have (√2 = 1.414213562373…)?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 5, tolerance: 0 },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -181,6 +195,57 @@ print(round(x, 10))`}</Code>
           { name: "fast", code: `assert abs(newton(lambda x: x * x - 2, lambda x: 2 * x, 1.0, 5) - 2 ** 0.5) < 1e-12, 'Five steps should already give twelve correct digits.'` },
           { name: "cos", code: `import math
 assert abs(newton(lambda x: math.cos(x) - x, lambda x: -math.sin(x) - 1, 1.0) - 0.7390851332151607) < 1e-12, 'The fixed point of cos is about 0.739.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>newton_order(f, df, x0, root, steps)</C>, which runs Newton&rsquo;s method and returns the list of errors |xₖ − root| (starting with x0&rsquo;s), stopping early once an error is below 1e−15 or is exactly 0. Then write <C>estimated_order(errors)</C>, the convergence order estimated from the last three usable errors e₀, e₁, e₂ (all positive) as log(e₂/e₁)/log(e₁/e₀). Newton is quadratic at a simple root and only linear at a double root, and the tests check both.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def newton_order(f, df, x0, root, steps):
+    return [abs(x0 - root)]
+
+def estimated_order(errors):
+    return 1.0
+`,
+        solution: `import math
+
+def newton_order(f, df, x0, root, steps):
+    x = x0
+    errs = [abs(x - root)]
+    for _ in range(steps):
+        if errs[-1] < 1e-15:
+            break
+        d = df(x)
+        if d == 0:
+            break
+        x = x - f(x) / d
+        errs.append(abs(x - root))
+    return errs
+
+def estimated_order(errors):
+    e = [v for v in errors if v > 0]
+    e0, e1, e2 = e[-3], e[-2], e[-1]
+    return math.log(e2 / e1) / math.log(e1 / e0)
+`,
+        tests: [
+          { name: "errors", code: `errs = newton_order(lambda x: x * x - 2, lambda x: 2 * x, 1.0, 2 ** 0.5, 10)
+assert len(errs) <= 7 and errs[-1] < 1e-15 and errs[1] < errs[0], 'The error collapses within a few steps.'` },
+          { name: "quadratic", code: `from fractions import Fraction
+errs = newton_order(lambda x: x ** 3 - 2 * x - 5, lambda x: 3 * x * x - 2, 3.0, 2.0945514815423265, 4)
+q = estimated_order(errs[:4])
+assert 1.7 < q < 2.3, f'Order about 2 at a simple root, got {q:.2f}.'` },
+          { name: "linear", code: `errs = newton_order(lambda x: (x - 1) ** 2, lambda x: 2 * (x - 1), 2.0, 1.0, 30)
+q = estimated_order(errs[:12])
+assert abs(q - 1) < 0.05 and abs(errs[5] / errs[4] - 0.5) < 1e-12, 'At a double root each step only halves the error.'` },
         ],
       },
     },

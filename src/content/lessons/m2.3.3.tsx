@@ -177,6 +177,20 @@ print(round(x[np.argmax(f)], 3), round(f.max(), 3))`}</Code>
       answer: { kind: "numeric", value: 4.0, tolerance: 0.001 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = lambda x: x ** 3 - 3 * x
+xs = [-2 + k / 100 for k in range(401)]
+ys = [f(x) for x in xs]
+print(round(max(ys), 6), round(min(ys), 6), xs[ys.index(max(ys))])`}</Code>
+          <p>x³ − 3x on [−2, 2]: maximum and minimum, and where the first maximum is found. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2.0 -2.0 -1.0", "2.0 -2.0 2.0", "2.0 -2.0 1.0", "8.0 -8.0 2.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -205,6 +219,69 @@ print(round(x[np.argmax(f)], 3), round(f.max(), 3))`}</Code>
 assert abs(x - 1) < 1e-3 and abs(y - 4) < 1e-6, 'On [0, 3] the maximum 4 is at x = 1.'` },
           { name: "endpoint", code: `x, y = grid_max(lambda x: x, 0, 5)
 assert x == 5, 'The maximum can sit at an endpoint.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>golden_max(f, a, b, tol)</C>, which maximises a unimodal f on [a, b] by golden-section search, keeping two interior points at fractions 1 − 1/φ and 1/φ and reusing one function value per step, until the bracket is shorter than tol; return the midpoint. Then write <C>global_max(f, a, b, n)</C>, which finds the largest of the local maxima on a grid of n steps (refining each with <C>golden_max</C>) and also compares with the endpoints, returning (x, f(x)).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def golden_max(f, a, b, tol):
+    return (a + b) / 2
+
+def global_max(f, a, b, n):
+    return (a, f(a))
+`,
+        solution: `import math
+
+PHI = (1 + math.sqrt(5)) / 2
+
+def golden_max(f, a, b, tol):
+    c, d = b - (b - a) / PHI, a + (b - a) / PHI
+    fc, fd = f(c), f(d)
+    while b - a > tol:
+        if fc > fd:
+            b, d, fd = d, c, fc
+            c = b - (b - a) / PHI
+            fc = f(c)
+        else:
+            a, c, fc = c, d, fd
+            d = a + (b - a) / PHI
+            fd = f(d)
+    return (a + b) / 2
+
+def global_max(f, a, b, n):
+    h = (b - a) / n
+    xs = [a + i * h for i in range(n + 1)]
+    best = max([(f(a), a), (f(b), b)])
+    for i in range(1, n):
+        if f(xs[i]) >= f(xs[i - 1]) and f(xs[i]) >= f(xs[i + 1]):
+            x = golden_max(f, xs[i - 1], xs[i + 1], 1e-10)
+            best = max(best, (f(x), x))
+    return (best[1], best[0])
+`,
+        tests: [
+          { name: "parabola", code: `x = golden_max(lambda x: -(x - 1.3) ** 2, 0, 5, 1e-10)
+assert abs(x - 1.3) < 1e-8, 'The maximum is at 1.3.'` },
+          { name: "calls", code: `calls = [0]
+def f(x):
+    calls[0] += 1
+    return -abs(x - 2)
+golden_max(f, 0, 10, 1e-6)
+assert calls[0] <= 40, f'Golden section reuses a value each step; you used {calls[0]} evaluations.'` },
+          { name: "global", code: `import math
+x, v = global_max(lambda x: math.sin(x) + math.sin(3 * x) / 3, 0, 6, 60)
+assert abs(v - max(math.sin(t / 10000) + math.sin(3 * t / 10000) / 3 for t in range(60001))) < 1e-7, 'Find the highest of the peaks.'` },
+          { name: "endpoint", code: `x, v = global_max(lambda x: x, 0, 3, 10)
+assert x == 3 and v == 3, 'The maximum can be at an end.'` },
         ],
       },
     },

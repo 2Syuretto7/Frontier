@@ -310,6 +310,18 @@ print(a == b, abs(a - b) < 1e-12)`}</Code>
       answer: { kind: "choice", options: ["False True", "True True", "False False", "True False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`a = 1e16
+print(a + 1 - a, (a - a) + 1, 0.1 * 3 == 0.3, 2.0 ** 53 + 1 == 2.0 ** 53)`}</Code>
+          <p>Floating-point numbers break the field axioms. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.0 1.0 False True", "1.0 1.0 False True", "0.0 1.0 True True", "0.0 1.0 False False"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -331,6 +343,69 @@ print(a == b, abs(a - b) < 1e-12)`}</Code>
           { name: "small and large", code: `assert assoc_gap(1e16, -1e16, 1.0) == 1.0, 'Try a = 10¹⁶, b = −10¹⁶, c = 1 by hand: the two groupings differ by 1.'` },
           { name: "tenths", code: `assert assoc_gap(0.1, 0.2, 0.3) > 0, 'Even 0.1, 0.2 and 0.3 give a tiny non-zero gap.'` },
           { name: "integers", code: `assert assoc_gap(1.0, 2.0, 3.0) == 0.0, 'Small whole numbers are exact in floating point.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Floating-point addition is not associative, so the order of summation matters. Write <C>naive_sum(xs)</C>, a plain left-to-right loop, and <C>kahan_sum(xs)</C>, compensated summation: keep a correction c, and for each x set y = x − c, t = s + y, c = (t − s) − y, s = t. Then write <C>pairwise_sum(xs)</C>, which splits the list in half recursively (sum directly below 8 items). Do not use <C>sum</C> or <C>math.fsum</C> in them.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def naive_sum(xs):
+    s = 0.0
+    for x in xs:
+        s += x
+    return s
+
+def kahan_sum(xs):
+    return naive_sum(xs)
+
+def pairwise_sum(xs):
+    return naive_sum(xs)
+`,
+        solution: `def naive_sum(xs):
+    s = 0.0
+    for x in xs:
+        s += x
+    return s
+
+def kahan_sum(xs):
+    s, c = 0.0, 0.0
+    for x in xs:
+        y = x - c
+        t = s + y
+        c = (t - s) - y
+        s = t
+    return s
+
+def pairwise_sum(xs):
+    if len(xs) < 8:
+        return naive_sum(xs)
+    m = len(xs) // 2
+    return pairwise_sum(xs[:m]) + pairwise_sum(xs[m:])
+`,
+        tests: [
+          { name: "tenths", code: `import math
+xs = [0.1] * 1000000
+exact = math.fsum(xs)
+assert abs(kahan_sum(xs) - exact) < 1e-12 and abs(naive_sum(xs) - exact) > 1e-7, 'Kahan recovers the lost low-order bits.'` },
+          { name: "pairwise", code: `import math
+xs = [0.1] * 1000000
+assert abs(pairwise_sum(xs) - math.fsum(xs)) < 1e-9, 'Pairwise summation keeps errors small too.'` },
+          { name: "mixed", code: `import math, random
+random.seed(4)
+xs = [random.uniform(-1, 1) * 10 ** random.randint(-8, 8) for _ in range(20000)]
+assert abs(kahan_sum(xs) - math.fsum(xs)) < 1e-6, 'Kahan is accurate for mixed magnitudes.'` },
+          { name: "no builtins", code: `import inspect
+src = inspect.getsource(kahan_sum) + inspect.getsource(pairwise_sum)
+assert 'sum(' not in src.replace('naive_sum(', '').replace('pairwise_sum(', '').replace('kahan_sum(', ''), 'Write the loops yourself.'` },
         ],
       },
     },

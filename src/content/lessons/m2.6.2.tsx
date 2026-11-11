@@ -196,6 +196,21 @@ print(round(np.trapezoid(x, x), 3))`}</Code>
       answer: { kind: "numeric", value: 1.5, tolerance: 0.002 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+def mid(f, a, b, n=1000):
+    h = (b - a) / n
+    return h * sum(f(a + (i + 0.5) * h) for i in range(n))
+print(round(mid(math.sin, 0, 2 * math.pi), 9), round(mid(math.sin, 0, math.pi), 6), round(mid(math.sin, math.pi, 0), 6))`}</Code>
+          <p>Signed area of sin over a full period, a half period, and with reversed limits. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["-0.0 2.000001 -2.000001", "0.0 2.0 2.0", "4.0 2.000001 -2.000001", "-0.0 2.000001 2.000001"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -218,6 +233,61 @@ print(round(np.trapezoid(x, x), 3))`}</Code>
         tests: [
           { name: "linear", code: `assert abs(signed_area(lambda x: x, -1, 2) - 1.5) < 1e-8, 'The area under y = x from −1 to 2 is 2 − 1/2 = 1.5.'` },
           { name: "reversed", code: `assert abs(signed_area(lambda x: x * x, 1, 0) + 1 / 3) < 1e-8, 'Integrating from 1 to 0 gives minus the integral from 0 to 1.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>adaptive(f, a, b, tol)</C>, adaptive Simpson integration: compute Simpson&rsquo;s rule S on [a, b] and S₁ + S₂ on the halves; if |S₁ + S₂ − S| &lt; 15·tol return S₁ + S₂ + (S₁ + S₂ − S)/15, otherwise recurse on each half with tol/2. Reuse function values so each point is evaluated once, and cap the recursion depth at 50. Also return the number of evaluations: the result is a pair (value, evaluations).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def adaptive(f, a, b, tol):
+    m = (a + b) / 2
+    return ((b - a) / 6 * (f(a) + 4 * f(m) + f(b)), 3)
+`,
+        solution: `def adaptive(f, a, b, tol):
+    count = [0]
+    def F(x):
+        count[0] += 1
+        return f(x)
+    def simpson(a, fa, m, fm, b, fb):
+        return (b - a) / 6 * (fa + 4 * fm + fb)
+    def rec(a, fa, m, fm, b, fb, S, tol, depth):
+        lm, rm = (a + m) / 2, (m + b) / 2
+        flm, frm = F(lm), F(rm)
+        S1 = simpson(a, fa, lm, flm, m, fm)
+        S2 = simpson(m, fm, rm, frm, b, fb)
+        if depth >= 50 or abs(S1 + S2 - S) < 15 * tol:
+            return S1 + S2 + (S1 + S2 - S) / 15
+        return rec(a, fa, lm, flm, m, fm, S1, tol / 2, depth + 1) + rec(m, fm, rm, frm, b, fb, S2, tol / 2, depth + 1)
+    fa, fb = F(a), F(b)
+    m = (a + b) / 2
+    fm = F(m)
+    S = simpson(a, fa, m, fm, b, fb)
+    return (rec(a, fa, m, fm, b, fb, S, tol, 0), count[0])
+`,
+        tests: [
+          { name: "sin", code: `import math
+v, n = adaptive(math.sin, 0, math.pi, 1e-10)
+assert abs(v - 2) < 1e-9, 'The integral of sin over [0, π] is 2.'` },
+          { name: "peak", code: `import math
+v, n = adaptive(lambda x: 1 / (1e-4 + x * x), -1, 1, 1e-8)
+exact = 2 * 100 * math.atan(100)
+assert abs(v - exact) < 1e-5 * exact and n < 8000, f'Refine only near the peak; you used {n} evaluations.'` },
+          { name: "efficient", code: `import math
+v1, n1 = adaptive(math.exp, 0, 1, 1e-6)
+v2, n2 = adaptive(math.exp, 0, 1, 1e-12)
+assert abs(v2 - (math.e - 1)) < 1e-11 and n1 < n2 < 600, 'Smooth functions need few points.'` },
+          { name: "reuse", code: `calls = []
+v, n = adaptive(lambda x: calls.append(x) or x ** 4, 0, 2, 1e-9)
+assert len(calls) == n and len(set(calls)) == len(calls) and abs(v - 6.4) < 1e-8, 'Evaluate each point once.'` },
         ],
       },
     },

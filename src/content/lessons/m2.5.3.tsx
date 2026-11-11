@@ -164,6 +164,76 @@ export const lesson: LessonContent = {
       answer: { kind: "numeric", value: 32000 / 27, tolerance: 0.0001 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+best = min(((x, 2 * x + 50 / x) for x in [k / 10 for k in range(10, 101)]), key=lambda t: t[1])
+print(best, math.sqrt(25))`}</Code>
+          <p>Minimising 2x + 50/x over x = 1.0, 1.1, …, 10.0. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["(5.0, 20.0) 5.0", "(5.0, 20.0) 25", "(25.0, 52.0) 5.0", "(4.9, 20.004081632653) 5.0"], correct: [0] },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>gradient_descent(grad, x0, lr, steps)</C> for a function of several variables (x as a list), and <C>minimise_with_backtracking(f, grad, x0, steps)</C>, gradient descent where each step starts with step size 1 and halves it until the Armijo condition f(x − t∇f) ≤ f(x) − (t/2)‖∇f‖² holds. Return the final point as a list. The tests minimise a badly scaled quadratic and the Rosenbrock function.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def gradient_descent(grad, x0, lr, steps):
+    return list(x0)
+
+def minimise_with_backtracking(f, grad, x0, steps):
+    return list(x0)
+`,
+        solution: `def gradient_descent(grad, x0, lr, steps):
+    x = list(x0)
+    for _ in range(steps):
+        g = grad(x)
+        x = [a - lr * b for a, b in zip(x, g)]
+    return x
+
+def minimise_with_backtracking(f, grad, x0, steps):
+    x = list(x0)
+    for _ in range(steps):
+        g = grad(x)
+        gg = sum(v * v for v in g)
+        if gg == 0:
+            break
+        t, fx = 1.0, f(x)
+        while True:
+            y = [a - t * b for a, b in zip(x, g)]
+            if f(y) <= fx - t / 2 * gg or t < 1e-20:
+                break
+            t /= 2
+        x = y
+    return x
+`,
+        tests: [
+          { name: "plain", code: `x = gradient_descent(lambda v: [2 * (v[0] - 3), 4 * (v[1] + 1)], [0, 0], 0.1, 200)
+assert abs(x[0] - 3) < 1e-9 and abs(x[1] + 1) < 1e-9, 'Minimum at (3, −1).'` },
+          { name: "diverges", code: `x = gradient_descent(lambda v: [2 * v[0]], [1.0], 1.1, 50)
+assert abs(x[0]) > 1e3, 'Too large a step diverges: each step multiplies by −1.2.'` },
+          { name: "scaled", code: `f = lambda v: v[0] ** 2 + 100 * v[1] ** 2
+g = lambda v: [2 * v[0], 200 * v[1]]
+x = minimise_with_backtracking(f, g, [5.0, 1.0], 2000)
+assert f(x) < 1e-10, 'Backtracking adapts the step size.'` },
+          { name: "rosenbrock", code: `f = lambda v: (1 - v[0]) ** 2 + 100 * (v[1] - v[0] ** 2) ** 2
+g = lambda v: [-2 * (1 - v[0]) - 400 * v[0] * (v[1] - v[0] ** 2), 200 * (v[1] - v[0] ** 2)]
+x = minimise_with_backtracking(f, g, [-1.2, 1.0], 20000)
+assert abs(x[0] - 1) < 1e-3 and abs(x[1] - 1) < 2e-3, f'Reach (1, 1), got {x}.'` },
+        ],
+      },
+    },
+    {
       key: "read",
       rung: "apply",
       prompt: (
@@ -205,6 +275,12 @@ print(round(x[np.argmax(area)], 2))`}</Code>
 `,
         tests: [
           { name: "answer", code: `assert abs(best_side() - 4) < 1e-9, 'Solve 2x = 128/x², that is x³ = 64.'` },
+          { name: "is a minimum", code: `x = best_side()
+A = lambda x: x * x + 128 / x
+assert A(x) <= min(A(x - 0.01), A(x + 0.01)) and abs(A(x) - 48) < 1e-9, 'The least surface area is 16 + 32 = 48.'` },
+          { name: "not hard-coded", code: `import inspect
+src = inspect.getsource(best_side)
+assert 'return 4' not in src.replace(' ', '').replace('return4', 'return 4'), 'Find the root by bisection.'` },
         ],
       },
     },

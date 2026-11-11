@@ -201,6 +201,25 @@ print(round(lo, 3))`}</Code>
       answer: { kind: "numeric", value: 1.521, tolerance: 0.0005 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = lambda x: x ** 3 - 2 * x - 5
+lo, hi = 2.0, 3.0
+for _ in range(3):
+    mid = (lo + hi) / 2
+    if f(mid) > 0:
+        hi = mid
+    else:
+        lo = mid
+print(lo, hi)`}</Code>
+          <p>Three bisection steps for x³ − 2x − 5 on [2, 3]. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2.0 2.125", "2.125 2.25", "2.0 2.25", "2.5 2.75"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -230,6 +249,71 @@ print(round(lo, 3))`}</Code>
           { name: "cube root", code: `assert abs(bisect(lambda x: x ** 3 - 2, 0, 2) - 2 ** (1 / 3)) < 1e-9, 'The root of x³ − 2 is the cube root of 2.'` },
           { name: "decreasing", code: `import math
 assert abs(bisect(lambda x: math.cos(x) - x, 0, 1) - 0.7390851332) < 1e-9, 'Handle a function that goes from positive to negative too.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>all_roots(f, a, b, n, tol)</C>, which finds every root of a continuous f on [a, b] that shows up as a sign change on a grid of n equal steps (plus grid points where f is exactly 0), refining each bracket by bisection to width tol, and returns them sorted. Then write <C>fixed_point(g, a, b)</C> for continuous g mapping [a, b] into itself: by the intermediate value theorem applied to g(x) − x, a fixed point exists; return one found by bisection to within 1e−12.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def all_roots(f, a, b, n, tol):
+    return []
+
+def fixed_point(g, a, b):
+    return a
+`,
+        solution: `def bisect(f, lo, hi, tol):
+    flo = f(lo)
+    while hi - lo > tol:
+        mid = (lo + hi) / 2
+        fm = f(mid)
+        if fm == 0:
+            return mid
+        if (fm < 0) == (flo < 0):
+            lo, flo = mid, fm
+        else:
+            hi = mid
+    return (lo + hi) / 2
+
+def all_roots(f, a, b, n, tol):
+    h = (b - a) / n
+    xs = [a + i * h for i in range(n + 1)]
+    ys = [f(x) for x in xs]
+    out = []
+    for i in range(n + 1):
+        if ys[i] == 0:
+            out.append(xs[i])
+        elif i < n and ys[i + 1] != 0 and (ys[i] < 0) != (ys[i + 1] < 0):
+            out.append(bisect(f, xs[i], xs[i + 1], tol))
+    return sorted(out)
+
+def fixed_point(g, a, b):
+    h = lambda x: g(x) - x
+    if h(a) == 0:
+        return a
+    if h(b) == 0:
+        return b
+    return bisect(h, a, b, 1e-12)
+`,
+        tests: [
+          { name: "cubic", code: `rs = all_roots(lambda x: x ** 3 - 6 * x * x + 11 * x - 6.0, 0, 4, 37, 1e-12)
+assert len(rs) == 3 and all(abs(r - t) < 1e-9 for r, t in zip(rs, [1, 2, 3])), 'Roots 1, 2 and 3.'` },
+          { name: "sine", code: `import math
+rs = all_roots(math.sin, 0.5, 20, 200, 1e-12)
+assert len(rs) == 6 and all(abs(r - k * math.pi) < 1e-9 for r, k in zip(rs, range(1, 7))), 'The zeros of sin are multiples of π.'` },
+          { name: "grid zero", code: `rs = all_roots(lambda x: x * x - 1, -2, 2, 4, 1e-12)
+assert rs == [-1.0, 1.0], 'Exact zeros on the grid count once.'` },
+          { name: "fixed", code: `import math
+x = fixed_point(math.cos, 0, 1)
+assert abs(math.cos(x) - x) < 1e-11 and abs(x - 0.7390851332) < 1e-9, 'cos x = x at the Dottie number.'` },
         ],
       },
     },

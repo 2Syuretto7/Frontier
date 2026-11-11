@@ -139,6 +139,23 @@ print(round(np.trapezoid(2 * x * np.cos(x ** 2), x), 4), round(np.sin(1), 4))`}<
       answer: { kind: "numeric", value: 0.8415, tolerance: 0.0002 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+def mid(f, a, b, n=10000):
+    h = (b - a) / n
+    return h * sum(f(a + (i + 0.5) * h) for i in range(n))
+lhs = mid(lambda x: 2 * x * math.cos(x * x), 0, 2)
+rhs = mid(math.cos, 0, 4)
+print(round(lhs, 6), round(rhs, 6), round(math.sin(4), 6))`}</Code>
+          <p>Substituting u = x² turns one integral into another. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["-0.756803 -0.756803 -0.756802", "-0.756803 -0.378401 -0.756802", "0.756803 0.756803 0.756802", "-0.756803 -0.756803 0.909297"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -161,6 +178,46 @@ print(round(np.trapezoid(2 * x * np.cos(x ** 2), x), 4), round(np.sin(1), 4))`}<
 assert abs(by_substitution(math.sin, lambda x: x * x, 0, 1) - math.sin(1)) < 1e-12, 'With u = x², the limits become g(0) = 0 and g(1) = 1.'` },
           { name: "exp", code: `import math
 assert abs(by_substitution(math.exp, lambda x: 3 * x, 0, 1) - (math.exp(3) - 1)) < 1e-9, 'Change the limits as well as the integrand.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Some integrals are hard numerically but easy after a substitution. Write <C>integrate_sub(f, a, b, phi, dphi, n)</C>, the integral of f from a to b computed as the integral of f(φ(t))·φ′(t) over [φ⁻¹(a), φ⁻¹(b)], where you are given φ, φ′ and the t-limits are passed as a pair <C>phi_limits</C> instead of b: so the signature is <C>integrate_sub(f, phi, dphi, t0, t1, n)</C>, using the midpoint rule with n strips. Use it to compute the integral of 1/√x on [0, 1] with x = t², and of 1/√(1 − x²) on [0, 1] with x = sin t, both far more accurately than the plain midpoint rule.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def integrate_sub(f, phi, dphi, t0, t1, n):
+    h = (t1 - t0) / n
+    return h * sum(f(t0 + (i + 0.5) * h) for i in range(n))
+`,
+        solution: `def integrate_sub(f, phi, dphi, t0, t1, n):
+    h = (t1 - t0) / n
+    total = 0.0
+    for i in range(n):
+        t = t0 + (i + 0.5) * h
+        total += f(phi(t)) * dphi(t)
+    return h * total
+`,
+        tests: [
+          { name: "plain", code: `import math
+v = integrate_sub(lambda x: math.cos(x), lambda t: t * t, lambda t: 2 * t, 0, 2, 2000)
+assert abs(v - math.sin(4)) < 1e-5, 'The integral of cos over [0, 4] with x = t².'` },
+          { name: "inverse sqrt", code: `import math
+v = integrate_sub(lambda x: 1 / math.sqrt(x), lambda t: t * t, lambda t: 2 * t, 0, 1, 10)
+assert abs(v - 2) < 1e-12, 'With x = t² the integrand becomes the constant 2.'` },
+          { name: "arcsine", code: `import math
+v = integrate_sub(lambda x: 1 / math.sqrt(1 - x * x) if x < 1 else 0.0, math.sin, math.cos, 0, math.pi / 2, 50)
+assert abs(v - math.pi / 2) < 1e-6, 'x = sin t removes the singularity at 1.'` },
+          { name: "gaussian", code: `import math
+v = integrate_sub(lambda x: math.exp(-x * x), lambda t: t / (1 - t), lambda t: 1 / (1 - t) ** 2, 0, 1, 4000)
+assert abs(v - math.sqrt(math.pi) / 2) < 1e-6, 'x = t/(1 − t) maps [0, 1) onto [0, ∞).'` },
         ],
       },
     },

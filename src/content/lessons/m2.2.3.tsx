@@ -216,6 +216,21 @@ print(round(f(x) * g(x), 4))`}</Code>
       answer: { kind: "numeric", value: 3.0, tolerance: 0.0001 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+p = np.poly1d([1, 0, -4])
+q = np.poly1d([1, -2])
+quot, rem = p / q
+print(quot(2), p(2), q(2))`}</Code>
+          <p>(x² − 4)/(x − 2) at x = 2: both are 0, but the quotient polynomial gives the limit. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["4.0 0 0", "0.0 0 0", "4.0 4 0", "2.0 0 0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -243,6 +258,57 @@ def limit_of_quotient(p, q, a):
         tests: [
           { name: "law applies", code: `assert abs(limit_of_quotient([1, 0, 1], [1, 2], 2) - 1.25) < 1e-12, '(x² + 1)/(x + 2) at x = 2 is 5/4.'` },
           { name: "law does not apply", code: `assert limit_of_quotient([1, 0, -1], [1, -1], 1) is None, 'When the denominator is 0 at a, the quotient law says nothing: return None.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>rational_limit(p, q, a)</C>, the limit of p(x)/q(x) as x → a for polynomials given as integer coefficient lists, highest power first, computed exactly with <C>Fraction</C>: while both p(a) and q(a) are 0, divide each by (x − a) using synthetic division; then return p(a)/q(a) as a <C>Fraction</C> if q(a) ≠ 0, or <C>None</C> if the limit is infinite or does not exist.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `from fractions import Fraction
+
+def rational_limit(p, q, a):
+    return None
+`,
+        solution: `from fractions import Fraction
+
+def ev(p, a):
+    r = Fraction(0)
+    for c in p:
+        r = r * a + c
+    return r
+
+def deflate(p, a):
+    out, r = [], Fraction(0)
+    for c in p[:-1]:
+        r = r * a + c
+        out.append(r)
+    return out
+
+def rational_limit(p, q, a):
+    a = Fraction(a)
+    p, q = [Fraction(c) for c in p], [Fraction(c) for c in q]
+    while ev(p, a) == 0 and ev(q, a) == 0:
+        p, q = deflate(p, a), deflate(q, a)
+    if ev(q, a) == 0:
+        return None
+    return ev(p, a) / ev(q, a)
+`,
+        tests: [
+          { name: "simple", code: `from fractions import Fraction
+assert rational_limit([1, 0, -4], [1, -2], 2) == 4 and rational_limit([1, 1], [1, 2], 0) == Fraction(1, 2), 'Cancel (x − 2) once.'` },
+          { name: "double", code: `assert rational_limit([1, -2, 1], [1, -1, 0], 1) == 0 and rational_limit([1, -3, 3, -1], [1, -2, 1], 1) == 0 and rational_limit([1, -2, 1], [2, -4, 2], 1) == 0.5, 'Repeated roots need several cancellations.'` },
+          { name: "fraction", code: `from fractions import Fraction
+assert rational_limit([1, 0, 0, -8], [1, 0, -4], 2) == 3 and rational_limit([3, -1, -2], [2, 1, -3], 1) == Fraction(5, 5), '(x³ − 8)/(x² − 4) → 12/4.'` },
+          { name: "infinite", code: `assert rational_limit([1], [1, -3], 3) is None and rational_limit([1, 0], [1, 0, 0], 0) is None, 'A leftover zero in the denominator means no finite limit.'` },
         ],
       },
     },

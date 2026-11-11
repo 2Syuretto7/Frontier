@@ -135,6 +135,21 @@ print(round(np.trapezoid(x * np.exp(x), x), 4))`}</Code>
       answer: { kind: "numeric", value: 1.0, tolerance: 0.0001 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+I = math.e - 1
+for n in range(1, 4):
+    I = math.e - n * I
+print(round(I, 6))`}</Code>
+          <p>The recurrence Iₙ = e − n·Iₙ₋₁ for the integral of xⁿeˣ on [0, 1]. What is I₃?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 0.563436, tolerance: 1e-06 },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -164,6 +179,56 @@ def I(n):
           { name: "third", code: `import numpy as np
 x = np.linspace(0, 1, 400001)
 assert abs(I(3) - np.trapezoid(x ** 3 * np.exp(x), x)) < 1e-6, 'Apply the recurrence n times.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            The forward recurrence Iₙ = e − n·Iₙ₋₁ multiplies any error by n! and soon gives nonsense. Write <C>forward(n)</C>, which uses it from I₀ = e − 1, and <C>backward(n, start=60)</C>, which runs the recurrence backwards, Iₖ₋₁ = (e − Iₖ)/k, from a rough guess I_start = 0, dividing the error by k at each step. Then write <C>exact(n)</C>, the integral computed independently from the series Σₖ≥₀ 1/(k! (n + k + 1)) multiplied by e and with the sign pattern of the closed form, or more simply by <C>Fraction</C> integration of xⁿ times the Taylor series of eˣ to 40 terms, returned as a float.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def forward(n):
+    return 0.0
+
+def backward(n, start=60):
+    return 0.0
+
+def exact(n):
+    return 0.0
+`,
+        solution: `import math
+from fractions import Fraction
+
+def forward(n):
+    I = math.e - 1
+    for k in range(1, n + 1):
+        I = math.e - k * I
+    return I
+
+def backward(n, start=60):
+    I = 0.0
+    for k in range(start, n, -1):
+        I = (math.e - I) / k
+    return I
+
+def exact(n):
+    return float(sum(Fraction(1, math.factorial(k) * (n + k + 1)) for k in range(40)))
+`,
+        tests: [
+          { name: "exact", code: `import math
+assert abs(exact(0) - (math.e - 1)) < 1e-15 and abs(exact(1) - 1) < 1e-15, 'The integral of x·eˣ on [0, 1] is 1.'` },
+          { name: "forward small", code: `assert abs(forward(5) - exact(5)) < 1e-10, 'For small n the forward recurrence is fine.'` },
+          { name: "forward fails", code: `assert abs(forward(25) - exact(25)) > 1, 'By n = 25 the error has been multiplied by 25!.'` },
+          { name: "backward", code: `assert all(abs(backward(n) - exact(n)) < 1e-14 for n in [0, 5, 20, 25, 40]), 'Running backwards shrinks the error.'` },
         ],
       },
     },

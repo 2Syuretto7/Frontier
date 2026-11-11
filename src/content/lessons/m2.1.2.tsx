@@ -200,6 +200,18 @@ print(max(xs) < 1, round(max(xs), 3))`}</Code>
       answer: { kind: "choice", options: ["True 0.999", "True 1.0", "False 1.0", "True 0.99"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`S = [1 - 1 / n for n in range(1, 1001)]
+print(max(S), 1 in S, min(S))`}</Code>
+          <p>The set {'{1 − 1/n}'} has supremum 1, but is 1 a member? What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.999 False 0.0", "1.0 True 0.0", "0.999 False 1.0", "0.999 True 0.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -229,6 +241,54 @@ print(max(xs) < 1, round(max(xs), 3))`}</Code>
           { name: "one step", code: `assert sqrt2_bounds(1) == (1.0, 1.5), 'After one halving the interval is [1, 1.5].'` },
           { name: "narrow", code: `lo, hi = sqrt2_bounds(40)
 assert lo * lo < 2 <= hi * hi and hi - lo < 1e-11, 'After 40 halvings the interval should be tiny and still contain √2.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Completeness lets us define √x as a supremum. Write <C>sup_by_bisection(in_set, lo, hi, tol)</C>, which finds the supremum of a set S of reals described by a predicate <C>in_set</C>, assuming S is downward closed on [lo, hi] (if x is in S, so is every smaller point of [lo, hi]), lo is in S and hi is an upper bound not in S. Halve the bracket until it is shorter than tol and return its upper end. Then write <C>nth_root(a, n)</C> for a ≥ 0 as the supremum of {"{x ≥ 0 : xⁿ ≤ a}"} to within 1e−12, using exact rational comparison via <C>Fraction</C> for the test xⁿ ≤ a.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def sup_by_bisection(in_set, lo, hi, tol):
+    return hi
+
+def nth_root(a, n):
+    return a ** (1 / n)
+`,
+        solution: `from fractions import Fraction
+
+def sup_by_bisection(in_set, lo, hi, tol):
+    while hi - lo > tol:
+        mid = (lo + hi) / 2
+        if in_set(mid):
+            lo = mid
+        else:
+            hi = mid
+    return hi
+
+def nth_root(a, n):
+    A = Fraction(a)
+    hi = max(1.0, float(a)) + 1
+    return sup_by_bisection(lambda x: Fraction(x) ** n <= A, 0.0, hi, 1e-12)
+`,
+        tests: [
+          { name: "sqrt2", code: `r = sup_by_bisection(lambda x: x * x < 2, 0, 2, 1e-12)
+assert abs(r - 2 ** 0.5) < 2e-12 and r >= 2 ** 0.5 - 1e-12, 'Keep the half that contains the supremum.'` },
+          { name: "roots", code: `assert abs(nth_root(2, 2) - 2 ** 0.5) < 2e-12 and abs(nth_root(1000, 3) - 10) < 2e-12 and abs(nth_root(0.5, 5) - 0.5 ** 0.2) < 2e-12, 'xⁿ ≤ a describes a downward closed set.'` },
+          { name: "zero", code: `assert nth_root(0, 4) < 1e-11 and abs(nth_root(1, 7) - 1) < 2e-12, 'The supremum of {0} is 0.'` },
+          { name: "predicate", code: `calls = []
+def inS(x):
+    calls.append(x)
+    return x < 0.3
+r = sup_by_bisection(inS, 0, 1, 1e-6)
+assert abs(r - 0.3) < 1e-6 and 15 <= len(calls) <= 25, 'Bisection needs about log₂(1/tol) tests.'` },
         ],
       },
     },

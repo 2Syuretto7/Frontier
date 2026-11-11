@@ -205,6 +205,20 @@ print(int((f2 < 0).sum()))`}</Code>
       answer: { kind: "numeric", value: 3 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = lambda x: x ** 4 - 4 * x ** 3
+d2 = lambda x: 12 * x * x - 24 * x
+xs = [x / 2 for x in range(-2, 7)]
+print([x for x in xs if d2(x) < 0], d2(0), d2(2))`}</Code>
+          <p>Where is x⁴ − 4x³ concave (second derivative negative) on a grid? What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0.5, 1.0, 1.5] 0 0", "[0.0, 0.5, 1.0, 1.5, 2.0] 0 0", "[0.5, 1.0, 1.5, 2.0] 0 0", "[-1.0, -0.5] 0 0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -227,6 +241,73 @@ print(int((f2 < 0).sum()))`}</Code>
           { name: "cubic", code: `frac = increasing_intervals(lambda x: 3 * x * x - 3, -2, 2, 4000)
 assert abs(frac - 0.5) < 0.01, 'x³ − 3x increases on [−2, −1] and [1, 2], half of [−2, 2].'` },
           { name: "always", code: `assert increasing_intervals(lambda x: 1, 0, 1) == 1.0, 'A positive derivative everywhere gives 1.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>is_convex(xs, ys)</C> for sample points with increasing xs, true when every point lies on or below the chord of its neighbours (the slopes between consecutive points never decrease), allowing 1e−12 slack. Then write <C>convex_hull_lower(xs, ys)</C>, the lower convex hull of the points as a list of indices (a monotone chain: keep a stack and pop while the last turn is not strictly convex), and <C>convex_envelope(xs, ys)</C>, the values at each x of the largest convex function below the data, by interpolating along the hull.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def is_convex(xs, ys):
+    return True
+
+def convex_hull_lower(xs, ys):
+    return list(range(len(xs)))
+
+def convex_envelope(xs, ys):
+    return list(ys)
+`,
+        solution: `def is_convex(xs, ys):
+    s = [(ys[i + 1] - ys[i]) / (xs[i + 1] - xs[i]) for i in range(len(xs) - 1)]
+    return all(b >= a - 1e-12 for a, b in zip(s, s[1:]))
+
+def convex_hull_lower(xs, ys):
+    st = []
+    for i in range(len(xs)):
+        while len(st) >= 2:
+            a, b = st[-2], st[-1]
+            cross = (xs[b] - xs[a]) * (ys[i] - ys[a]) - (ys[b] - ys[a]) * (xs[i] - xs[a])
+            if cross <= 0:
+                st.pop()
+            else:
+                break
+        st.append(i)
+    return st
+
+def convex_envelope(xs, ys):
+    h = convex_hull_lower(xs, ys)
+    out = []
+    j = 0
+    for i, x in enumerate(xs):
+        while j + 1 < len(h) and xs[h[j + 1]] < x:
+            j += 1
+        if j + 1 < len(h):
+            a, b = h[j], h[j + 1]
+            t = (x - xs[a]) / (xs[b] - xs[a])
+            out.append(ys[a] + t * (ys[b] - ys[a]))
+        else:
+            out.append(ys[h[-1]])
+    return out
+`,
+        tests: [
+          { name: "convex", code: `xs = [i / 10 for i in range(-20, 21)]
+assert is_convex(xs, [x * x for x in xs]) and not is_convex(xs, [x ** 3 for x in xs]) and is_convex([0, 1, 2], [0, 1, 2]), 'x² is convex, x³ is not.'` },
+          { name: "hull", code: `assert convex_hull_lower([0, 1, 2, 3, 4], [0, 3, 1, 4, 0]) == [0, 4] and convex_hull_lower([0, 1, 2, 3], [3, 1, 0, 2]) == [0, 1, 2, 3], 'Keep only strictly convex turns.'` },
+          { name: "envelope", code: `env = convex_envelope([0, 1, 2, 3, 4], [0, 3, 1, 4, 0])
+assert env == [0, 0, 0, 0, 0], 'The chord from the first to the last point.'` },
+          { name: "below and convex", code: `import math
+xs = [i / 20 for i in range(201)]
+ys = [math.sin(3 * x) + 0.1 * x * x for x in xs]
+env = convex_envelope(xs, ys)
+assert is_convex(xs, env) and all(e <= y + 1e-12 for e, y in zip(env, ys)), 'The envelope is convex and lies below the data.'` },
         ],
       },
     },

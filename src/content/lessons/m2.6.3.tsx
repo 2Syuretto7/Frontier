@@ -190,6 +190,22 @@ print(round(F(math.pi) - F(0), 6))`}</Code>
       answer: { kind: "numeric", value: 2.0, tolerance: 1e-06 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+def F(x, n=2000):
+    h = x / n
+    return h * sum(math.cos((i + 0.5) * h) for i in range(n))
+h = 1e-4
+print(round(F(1.0), 6), round(math.sin(1.0), 6), round((F(1.0 + h) - F(1.0 - h)) / (2 * h), 6))`}</Code>
+          <p>F(x) is the integral of cos from 0 to x. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.841471 0.841471 0.540302", "0.841471 0.841471 0.841471", "0.540302 0.841471 0.540302", "0.841471 0.540302 0.540302"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -220,6 +236,59 @@ assert abs(v[0] - math.sin(0.5)) < 1e-8 and abs(v[1] - math.sin(1.0)) < 1e-8, 'T
 h = 1e-3
 v = accumulate(lambda t: t * t, 0, [2 - h, 2 + h])
 assert abs((v[1] - v[0]) / (2 * h) - 4) < 1e-5, 'The slope of the accumulated area at 2 should be f(2) = 4.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>cumulative(ys, h)</C>, the running integral of equally spaced samples by the trapezoid rule (a list starting with 0, the same length as ys), and <C>differentiate(ys, h)</C>, the derivative of samples by central differences inside and one-sided second-order differences (−3y₀ + 4y₁ − y₂)/2h at the ends. The fundamental theorem says these undo each other; the tests check that differentiating the running integral of cos gives cos back to about h².
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def cumulative(ys, h):
+    return [0.0] * len(ys)
+
+def differentiate(ys, h):
+    return [0.0] * len(ys)
+`,
+        solution: `def cumulative(ys, h):
+    out = [0.0]
+    for i in range(1, len(ys)):
+        out.append(out[-1] + h * (ys[i - 1] + ys[i]) / 2)
+    return out
+
+def differentiate(ys, h):
+    n = len(ys)
+    d = [0.0] * n
+    d[0] = (-3 * ys[0] + 4 * ys[1] - ys[2]) / (2 * h)
+    d[-1] = (3 * ys[-1] - 4 * ys[-2] + ys[-3]) / (2 * h)
+    for i in range(1, n - 1):
+        d[i] = (ys[i + 1] - ys[i - 1]) / (2 * h)
+    return d
+`,
+        tests: [
+          { name: "integral", code: `import math
+h = 0.001
+xs = [i * h for i in range(1001)]
+F = cumulative([math.cos(x) for x in xs], h)
+assert max(abs(a - math.sin(x)) for a, x in zip(F, xs)) < 1e-6, 'The running integral of cos is sin.'` },
+          { name: "derivative", code: `import math
+h = 0.01
+xs = [i * h for i in range(301)]
+d = differentiate([x ** 3 for x in xs], h)
+assert max(abs(a - 3 * x * x) for a, x in zip(d, xs)) < 1e-3 and abs(d[0]) < 1e-3, 'Second-order at the ends too.'` },
+          { name: "round trip", code: `import math
+h = 0.005
+xs = [i * h for i in range(801)]
+ys = [math.cos(x) for x in xs]
+back = differentiate(cumulative(ys, h), h)
+assert max(abs(a - b) for a, b in zip(back, ys)) < 1e-4, 'Differentiating the integral returns the function.'` },
         ],
       },
     },

@@ -156,6 +156,21 @@ print(round(s(x) * (1 - s(x)), 4))`}</Code>
       answer: { kind: "numeric", value: 0.2217, tolerance: 0.0005 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+x = np.array([-1000.0, 0.0, 1000.0])
+with np.errstate(over='ignore'):
+    naive = 1 / (1 + np.exp(-x))
+print(naive, np.log(naive))`}</Code>
+          <p>The sigmoid at ±1000 and its logarithm, computed naively. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0.  0.5 1. ] [       -inf -0.69314718  0.        ]", "[0.  0.5 1. ] [-1000.   -0.69314718  0.        ]", "[nan 0.5 1. ] [nan -0.69314718 0.]", "[0.  0.5 1. ] [0. -0.69314718 0.]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -190,6 +205,77 @@ assert abs(sigmoid_grad(np.array([0.0]))[0] - 0.25) < 1e-12, 'The sigmoid is ste
           { name: "matches difference", code: `import numpy as np
 x = np.linspace(-4, 4, 9); h = 1e-6
 assert np.allclose(sigmoid_grad(x), (sigmoid(x + h) - sigmoid(x - h)) / (2 * h), atol=1e-8), 'Use σ(1 − σ).'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write numerically stable versions for NumPy arrays: <C>log_sigmoid(x)</C> = log σ(x) = −log(1 + e⁻ˣ), computed as −<C>np.logaddexp(0, -x)</C> or an equivalent piecewise formula; <C>softplus(x)</C> = log(1 + eˣ); and <C>bce(logits, y)</C>, the mean binary cross-entropy −[y log σ(z) + (1 − y) log(1 − σ(z))] computed from logits without ever forming σ(z), which must be finite at z = ±1000. Also write <C>bce_grad(logits, y)</C>, the derivative of the mean loss with respect to each logit, (σ(z) − y)/n.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+def log_sigmoid(x):
+    return np.log(sigmoid(x))
+
+def softplus(x):
+    return np.log(1 + np.exp(x))
+
+def bce(z, y):
+    s = sigmoid(z)
+    return -np.mean(y * np.log(s) + (1 - y) * np.log(1 - s))
+
+def bce_grad(z, y):
+    return z - y
+`,
+        solution: `import numpy as np
+
+def sigmoid(x):
+    return np.where(x >= 0, 1 / (1 + np.exp(-np.abs(x))), np.exp(-np.abs(x)) / (1 + np.exp(-np.abs(x))))
+
+def softplus(x):
+    return np.logaddexp(0, x)
+
+def log_sigmoid(x):
+    return -np.logaddexp(0, -x)
+
+def bce(z, y):
+    z, y = np.asarray(z, float), np.asarray(y, float)
+    return float(np.mean(y * softplus(-z) + (1 - y) * softplus(z)))
+
+def bce_grad(z, y):
+    z, y = np.asarray(z, float), np.asarray(y, float)
+    return (sigmoid(z) - y) / len(z)
+`,
+        tests: [
+          { name: "log sigmoid", code: `import numpy as np
+with np.errstate(all='ignore'):
+    v = log_sigmoid(np.array([-1000.0, 0.0, 30.0]))
+assert np.allclose(v, [-1000.0, -np.log(2), -np.exp(-30.0)], rtol=1e-12, atol=0), 'log σ(−1000) is −1000, not −inf.'` },
+          { name: "softplus", code: `import numpy as np
+with np.errstate(all='ignore'):
+    v = softplus(np.array([1000.0, 0.0, -1000.0]))
+assert np.allclose(v, [1000.0, np.log(2), 0.0]) and np.isfinite(v).all(), 'softplus(1000) is 1000.'` },
+          { name: "bce", code: `import numpy as np
+with np.errstate(all='ignore'):
+    L = bce(np.array([1000.0, -1000.0, 0.0]), np.array([0.0, 1.0, 1.0]))
+assert np.isfinite(L) and abs(L - (1000 + 1000 + np.log(2)) / 3) < 1e-9, 'Confidently wrong logits give a large but finite loss.'` },
+          { name: "grad", code: `import numpy as np
+rng = np.random.default_rng(0)
+z, y = rng.normal(size=6), rng.integers(0, 2, size=6).astype(float)
+h = 1e-6
+num = np.array([(bce(z + h * e, y) - bce(z - h * e, y)) / (2 * h) for e in np.eye(6)])
+assert np.allclose(bce_grad(z, y), num, atol=1e-8), 'The gradient is (σ(z) − y)/n.'` },
         ],
       },
     },
