@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark } from "@/components/lesson/Blocks";
 import { FrequencyViz } from "@/components/viz/FrequencyViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -169,6 +170,53 @@ export const lesson: LessonContent = {
           "Eight tails in a row is impossible for a fair coin.",
         ],
         correct: [0, 2],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import random
+random.seed(1)
+flips = [random.random() < 0.5 for _ in range(100000)]
+print(abs(sum(flips) / len(flips) - 0.5) < 0.01)`}</Code>
+          <p>The fraction of heads in 100 000 fair flips. Is it within 0.01 of one half?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True", "False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>frequency(trial, n)</C>, which seeds <C>random</C> with 0, runs the function <C>trial()</C> n times and returns the fraction of runs that returned <C>True</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def frequency(trial, n):
+    return 0.5
+`,
+        solution: `import random
+
+def frequency(trial, n):
+    random.seed(0)
+    return sum(1 for _ in range(n) if trial()) / n
+`,
+        tests: [
+          { name: "dice", code: `import random
+f = frequency(lambda: random.randint(1, 6) == 6, 60000)
+assert abs(f - 1 / 6) < 0.01, 'A six should come up about one time in six.'` },
+          { name: "two dice", code: `import random
+f = frequency(lambda: random.randint(1, 6) + random.randint(1, 6) == 7, 60000)
+assert abs(f - 1 / 6) < 0.01, 'A total of 7 has probability 6/36.'` },
+          { name: "seeded", code: `import random
+assert frequency(lambda: random.random() < 0.3, 1000) == frequency(lambda: random.random() < 0.3, 1000), 'Seed with 0 so the answer is repeatable.'` },
+        ],
       },
     },
     {

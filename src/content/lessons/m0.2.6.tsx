@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { AreaModelViz } from "@/components/viz/AreaModelViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -164,6 +165,46 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>What is the remainder when <M>{"x^3 - 2x + 5"}</M> is divided by <M>{"x - 2"}</M>?</p>,
       answer: { kind: "numeric", value: 9 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+print(np.polymul([1, 2], [1, -3]))`}</Code>
+          <p>numpy stores a polynomial by its coefficients, highest power first. What does (x + 2)(x − 3) give?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[ 1 -1 -6]", "[ 1  5 -6]", "[ 1 -1  6]", "[ 1 -6]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>multiply(p, q)</C>, which multiplies two polynomials given as coefficient lists [a₀, a₁, …], lowest power first, by adding each product aᵢbⱼ into position i + j.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def multiply(p, q):
+    return [a * b for a, b in zip(p, q)]
+`,
+        solution: `def multiply(p, q):
+    out = [0] * (len(p) + len(q) - 1)
+    for i, a in enumerate(p):
+        for j, b in enumerate(q):
+            out[i + j] += a * b
+    return out
+`,
+        tests: [
+          { name: "binomials", code: `assert multiply([2, 1], [-3, 1]) == [-6, -1, 1], '(2 + x)(−3 + x) = −6 − x + x².'` },
+          { name: "square", code: `assert multiply([1, 1], [1, 1]) == [1, 2, 1] and multiply([1, 0, 1], [1, 0, -1]) == [1, 0, 0, 0, -1], '(1 + x)² = 1 + 2x + x².'` },
+        ],
+      },
     },
     {
       key: "formula",

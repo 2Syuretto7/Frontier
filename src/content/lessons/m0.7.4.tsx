@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ChooseViz } from "@/components/viz/ChooseViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -140,6 +141,59 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>What is the smallest group of people in which two must have birthdays in the same month?</p>,
       answer: { kind: "numeric", value: 13 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from itertools import permutations, combinations
+print(len(list(permutations('abcd', 2))), len(list(combinations('abcd', 2))))`}</Code>
+          <p>Ordered and unordered choices of 2 from 4. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["12 6", "6 12", "16 6", "12 4"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>perm(n, k)</C> and <C>comb(n, k)</C>, the numbers of ordered and unordered choices of k from n, without <C>math.perm</C>, <C>math.comb</C> or <C>itertools</C>. Return 0 when k &gt; n.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def perm(n, k):
+    return n ** k
+
+def comb(n, k):
+    return n ** k
+`,
+        solution: `def perm(n, k):
+    if k > n:
+        return 0
+    out = 1
+    for i in range(k):
+        out *= n - i
+    return out
+
+def comb(n, k):
+    if k > n:
+        return 0
+    f = 1
+    for i in range(2, k + 1):
+        f *= i
+    return perm(n, k) // f
+`,
+        tests: [
+          { name: "small", code: `assert perm(4, 2) == 12 and comb(4, 2) == 6 and comb(5, 0) == 1, 'n choices, then n − 1, …; divide by k! when order does not matter.'` },
+          { name: "lottery", code: `assert comb(49, 6) == 13983816 and perm(10, 10) == 3628800, 'There are 13 983 816 ways to pick 6 of 49.'` },
+          { name: "too many", code: `assert perm(3, 5) == 0 and comb(3, 5) == 0, 'You cannot choose more than you have.'` },
+        ],
+      },
     },
     {
       key: "symmetry",

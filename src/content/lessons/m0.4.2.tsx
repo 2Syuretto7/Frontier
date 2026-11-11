@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ExpLogViz } from "@/components/viz/ExpLogViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -150,6 +151,43 @@ export const lesson: LessonContent = {
         kind: "choice",
         options: ["b^x > 0 for all real x", "the graph of y = b^x passes through (0, 1)", "b^x increases as x increases", "b^x = b^y only when x = y"],
         correct: [0, 1, 3],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`print([2 ** x for x in range(-2, 4)])`}</Code>
+          <p>Negative exponents give reciprocals. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0.25, 0.5, 1, 2, 4, 8]", "[-4, -2, 1, 2, 4, 8]", "[0.25, 0.5, 0, 2, 4, 8]", "[4, 2, 1, 2, 4, 8]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            An exponential f(x) = a · bˣ passes through (0, y₀) and (1, y₁). Write <C>fit_exp(y0, y1)</C>, which returns (a, b).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def fit_exp(y0, y1):
+    return (y0, y1 - y0)
+`,
+        solution: `def fit_exp(y0, y1):
+    return (y0, y1 / y0)
+`,
+        tests: [
+          { name: "growth", code: `a, b = fit_exp(3, 6)
+assert abs(a - 3) < 1e-9 and abs(b - 2) < 1e-9, 'f(0) = a and f(1) = ab.'` },
+          { name: "decay", code: `a, b = fit_exp(100, 80)
+assert abs(b - 0.8) < 1e-9, 'A ratio below 1 is decay.'` },
+        ],
       },
     },
     {

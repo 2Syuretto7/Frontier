@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { RadianViz } from "@/components/viz/RadianViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -175,6 +176,52 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 2.25 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+r, theta = 2, math.pi / 3
+print(round(r * theta, 3), round(math.degrees(theta)))`}</Code>
+          <p>Arc length is rθ when θ is in radians. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2.094 60", "120 60", "2.094 1", "1.047 60"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>sector(r, degrees)</C>, which returns (arc length, area) of a sector of a circle of radius r, converting the angle to radians first. The area is ½r²θ.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def sector(r, degrees):
+    return (r * degrees, r * r * degrees / 2)
+`,
+        solution: `import math
+
+def sector(r, degrees):
+    t = math.radians(degrees)
+    return (r * t, r * r * t / 2)
+`,
+        tests: [
+          { name: "quarter", code: `import math
+s, A = sector(2, 90)
+assert abs(s - math.pi) < 1e-9 and abs(A - math.pi) < 1e-9, 'A quarter circle of radius 2 has arc π and area π.'` },
+          { name: "full", code: `import math
+s, A = sector(1, 360)
+assert abs(s - 2 * math.pi) < 1e-9 and abs(A - math.pi) < 1e-9, 'The full circle has circumference 2πr and area πr².'` },
+        ],
+      },
     },
     {
       key: "sector-proof",

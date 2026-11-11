@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { VectorViz } from "@/components/viz/VectorViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -141,6 +142,49 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 4 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+u, v = np.array([3, 4]), np.array([-4, 3])
+print(np.linalg.norm(u), u @ v, u + v)`}</Code>
+          <p>Length, dot product and sum of two vectors. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["5.0 0 [-1  7]", "7.0 0 [-1  7]", "5.0 24 [-1  7]", "5.0 0 [7 -1]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>angle(u, v)</C>, the angle in degrees between two non-zero vectors in the plane given as tuples, using cos θ = u·v / (|u||v|). Clamp the cosine to [−1, 1] before <C>math.acos</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def angle(u, v):
+    return math.degrees(math.atan2(v[1], v[0]))
+`,
+        solution: `import math
+
+def angle(u, v):
+    dot = u[0] * v[0] + u[1] * v[1]
+    c = dot / (math.hypot(*u) * math.hypot(*v))
+    return math.degrees(math.acos(max(-1.0, min(1.0, c))))
+`,
+        tests: [
+          { name: "right angle", code: `assert abs(angle((3, 4), (-4, 3)) - 90) < 1e-9, 'A zero dot product means a right angle.'` },
+          { name: "others", code: `assert abs(angle((1, 0), (1, 1)) - 45) < 1e-9 and abs(angle((1, 0), (-3, 0)) - 180) < 1e-9, 'Opposite directions make 180 degrees.'` },
+        ],
+      },
     },
     {
       key: "expand",

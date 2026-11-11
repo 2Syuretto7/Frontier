@@ -2,6 +2,7 @@ import { M, MD } from "@/components/Math";
 import { Axiom, Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { PairingViz } from "@/components/viz/PairingViz";
 import { SuccessorViz } from "@/components/viz/SuccessorViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -214,6 +215,48 @@ export const lesson: LessonContent = {
           "Axiom 4: different numbers have different successors.",
         ],
         correct: [1],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`n = 0
+for k in range(1, 11):
+    n += k
+print(n)`}</Code>
+          <p>This adds the first ten counting numbers. What does it print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 55 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>digit_sum(n)</C>, the sum of the decimal digits of a natural number n, using <C>%</C> and <C>//</C> rather than converting to a string.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def digit_sum(n):
+    return n % 10
+`,
+        solution: `def digit_sum(n):
+    s = 0
+    while n > 0:
+        s += n % 10
+        n //= 10
+    return s
+`,
+        tests: [
+          { name: "examples", code: `assert digit_sum(0) == 0 and digit_sum(7) == 7 and digit_sum(1234) == 10, 'n % 10 is the last digit and n // 10 drops it.'` },
+          { name: "large", code: `assert digit_sum(99999) == 45, 'Keep going until n reaches 0.'` },
+        ],
       },
     },
     {

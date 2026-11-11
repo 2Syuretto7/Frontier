@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { HistogramViz } from "@/components/viz/HistogramViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -154,6 +155,52 @@ export const lesson: LessonContent = {
           "A single number such as the mean describes this data poorly.",
         ],
         correct: [0, 3],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+xs = [1, 2, 2, 3, 3, 3, 7, 8, 9, 10]
+counts, edges = np.histogram(xs, bins=3, range=(1, 10))
+print(counts)`}</Code>
+          <p>Ten values in three bins of equal width over [1, 10]. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[6 0 4]", "[3 3 4]", "[6 1 3]", "[4 2 4]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>histogram(xs, lo, hi, k)</C>, which counts the values in k bins of equal width over [lo, hi]. Each bin includes its left edge, and the last bin includes hi too. Ignore values outside [lo, hi].
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def histogram(xs, lo, hi, k):
+    return [len(xs)] + [0] * (k - 1)
+`,
+        solution: `def histogram(xs, lo, hi, k):
+    counts = [0] * k
+    w = (hi - lo) / k
+    for x in xs:
+        if lo <= x <= hi:
+            i = min(int((x - lo) / w), k - 1)
+            counts[i] += 1
+    return counts
+`,
+        tests: [
+          { name: "matches numpy", code: `import numpy as np
+xs = [1, 2, 2, 3, 3, 3, 7, 8, 9, 10]
+assert histogram(xs, 1, 10, 3) == list(np.histogram(xs, bins=3, range=(1, 10))[0]), 'The bins are [1, 4), [4, 7) and [7, 10].'` },
+          { name: "edges", code: `assert histogram([0, 5, 10, 11], 0, 10, 2) == [1, 2], '5 goes in the second bin, 10 in the last, 11 is outside.'` },
+        ],
       },
     },
     {

@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { LineParabolaViz } from "@/components/viz/LineParabolaViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -149,6 +150,59 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>What is the greatest value of <M>{"-2x^2 + 8x + 1"}</M>?</p>,
       answer: { kind: "numeric", value: 9 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`a, b, c = 1, -6, 5
+xv = -b / (2 * a)
+print(xv, a * xv ** 2 + b * xv + c)`}</Code>
+          <p>The vertex of y = x² − 6x + 5 is at x = −b/(2a). What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["3.0 -4.0", "-3.0 32.0", "3.0 4.0", "6.0 5.0"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>roots(a, b, c)</C>, which returns the sorted list of real roots of ax² + bx + c with a ≠ 0: two, one or none, by the sign of the discriminant.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def roots(a, b, c):
+    r = math.sqrt(b * b - 4 * a * c)
+    return [(-b - r) / (2 * a), (-b + r) / (2 * a)]
+`,
+        solution: `import math
+
+def roots(a, b, c):
+    D = b * b - 4 * a * c
+    if D < 0:
+        return []
+    if D == 0:
+        return [-b / (2 * a)]
+    r = math.sqrt(D)
+    return sorted([(-b - r) / (2 * a), (-b + r) / (2 * a)])
+`,
+        tests: [
+          { name: "two", code: `r = roots(1, -6, 5)
+assert len(r) == 2 and abs(r[0] - 1) < 1e-9 and abs(r[1] - 5) < 1e-9, 'x² − 6x + 5 = (x − 1)(x − 5).'` },
+          { name: "one", code: `r = roots(1, 2, 1)
+assert len(r) == 1 and abs(r[0] + 1) < 1e-9, 'A zero discriminant gives one repeated root.'` },
+          { name: "none", code: `assert roots(1, 0, 1) == [], 'x² + 1 has no real roots.'` },
+          { name: "negative a", code: `r = roots(-1, 0, 4)
+assert len(r) == 2 and r[0] < r[1], 'Return the roots in increasing order, even when a < 0.'` },
+        ],
+      },
     },
     {
       key: "square-pen",

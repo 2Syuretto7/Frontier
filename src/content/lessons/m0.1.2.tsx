@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { SignedMovesViz } from "@/components/viz/SignedMovesViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -222,6 +223,51 @@ export const lesson: LessonContent = {
         kind: "choice",
         options: ["-3x < -12", "-3x > -12", "-3x < 12", "Nothing can be said."],
         correct: [1],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`print(-7 // 2, -7 % 2, abs(-7))`}</Code>
+          <p>Python's floor division rounds down, towards minus infinity. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["-4 1 7", "-3 -1 7", "-3 1 7", "-4 -1 -7"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>sign(x)</C>, which returns 1 for a positive number, −1 for a negative one and 0 for zero, and <C>distance(a, b)</C>, the distance between two integers on the number line.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def sign(x):
+    return 1
+
+def distance(a, b):
+    return a - b
+`,
+        solution: `def sign(x):
+    if x > 0:
+        return 1
+    if x < 0:
+        return -1
+    return 0
+
+def distance(a, b):
+    return abs(a - b)
+`,
+        tests: [
+          { name: "sign", code: `assert [sign(-5), sign(0), sign(3)] == [-1, 0, 1], 'Three cases: negative, zero, positive.'` },
+          { name: "distance", code: `assert distance(-3, 4) == 7 and distance(4, -3) == 7, 'Distance never depends on the order: use abs.'` },
+        ],
       },
     },
     {

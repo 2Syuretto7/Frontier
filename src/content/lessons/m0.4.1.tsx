@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark } from "@/components/lesson/Blocks";
 import { GrowthViz } from "@/components/viz/GrowthViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -158,6 +159,49 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>How many grains are on the first 10 squares of the doubling chessboard altogether?</p>,
       answer: { kind: "numeric", value: 1023 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`v = 1000
+for year in range(3):
+    v *= 1.10
+print(round(v, 2))`}</Code>
+          <p>A value grows by 10% a year for three years. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 1331.0, tolerance: 0.01 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>doubling_time(rate)</C>, the number of whole periods before a quantity growing by <C>rate</C> per period (0.05 means 5%) first at least doubles, by simulating it.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def doubling_time(rate):
+    return round(70 / (rate * 100))
+`,
+        solution: `def doubling_time(rate):
+    v, n = 1.0, 0
+    while v < 2:
+        v *= 1 + rate
+        n += 1
+    return n
+`,
+        tests: [
+          { name: "ten percent", code: `assert doubling_time(0.10) == 8, '1.1⁷ ≈ 1.95 and 1.1⁸ ≈ 2.14.'` },
+          { name: "one percent", code: `assert doubling_time(0.01) == 70, '1.01⁶⁹ ≈ 1.987 and 1.01⁷⁰ ≈ 2.007.'` },
+          { name: "large", code: `assert doubling_time(1.0) == 1, 'Growing by 100% doubles in one period.'` },
+        ],
+      },
     },
     {
       key: "sum-proof",

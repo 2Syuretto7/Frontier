@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ExpLogViz } from "@/components/viz/ExpLogViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -145,6 +146,46 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>How many digits does <M>{"2^{20}"}</M> have?</p>,
       answer: { kind: "numeric", value: 7 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+print(math.log2(1024), math.log10(0.001), math.log(math.e ** 3))`}</Code>
+          <p>A logarithm answers 'what power?'. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["10.0 -3.0 3.0", "10.0 3.0 3.0", "512.0 -3.0 3.0", "10.0 -3.0 20.09"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>ilog(b, x)</C>, the largest integer k with bᵏ ≤ x, for integers b ≥ 2 and x ≥ 1, by repeated multiplication. It is the floor of log<sub>b</sub> x.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def ilog(b, x):
+    return x // b
+`,
+        solution: `def ilog(b, x):
+    k, p = 0, b
+    while p <= x:
+        k += 1
+        p *= b
+    return k
+`,
+        tests: [
+          { name: "exact", code: `assert ilog(2, 1024) == 10 and ilog(10, 1000) == 3, '2¹⁰ = 1024 and 10³ = 1000.'` },
+          { name: "between", code: `assert ilog(2, 1000) == 9 and ilog(3, 1) == 0, '2⁹ = 512 ≤ 1000 < 1024.'` },
+        ],
+      },
     },
     {
       key: "inverse-proof",

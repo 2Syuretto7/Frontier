@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark } from "@/components/lesson/Blocks";
 import { ExpectedValueViz } from "@/components/viz/ExpectedValueViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -160,6 +161,49 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 300 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from fractions import Fraction
+print(sum(Fraction(k, 6) for k in range(1, 7)))`}</Code>
+          <p>The expected value of one roll of a fair die. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["7/2", "21", "3", "6"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>expected(dist)</C>, the expected value of a finite distribution given as a dict from values to probabilities, and <C>fair_price(win, p)</C>, the stake at which a bet paying <C>win</C> with probability p and 0 otherwise breaks even on average.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def expected(dist):
+    return sum(dist) / len(dist)
+
+def fair_price(win, p):
+    return win
+`,
+        solution: `def expected(dist):
+    return sum(x * p for x, p in dist.items())
+
+def fair_price(win, p):
+    return win * p
+`,
+        tests: [
+          { name: "die", code: `assert abs(expected({k: 1 / 6 for k in range(1, 7)}) - 3.5) < 1e-9, 'Weight each value by its probability.'` },
+          { name: "uneven", code: `assert abs(expected({0: 0.5, 10: 0.3, 100: 0.2}) - 23) < 1e-9, 'Values far apart with uneven weights: 0 + 3 + 20.'` },
+          { name: "price", code: `assert abs(fair_price(100, 0.05) - 5) < 1e-9, 'A fair stake equals the expected payout.'` },
+        ],
+      },
     },
     {
       key: "indicator",

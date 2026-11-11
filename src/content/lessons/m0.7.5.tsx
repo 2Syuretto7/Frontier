@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { PascalViz } from "@/components/viz/PascalViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -135,6 +136,48 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Use the binomial theorem to find <M>{"1.01^5"}</M> to four decimal places.</p>,
       answer: { kind: "numeric", value: 1.051, tolerance: 0.0001 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`row = [1]
+for _ in range(5):
+    row = [a + b for a, b in zip([0] + row, row + [0])]
+print(row)`}</Code>
+          <p>Each row of Pascal's triangle comes from the one above. Which row is printed?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[1, 5, 10, 10, 5, 1]", "[1, 4, 6, 4, 1]", "[1, 6, 15, 20, 15, 6, 1]", "[1, 5, 10, 5, 1]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>expand(a, b, n)</C>, which returns the coefficients of (ax + b)ⁿ as a list from the xⁿ term down to the constant, using the binomial theorem and <C>math.comb</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def expand(a, b, n):
+    return [math.comb(n, k) for k in range(n + 1)]
+`,
+        solution: `import math
+
+def expand(a, b, n):
+    return [math.comb(n, k) * a ** (n - k) * b ** k for k in range(n + 1)]
+`,
+        tests: [
+          { name: "plain", code: `assert expand(1, 1, 4) == [1, 4, 6, 4, 1], '(x + 1)⁴ gives a row of Pascal’s triangle.'` },
+          { name: "weighted", code: `assert expand(2, -3, 2) == [4, -12, 9] and expand(1, -1, 3) == [1, -3, 3, -1], 'Each term carries a^(n − k) b^k.'` },
+        ],
+      },
     },
     {
       key: "pascal-proof",

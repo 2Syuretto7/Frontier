@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { FractionBarsViz } from "@/components/viz/FractionBarsViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -228,6 +229,52 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 49500 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from fractions import Fraction
+print(Fraction(1, 3) + Fraction(1, 6))`}</Code>
+          <p>Fractions add over a common denominator, then reduce. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1/2", "2/9", "3/6", "1/9"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>add(a, b, c, d)</C>, which returns a/b + c/d in lowest terms as a tuple (numerator, denominator) with a positive denominator. Use <C>math.gcd</C> and not the <C>fractions</C> module.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def add(a, b, c, d):
+    return (a + c, b + d)
+`,
+        solution: `import math
+
+def add(a, b, c, d):
+    n, m = a * d + c * b, b * d
+    g = math.gcd(n, m)
+    n, m = n // g, m // g
+    if m < 0:
+        n, m = -n, -m
+    return (n, m)
+`,
+        tests: [
+          { name: "halves", code: `assert add(1, 2, 1, 3) == (5, 6), '1/2 + 1/3 = 3/6 + 2/6 = 5/6.'` },
+          { name: "reduce", code: `assert add(1, 3, 1, 6) == (1, 2), 'Reduce by the greatest common divisor.'` },
+          { name: "signs", code: `assert add(1, -4, 0, 1) == (-1, 4), 'Keep the denominator positive.'` },
+        ],
+      },
     },
     {
       key: "test",

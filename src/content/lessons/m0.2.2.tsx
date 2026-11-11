@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { BalanceViz } from "@/components/viz/BalanceViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -166,6 +167,45 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "choice", options: ["x = 0", "x = 3", "x = 5", "x = -5"], correct: [0, 2] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`a, b, c = 3, 5, 20
+x = (c - b) / a
+print(x, a * x + b)`}</Code>
+          <p>Solving ax + b = c by undoing each step. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["5.0 20.0", "8.33 25.0", "5.0 15.0", "-5.0 -10.0"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>solve_linear(a, b, c, d)</C>, which solves ax + b = cx + d and returns x, or <C>None</C> when there is no single solution (a = c).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def solve_linear(a, b, c, d):
+    return (d - b) / a
+`,
+        solution: `def solve_linear(a, b, c, d):
+    if a == c:
+        return None
+    return (d - b) / (a - c)
+`,
+        tests: [
+          { name: "both sides", code: `assert abs(solve_linear(5, 3, 2, 12) - 3) < 1e-9, '5x + 3 = 2x + 12 gives 3x = 9.'` },
+          { name: "no single solution", code: `assert solve_linear(2, 1, 2, 7) is None, 'When the x terms cancel there is no single solution.'` },
+        ],
+      },
     },
     {
       key: "unique",

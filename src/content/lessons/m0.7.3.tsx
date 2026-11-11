@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { HanoiViz } from "@/components/viz/HanoiViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -143,6 +144,43 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Induction proves <M>{"1 + 2 + 4 + \\cdots + 2^{n-1} = 2^n - 1"}</M>. What is <M>{"1 + 2 + 4 + \\cdots + 2^{15}"}</M>?</p>,
       answer: { kind: "numeric", value: 65535 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`print(all(sum(2 ** i for i in range(n)) == 2 ** n - 1 for n in range(1, 50)))`}</Code>
+          <p>This checks 1 + 2 + … + 2ⁿ⁻¹ = 2ⁿ − 1 for n below 50. What does it print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True", "False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Induction mirrors recursion. Write <C>tower(n)</C>, the fewest moves to solve the Tower of Hanoi with n discs, recursively: tower(0) = 0 and tower(n) = 2 · tower(n − 1) + 1. Then compare it with 2ⁿ − 1.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def tower(n):
+    return 2 * n
+`,
+        solution: `def tower(n):
+    if n == 0:
+        return 0
+    return 2 * tower(n - 1) + 1
+`,
+        tests: [
+          { name: "small", code: `assert [tower(n) for n in range(5)] == [0, 1, 3, 7, 15], 'Move n − 1 discs off, the big disc across, then n − 1 discs back on.'` },
+          { name: "closed form", code: `assert all(tower(n) == 2 ** n - 1 for n in range(30)), 'The recursion matches 2ⁿ − 1.'` },
+        ],
+      },
     },
     {
       key: "odd-induction",
