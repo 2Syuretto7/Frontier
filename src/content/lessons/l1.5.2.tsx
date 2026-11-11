@@ -1,0 +1,163 @@
+import { M, MD } from "@/components/Math";
+import { Definition, Example, Remark } from "@/components/lesson/Blocks";
+import { CrossValViz } from "@/components/viz/CrossValViz";
+import type { LessonContent } from "@/lib/types";
+
+export const lesson: LessonContent = {
+  id: "l1.5.2",
+  minutes: 50,
+  links: {
+    requires: ["l1.1.4"],
+    revisits: ["l1.5.1"],
+    parallels: ["m4.6.3"],
+    foreshadows: ["l1.5.4", "l1.7.2"],
+  },
+
+  puzzle: (
+    <>
+      <p>
+        You have only 30 labelled examples. Holding out 10 for validation leaves just 20 to train on, and the validation score
+        from 10 points is itself very noisy: a different choice of 10 might reverse your decision.
+      </p>
+      <p>
+        Is there a way to let every example serve both as training data and as validation data, without ever scoring a model
+        on a point it was trained on?
+      </p>
+    </>
+  ),
+
+  intuition: (
+    <>
+      <p>
+        Take turns. Split the 30 examples into 5 groups of 6. Train on four groups and score on the fifth; repeat five times
+        so each group is held out once. Every example is used for validation exactly once and for training four times, and no
+        model is ever scored on its own training data. Average the five scores.
+      </p>
+      <CrossValViz />
+      <p>
+        The estimate is not equal to the true test error, but it rises and falls with it, so the degree it picks is close to
+        the best. That is all model selection needs.
+      </p>
+    </>
+  ),
+
+  theory: (
+    <>
+      <Definition title="k-fold cross-validation">
+        <p>
+          Split the <M>n</M> training examples into <M>k</M> disjoint folds <M>{"F_1, \\dots, F_k"}</M> of nearly equal size.
+          For each <M>j</M>, train on every fold except <M>{"F_j"}</M>, giving <M>{"\\hat f^{(-j)}"}</M>. The cross-validation
+          estimate of the error is
+        </p>
+        <MD>{"\\mathrm{CV} = \\frac1n \\sum_{j=1}^k \\sum_{i \\in F_j} L\\big(y_i, \\hat f^{(-j)}(x_i)\\big)."}</MD>
+        <p>
+          With <M>{"k = n"}</M>, each fold is a single example: <strong>leave-one-out</strong> cross-validation.
+        </p>
+      </Definition>
+
+      <Remark title="choosing k">
+        <p>
+          Each model trains on a fraction <M>{"(k - 1)/k"}</M> of the data, so it is a little worse than one trained on all of
+          it, and the estimate is slightly pessimistic, most of all for small <M>k</M>. Larger <M>k</M> reduces that bias but
+          costs <M>k</M> fits and gives fold models that are nearly identical, so their errors are highly correlated. Five or
+          ten folds is the usual compromise.
+        </p>
+      </Remark>
+
+      <Example title="the arithmetic">
+        <p>
+          With 1,000 examples and 5 folds, each model trains on 800 and is scored on 200. If the five fold errors are 0.20,
+          0.25, 0.15, 0.22 and 0.18, the estimate is their mean, 0.20, and their spread hints at how uncertain it is. Comparing
+          12 hyperparameter settings this way costs <M>{"12 \\times 5 = 60"}</M> fits.
+        </p>
+      </Example>
+
+      <Remark title="splits must respect the structure of the data">
+        <p>
+          The folds must mimic how the model will meet new data. If several examples come from the same patient, all of them
+          go in the same fold, or the model is scored on a patient it has seen. For data ordered in time, train on the past
+          and validate on the future, never the other way round. For rare classes, <strong>stratify</strong>: give each fold
+          the same class proportions.
+        </p>
+      </Remark>
+
+      <Remark title="cross-validation selects; it does not certify">
+        <p>
+          After trying many settings and keeping the one with the best cross-validation score, that score is optimistic: you
+          chose it partly for its luck. To report a trustworthy number, keep a separate test set untouched, or use{" "}
+          <strong>nested</strong> cross-validation, where an inner loop selects settings and an outer loop scores the whole
+          selection procedure.
+        </p>
+      </Remark>
+    </>
+  ),
+
+  practice: [
+    {
+      key: "once",
+      rung: "check",
+      prompt: <p>In k-fold cross-validation, how many times is each example used for validation?</p>,
+      answer: { kind: "choice", options: ["Exactly once", "k times", "k − 1 times"], correct: [0] },
+    },
+    {
+      key: "time",
+      rung: "check",
+      prompt: <p>You are forecasting next month&rsquo;s sales from monthly history. How should you split for validation?</p>,
+      answer: { kind: "choice", options: ["Train on earlier months and validate on later ones", "Shuffle the months into random folds", "Either; it makes no difference"], correct: [0] },
+    },
+    {
+      key: "trainsize",
+      rung: "apply",
+      prompt: <p>With 1,000 examples and 5-fold cross-validation, how many examples does each model train on?</p>,
+      answer: { kind: "numeric", value: 800 },
+    },
+    {
+      key: "mean",
+      rung: "apply",
+      prompt: <p>The five fold errors are 0.20, 0.25, 0.15, 0.22 and 0.18, with equal fold sizes. What is the cross-validation estimate?</p>,
+      answer: { kind: "numeric", value: 0.2 },
+    },
+    {
+      key: "fits",
+      rung: "apply",
+      prompt: <p>How many models are trained to compare 12 hyperparameter settings by 10-fold cross-validation?</p>,
+      answer: { kind: "numeric", value: 120 },
+    },
+    {
+      key: "nested",
+      rung: "prove",
+      prompt: (
+        <p>
+          You try 200 settings and report the best 5-fold cross-validation accuracy as your model&rsquo;s accuracy. Explain why
+          this number is biased upwards, and describe a procedure that gives an honest estimate.
+        </p>
+      ),
+      answer: {
+        kind: "written",
+        rubric: [
+          "Notes that each cross-validation score is a noisy estimate, so the maximum of 200 of them tends to be one whose noise happened to be favourable.",
+          "Concludes that the reported score overstates how the chosen model will do on new data.",
+          "Describes keeping a final test set untouched until selection is finished, or nested cross-validation with selection inside each outer training split.",
+          "States that the honest estimate must score the whole selection procedure on data it never influenced.",
+        ],
+      },
+    },
+    {
+      key: "folds",
+      rung: "stretch",
+      prompt: <p>103 examples are split into 10 folds as evenly as possible. How many folds hold 11 examples?</p>,
+      answer: { kind: "numeric", value: 3 },
+    },
+  ],
+
+  teachBack:
+    "Explain to a friend how k-fold cross-validation works, why it beats a single small validation set, and why the best cross-validation score is not an honest final number.",
+
+  glimpse: (
+    <p>
+      Next, ridge and lasso, which give you a dial for bias and variance that cross-validation can set. In large-scale deep
+      learning one training run can cost a fortune, so cross-validation gives way to a single held-out set and to scaling laws
+      fitted on small runs.
+    </p>
+  ),
+};

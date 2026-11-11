@@ -1,0 +1,178 @@
+import { M, MD } from "@/components/Math";
+import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
+import { ForestViz } from "@/components/viz/ForestViz";
+import type { LessonContent } from "@/lib/types";
+
+export const lesson: LessonContent = {
+  id: "l1.4.4",
+  minutes: 50,
+  links: {
+    requires: ["l1.4.3"],
+    revisits: ["m4.6.3"],
+    parallels: ["m4.1.2"],
+    foreshadows: ["l1.5.1", "l2.4.2", "l2.4.3"],
+  },
+
+  puzzle: (
+    <>
+      <p>
+        Twenty-five students each answer a true-or-false question independently, and each is right 60% of the time. You go
+        with the majority.
+      </p>
+      <p>
+        Is the majority right more or less often than a single student? What if the students had all copied from the same
+        friend?
+      </p>
+    </>
+  ),
+
+  intuition: (
+    <>
+      <p>
+        If the students are independent, the majority is right about 85% of the time, far better than any one of them. If
+        they all copied the same friend, the majority is exactly as good as the friend. Averaging helps only to the extent
+        that the voters make <em>different</em> mistakes.
+      </p>
+      <p>
+        A deep decision tree is a nervous voter: low bias but high variance. A <strong>random forest</strong> grows many such
+        trees and deliberately makes them different, by giving each a different resampled dataset and letting each split
+        consider only a random subset of features.
+      </p>
+      <ForestViz />
+      <p>
+        One tree is blocky and wrong in places. As trees are added, their individual mistakes disagree and cancel, and the
+        averaged vote traces the true shape. Adding trees never makes the forest overfit more; the test accuracy simply
+        levels off.
+      </p>
+    </>
+  ),
+
+  theory: (
+    <>
+      <Definition title="bootstrap and bagging">
+        <p>
+          A <strong>bootstrap sample</strong> of <M>n</M> training points is <M>n</M> draws from them with replacement, so
+          some points appear several times and some not at all. <strong>Bagging</strong>, short for bootstrap aggregating,
+          fits one model to each of <M>B</M> bootstrap samples and averages their predictions, or takes a majority vote.
+        </p>
+      </Definition>
+
+      <Definition title="random forest">
+        <p>
+          A <strong>random forest</strong> is bagging of deep decision trees, with one more source of randomness: at each
+          split, only a random subset of <M>m</M> of the <M>d</M> features is considered. A common default for classification
+          is <M>{"m \\approx \\sqrt d"}</M>.
+        </p>
+      </Definition>
+
+      <Theorem title="variance of an average of correlated predictors">
+        <p>
+          Let <M>{"Z_1, \\dots, Z_B"}</M> each have variance <M>{"\\sigma^2"}</M>, with correlation <M>{"\\rho"}</M> between
+          every pair. Then
+        </p>
+        <MD>{"\\operatorname{Var}\\Big(\\frac1B \\sum_{b=1}^B Z_b\\Big) = \\rho\\,\\sigma^2 + \\frac{1 - \\rho}{B}\\,\\sigma^2 ."}</MD>
+      </Theorem>
+      <Proof>
+        <p>
+          The variance of a sum is the sum of all covariances. There are <M>B</M> diagonal terms equal to{" "}
+          <M>{"\\sigma^2"}</M> and <M>{"B(B - 1)"}</M> off-diagonal terms equal to <M>{"\\rho\\sigma^2"}</M>, so
+        </p>
+        <MD>{"\\operatorname{Var}\\Big(\\sum_b Z_b\\Big) = B\\sigma^2 + B(B - 1)\\rho\\sigma^2 ."}</MD>
+        <p>
+          Dividing by <M>{"B^2"}</M> gives <M>{"\\sigma^2/B + (1 - 1/B)\\rho\\sigma^2"}</M>, which rearranges to the claim.
+        </p>
+      </Proof>
+      <p>
+        As <M>B</M> grows, the second term vanishes but the first, <M>{"\\rho\\sigma^2"}</M>, remains. More trees cannot remove
+        the variance the trees share. That is exactly why a random forest restricts the features at each split: it lowers{" "}
+        <M>{"\\rho"}</M>, at the cost of slightly worse individual trees.
+      </p>
+
+      <Example title="out-of-bag points">
+        <p>
+          A given point is missed by one draw with probability <M>{"1 - 1/n"}</M>, so it is absent from a bootstrap sample
+          with probability <M>{"(1 - 1/n)^n"}</M>, which tends to <M>{"1/e \\approx 0.368"}</M>. Each tree therefore never
+          sees about a third of the data. Predicting each point using only the trees that did not see it gives the{" "}
+          <strong>out-of-bag error</strong>, an estimate of test error that costs no separate validation set.
+        </p>
+      </Example>
+
+      <Remark title="where forests stand">
+        <p>
+          Random forests need little tuning, rarely overfit badly, and work out of the box on tabular data. Boosted trees
+          usually beat them when tuned well. The principle behind them, averaging diverse models, reappears in ensembles of
+          neural networks and in averaging the weights of models along a training run.
+        </p>
+      </Remark>
+    </>
+  ),
+
+  practice: [
+    {
+      key: "random",
+      rung: "check",
+      prompt: <p>Which sources of randomness does a random forest use? Select all that apply.</p>,
+      answer: { kind: "choice", options: ["A bootstrap sample of the rows for each tree", "A random subset of features at each split", "Random labels for some training points"], correct: [0, 1] },
+    },
+    {
+      key: "more",
+      rung: "check",
+      prompt: <p>What typically happens to test error as you add more and more trees to a random forest?</p>,
+      answer: { kind: "choice", options: ["It decreases and then levels off", "It decreases and then rises because of overfitting", "It stays the same"], correct: [0] },
+    },
+    {
+      key: "oob",
+      rung: "apply",
+      prompt: <p>With <M>{"n = 10"}</M> training points, what is the probability that a given point is absent from a bootstrap sample? Give three decimal places.</p>,
+      answer: { kind: "numeric", value: 0.349, tolerance: 0.0006 },
+    },
+    {
+      key: "var",
+      rung: "apply",
+      prompt: <p>Trees with variance <M>{"\\sigma^2 = 4"}</M> and pairwise correlation <M>{"\\rho = 0.25"}</M> are averaged, <M>{"B = 100"}</M> of them. What is the variance of the average?</p>,
+      answer: { kind: "numeric", value: 1.03 },
+    },
+    {
+      key: "limit",
+      rung: "apply",
+      prompt: <p>With the same trees, what does the variance of the average approach as <M>B</M> grows without limit?</p>,
+      answer: { kind: "numeric", value: 1 },
+    },
+    {
+      key: "derive",
+      rung: "prove",
+      prompt: (
+        <p>
+          Derive the formula for the variance of an average of <M>B</M> predictors with common variance <M>{"\\sigma^2"}</M> and
+          pairwise correlation <M>{"\\rho"}</M>. Use it to explain why a random forest restricts the features at each split.
+        </p>
+      ),
+      answer: {
+        kind: "written",
+        rubric: [
+          "Writes the variance of the sum as the sum of all pairwise covariances.",
+          "Counts B diagonal terms σ² and B(B − 1) off-diagonal terms ρσ².",
+          "Divides by B² and simplifies to ρσ² + (1 − ρ)σ²/B.",
+          "Explains that the ρσ² term does not shrink with B, so reducing the correlation between trees, by restricting features, is what lowers it further.",
+        ],
+      },
+    },
+    {
+      key: "vote",
+      rung: "stretch",
+      prompt: <p>Twenty-five independent voters are each right with probability 0.6. What is the probability that the majority is right? Give three decimal places.</p>,
+      answer: { kind: "numeric", value: 0.846, tolerance: 0.0006 },
+    },
+  ],
+
+  teachBack:
+    "Explain to a friend why averaging many deep trees beats one, why the trees must be made different, and what out-of-bag error is.",
+
+  glimpse: (
+    <p>
+      Next, the bias and variance you have now met twice, made precise. Statistical Machine Learning develops bagging and
+      boosting side by side: bagging averages away variance, while boosting builds a strong model from weak ones by attacking
+      bias.
+    </p>
+  ),
+};

@@ -872,3 +872,21 @@ label { font-size: 13px; font-weight: 500; color: var(--text); }
 .tb-line:hover { background: var(--overlay); }
 .tb-line.is-on { background: var(--accent-soft); }
 @media (max-width: 640px) { .code-inline { white-space: normal; overflow-wrap: anywhere; } }
+
+/* ---------- Machine learning plots ---------- */
+.ml-c1 { fill: var(--accent); stroke: var(--surface); stroke-width: 1.5; }
+.ml-c0 { fill: var(--surface); stroke: var(--text-muted); stroke-width: 1.75; }
+.ml-r1 { fill: var(--accent-soft); }
+.ml-r0 { fill: transparent; }
+.ml-train { fill: var(--accent); stroke: var(--surface); stroke-width: 1.5; }
+.ml-test { fill: var(--surface); stroke: var(--danger); stroke-width: 1.75; }
+.ml-curve-test { fill: none; stroke: var(--danger); stroke-width: 2.25; }
+.ml-faint { fill: none; stroke: var(--accent); stroke-width: 1; opacity: 0.25; }
+.ml-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--text-muted); margin-top: 6px; }
+.ml-legend span::before { content: ""; display: inline-block; width: 14px; height: 3px; margin-right: 6px; vertical-align: middle; background: var(--accent); }
+.ml-legend span.is-test::before { background: var(--danger); }
+.ml-legend span.is-muted::before { background: var(--text-muted); }
+.ml-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-top: 12px; }
+.ml-stat { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 10px; }
+.ml-stat b { display: block; font-family: var(--font-mono); font-size: 16px; font-weight: 600; color: var(--text); }
+.ml-stat span { font-size: 12px; color: var(--text-muted); }
