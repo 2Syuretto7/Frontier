@@ -51,7 +51,7 @@ export function IntervalGreedyViz() {
           return (
             <rect key={i} x={X0 + s * U + 1} y={6 + i * rowH} width={(e - s) * U - 2} height={rowH - 6} rx={4}
               className={st ? "viz-cell is-on" : "viz-cell"}
-              style={{ opacity: st === false ? 0.3 : 1, strokeWidth: cur && cur.i === i ? 3 : undefined }} />
+              style={{ opacity: st === false ? 0.5 : 1, strokeDasharray: st === false ? "4 3" : undefined, strokeWidth: cur && cur.i === i ? 3 : undefined }} />
           );
         })}
       </svg>

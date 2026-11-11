@@ -39,6 +39,8 @@ function search(dfs: boolean): Snap[] {
     }
     out.push({ state: [...state], label: [...label], hot: [...hot], list: `${dfs ? "stack" : "queue"}: ${show()}`, note: `Visit ${NAMES[u]} (number ${order}). ${added.length ? `Push ${added.map((v) => NAMES[v]).join(", ")}.` : "Nothing new to push."}` });
   }
+  const last = out[out.length - 1];
+  if (!last.list.endsWith("empty")) last.note += " The vertices left on the frontier were already visited, so popping them does nothing.";
   out[out.length - 1].note += dfs ? " Done: the highlighted edges form the depth-first tree, which runs deep before it branches." : " Done: the highlighted edges form the breadth-first tree, whose paths from A use the fewest edges.";
   return out;
 }
@@ -146,6 +148,7 @@ export function GraphAlgoViz({ algo }: { algo: Algo }) {
         })}
         {POS.map(([x, y], i) => (
           <g key={i}>
+            <circle cx={x} cy={y} r={16} style={{ fill: "var(--surface)" }} />
             <circle cx={x} cy={y} r={16} className={s.state[i] === 2 ? "viz-node is-paired" : "viz-node"} style={s.state[i] === 1 ? { strokeWidth: 3, stroke: "var(--accent)" } : undefined} />
             <text x={x} y={y + 5} textAnchor="middle" className="viz-label">{NAMES[i]}</text>
             {s.label[i] && <text x={x} y={y - 22} textAnchor="middle" className="plot-tick">{s.label[i]}</text>}
