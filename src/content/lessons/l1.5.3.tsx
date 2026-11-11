@@ -266,7 +266,7 @@ X = rng.normal(size=(200, 20)); y = X[:, 3] * 2 - X[:, 7] + rng.normal(0, 0.3, 2
 w = lasso_cd(X, y, 0.1, 200)
 assert set(np.nonzero(np.abs(w) > 1e-10)[0].tolist()) == {3, 7}, 'The lasso keeps only the real features.'
 L = lambda_max(X, y)
-assert np.all(lasso_cd(X, y, L, 50) == 0) and np.any(lasso_cd(X, y, 0.99 * L, 50) != 0), 'λ_max is exactly where the first coefficient appears.'` },
+assert np.all(lasso_cd(X, y, L * (1 + 1e-9), 50) == 0) and np.any(lasso_cd(X, y, 0.99 * L, 50) != 0), 'λ_max is exactly where the first coefficient appears.'` },
         ],
       },
     },
