@@ -220,9 +220,7 @@ assert isinstance(b, types.GeneratorType) and next(b) == [0, 1] and next(b) == [
       answer: {
         kind: "code",
         starter: `def windows(iterable, n):
-    items = list(iterable)
-    for i in range(len(items) - n + 1):
-        yield tuple(items[i:i + n])
+    return iter([])
 
 class Peekable:
     def __init__(self, it):

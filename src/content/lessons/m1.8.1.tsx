@@ -217,11 +217,6 @@ assert count_injections(3, 4) == sum(len(set(t)) == 3 for t in product(range(4),
       answer: {
         kind: "code",
         starter: `def collision(f, A):
-    A = list(A)
-    for i in range(len(A)):
-        for j in range(i + 1, len(A)):
-            if f(A[i]) == f(A[j]):
-                return (A[i], A[j])
     return None
 
 def birthday_collision(n, days, seed):

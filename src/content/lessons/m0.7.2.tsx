@@ -190,7 +190,7 @@ print(s1, s2, round(s3, 2))`}</Code>
       answer: {
         kind: "code",
         starter: `def power_sum(p, n):
-    return sum(k ** p for k in range(1, n + 1))
+    return n ** (p + 1) // (p + 1)
 `,
         solution: `from math import comb
 

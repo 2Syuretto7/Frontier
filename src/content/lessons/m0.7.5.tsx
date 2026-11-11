@@ -208,10 +208,10 @@ def expand(a, b, n):
         starter: `from math import comb
 
 def binom_mod_p(n, k, p):
-    return comb(n, k) % p
+    return 1 if k <= n else 0
 
 def odd_entries(n):
-    return sum(comb(n, k) % 2 for k in range(n + 1))
+    return n + 1
 `,
         solution: `from math import comb
 
