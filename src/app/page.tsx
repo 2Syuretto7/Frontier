@@ -36,7 +36,7 @@ export default async function Home() {
             <p className="hero-lede fade-up" style={{ animationDelay: "260ms" }}>{lede}</p>
             <div className="hero-actions fade-up" style={{ animationDelay: "340ms" }}>
               <form action={learnAction}>
-                <button type="submit" className="btn btn-primary btn-lg learn" disabled={step.kind === "rest"}>
+                <button type="submit" className="btn btn-primary btn-lg learn">
                   Learn <span className="chev"><ChevronRight /></span>
                 </button>
               </form>
@@ -80,19 +80,16 @@ function NextPanel({ step }: { step: LearnStep }) {
   if (step.kind === "begin" || step.kind === "continue") {
     title = step.lesson.title;
     meta = `${step.lesson.courseTitle} · Chapter ${step.lesson.chapter}, ${step.lesson.chapterTitle}`;
+    if (step.kind === "begin" && step.pastPace) meta += ". You have reached today's suggested pace; carry on whenever you like.";
     code = `${step.lesson.course} / ${step.lesson.id}`;
   } else if (step.kind === "review") {
     const n = Math.min(step.count, 12);
     title = n === 1 ? "One question to review" : `${n} questions to review`;
     meta = "Earlier ideas, mixed together, just before you would forget them.";
     code = "review / spaced";
-  } else if (step.reason === "pace") {
-    title = "That's today's new learning done";
-    meta = "Come back tomorrow. Reviews are never limited, and the map is always open.";
-    code = "pace / reached";
   } else {
     title = "You're ahead of the writing";
-    meta = "New lessons are on their way. Until then, the map shows everything that is ready.";
+    meta = "New lessons are on their way. Until then, Learn opens the map, which shows everything that is ready.";
     code = "frontier / waiting";
   }
 

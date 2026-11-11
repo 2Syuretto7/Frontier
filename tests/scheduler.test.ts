@@ -38,8 +38,12 @@ test("falls back to the same track when the others have nothing unlocked", () =>
   assert.equal(step.kind === "begin" && step.lesson.id, "m");
 });
 
-test("respects the daily pace", () => {
-  assert.deepEqual(chooseNextStep({ ...base, newLessonsToday: 2 }), { kind: "rest", reason: "pace" });
+test("the daily pace never stops Learn, it only notes that it was passed", () => {
+  const step = chooseNextStep({ ...base, newLessonsToday: 5 });
+  assert.equal(step.kind, "begin");
+  assert.equal(step.kind === "begin" && step.pastPace, true);
+  const fresh = chooseNextStep({ ...base, newLessonsToday: 0 });
+  assert.equal(fresh.kind === "begin" && fresh.pastPace, false);
 });
 
 test("waits when nothing is unlocked", () => {

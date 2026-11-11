@@ -59,7 +59,7 @@ export async function learnAction() {
     await startLesson(step.lesson.id);
     redirect(`/learn/${step.lesson.id}`);
   }
-  redirect("/");
+  redirect("/map");
 }
 
 export type CheckResponse = {
