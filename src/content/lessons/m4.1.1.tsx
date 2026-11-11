@@ -157,6 +157,19 @@ print(len(list(product(letters, digits))), len(letters) + len(digits))`}</Code>
       answer: { kind: "choice", options: ["6 5", "5 6", "6 6", "9 5"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from itertools import product
+s = [w for w in product("abc", repeat=3) if all(w[i] != w[i + 1] for i in range(2))]
+print(len(s), 3 * 2 * 2, sum(1 for w in s if w[0] == w[2]))`}</Code>
+          <p>Strings of length 3 over a, b, c with no two neighbours equal. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["12 12 6", "12 12 4", "18 12 6", "12 18 6"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -188,6 +201,45 @@ from itertools import product
 L, D = 'ab', '01'
 brute = sum(1 for s in product(L + D, repeat=3) if any(c in D for c in s))
 assert count_with_digit(3, L, D) == brute and count_with_digit(8, string.ascii_lowercase, string.digits) == 36 ** 8 - 26 ** 8, 'Count all passwords, then subtract those with no digit.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>count_avoiding(k, n, forbidden)</C>, the number of strings of length n over the letters 0 … k − 1 in which no two consecutive letters (a, b) form a pair in the list <C>forbidden</C>. Use the product rule one position at a time: keep, for each letter, the number of valid strings ending in it, so the running time is about n·k² (the tests use n = 1000). The empty string counts once.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def count_avoiding(k, n, forbidden):
+    return k ** n
+`,
+        solution: `def count_avoiding(k, n, forbidden):
+    if n == 0:
+        return 1
+    bad = set(forbidden)
+    ways = [1] * k
+    for _ in range(n - 1):
+        ways = [sum(ways[i] for i in range(k) if (i, j) not in bad) for j in range(k)]
+    return sum(ways)
+`,
+        tests: [
+          { name: "no repeats", code: `assert count_avoiding(3, 3, [(0, 0), (1, 1), (2, 2)]) == 12, 'Three choices, then two, then two.'` },
+          { name: "brute", code: `from itertools import product
+import random
+random.seed(1)
+for _ in range(30):
+    k, n = random.randint(1, 4), random.randint(0, 5)
+    bad = [(a, b) for a in range(k) for b in range(k) if random.random() < 0.3]
+    want = sum(1 for w in product(range(k), repeat=n) if all((w[i], w[i + 1]) not in bad for i in range(n - 1)))
+    assert count_avoiding(k, n, bad) == want, f'k={k}, n={n}, forbidden={bad}'` },
+          { name: "edges", code: `assert count_avoiding(4, 0, []) == 1 and count_avoiding(4, 1, [(a, b) for a in range(4) for b in range(4)]) == 4 and count_avoiding(4, 2, [(a, b) for a in range(4) for b in range(4)]) == 0, 'One empty string; single letters are never forbidden.'` },
+          { name: "long", code: `assert count_avoiding(3, 1000, [(0, 0), (1, 1), (2, 2)]) == 3 * 2 ** 999, 'Exact for n = 1000.'` },
         ],
       },
     },

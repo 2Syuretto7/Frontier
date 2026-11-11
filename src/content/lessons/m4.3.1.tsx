@@ -158,6 +158,22 @@ print(deg, sum(deg))`}</Code>
       answer: { kind: "choice", options: ["[2, 2, 3, 1] 8", "[2, 2, 3, 1] 4", "[1, 1, 2, 0] 4", "[2, 2, 2, 2] 8"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`edges = [(0, 1), (1, 2), (2, 0), (2, 3)]
+deg = [0] * 4
+for u, v in edges:
+    deg[u] += 1
+    deg[v] += 1
+print(deg, sum(deg), sum(d % 2 for d in deg))`}</Code>
+          <p>A triangle with a pendant edge: degrees, their sum, and the number of odd ones. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[2, 2, 3, 1] 8 2", "[2, 2, 3, 1] 4 2", "[2, 2, 2, 1] 7 1", "[2, 2, 3, 1] 8 1"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -196,6 +212,81 @@ def walks(A, i, j, k):
 assert (A == A.T).all() and A.sum() == 8, 'Each undirected edge appears twice in the matrix.'` },
           { name: "walks", code: `A = adjacency(4, [(0, 1), (1, 2), (2, 3), (3, 0)])
 assert walks(A, 0, 0, 2) == 2 and walks(A, 0, 2, 2) == 2 and walks(A, 0, 1, 3) == 4, 'Powers of A count walks.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A list of degrees is graphical if some simple graph has exactly those degrees. Write <C>is_graphical(degrees)</C> by the Erdős–Gallai test: sort decreasingly, require an even sum, and for every k check d₁ + … + d_k ≤ k(k − 1) + Σᵢ&gt;ₖ min(dᵢ, k). Then write <C>havel_hakimi_graph(degrees)</C>, which builds such a graph or returns <C>None</C>: repeatedly take a vertex of largest remaining degree d and join it to the d vertices of next largest remaining degree. Return the edges as pairs (u, v) with u &lt; v, using the original vertex numbers.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def is_graphical(degrees):
+    return sum(degrees) % 2 == 0
+
+def havel_hakimi_graph(degrees):
+    return []
+`,
+        solution: `def is_graphical(degrees):
+    d = sorted(degrees, reverse=True)
+    n = len(d)
+    if sum(d) % 2 or any(x < 0 for x in d):
+        return False
+    for k in range(1, n + 1):
+        if sum(d[:k]) > k * (k - 1) + sum(min(x, k) for x in d[k:]):
+            return False
+    return True
+
+def havel_hakimi_graph(degrees):
+    if sum(degrees) % 2 or any(d < 0 for d in degrees):
+        return None
+    rem = [[d, v] for v, d in enumerate(degrees)]
+    edges = []
+    while rem:
+        rem.sort(key=lambda t: -t[0])
+        d, v = rem[0]
+        if d == 0:
+            return edges
+        if d > len(rem) - 1:
+            return None
+        rem[0][0] = 0
+        for t in rem[1:d + 1]:
+            if t[0] == 0:
+                return None
+            t[0] -= 1
+            edges.append((min(v, t[1]), max(v, t[1])))
+    return edges
+`,
+        tests: [
+          { name: "examples", code: `assert is_graphical([3, 3, 3, 3]) and not is_graphical([3, 3, 1, 1]) and is_graphical([4, 1, 1, 1, 1]) and not is_graphical([1, 1, 1]) and is_graphical([]) and not is_graphical([5, 1, 1, 1, 1]), 'K₄ and a star work; [3, 3, 1, 1] does not.'` },
+          { name: "realise", code: `import random
+random.seed(7)
+for _ in range(100):
+    n = random.randint(1, 12)
+    deg = [0] * n
+    for u in range(n):
+        for v in range(u + 1, n):
+            if random.random() < 0.4:
+                deg[u] += 1; deg[v] += 1
+    assert is_graphical(deg), f'{deg} came from a graph.'
+    E = havel_hakimi_graph(deg)
+    assert E is not None and len(set(E)) == len(E) and all(u < v for u, v in E), 'Simple: no loops, no repeated edges.'
+    got = [0] * n
+    for u, v in E:
+        got[u] += 1; got[v] += 1
+    assert got == deg, 'The degrees must match vertex by vertex.'` },
+          { name: "agree", code: `import random
+random.seed(8)
+for _ in range(500):
+    deg = [random.randint(0, 6) for _ in range(random.randint(1, 8))]
+    assert is_graphical(deg) == (havel_hakimi_graph(deg) is not None), f'The two tests disagree on {deg}'` },
+          { name: "fail", code: `assert havel_hakimi_graph([3, 3, 1, 1]) is None and havel_hakimi_graph([1, 1, 1]) is None` },
         ],
       },
     },

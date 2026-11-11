@@ -163,6 +163,27 @@ print(dist.get(4), 5 in dist)`}</Code>
       answer: { kind: "choice", options: ["3 False", "2 False", "3 True", "4 False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from collections import deque
+adj = {0: [1, 2], 1: [3], 2: [3], 3: [4], 4: []}
+dist = {0: 0}
+q = deque([0])
+while q:
+    u = q.popleft()
+    for v in adj[u]:
+        if v not in dist:
+            dist[v] = dist[u] + 1
+            q.append(v)
+print(dist[4], sorted(dist.values()))`}</Code>
+          <p>Breadth-first distances from vertex 0 in a small directed graph. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["3 [0, 1, 1, 2, 3]", "4 [0, 1, 1, 2, 3]", "3 [0, 1, 2, 2, 3]", "3 [0, 1, 1, 2, 2]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -208,6 +229,91 @@ assert bfs(adj, 0) == {0: 0, 1: 1, 2: 1, 3: 2, 4: 3}, 'Distances grow by one per
 assert bfs(adj, (0, 0))[(4, 4)] == 8, 'Opposite corners of a 5 × 5 grid are 8 apart.'` },
           { name: "components", code: `adj = {0: [1], 1: [0], 2: [], 3: [4], 4: [3], 5: []}
 assert components(adj) == 4, 'Two edges and two isolated vertices: 4 components.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Breadth-first search counts edges; with weights you need Dijkstra. Write <C>dijkstra(n, edges, s)</C> for a directed graph on 0 … n − 1 with edges (u, v, w), w ≥ 0, using <C>heapq</C>: return the list of distances from s, with <C>float("inf")</C> for unreachable vertices. Then write <C>shortest_path(n, edges, s, t)</C>, the list of vertices on one shortest path from s to t (both ends included), or <C>None</C> if t is unreachable, by remembering each vertex&rsquo;s predecessor.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def dijkstra(n, edges, s):
+    return [0] * n
+
+def shortest_path(n, edges, s, t):
+    return None
+`,
+        solution: `import heapq
+
+def _run(n, edges, s):
+    adj = [[] for _ in range(n)]
+    for u, v, w in edges:
+        adj[u].append((v, w))
+    dist = [float('inf')] * n
+    prev = [-1] * n
+    dist[s] = 0
+    pq = [(0, s)]
+    while pq:
+        d, u = heapq.heappop(pq)
+        if d > dist[u]:
+            continue
+        for v, w in adj[u]:
+            if d + w < dist[v]:
+                dist[v] = d + w
+                prev[v] = u
+                heapq.heappush(pq, (dist[v], v))
+    return dist, prev
+
+def dijkstra(n, edges, s):
+    return _run(n, edges, s)[0]
+
+def shortest_path(n, edges, s, t):
+    dist, prev = _run(n, edges, s)
+    if dist[t] == float('inf'):
+        return None
+    path = [t]
+    while path[-1] != s:
+        path.append(prev[path[-1]])
+    return path[::-1]
+`,
+        tests: [
+          { name: "small", code: `E = [(0, 1, 4), (0, 2, 1), (2, 1, 2), (1, 3, 1), (2, 3, 5)]
+assert dijkstra(5, E, 0) == [0, 3, 1, 4, float('inf')] and shortest_path(5, E, 0, 3) == [0, 2, 1, 3] and shortest_path(5, E, 0, 4) is None, 'The cheap way round is 0 → 2 → 1 → 3.'` },
+          { name: "floyd", code: `import random
+random.seed(9)
+for _ in range(20):
+    n = 25
+    E = [(random.randrange(n), random.randrange(n), random.randint(0, 20)) for _ in range(80)]
+    D = [[0 if i == j else float('inf') for j in range(n)] for i in range(n)]
+    for u, v, w in E:
+        D[u][v] = min(D[u][v], w)
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                D[i][j] = min(D[i][j], D[i][k] + D[k][j])
+    assert dijkstra(n, E, 0) == D[0], 'Agree with Floyd–Warshall.'
+    for t in range(n):
+        P = shortest_path(n, E, 0, t)
+        if D[0][t] == float('inf'):
+            assert P is None
+        else:
+            W = {}
+            for u, v, w in E:
+                W[(u, v)] = min(W.get((u, v), float('inf')), w)
+            assert P[0] == 0 and P[-1] == t and sum(W[(a, b)] for a, b in zip(P, P[1:])) == D[0][t], 'The path must be real and as short as the distance.'` },
+          { name: "fast", code: `import random
+random.seed(10)
+n = 20000
+E = [(i, i + 1, 1) for i in range(n - 1)] + [(random.randrange(n), random.randrange(n), random.randint(1, 100)) for _ in range(100000)]
+d = dijkstra(n, E, 0)
+assert d[0] == 0 and all(x <= i for i, x in enumerate(d)), 'O(m log n) on 20000 vertices.'` },
         ],
       },
     },

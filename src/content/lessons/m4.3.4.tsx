@@ -142,6 +142,19 @@ print(order.index("shirt") < order.index("tie") < order.index("jacket"))`}</Code
       answer: { kind: "choice", options: ["True", "False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import graphlib
+ts = graphlib.TopologicalSorter({"c": {"a", "b"}, "b": {"a"}, "d": {"c"}})
+print(list(ts.static_order()))`}</Code>
+          <p>Python&rsquo;s own topological sorter, given each node&rsquo;s prerequisites. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["['a', 'b', 'c', 'd']", "['d', 'c', 'b', 'a']", "['a', 'c', 'b', 'd']", "['b', 'a', 'c', 'd']"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -186,6 +199,104 @@ E2 = [(perm[u], perm[v]) for u, v in E]
 o = kahn(12, E2)
 assert o is not None and sorted(o) == list(range(12)) and all(o.index(u) < o.index(v) for u, v in E2), 'Every edge must point forward.'` },
           { name: "cycle", code: `assert kahn(3, [(0, 1), (1, 2), (2, 0)]) is None, 'A cycle has no topological order.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Scheduling with a DAG. Write <C>longest_path(n, edges)</C> for a directed graph on 0 … n − 1 with edges (u, v, w) and positive weights: find a topological order with Kahn&rsquo;s algorithm (raise <C>ValueError</C> if there is a cycle), relax the edges in that order to get the heaviest path ending at each vertex (a path may start anywhere), and return (length, path) for the heaviest path overall. Then write <C>count_paths(n, edges, s, t)</C>, the number of directed paths from s to t, for edges given as pairs (u, v), by dynamic programming in topological order.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def longest_path(n, edges):
+    return 0, []
+
+def count_paths(n, edges, s, t):
+    return 1
+`,
+        solution: `from collections import deque
+
+def _order(n, pairs):
+    adj = [[] for _ in range(n)]
+    indeg = [0] * n
+    for u, v in pairs:
+        adj[u].append(v)
+        indeg[v] += 1
+    q = deque(v for v in range(n) if indeg[v] == 0)
+    order = []
+    while q:
+        u = q.popleft()
+        order.append(u)
+        for v in adj[u]:
+            indeg[v] -= 1
+            if indeg[v] == 0:
+                q.append(v)
+    if len(order) < n:
+        raise ValueError('cycle')
+    return order, adj
+
+def longest_path(n, edges):
+    order, _ = _order(n, [(u, v) for u, v, w in edges])
+    out = [[] for _ in range(n)]
+    for u, v, w in edges:
+        out[u].append((v, w))
+    best, prev = [0] * n, [-1] * n
+    for u in order:
+        for v, w in out[u]:
+            if best[u] + w > best[v]:
+                best[v] = best[u] + w
+                prev[v] = u
+    end = max(range(n), key=lambda v: best[v])
+    path = []
+    v = end
+    while v != -1:
+        path.append(v)
+        v = prev[v]
+    return best[end], path[::-1]
+
+def count_paths(n, edges, s, t):
+    order, adj = _order(n, edges)
+    ways = [0] * n
+    ways[s] = 1
+    for u in order:
+        for v in adj[u]:
+            ways[v] += ways[u]
+    return ways[t]
+`,
+        tests: [
+          { name: "project", code: `E = [(0, 1, 3), (0, 2, 2), (1, 3, 4), (2, 3, 6), (3, 4, 1)]
+L, P = longest_path(5, E)
+assert L == 9 and P == [0, 2, 3, 4], 'The critical path is 0 → 2 → 3 → 4, of length 2 + 6 + 1.'` },
+          { name: "brute", code: `import random
+random.seed(12)
+for _ in range(30):
+    n = 8
+    E = [(u, v, random.randint(1, 9)) for u in range(n) for v in range(u + 1, n) if random.random() < 0.35]
+    perm = list(range(n)); random.shuffle(perm)
+    E = [(perm[u], perm[v], w) for u, v, w in E]
+    W = {(u, v): w for u, v, w in E}
+    def best_from(u):
+        return max([w + best_from(v) for (a, v), w in W.items() if a == u], default=0)
+    L, P = longest_path(n, E)
+    assert L == max(best_from(u) for u in range(n)), 'Heaviest path by exhaustive search.'
+    assert sum(W[(a, b)] for a, b in zip(P, P[1:])) == L, 'The returned path must have that weight.'` },
+          { name: "count", code: `from math import comb
+m = 6
+idx = lambda i, j: i * (m + 1) + j
+E = [(idx(i, j), idx(i + 1, j)) for i in range(m) for j in range(m + 1)] + [(idx(i, j), idx(i, j + 1)) for i in range(m + 1) for j in range(m)]
+assert count_paths((m + 1) ** 2, E, 0, idx(m, m)) == comb(2 * m, m) and count_paths(3, [(0, 1)], 0, 2) == 0, 'Lattice paths in a grid: C(12, 6) = 924.'` },
+          { name: "cycle", code: `for f in (lambda: longest_path(3, [(0, 1, 1), (1, 2, 1), (2, 0, 1)]), lambda: count_paths(2, [(0, 1), (1, 0)], 0, 1)):
+    try:
+        f()
+        assert False, 'A cycle must raise ValueError.'
+    except ValueError:
+        pass` },
         ],
       },
     },

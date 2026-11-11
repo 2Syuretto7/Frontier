@@ -153,6 +153,21 @@ print(np.polymul([1, 1, 1], [1, 1, 1]))`}</Code>
       answer: { kind: "choice", options: ["[1 2 3 2 1]", "[1 1 1 1 1]", "[1 2 1]", "[1 3 3 1]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+die = np.ones(7)
+die[0] = 0
+two = np.convolve(die, die)
+print(len(two) - 1, int(two[7]), int(two.sum()))`}</Code>
+          <p>Squaring the generating function x + x² + … + x⁶ of one die. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["12 6 36", "12 7 36", "13 6 36", "12 6 49"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -181,6 +196,65 @@ assert w[10] == 10 and w[20] == 29, '10 ways to make 10 and 29 ways to make 20.'
 brute = sum(1 for a, b, c in product(range(31), range(16), range(7)) if a + 2 * b + 5 * c == 30)
 assert coin_ways([1, 2, 5], 30)[30] == brute, 'Compare with counting (a, b, c) directly.'` },
           { name: "fifty", code: `assert coin_ways([1, 2, 5, 10], 50)[50] == 341, 'Four coins make 50 in 341 ways.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>poly_mul(a, b)</C>, the product of two polynomials given as coefficient lists (lowest power first; an empty list is the zero polynomial). Then count integer partitions with generating functions: <C>partitions_count(n)</C>, the coefficient of xⁿ in Π 1/(1 − xᵏ), and <C>partitions_distinct(n)</C>, the coefficient of xⁿ in Π (1 + xᵏ), each by updating one array of coefficients up to xⁿ factor by factor (O(n²) work), so n = 1000 is fast.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def poly_mul(a, b):
+    return []
+
+def partitions_count(n):
+    return 1
+
+def partitions_distinct(n):
+    return 1
+`,
+        solution: `def poly_mul(a, b):
+    if not a or not b:
+        return []
+    out = [0] * (len(a) + len(b) - 1)
+    for i, x in enumerate(a):
+        if x:
+            for j, y in enumerate(b):
+                out[i + j] += x * y
+    return out
+
+def partitions_count(n):
+    c = [1] + [0] * n
+    for k in range(1, n + 1):
+        for m in range(k, n + 1):
+            c[m] += c[m - k]
+    return c[n]
+
+def partitions_distinct(n):
+    c = [1] + [0] * n
+    for k in range(1, n + 1):
+        for m in range(n, k - 1, -1):
+            c[m] += c[m - k]
+    return c[n]
+`,
+        tests: [
+          { name: "mul", code: `assert poly_mul([1, 1], [1, 1]) == [1, 2, 1] and poly_mul([1, 2, 3], [0, 1]) == [0, 1, 2, 3] and poly_mul([], [1]) == [], '(1 + x)² = 1 + 2x + x².'` },
+          { name: "partitions", code: `assert [partitions_count(n) for n in range(11)] == [1, 1, 2, 3, 5, 7, 11, 15, 22, 30, 42] and partitions_count(100) == 190569292, 'p(100) = 190569292.'` },
+          { name: "big", code: `assert partitions_count(1000) == 24061467864032622473692149727991, 'p(1000), exactly.'` },
+          { name: "euler", code: `def odd_parts(n):
+    c = [1] + [0] * n
+    for k in range(1, n + 1, 2):
+        for m in range(k, n + 1):
+            c[m] += c[m - k]
+    return c[n]
+assert partitions_distinct(10) == 10 and all(partitions_distinct(n) == odd_parts(n) for n in range(80)), 'Euler: distinct parts and odd parts are equinumerous.'` },
         ],
       },
     },

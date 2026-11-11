@@ -142,6 +142,22 @@ print(sum(1 for a, b in rolls if a + b == 9), sum(1 for a, b in rolls if a + b =
       answer: { kind: "choice", options: ["4 3 36", "2 2 36", "3 4 36", "4 3 21"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from itertools import product
+from fractions import Fraction
+space = list(product(range(1, 7), repeat=2))
+A = [w for w in space if sum(w) == 7]
+B = [w for w in space if w[0] == 3]
+print(Fraction(len(A), 36), Fraction(len([w for w in A if w in B]), 36), Fraction(len(A), 36) * Fraction(len(B), 36))`}</Code>
+          <p>Two dice: is a total of 7 independent of the first die showing 3? What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1/6 1/36 1/36", "1/6 1/6 1/36", "7/36 1/36 7/216", "1/6 1/36 1/6"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -179,6 +195,70 @@ from itertools import product
 S = list(product(range(1, 7), repeat=2))
 assert prob(lambda w: sum(w) == 9, S) == Fraction(1, 9) and prob(lambda w: sum(w) == 10, S) == Fraction(1, 12), 'Count favourable outcomes over all outcomes.'` },
           { name: "birthday", code: `assert abs(p_shared_birthday(23) - 0.5073) < 1e-4 and p_shared_birthday(1) == 0 and p_shared_birthday(366) == 1, 'Use the complement: all birthdays different.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>birthday(n, days)</C>, the exact probability (a <C>Fraction</C>) that among n people with birthdays uniform over <C>days</C> days some two share one: 1 − Π (days − i)/days over i &lt; n (which is 1 once n &gt; days). Then write <C>min_people(p, days)</C>, the smallest n for which that probability is at least p (floats are fine here), and <C>simulate_birthday(n, days, trials, seed)</C>, the fraction of trials, using <C>random.Random(seed)</C>, in which a shared birthday occurs.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `from fractions import Fraction
+
+def birthday(n, days):
+    return Fraction(n, days)
+
+def min_people(p, days):
+    return days
+
+def simulate_birthday(n, days, trials, seed):
+    return 0.0
+`,
+        solution: `from fractions import Fraction
+import random
+
+def birthday(n, days):
+    if n > days:
+        return Fraction(1)
+    q = Fraction(1)
+    for i in range(n):
+        q *= Fraction(days - i, days)
+    return 1 - q
+
+def min_people(p, days):
+    n, q = 0, 1.0
+    while 1 - q < p:
+        q *= (days - n) / days
+        n += 1
+    return n
+
+def simulate_birthday(n, days, trials, seed):
+    rng = random.Random(seed)
+    hits = 0
+    for _ in range(trials):
+        seen = set()
+        for _ in range(n):
+            b = rng.randrange(days)
+            if b in seen:
+                hits += 1
+                break
+            seen.add(b)
+    return hits / trials
+`,
+        tests: [
+          { name: "exact", code: `from fractions import Fraction
+assert birthday(2, 2) == Fraction(1, 2) and birthday(3, 2) == 1 and birthday(1, 365) == 0 and isinstance(birthday(5, 365), Fraction), 'Exact fractions.'
+assert abs(float(birthday(23, 365)) - 0.5072972343) < 1e-9` },
+          { name: "threshold", code: `assert min_people(0.5, 365) == 23 and min_people(0.99, 365) == 57 and min_people(0.5, 2) == 2 and min_people(1.0, 10) == 11, '23 people for an even chance.'` },
+          { name: "simulate", code: `s = simulate_birthday(23, 365, 20000, 1)
+assert abs(s - 0.5073) < 0.02 and simulate_birthday(23, 365, 20000, 1) == s, 'Seeded, and close to the exact value.'` },
         ],
       },
     },

@@ -146,6 +146,26 @@ print(a[-1])`}</Code>
       answer: { kind: "numeric", value: 34 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from functools import lru_cache
+calls = 0
+def f(n):
+    global calls
+    calls += 1
+    return n if n < 2 else f(n - 1) + f(n - 2)
+@lru_cache(None)
+def g(n):
+    return n if n < 2 else g(n - 1) + g(n - 2)
+print(f(10), calls, g(10), g.cache_info().currsize)`}</Code>
+          <p>Naive recursion against memoised recursion for F₁₀. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["55 177 55 11", "55 109 55 11", "55 177 55 10", "89 177 89 11"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -193,6 +213,61 @@ try:
 finally:
     solve2 = _orig` },
           { name: "binet", code: `assert all(binet(n) == solve2(1, 1, 0, 1, n) for n in range(60)), 'round(φⁿ/√5) gives Fₙ.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>kth_term(coeffs, init, n, mod)</C> for the linear recurrence aₙ = c₁aₙ₋₁ + c₂aₙ₋₂ + … + c_k aₙ₋ₖ, given <C>coeffs</C> = [c₁, …, c_k] and <C>init</C> = [a₀, …, a_(k−1)]: return aₙ mod <C>mod</C>. Use the k × k companion matrix (first row the coefficients, ones just below the diagonal) and repeated squaring, so that n = 10¹⁸ takes about 60 matrix products. Coefficients may be negative; the answer must lie in [0, mod).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def kth_term(coeffs, init, n, mod):
+    return 0
+`,
+        solution: `def kth_term(coeffs, init, n, mod):
+    k = len(coeffs)
+    if n < k:
+        return init[n] % mod
+    def mul(A, B):
+        return [[sum(A[i][t] * B[t][j] for t in range(k)) % mod for j in range(k)] for i in range(k)]
+    M = [[0] * k for _ in range(k)]
+    M[0] = [c % mod for c in coeffs]
+    for i in range(1, k):
+        M[i][i - 1] = 1
+    Rm = [[int(i == j) for j in range(k)] for i in range(k)]
+    e = n - k + 1
+    while e:
+        if e & 1:
+            Rm = mul(Rm, M)
+        M = mul(M, M)
+        e >>= 1
+    state = [init[k - 1 - i] for i in range(k)]
+    return sum(Rm[0][j] * state[j] for j in range(k)) % mod
+`,
+        tests: [
+          { name: "fibonacci", code: `assert kth_term([1, 1], [0, 1], 10, 10 ** 9) == 55 and kth_term([1, 1], [0, 1], 1, 7) == 1 and kth_term([1, 1], [0, 1], 0, 7) == 0, 'F₁₀ = 55.'` },
+          { name: "tribonacci", code: `M = 10 ** 9 + 7
+a = [0, 0, 1]
+for _ in range(300):
+    a.append((a[-1] + a[-2] + a[-3]) % M)
+assert all(kth_term([1, 1, 1], [0, 0, 1], n, M) == a[n] for n in range(300)), 'Order 3 against a loop.'` },
+          { name: "huge", code: `M = 10 ** 9 + 7
+def fd(n):
+    if n == 0:
+        return (0, 1)
+    a, b = fd(n // 2)
+    c = a * (2 * b - a) % M
+    d = (a * a + b * b) % M
+    return (d, (c + d) % M) if n % 2 else (c, d)
+assert kth_term([1, 1], [0, 1], 10 ** 18, M) == fd(10 ** 18)[0], 'F at 10¹⁸ by fast doubling.'` },
+          { name: "negative", code: `assert kth_term([2, -1], [0, 1], 10 ** 15, 10 ** 9 + 7) == 10 ** 15 % (10 ** 9 + 7) and kth_term([0, -1], [1, 0], 3, 5) == 0 and kth_term([0, -1], [1, 0], 2, 5) == 4, 'aₙ = 2aₙ₋₁ − aₙ₋₂ gives aₙ = n; results lie in [0, mod).'` },
         ],
       },
     },

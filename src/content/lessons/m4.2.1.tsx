@@ -152,6 +152,21 @@ print(sum(1 for x in range(1, N + 1) if x % 2 == 0 or x % 3 == 0), N // 2 + N //
       answer: { kind: "choice", options: ["67 67", "83 83", "67 83", "66 67"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`N = 30
+A = {n for n in range(1, N + 1) if n % 2 == 0}
+B = {n for n in range(1, N + 1) if n % 3 == 0}
+C = {n for n in range(1, N + 1) if n % 5 == 0}
+print(len(A | B | C), len(A) + len(B) + len(C) - len(A & B) - len(A & C) - len(B & C) + len(A & B & C), N - len(A | B | C))`}</Code>
+          <p>Numbers up to 30 divisible by 2, 3 or 5, counted two ways. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["22 22 8", "31 22 8", "22 21 8", "22 22 7"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -186,6 +201,65 @@ def derangements(n):
           { name: "divisible", code: `assert count_divisible(1000, [2, 3, 5]) == sum(1 for x in range(1, 1001) if x % 2 == 0 or x % 3 == 0 or x % 5 == 0), 'Alternate signs over subsets of divisors.'` },
           { name: "derange", code: `from itertools import permutations
 assert [derangements(n) for n in range(7)] == [1, 0, 1, 2, 9, 44, 265] and derangements(6) == sum(1 for p in permutations(range(6)) if all(p[i] != i for i in range(6))), 'D(4) = 9 and D(5) = 44.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Three classic inclusion–exclusion counts. Write <C>derangements(n)</C>, the permutations of n items with no fixed point, Σ (−1)ᵏ C(n, k)(n − k)!; <C>surjections(n, k)</C>, the functions from an n-set onto a k-set, Σ (−1)ʲ C(k, j)(k − j)ⁿ; and <C>euler_phi(n)</C>, how many of 1 … n are coprime to n, by removing the multiples of each prime factor of n (factor n by trial division).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `from math import factorial
+
+def derangements(n):
+    return factorial(n)
+
+def surjections(n, k):
+    return k ** n
+
+def euler_phi(n):
+    return n - 1
+`,
+        solution: `from math import comb, factorial
+
+def derangements(n):
+    return sum((-1) ** k * comb(n, k) * factorial(n - k) for k in range(n + 1))
+
+def surjections(n, k):
+    return sum((-1) ** j * comb(k, j) * (k - j) ** n for j in range(k + 1))
+
+def euler_phi(n):
+    r, m, q = n, n, 2
+    while q * q <= m:
+        if m % q == 0:
+            while m % q == 0:
+                m //= q
+            r -= r // q
+        q += 1
+    if m > 1:
+        r -= r // m
+    return r
+`,
+        tests: [
+          { name: "derangements", code: `from itertools import permutations
+assert [derangements(n) for n in range(7)] == [1, 0, 1, 2, 9, 44, 265], 'D(0) = 1, D(1) = 0, D(2) = 1, …'
+assert derangements(7) == sum(all(q[i] != i for i in range(7)) for q in permutations(range(7)))` },
+          { name: "surjections", code: `from itertools import product
+from math import factorial
+for n in range(6):
+    for k in range(5):
+        assert surjections(n, k) == sum(len(set(f)) == k for f in product(range(k), repeat=n)), f'n={n}, k={k}'
+assert surjections(8, 8) == factorial(8) and surjections(3, 4) == 0` },
+          { name: "phi", code: `from math import gcd
+assert all(euler_phi(n) == sum(gcd(i, n) == 1 for i in range(1, n + 1)) for n in range(1, 300)), 'Agree with a direct count.'
+assert euler_phi(36) == 12 and euler_phi(1000000000039) == 1000000000038, '10¹² + 39 is prime.'` },
         ],
       },
     },

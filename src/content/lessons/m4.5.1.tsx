@@ -149,6 +149,27 @@ print(largest([-5, -2, -9]), largest([4]))`}</Code>
       answer: { kind: "choice", options: ["-2 4", "0 4", "-9 4", "-2 0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def lower_bound(xs, t):
+    lo, hi, steps = 0, len(xs), 0
+    while lo < hi:
+        mid = (lo + hi) // 2
+        steps += 1
+        if xs[mid] < t:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo, steps
+print(lower_bound(list(range(0, 100, 2)), 37), lower_bound([1, 1, 1], 1))`}</Code>
+          <p>Binary search for the first position whose value is at least t. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["(19, 5) (0, 2)", "(18, 5) (0, 2)", "(19, 50) (0, 3)", "(19, 5) (2, 2)"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -187,6 +208,81 @@ assert ys == sorted(xs), 'The result must be sorted.'` },
           { name: "copy", code: `xs = [3, 1, 2]
 insertion_sort(xs)
 assert xs == [3, 1, 2], 'Sort a copy, not the caller’s list.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write your own <C>bisect_left(xs, t)</C> and <C>bisect_right(xs, t)</C> for a sorted list (the first index whose value is ≥ t, and &gt; t), and <C>count_in_range(xs, lo, hi)</C>, how many values lie in [lo, hi], with two binary searches. Then write <C>first_true(pred, lo, hi)</C>: for a predicate that is False and then True on the integers lo … hi, return the first integer where it is True (hi + 1 if none), calling <C>pred</C> only O(log(hi − lo)) times. Do not import <C>bisect</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def bisect_left(xs, t):
+    return 0
+
+def bisect_right(xs, t):
+    return len(xs)
+
+def count_in_range(xs, lo, hi):
+    return len(xs)
+
+def first_true(pred, lo, hi):
+    return lo
+`,
+        solution: `def bisect_left(xs, t):
+    lo, hi = 0, len(xs)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if xs[mid] < t:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+def bisect_right(xs, t):
+    lo, hi = 0, len(xs)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if xs[mid] <= t:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+def count_in_range(xs, lo, hi):
+    return max(0, bisect_right(xs, hi) - bisect_left(xs, lo))
+
+def first_true(pred, lo, hi):
+    a, b = lo, hi + 1
+    while a < b:
+        mid = (a + b) // 2
+        if pred(mid):
+            b = mid
+        else:
+            a = mid + 1
+    return a
+`,
+        tests: [
+          { name: "bisect", code: `import bisect, random
+random.seed(18)
+for _ in range(300):
+    xs = sorted(random.randint(0, 20) for _ in range(random.randint(0, 30)))
+    t = random.randint(-2, 22)
+    assert bisect_left(xs, t) == bisect.bisect_left(xs, t) and bisect_right(xs, t) == bisect.bisect_right(xs, t), f'{xs}, {t}'` },
+          { name: "range", code: `xs = [1, 2, 2, 2, 5, 7, 7, 9]
+assert count_in_range(xs, 2, 7) == 6 and count_in_range(xs, 3, 4) == 0 and count_in_range(xs, 8, 3) == 0 and count_in_range([], 0, 9) == 0, 'Both ends inclusive.'` },
+          { name: "first true", code: `calls = []
+def pred(x):
+    calls.append(x)
+    return x * x > 10 ** 30
+assert first_true(pred, 0, 10 ** 18) - 1 == 10 ** 15 and len(calls) <= 70, 'Integer square root of 10³⁰ in about 60 calls.'
+assert first_true(lambda x: False, 3, 9) == 10 and first_true(lambda x: True, 3, 9) == 3` },
         ],
       },
     },

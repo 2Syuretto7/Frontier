@@ -158,6 +158,22 @@ print(cycles)`}</Code>
       answer: { kind: "numeric", value: 1 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`parent = [-1, 0, 0, 1, 1, 2]
+depth = [0] * 6
+for v in range(1, 6):
+    depth[v] = depth[parent[v]] + 1
+leaves = [v for v in range(6) if v not in parent]
+print(max(depth), leaves, len(parent) - 1)`}</Code>
+          <p>A rooted tree stored as a parent array. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2 [3, 4, 5] 5", "3 [3, 4, 5] 5", "2 [3, 4, 5] 6", "2 [2, 3, 4, 5] 5"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -192,6 +208,90 @@ print(cycles)`}</Code>
           { name: "tree", code: `assert is_tree(5, [(0, 1), (1, 2), (1, 3), (3, 4)]) and is_tree(1, []), 'Connected with n − 1 edges.'` },
           { name: "not tree", code: `assert not is_tree(5, [(0, 1), (1, 2), (2, 0), (3, 4)]), 'Right number of edges, but a cycle and two components.'` },
           { name: "too many", code: `assert not is_tree(3, [(0, 1), (1, 2), (2, 0)]), 'A triangle has 3 edges, not 2.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Prüfer sequences prove Cayley&rsquo;s formula: there are nⁿ⁻² labelled trees on n vertices. Write <C>prufer_encode(n, edges)</C> for a tree on 0 … n − 1 (n ≥ 2): n − 2 times, remove the smallest-numbered leaf and record its neighbour. Then write <C>prufer_decode(seq)</C>, which rebuilds the tree on n = len(seq) + 2 vertices: repeatedly join the smallest leaf (a vertex not yet used whose remaining count in the sequence is 0) to the next entry, and finally join the last two vertices. Return the edges as a sorted list of pairs (u, v) with u &lt; v. Use a heap for the leaves.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def prufer_encode(n, edges):
+    return []
+
+def prufer_decode(seq):
+    return []
+`,
+        solution: `import heapq
+
+def prufer_encode(n, edges):
+    adj = [set() for _ in range(n)]
+    for u, v in edges:
+        adj[u].add(v)
+        adj[v].add(u)
+    leaves = [v for v in range(n) if len(adj[v]) == 1]
+    heapq.heapify(leaves)
+    seq = []
+    for _ in range(n - 2):
+        leaf = heapq.heappop(leaves)
+        (nb,) = adj[leaf]
+        seq.append(nb)
+        adj[nb].discard(leaf)
+        adj[leaf].clear()
+        if len(adj[nb]) == 1:
+            heapq.heappush(leaves, nb)
+    return seq
+
+def prufer_decode(seq):
+    n = len(seq) + 2
+    deg = [1] * n
+    for x in seq:
+        deg[x] += 1
+    leaves = [v for v in range(n) if deg[v] == 1]
+    heapq.heapify(leaves)
+    edges = []
+    for x in seq:
+        leaf = heapq.heappop(leaves)
+        edges.append((min(leaf, x), max(leaf, x)))
+        deg[x] -= 1
+        if deg[x] == 1:
+            heapq.heappush(leaves, x)
+    u, v = heapq.heappop(leaves), heapq.heappop(leaves)
+    edges.append((min(u, v), max(u, v)))
+    return sorted(edges)
+`,
+        tests: [
+          { name: "examples", code: `assert prufer_encode(5, [(0, 1), (0, 2), (0, 3), (0, 4)]) == [0, 0, 0] and prufer_encode(4, [(0, 1), (1, 2), (2, 3)]) == [1, 2] and prufer_encode(2, [(0, 1)]) == [], 'A star records its centre; a path its inner vertices.'` },
+          { name: "decode", code: `assert prufer_decode([1, 2]) == [(0, 1), (1, 2), (2, 3)] and prufer_decode([]) == [(0, 1)] and prufer_decode([3, 3, 3]) == [(0, 3), (1, 3), (2, 3), (3, 4)]` },
+          { name: "roundtrip", code: `import random
+random.seed(11)
+for _ in range(50):
+    n = random.randint(2, 60)
+    lab = list(range(n)); random.shuffle(lab)
+    E = []
+    for i in range(1, n):
+        j = random.randrange(i)
+        E.append((min(lab[i], lab[j]), max(lab[i], lab[j])))
+    assert prufer_decode(prufer_encode(n, E)) == sorted(E), 'Decoding inverts encoding.'` },
+          { name: "cayley", code: `from itertools import product
+trees = {tuple(prufer_decode(list(s))) for s in product(range(5), repeat=3)}
+def connected(E):
+    seen, stack = {0}, [0]
+    while stack:
+        u = stack.pop()
+        for a, b in E:
+            for x, y in ((a, b), (b, a)):
+                if x == u and y not in seen:
+                    seen.add(y); stack.append(y)
+    return len(seen) == 5
+assert len(trees) == 125 and all(len(t) == 4 and connected(t) for t in trees), 'Cayley: 5³ = 125 distinct trees on 5 vertices.'` },
         ],
       },
     },

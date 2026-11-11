@@ -158,6 +158,20 @@ print(best >= len(edges) / 2)`}</Code>
       answer: { kind: "choice", options: ["True", "False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from itertools import product
+edges = [(0, 1), (1, 2), (2, 0), (2, 3)]
+cuts = [sum(s[u] != s[v] for u, v in edges) for s in product((0, 1), repeat=4)]
+print(sum(cuts) / len(cuts), max(cuts), len(edges) / 2)`}</Code>
+          <p>Average and best cut over all 2-colourings of a triangle with a tail. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2.0 3 2.0", "2.0 4 2.0", "1.5 3 2.0", "2.0 3 1.5"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -196,6 +210,58 @@ for _ in range(50):
           { name: "bipartite", code: `E = [(i, (i + 1) % 8) for i in range(8)]
 s = greedy_cut(8, E)
 assert sum(s[u] != s[v] for u, v in E) >= 7, 'On an even cycle greedy cuts almost every edge.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Erdős showed that if C(n, k)·2^(1 − C(k, 2)) &lt; 1, some red/blue colouring of the edges of Kₙ has no single-coloured Kₖ. Colourings are dicts mapping each pair (i, j) with i &lt; j to 0 or 1. Write <C>has_mono_clique(n, colour, k)</C>, whether some k vertices have all their edges the same colour. Then write <C>find_ramsey_free(n, k, tries, seed)</C>, which draws up to <C>tries</C> uniformly random colourings with <C>random.Random(seed)</C> and returns the first with no single-coloured Kₖ, or <C>None</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def has_mono_clique(n, colour, k):
+    return False
+
+def find_ramsey_free(n, k, tries, seed):
+    return None
+`,
+        solution: `from itertools import combinations
+import random
+
+def has_mono_clique(n, colour, k):
+    for S in combinations(range(n), k):
+        if len({colour[e] for e in combinations(S, 2)}) == 1:
+            return True
+    return False
+
+def find_ramsey_free(n, k, tries, seed):
+    rng = random.Random(seed)
+    pairs = list(combinations(range(n), 2))
+    for _ in range(tries):
+        c = {e: rng.randint(0, 1) for e in pairs}
+        if not has_mono_clique(n, c, k):
+            return c
+    return None
+`,
+        tests: [
+          { name: "check", code: `from itertools import combinations
+red = {e: 0 for e in combinations(range(4), 2)}
+pent = {(i, j): int((j - i) % 5 in (1, 4)) for i, j in combinations(range(5), 2)}
+assert has_mono_clique(4, red, 3) and not has_mono_clique(5, pent, 3), 'The pentagon and its complement contain no triangle.'` },
+          { name: "find", code: `from itertools import combinations
+c = find_ramsey_free(5, 3, 3000, 0)
+assert c is not None and set(c) == set(combinations(range(5), 2)), 'R(3, 3) > 5: a good colouring of K₅ exists.'
+assert all(len({c[e] for e in combinations(S, 2)}) == 2 for S in combinations(range(5), 3)), 'Every triangle must use both colours.'` },
+          { name: "r33", code: `assert find_ramsey_free(6, 3, 300, 1) is None, 'R(3, 3) = 6: every colouring of K₆ has a one-colour triangle.'` },
+          { name: "bound", code: `from itertools import combinations
+c = find_ramsey_free(6, 4, 50, 2)
+assert c is not None and not any(len({c[e] for e in combinations(S, 2)}) == 1 for S in combinations(range(6), 4)), 'C(6, 4)·2⁻⁵ = 15/32 < 1, so random colourings usually work.'` },
         ],
       },
     },

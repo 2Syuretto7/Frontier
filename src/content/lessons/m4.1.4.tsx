@@ -148,6 +148,24 @@ print(max(len(g) for g in groups.values()))`}</Code>
       answer: { kind: "numeric", value: 3 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`nums = [3, 8, 4, 10, 6]
+seen = {}
+for i, x in enumerate(nums):
+    r = x % 4
+    if r in seen:
+        print(seen[r], i, nums[seen[r]], x)
+        break
+    seen[r] = i`}</Code>
+          <p>Five numbers, four remainders mod 4: the first pair that must collide. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1 2 8 4", "0 4 3 6", "2 4 4 6", "1 3 8 10"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -183,6 +201,83 @@ for _ in range(200):
     nums = [random.randint(-50, 50) for _ in range(n)]
     i, j = repeat_prefix_sums(nums)
     assert 0 <= i < j <= n and sum(nums[i:j]) % n == 0, 'n + 1 prefix sums, only n remainders: some pair must repeat.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Erdős–Szekeres: any sequence of (r − 1)(s − 1) + 1 distinct numbers has an increasing run of length r or a decreasing one of length s. Write <C>lis_length(seq)</C>, the length of the longest strictly increasing subsequence, in O(n log n) with the patience method (keep the smallest possible tail for each length and place each element with <C>bisect_left</C>). Then write <C>lis_witness(seq)</C>, one actual longest strictly increasing subsequence, by remembering for each element the index of its predecessor.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def lis_length(seq):
+    return len(seq)
+
+def lis_witness(seq):
+    return list(seq)
+`,
+        solution: `from bisect import bisect_left
+
+def lis_length(seq):
+    tails = []
+    for x in seq:
+        i = bisect_left(tails, x)
+        if i == len(tails):
+            tails.append(x)
+        else:
+            tails[i] = x
+    return len(tails)
+
+def lis_witness(seq):
+    tails, tidx, prev = [], [], [-1] * len(seq)
+    for k, x in enumerate(seq):
+        i = bisect_left(tails, x)
+        if i == len(tails):
+            tails.append(x)
+            tidx.append(k)
+        else:
+            tails[i] = x
+            tidx[i] = k
+        prev[k] = tidx[i - 1] if i > 0 else -1
+    out = []
+    k = tidx[-1] if tidx else -1
+    while k != -1:
+        out.append(seq[k])
+        k = prev[k]
+    return out[::-1]
+`,
+        tests: [
+          { name: "basic", code: `assert lis_length([3, 1, 2, 5, 4]) == 3 and lis_length([2, 2, 2]) == 1 and lis_length([]) == 0, 'Strictly increasing only.'` },
+          { name: "brute", code: `import random
+random.seed(4)
+def slow(a):
+    best = [1] * len(a)
+    for j in range(len(a)):
+        for i in range(j):
+            if a[i] < a[j]:
+                best[j] = max(best[j], best[i] + 1)
+    return max(best, default=0)
+for _ in range(100):
+    a = [random.randint(0, 30) for _ in range(random.randint(0, 60))]
+    w = lis_witness(a)
+    it = iter(a)
+    assert lis_length(a) == slow(a) == len(w), f'Length for {a}'
+    assert all(x < y for x, y in zip(w, w[1:])) and all(x in it for x in w), 'The witness must be an increasing subsequence.'` },
+          { name: "erdos szekeres", code: `import random
+random.seed(5)
+for _ in range(2000):
+    q = list(range(10)); random.shuffle(q)
+    assert lis_length(q) >= 4 or lis_length([-x for x in q]) >= 4, 'Ten distinct numbers force a run of 4 one way.'` },
+          { name: "fast", code: `import random
+random.seed(6)
+a = [random.random() for _ in range(200000)]
+assert 850 < lis_length(a) < 940, 'About 2√n for random data, in O(n log n).'` },
         ],
       },
     },
