@@ -81,6 +81,14 @@ export async function checkExerciseAction(
   return attempt(exerciseId, String(input).slice(0, 20000), context, Math.max(1, Math.floor(attemptInSession)));
 }
 
+/** The checks for a code exercise, sent only when the learner presses Check. They run in the learner's browser. */
+export async function codeTestsAction(exerciseId: string): Promise<{ name: string; code: string }[] | null> {
+  await requireOwner();
+  const { EXERCISES } = await import("@/lib/curriculum");
+  const answer = EXERCISES.get(String(exerciseId))?.exercise.answer;
+  return answer?.kind === "code" ? answer.tests.map((t) => ({ name: t.name, code: t.code })) : null;
+}
+
 export type TeachBackResponse = {
   ok: boolean;
   lessonMastered?: boolean;
@@ -107,14 +115,22 @@ export async function teachBackAction(lessonId: string, body: string): Promise<T
   }
 }
 
-export async function askPartonAction(lessonId: string, exerciseId: string | null, message: string) {
+export async function askPartonAction(
+  lessonId: string,
+  exerciseId: string | null,
+  message: string,
+  workspace?: { source: string; error: string | null; output: string } | null,
+) {
   await requireOwner();
   const { LESSON_BY_ID } = await import("@/lib/curriculum");
   const text = String(message ?? "").trim().slice(0, 4000);
   if (!LESSON_BY_ID.has(lessonId)) return { ok: false as const, error: "Unknown lesson." };
   if (!text) return { ok: false as const, error: "Write a question first." };
   const { askParton } = await import("@/lib/parton");
-  return askParton(lessonId, exerciseId ? String(exerciseId) : null, text);
+  const editor = workspace && typeof workspace.source === "string"
+    ? { source: workspace.source.slice(0, 8000), error: typeof workspace.error === "string" ? workspace.error.slice(0, 2000) : null, output: String(workspace.output ?? "").slice(0, 2000) }
+    : null;
+  return askParton(lessonId, exerciseId ? String(exerciseId) : null, text, editor);
 }
 
 export async function setPaceAction(form: FormData) {

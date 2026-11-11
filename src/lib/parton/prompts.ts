@@ -159,6 +159,8 @@ export function describeAnswer(a: Answer): string {
       return `The answer is any expression equivalent to ${a.value} (in ${a.variables.join(", ")}).`;
     case "choice":
       return `The correct option${a.correct.length > 1 ? "s are" : " is"}: ${a.correct.map((i) => `"${a.options[i]}"`).join(", ")}.`;
+    case "code":
+      return `A reference solution (never quote it or reveal its key lines):\n${a.solution}\nThe checks it must pass:\n${a.tests.map((t) => `- ${t.name}: ${t.code}`).join("\n")}`;
     case "written":
       return `A complete answer does all of the following:\n${a.rubric.map((r, i) => `${i + 1}. ${r}`).join("\n")}`;
   }
