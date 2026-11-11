@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { ConnectiveViz } from "@/components/viz/ConnectiveViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -141,6 +142,41 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Of the four combinations of truth values for P and Q, in how many is <M>{"P \\to Q"}</M> true?</p>,
       answer: { kind: "numeric", value: 3 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`p, q = True, False
+print((p and not q) or (not p and q))`}</Code>
+          <p>This is the exclusive or of p and q. What does it print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True", "False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>implies(p, q)</C>, the truth value of p → q, using only <C>not</C> and <C>or</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def implies(p, q):
+    return q
+`,
+        solution: `def implies(p, q):
+    return (not p) or q
+`,
+        tests: [
+          { name: "all rows", code: `assert [implies(p, q) for p in (True, False) for q in (True, False)] == [True, False, True, True], 'p → q is false only when p is true and q is false.'` },
+        ],
+      },
     },
     {
       key: "vacuous",

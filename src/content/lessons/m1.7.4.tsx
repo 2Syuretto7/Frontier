@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { PreimageViz } from "@/components/viz/PreimageViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -136,6 +137,53 @@ export const lesson: LessonContent = {
         kind: "choice",
         options: ["f⁻¹(B) = A", "f(A) = B", "f⁻¹(∅) = ∅", "f(f⁻¹(T)) = T for every T ⊆ B"],
         correct: [0, 2],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = lambda x: x * x
+image = {f(x) for x in range(-3, 4)}
+preimage = {x for x in range(-3, 4) if f(x) in {4, 5}}
+print(len(image), sorted(preimage))`}</Code>
+          <p>f(x) = x² on {"{−3, …, 3}"}. How many elements does the image have?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 4 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>image(f, S)</C> and <C>preimage(f, A, T)</C>, where A is the domain. Then check that image(f, preimage(f, A, T)) is always a subset of T.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def image(f, S):
+    return set(S)
+
+def preimage(f, A, T):
+    return set(T)
+`,
+        solution: `def image(f, S):
+    return {f(x) for x in S}
+
+def preimage(f, A, T):
+    return {x for x in A if f(x) in T}
+`,
+        tests: [
+          { name: "square", code: `f = lambda x: x * x
+assert image(f, {-2, 1, 2}) == {1, 4} and preimage(f, range(-3, 4), {4, 5}) == {-2, 2}, 'Image collects outputs; preimage collects inputs that land in T.'` },
+          { name: "inclusion", code: `f = lambda x: x % 4
+A = range(20); T = {1, 7}
+assert image(f, preimage(f, A, T)) <= T and image(f, preimage(f, A, T)) != T, 'f(f⁻¹(T)) can be smaller than T when f misses part of T.'` },
+        ],
       },
     },
     {

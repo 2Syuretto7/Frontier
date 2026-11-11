@@ -1,6 +1,7 @@
 import { M } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { RecursionViz } from "@/components/viz/RecursionViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -132,6 +133,55 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Which of these is a formula according to the recursive definition in this lesson?</p>,
       answer: { kind: "choice", options: ["(P ∧ Q", "(P → (Q ∨ ¬R))", "P ∧ ∨ Q", "()"], correct: [1] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def a(n):
+    return 1 if n == 0 else 2 * a(n - 1) + 1
+print([a(n) for n in range(5)])`}</Code>
+          <p>This recursive definition produces which closed form?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2ⁿ⁺¹ − 1", "2ⁿ", "n² + 1", "2n + 1"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>fib(n)</C> recursively with memoisation (a dictionary of values already computed), with fib(0) = 0 and fib(1) = 1. It must handle n = 200 quickly.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def fib(n):
+    if n < 2:
+        return n
+    return fib(n - 1) + fib(n - 2)
+`,
+        solution: `memo = {0: 0, 1: 1}
+
+def fib(n):
+    if n not in memo:
+        memo[n] = fib(n - 1) + fib(n - 2)
+    return memo[n]
+`,
+        tests: [
+          { name: "small", code: `assert [fib(n) for n in range(10)] == [0, 1, 1, 2, 3, 5, 8, 13, 21, 34], 'Start 0, 1, then add the previous two.'` },
+          { name: "large", code: `_orig, _calls = fib, [0]
+def fib(n):
+    _calls[0] += 1
+    assert _calls[0] < 5000, 'fib(200) makes too many calls: remember values you have already computed.'
+    return _orig(n)
+v = fib(200)
+assert v == 280571172992510140037611932413038677189525, 'fib(200) is 280571172992510140037611932413038677189525.'` },
+        ],
+      },
     },
     {
       key: "linear",

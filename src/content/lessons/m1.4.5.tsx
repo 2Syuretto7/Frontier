@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { PowerSetViz } from "@/components/viz/PowerSetViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -132,6 +133,47 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>How many subsets of a 6-element set have exactly 2 elements?</p>,
       answer: { kind: "numeric", value: 15 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from itertools import product, combinations
+A = {'a', 'b', 'c'}
+power = [set(c) for r in range(len(A) + 1) for c in combinations(sorted(A), r)]
+print(len(power), len(list(product(A, A))))`}</Code>
+          <p>This prints the sizes of P(A) and A × A. What is their sum?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 17 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>power_set(S)</C>, which returns a list of all subsets of S as frozensets, built by bitmasks: for each integer m from 0 to 2ⁿ − 1, include element i when bit i of m is set.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def power_set(S):
+    return [frozenset(S)]
+`,
+        solution: `def power_set(S):
+    items = list(S)
+    n = len(items)
+    return [frozenset(items[i] for i in range(n) if m >> i & 1) for m in range(2 ** n)]
+`,
+        tests: [
+          { name: "size", code: `assert len(power_set({1, 2, 3, 4})) == 16, 'A 4-element set has 2⁴ = 16 subsets.'` },
+          { name: "all distinct", code: `P = power_set({1, 2, 3})
+assert len(set(P)) == 8 and frozenset() in P and frozenset({1, 2, 3}) in P, 'Include the empty set and the whole set, each once.'` },
+        ],
+      },
     },
     {
       key: "kuratowski",

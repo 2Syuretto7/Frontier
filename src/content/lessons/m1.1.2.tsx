@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark } from "@/components/lesson/Blocks";
 import { TruthTableViz } from "@/components/viz/TruthTableViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -140,6 +141,47 @@ export const lesson: LessonContent = {
           "P → Q; therefore Q → P",
         ],
         correct: [1, 2],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from itertools import product
+rows = [(p, q) for p, q in product([True, False], repeat=2) if not (p and q)]
+print(len(rows))`}</Code>
+          <p>How many rows of the truth table make p ∧ q false?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 3 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>truth_table(f, n)</C>, which returns the list of outputs of a Boolean function f of n variables over all 2ⁿ rows, in the order produced by <C>itertools.product([True, False], repeat=n)</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `from itertools import product
+
+def truth_table(f, n):
+    return []
+`,
+        solution: `from itertools import product
+
+def truth_table(f, n):
+    return [f(*row) for row in product([True, False], repeat=n)]
+`,
+        tests: [
+          { name: "and", code: `assert truth_table(lambda p, q: p and q, 2) == [True, False, False, False], 'p ∧ q is true only in the first row.'` },
+          { name: "three", code: `assert len(truth_table(lambda p, q, r: p or q or r, 3)) == 8 and truth_table(lambda p, q, r: p or q or r, 3)[-1] is False, 'Three variables give 8 rows; p ∨ q ∨ r fails only on the last.'` },
+        ],
       },
     },
     {

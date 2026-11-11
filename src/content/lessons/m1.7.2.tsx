@@ -1,6 +1,7 @@
 import { M } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { JectionViz } from "@/components/viz/JectionViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -141,6 +142,53 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 5 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`A = range(6)
+f = {a: (2 * a) % 6 for a in A}
+print(len(set(f.values())))`}</Code>
+          <p>How many distinct values does x ↦ 2x mod 6 take on {"{0, …, 5}"}?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 3 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>kind(f, A, B)</C> for a function given as a dict from A to B, returning one of <C>"bijection"</C>, <C>"injection"</C>, <C>"surjection"</C> or <C>"neither"</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def kind(f, A, B):
+    return 'neither'
+`,
+        solution: `def kind(f, A, B):
+    inj = len(set(f[a] for a in A)) == len(A)
+    sur = set(f[a] for a in A) == set(B)
+    if inj and sur:
+        return 'bijection'
+    if inj:
+        return 'injection'
+    if sur:
+        return 'surjection'
+    return 'neither'
+`,
+        tests: [
+          { name: "multiply by 5", code: `assert kind({a: (5 * a) % 6 for a in range(6)}, range(6), range(6)) == 'bijection', '5 is invertible mod 6.'` },
+          { name: "multiply by 2", code: `assert kind({a: (2 * a) % 6 for a in range(6)}, range(6), range(6)) == 'neither', '2x mod 6 repeats values and misses odd numbers.'` },
+          { name: "embedding", code: `assert kind({a: a for a in range(3)}, range(3), range(5)) == 'injection', 'Including {0, 1, 2} in {0, …, 4} is injective, not surjective.'` },
+          { name: "halving", code: `assert kind({a: a // 2 for a in range(6)}, range(6), range(3)) == 'surjection', 'a ↦ ⌊a/2⌋ hits every value twice.'` },
+        ],
+      },
     },
     {
       key: "bij-proof",

@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { OddSquareViz } from "@/components/viz/OddSquareViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -148,6 +149,46 @@ export const lesson: LessonContent = {
           "If a | b and b | c, then a | c.",
         ],
         correct: [1],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`bad = [n for n in range(1, 200) if (n * n) % 2 == 0 and n % 2 == 1]
+print(len(bad))`}</Code>
+          <p>The contrapositive of 'n² even ⇒ n even' is 'n odd ⇒ n² odd'. How many counterexamples does this search find?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 0 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>contrapositive(P, Q)</C>, which returns the predicate x ↦ (¬Q(x) → ¬P(x)), and check that it agrees with x ↦ (P(x) → Q(x)) everywhere.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def contrapositive(P, Q):
+    return lambda x: P(x)
+`,
+        solution: `def contrapositive(P, Q):
+    return lambda x: Q(x) or (not P(x))
+`,
+        tests: [
+          { name: "agrees", code: `P = lambda n: (n * n) % 2 == 0
+Q = lambda n: n % 2 == 0
+C = contrapositive(P, Q)
+assert all(C(n) == ((not P(n)) or Q(n)) for n in range(-20, 20)), 'The contrapositive must agree with P → Q for every x.'` },
+          { name: "fails sometimes", code: `C = contrapositive(lambda n: n > 2, lambda n: n > 5)
+assert C(3) is False and C(6) is True, 'n > 2 → n > 5 fails at n = 3, and so must its contrapositive.'` },
+        ],
       },
     },
     {

@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Proof, Quote, Remark, Theorem } from "@/components/lesson/Blocks";
 import { EuclidViz } from "@/components/viz/EuclidViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -149,6 +150,52 @@ export const lesson: LessonContent = {
           "a is both even and odd.",
         ],
         correct: [1],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from fractions import Fraction
+found = [Fraction(p, q) for q in range(1, 300) for p in range(q, 2 * q) if p * p == 2 * q * q]
+print(found)`}</Code>
+          <p>A search for p/q with (p/q)² = 2. What does it print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[]", "[Fraction(99, 70)]", "[Fraction(7, 5)]", "An error"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Euclid&rsquo;s proof that there are infinitely many primes multiplies the known primes and adds 1. Write <C>euclid_new_prime(primes)</C>, which returns the smallest prime factor of that number: a prime missing from the list.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def euclid_new_prime(primes):
+    return primes[0]
+`,
+        solution: `def euclid_new_prime(primes):
+    n = 1
+    for p in primes:
+        n *= p
+    n += 1
+    d = 2
+    while n % d:
+        d += 1
+    return d
+`,
+        tests: [
+          { name: "first five", code: `assert euclid_new_prime([2, 3, 5, 7, 11]) == 2311, '2·3·5·7·11 + 1 = 2311 is itself prime.'` },
+          { name: "composite case", code: `assert euclid_new_prime([2, 3, 5, 7, 11, 13]) == 59, '30031 = 59 × 509, so the new prime is 59.'` },
+          { name: "new", code: `ps = [2, 3, 5, 7, 11, 13, 17]
+assert euclid_new_prime(ps) not in ps, 'The prime found is never in the list.'` },
+        ],
       },
     },
     {

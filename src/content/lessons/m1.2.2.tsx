@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { QuantifierViz } from "@/components/viz/QuantifierViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -139,6 +140,54 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>With P(x) for &ldquo;x is prime&rdquo; and E(x) for &ldquo;x is even&rdquo;, symbolise &ldquo;Some prime is even&rdquo;.</p>,
       answer: { kind: "choice", options: ["∃x (P(x) → E(x))", "∃x (P(x) ∧ E(x))", "∀x (P(x) → E(x))", "∃x P(x) ∧ ∀x E(x)"], correct: [1] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`D = range(1, 10)
+print(all(n * n > n for n in D), any(n * n == 4 * n for n in D))`}</Code>
+          <p>The first is a ∀ statement, the second an ∃ statement over 1 to 9. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["False True", "True True", "False False", "True False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>forall(P, D)</C> and <C>exists(P, D)</C> for a finite domain D, using loops rather than <C>all</C> or <C>any</C>. Note what each returns on an empty domain.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def forall(P, D):
+    return False
+
+def exists(P, D):
+    return True
+`,
+        solution: `def forall(P, D):
+    for x in D:
+        if not P(x):
+            return False
+    return True
+
+def exists(P, D):
+    for x in D:
+        if P(x):
+            return True
+    return False
+`,
+        tests: [
+          { name: "squares", code: `assert not forall(lambda n: n * n > n, range(1, 10)) and exists(lambda n: n * n == 4 * n, range(1, 10)), 'n² > n fails at n = 1; n² = 4n holds at n = 4.'` },
+          { name: "empty domain", code: `assert forall(lambda x: False, []) and not exists(lambda x: True, []), 'A ∀ statement over an empty domain is vacuously true; an ∃ statement is false.'` },
+        ],
+      },
     },
     {
       key: "square-proof",

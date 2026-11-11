@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { DiagonalViz } from "@/components/viz/DiagonalViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -170,6 +171,47 @@ export const lesson: LessonContent = {
           "π is transcendental.",
         ],
         correct: [0],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`rows = ['0110', '1010', '0001', '1111']
+diag = ''.join('1' if rows[i][i] == '0' else '0' for i in range(4))
+print(diag, diag in rows)`}</Code>
+          <p>Cantor's diagonal string differs from every row. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1110 False", "0001 False", "1110 True", "0110 True"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>diagonal(rows)</C>, which takes a list of n binary strings, each of length at least n, and returns a string of length n that differs from row i in position i.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def diagonal(rows):
+    return rows[0][:len(rows)]
+`,
+        solution: `def diagonal(rows):
+    return ''.join('1' if r[i] == '0' else '0' for i, r in enumerate(rows))
+`,
+        tests: [
+          { name: "example", code: `assert diagonal(['0110', '1010', '0001', '1111']) == '1110', 'Flip the i-th character of the i-th row.'` },
+          { name: "not listed", code: `import random
+random.seed(1)
+rows = [''.join(random.choice('01') for _ in range(30)) for _ in range(30)]
+d = diagonal(rows)
+assert all(d[i] != rows[i][i] for i in range(30)) and d not in [r[:30] for r in rows], 'The diagonal string must differ from every row.'` },
+        ],
       },
     },
     {

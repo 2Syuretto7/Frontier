@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark } from "@/components/lesson/Blocks";
 import { WasonViz } from "@/components/viz/WasonViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -147,6 +148,44 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "choice", options: ["circle", "triangle", "red", "blue"], correct: [0, 3] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`imp = lambda p, q: (not p) or q
+from itertools import product
+print(sum(imp(p, q) != imp(not q, not p) for p, q in product([True, False], repeat=2)))`}</Code>
+          <p>On how many rows does p → q differ from its contrapositive?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 0 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>related(p, q)</C>, which returns a dict with the truth values of <C>"converse"</C> (q → p), <C>"inverse"</C> (¬p → ¬q) and <C>"contrapositive"</C> (¬q → ¬p).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def related(p, q):
+    return {}
+`,
+        solution: `def related(p, q):
+    imp = lambda a, b: (not a) or b
+    return {'converse': imp(q, p), 'inverse': imp(not p, not q), 'contrapositive': imp(not q, not p)}
+`,
+        tests: [
+          { name: "true false", code: `assert related(True, False) == {'converse': True, 'inverse': True, 'contrapositive': False}, 'With p true and q false, only the contrapositive (like p → q itself) is false.'` },
+          { name: "false true", code: `assert related(False, True) == {'converse': False, 'inverse': False, 'contrapositive': True}, 'With p false and q true, the converse and inverse fail.'` },
+        ],
+      },
     },
     {
       key: "contra-proof",

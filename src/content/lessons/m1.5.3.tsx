@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { DivisionViz } from "@/components/viz/DivisionViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -140,6 +141,45 @@ export const lesson: LessonContent = {
           "Show there are infinitely many counterexamples.",
         ],
         correct: [1],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`S = {n for n in range(1, 1000) if n % 7 == 3 and n % 5 == 4}
+print(min(S))`}</Code>
+          <p>The well-ordering principle says a non-empty set of positive integers has a least element. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 24 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>least(P)</C>, which returns the least positive integer satisfying P by searching upwards. (Well-ordering guarantees it exists when P holds for some positive integer.)
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def least(P):
+    return 1
+`,
+        solution: `def least(P):
+    n = 1
+    while not P(n):
+        n += 1
+    return n
+`,
+        tests: [
+          { name: "remainders", code: `assert least(lambda n: n % 7 == 3 and n % 5 == 4) == 24, '24 leaves 3 on division by 7 and 4 on division by 5.'` },
+          { name: "square over", code: `assert least(lambda n: n * n > 1000) == 32, '32² = 1024 is the first square above 1000.'` },
+        ],
       },
     },
     {

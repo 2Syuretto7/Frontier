@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { CountViz } from "@/components/viz/CountViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -139,6 +140,54 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 7 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`A = ['x', 'y', 'z']
+from itertools import product
+print(len(list(product([0, 1], repeat=len(A)))))`}</Code>
+          <p>Each subset of A is a choice of in or out for each element. How many subsets?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 8 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>count_functions(m, n)</C>, the number of functions from an m-element set to an n-element set, and <C>count_injections(m, n)</C>, the number of injective ones.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def count_functions(m, n):
+    return m * n
+
+def count_injections(m, n):
+    return 0
+`,
+        solution: `def count_functions(m, n):
+    return n ** m
+
+def count_injections(m, n):
+    out = 1
+    for k in range(m):
+        out *= n - k
+    return max(out, 0)
+`,
+        tests: [
+          { name: "functions", code: `assert count_functions(3, 2) == 8 and count_functions(2, 3) == 9, 'Each of the m inputs has n choices.'` },
+          { name: "injections", code: `assert count_injections(2, 3) == 6 and count_injections(3, 2) == 0, 'n(n − 1)… and none when m > n (pigeonhole).'` },
+          { name: "brute force", code: `from itertools import product
+assert count_injections(3, 4) == sum(len(set(t)) == 3 for t in product(range(4), repeat=3)), 'Compare with listing all functions.'` },
+        ],
+      },
     },
     {
       key: "galileo",

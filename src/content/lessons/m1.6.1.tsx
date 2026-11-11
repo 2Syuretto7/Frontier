@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { RelationViz } from "@/components/viz/RelationViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -124,6 +125,55 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>How many relations on a set with 3 elements are reflexive?</p>,
       answer: { kind: "numeric", value: 64 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`A = range(1, 5)
+R = {(a, b) for a in A for b in A if b % a == 0}
+print(all((a, a) in R for a in A), any((a, b) in R and (b, a) in R and a != b for a in A for b in A))`}</Code>
+          <p>R is 'a divides b' on {"{1, 2, 3, 4}"}. Is it reflexive, and does it have a symmetric pair of distinct elements?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True False", "True True", "False False", "False True"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>properties(R, A)</C> for a relation R (a set of pairs) on a finite set A, returning a dict with Boolean values for <C>"reflexive"</C>, <C>"symmetric"</C>, <C>"antisymmetric"</C> and <C>"transitive"</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def properties(R, A):
+    return {'reflexive': False, 'symmetric': False, 'antisymmetric': False, 'transitive': False}
+`,
+        solution: `def properties(R, A):
+    return {
+        'reflexive': all((a, a) in R for a in A),
+        'symmetric': all((b, a) in R for (a, b) in R),
+        'antisymmetric': all(a == b for (a, b) in R if (b, a) in R),
+        'transitive': all((a, d) in R for (a, b) in R for (c, d) in R if b == c),
+    }
+`,
+        tests: [
+          { name: "divides", code: `A = range(1, 7)
+R = {(a, b) for a in A for b in A if b % a == 0}
+assert properties(R, A) == {'reflexive': True, 'symmetric': False, 'antisymmetric': True, 'transitive': True}, 'Divisibility is a partial order on positive integers.'` },
+          { name: "same parity", code: `A = range(6)
+R = {(a, b) for a in A for b in A if (a - b) % 2 == 0}
+assert properties(R, A) == {'reflexive': True, 'symmetric': True, 'antisymmetric': False, 'transitive': True}, 'Same parity is an equivalence relation.'` },
+          { name: "less than", code: `A = range(4)
+R = {(a, b) for a in A for b in A if a < b}
+assert properties(R, A)['reflexive'] is False and properties(R, A)['transitive'] is True, '< is not reflexive but is transitive.'` },
+        ],
+      },
     },
     {
       key: "sym-trans",
