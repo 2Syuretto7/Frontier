@@ -1,5 +1,6 @@
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { OverfitViz } from "@/components/viz/OverfitViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -137,6 +138,56 @@ export const lesson: LessonContent = {
           "Evaluating on the test set once, after all choices are made",
         ],
         correct: [0, 1],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`train = {1: "a", 2: "b", 3: "a"}
+def memoriser(x):
+    return train.get(x, "?")
+print([memoriser(x) for x in [1, 2, 4]])`}</Code>
+          <p>A model that memorises its training data. What does it predict for 1, 2 and the new input 4?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["['a', 'b', '?']", "['a', 'b', 'a']", "['a', 'b', 'b']", "['?', '?', '?']"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>split(xs, ys, frac, seed)</C>, which shuffles the indices with <C>random.Random(seed)</C> and returns <C>(train_x, train_y, test_x, test_y)</C> with the first <C>round(frac * n)</C> shuffled items in the training set. Generalisation is measured only on the held-out part.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def split(xs, ys, frac, seed):
+    k = round(frac * len(xs))
+    return xs[:k], ys[:k], xs[k:], ys[k:]
+`,
+        solution: `import random
+
+def split(xs, ys, frac, seed):
+    idx = list(range(len(xs)))
+    random.Random(seed).shuffle(idx)
+    k = round(frac * len(xs))
+    tr, te = idx[:k], idx[k:]
+    return [xs[i] for i in tr], [ys[i] for i in tr], [xs[i] for i in te], [ys[i] for i in te]
+`,
+        tests: [
+          { name: "sizes", code: `a, b, c, d = split(list(range(10)), list(range(10)), 0.8, 0)
+assert len(a) == 8 and len(c) == 2 and sorted(a + c) == list(range(10)), 'Every item goes to exactly one side.'` },
+          { name: "aligned", code: `xs = list(range(20)); ys = [x * x for x in xs]
+a, b, c, d = split(xs, ys, 0.5, 1)
+assert all(y == x * x for x, y in zip(a + c, b + d)), 'Keep each x with its own y.'` },
+          { name: "shuffled", code: `a, _, _, _ = split(list(range(100)), list(range(100)), 0.5, 3)
+assert a != list(range(50)), 'Shuffle first: data files are often sorted.'` },
+        ],
       },
     },
     {

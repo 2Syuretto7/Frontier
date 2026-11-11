@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { BiasVarianceViz } from "@/components/viz/BiasVarianceViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -129,6 +130,59 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>With <M>{"\\sigma^2 = 4"}</M> and <M>{"n = 10"}</M> as well, what is the mean squared error of <M>{"0.5\\,\\bar x"}</M>?</p>,
       answer: { kind: "numeric", value: 1.1 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+rng = np.random.default_rng(0)
+preds = []
+for _ in range(500):
+    x = rng.uniform(-1, 1, 10); y = x ** 2 + rng.normal(0, 0.1, 10)
+    preds.append(np.polyval(np.polyfit(x, y, 1), 0.0))
+print(round(np.mean(preds) - 0.0, 1) > 0, np.var(preds) < 0.05)`}</Code>
+          <p>A straight line fitted to y = x², predicting at x = 0, over 500 datasets. Is it biased upward, and is its variance small?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True True", "True False", "False True", "False False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>bias_variance(degree, x0, trials, seed)</C>. With <C>np.random.default_rng(seed)</C>, repeat <C>trials</C> times: draw 15 x values uniform on [−1, 1], set y = sin(3x) + noise with standard deviation 0.3, fit <C>np.polyfit</C> of the given degree and predict at x0. Return (bias², variance) of the predictions against the truth sin(3·x0).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def bias_variance(degree, x0, trials, seed):
+    return (0.0, 0.0)
+`,
+        solution: `import numpy as np
+
+def bias_variance(degree, x0, trials, seed):
+    rng = np.random.default_rng(seed)
+    preds = []
+    for _ in range(trials):
+        x = rng.uniform(-1, 1, 15)
+        y = np.sin(3 * x) + rng.normal(0, 0.3, 15)
+        preds.append(np.polyval(np.polyfit(x, y, degree), x0))
+    preds = np.array(preds)
+    return (float((preds.mean() - np.sin(3 * x0)) ** 2), float(preds.var()))
+`,
+        tests: [
+          { name: "trade-off", code: `b1, v1 = bias_variance(1, 0.5, 400, 0)
+b5, v5 = bias_variance(5, 0.5, 400, 0)
+assert b1 > b5 and v5 > v1, 'Simple models have more bias; flexible ones have more variance.'` },
+        ],
+      },
     },
     {
       key: "derive",

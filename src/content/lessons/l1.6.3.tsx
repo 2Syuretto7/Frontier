@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { PcaViz } from "@/components/viz/PcaViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -137,6 +138,62 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>A covariance matrix has eigenvalues 5, 3, 1.5 and 0.5. What fraction of the variance do the first two components explain?</p>,
       answer: { kind: "numeric", value: 0.8 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+rng = np.random.default_rng(0)
+t = rng.normal(size=500)
+X = np.column_stack([t, 2 * t + rng.normal(0, 0.1, 500)])
+s = np.linalg.svd(X - X.mean(0), compute_uv=False)
+print(round(float(s[0] ** 2 / (s ** 2).sum()), 2))`}</Code>
+          <p>Two nearly collinear features. What fraction of variance does the first principal component explain?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1.0", "0.5", "0.8", "0.67"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>pca(X, k)</C>, which centres X, takes the SVD, and returns (the k × d matrix of principal directions, the n × k projected data, the fraction of variance explained by each of the k components).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def pca(X, k):
+    return np.eye(X.shape[1])[:k], X[:, :k], np.ones(k) / k
+`,
+        solution: `import numpy as np
+
+def pca(X, k):
+    Xc = X - X.mean(axis=0)
+    U, s, Vt = np.linalg.svd(Xc, full_matrices=False)
+    return Vt[:k], Xc @ Vt[:k].T, (s ** 2 / (s ** 2).sum())[:k]
+`,
+        tests: [
+          { name: "sklearn", code: `import numpy as np
+from sklearn.decomposition import PCA
+rng = np.random.default_rng(0)
+X = rng.normal(size=(200, 4)) @ rng.normal(size=(4, 4))
+V, Z, r = pca(X, 2)
+ref = PCA(2).fit(X)
+assert np.allclose(np.abs(V), np.abs(ref.components_), atol=1e-6) and np.allclose(r, ref.explained_variance_ratio_), 'Centre first; directions are rows of Vᵀ.'` },
+          { name: "projection", code: `import numpy as np
+rng = np.random.default_rng(1)
+X = rng.normal(size=(100, 3))
+V, Z, r = pca(X, 3)
+assert np.allclose(Z @ V + X.mean(0), X), 'With all components, projecting and mapping back recovers X.'` },
+        ],
+      },
     },
     {
       key: "maxproof",

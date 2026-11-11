@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { CurseViz } from "@/components/viz/CurseViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -130,6 +131,52 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Two independent uniform points in <M>{"[0, 1]^{60}"}</M>. What is the expected squared distance between them?</p>,
       answer: { kind: "numeric", value: 10 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+rng = np.random.default_rng(0)
+for d in (2, 1000):
+    X = rng.uniform(size=(200, d))
+    D = np.sqrt(((X[0] - X[1:]) ** 2).sum(1))
+    print(d, round(D.min() / D.max(), 1))`}</Code>
+          <p>Nearest over farthest distance from one point, in 2 and 1000 dimensions. Is the ratio for d = 1000 close to 0 or close to 1?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["Close to 1", "Close to 0", "Exactly 0.5", "Greater than 1"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>fraction_in_ball(d, n, seed)</C>, which samples n points uniformly from the cube [−1, 1]<sup>d</sup> with <C>np.random.default_rng(seed)</C> and returns the fraction inside the unit ball. In high dimensions almost all of the cube is in its corners.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def fraction_in_ball(d, n, seed):
+    return 3.14159 / 4
+`,
+        solution: `import numpy as np
+
+def fraction_in_ball(d, n, seed):
+    X = np.random.default_rng(seed).uniform(-1, 1, size=(n, d))
+    return float(((X ** 2).sum(axis=1) <= 1).mean())
+`,
+        tests: [
+          { name: "2d", code: `import numpy as np
+assert abs(fraction_in_ball(2, 100000, 0) - np.pi / 4) < 0.01, 'In 2D the disc covers π/4 of the square.'` },
+          { name: "high", code: `assert fraction_in_ball(10, 100000, 0) < 0.01, 'In 10D the ball covers under 1% of the cube.'` },
+        ],
+      },
     },
     {
       key: "sixth",

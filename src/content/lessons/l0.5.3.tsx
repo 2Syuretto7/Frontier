@@ -1,6 +1,7 @@
 import { M } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { ClaimSorterViz } from "@/components/viz/ClaimSorterViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -132,6 +133,60 @@ export const lesson: LessonContent = {
           "Did the model perform equally well across skin tones?",
         ],
         correct: [0, 2, 3],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import random
+random.seed(0)
+scores = [0.70 + random.gauss(0, 0.02) for _ in range(5)]
+print(round(max(scores) - min(scores), 3) > 0.01)`}</Code>
+          <p>The same model evaluated with five random seeds. Do the scores differ by more than one percentage point?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True", "False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A claimed improvement may be noise. Write <C>ci95(xs)</C>, which returns (mean, half-width) of an approximate 95% confidence interval for the mean, using 1.96 × sample standard deviation / √n with the n − 1 denominator, and <C>significant(a, b)</C>, which says whether the two intervals do not overlap.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def ci95(xs):
+    m = sum(xs) / len(xs)
+    return (m, 0.0)
+
+def significant(a, b):
+    return ci95(a)[0] != ci95(b)[0]
+`,
+        solution: `import math
+
+def ci95(xs):
+    n = len(xs)
+    m = sum(xs) / n
+    sd = math.sqrt(sum((x - m) ** 2 for x in xs) / (n - 1))
+    return (m, 1.96 * sd / math.sqrt(n))
+
+def significant(a, b):
+    ma, ha = ci95(a)
+    mb, hb = ci95(b)
+    return ma + ha < mb - hb or mb + hb < ma - ha
+`,
+        tests: [
+          { name: "interval", code: `m, h = ci95([1.0, 2.0, 3.0, 4.0])
+assert abs(m - 2.5) < 1e-9 and abs(h - 1.96 * (5 / 3) ** 0.5 / 2) < 1e-9, 'Use the n − 1 standard deviation divided by √n.'` },
+          { name: "noise", code: `assert not significant([0.70, 0.72, 0.69], [0.71, 0.73, 0.70]), 'A one-point gain within seed noise is not significant.'` },
+          { name: "real", code: `assert significant([0.70, 0.71, 0.70], [0.80, 0.81, 0.80]), 'A ten-point gain with small spread is.'` },
+        ],
       },
     },
     {

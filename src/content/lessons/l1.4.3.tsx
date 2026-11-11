@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { TreeViz } from "@/components/viz/TreeViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -142,6 +143,81 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>A different split gives two children of 5 points, each with 3 of one class and 2 of the other. By how much does it reduce the Gini impurity?</p>,
       answer: { kind: "numeric", value: 0 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from sklearn.tree import DecisionTreeClassifier, export_text
+X = [[1], [2], [3], [7], [8], [9]]
+y = [0, 0, 0, 1, 1, 1]
+t = DecisionTreeClassifier().fit(X, y)
+print(t.get_depth(), t.tree_.threshold[0])`}</Code>
+          <p>A tree learns one split. What are its depth and the threshold it chooses?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1 5.0", "1 3.0", "2 5.0", "1 7.0"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>build_tree(X, y, depth)</C>, a recursive classification tree on numpy arrays. A node is a leaf (its majority label, smallest on ties) when depth is 0 or the labels are pure; otherwise split on the feature and midpoint threshold minimising weighted Gini impurity. Return nested dicts <C>{'{"leaf": label}'}</C> or <C>{'{"f": j, "t": t, "l": left, "r": right}'}</C> with x[j] ≤ t going left. Also write <C>predict_one(tree, x)</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def build_tree(X, y, depth):
+    return {'leaf': int(np.bincount(y).argmax())}
+
+def predict_one(tree, x):
+    return tree['leaf']
+`,
+        solution: `import numpy as np
+
+def gini(y):
+    p = np.bincount(y) / len(y)
+    return 1 - (p ** 2).sum()
+
+def build_tree(X, y, depth):
+    if depth == 0 or len(set(y.tolist())) == 1:
+        return {'leaf': int(np.bincount(y).argmax())}
+    best = None
+    for j in range(X.shape[1]):
+        vals = np.unique(X[:, j])
+        for t in (vals[:-1] + vals[1:]) / 2:
+            m = X[:, j] <= t
+            s = (m.sum() * gini(y[m]) + (~m).sum() * gini(y[~m])) / len(y)
+            if best is None or s < best[0]:
+                best = (s, j, t)
+    if best is None:
+        return {'leaf': int(np.bincount(y).argmax())}
+    _, j, t = best
+    m = X[:, j] <= t
+    return {'f': j, 't': float(t), 'l': build_tree(X[m], y[m], depth - 1), 'r': build_tree(X[~m], y[~m], depth - 1)}
+
+def predict_one(tree, x):
+    while 'leaf' not in tree:
+        tree = tree['l'] if x[tree['f']] <= tree['t'] else tree['r']
+    return tree['leaf']
+`,
+        tests: [
+          { name: "stump", code: `import numpy as np
+X = np.array([[1.0], [2.0], [3.0], [7.0], [8.0], [9.0]]); y = np.array([0, 0, 0, 1, 1, 1])
+t = build_tree(X, y, 3)
+assert t['f'] == 0 and t['t'] == 5.0 and t['l'] == {'leaf': 0} and t['r'] == {'leaf': 1}, 'Split at the midpoint 5 and stop when pure.'` },
+          { name: "xor", code: `import numpy as np
+X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]] * 5, dtype=float); y = np.array([0, 1, 1, 0] * 5)
+t = build_tree(X, y, 2)
+assert all(predict_one(t, x) == v for x, v in zip(X, y)), 'Two levels of splits solve XOR.'` },
+        ],
+      },
     },
     {
       key: "pure",

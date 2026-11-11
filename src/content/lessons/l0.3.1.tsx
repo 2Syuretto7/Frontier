@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { LineByEyeViz } from "@/components/viz/LineByEyeViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -125,6 +126,45 @@ export const lesson: LessonContent = {
         kind: "choice",
         options: ["Ice cream causes drowning.", "A third factor, hot weather, may drive both.", "A line fitted to the data could predict one from the other.", "Banning ice cream would reduce drownings."],
         correct: [1, 2],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`pts = [(0, 1), (1, 3), (2, 5)]
+for m, c in [(2, 1), (1.5, 1.5)]:
+    print(sum((y - (m * x + c)) ** 2 for x, y in pts))`}</Code>
+          <p>Two lines drawn by eye, judged by squared error. What is the second line printed?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 0.5, tolerance: 1e-09 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Fitting by eye is a search. Write <C>grid_fit(pts, slopes, intercepts)</C>, which tries every pair (m, c) from the two lists and returns the pair with the smallest sum of squared errors.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def grid_fit(pts, slopes, intercepts):
+    return (slopes[0], intercepts[0])
+`,
+        solution: `def grid_fit(pts, slopes, intercepts):
+    def sse(m, c):
+        return sum((y - (m * x + c)) ** 2 for x, y in pts)
+    return min(((m, c) for m in slopes for c in intercepts), key=lambda mc: sse(*mc))
+`,
+        tests: [
+          { name: "grid", code: `pts = [(0, 1), (1, 3), (2, 5), (3, 7)]
+assert grid_fit(pts, [0, 1, 2, 3], [-1, 0, 1, 2]) == (2, 1), 'y = 2x + 1 fits exactly.'` },
+        ],
       },
     },
     {

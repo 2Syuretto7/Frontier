@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { RocViz } from "@/components/viz/RocViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -118,6 +119,51 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>What is the F1 score for precision 0.75 and recall 0.25? Give three decimal places.</p>,
       answer: { kind: "numeric", value: 0.375 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`tp, fp, fn = 8, 2, 4
+precision, recall = tp / (tp + fp), tp / (tp + fn)
+print(precision, round(recall, 3), round(2 * precision * recall / (precision + recall), 3))`}</Code>
+          <p>Precision, recall and F1. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.8 0.667 0.727", "0.667 0.8 0.727", "0.8 0.667 0.733", "0.8 0.333 0.471"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>roc_auc(y, scores)</C>, the area under the ROC curve computed as the probability that a random positive scores higher than a random negative, counting ties as one half. Check it against <C>sklearn.metrics.roc_auc_score</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def roc_auc(y, scores):
+    return 0.5
+`,
+        solution: `def roc_auc(y, scores):
+    pos = [s for s, t in zip(scores, y) if t == 1]
+    neg = [s for s, t in zip(scores, y) if t == 0]
+    wins = sum((p > n) + 0.5 * (p == n) for p in pos for n in neg)
+    return wins / (len(pos) * len(neg))
+`,
+        tests: [
+          { name: "perfect", code: `assert roc_auc([0, 0, 1, 1], [0.1, 0.2, 0.8, 0.9]) == 1.0, 'Every positive outranks every negative.'` },
+          { name: "sklearn", code: `from sklearn.metrics import roc_auc_score
+import random
+random.seed(0)
+y = [random.randint(0, 1) for _ in range(60)]
+s = [round(random.random() + 0.3 * t, 1) for t in y]
+assert abs(roc_auc(y, s) - roc_auc_score(y, s)) < 1e-9, 'Ties count one half.'` },
+        ],
+      },
     },
     {
       key: "tradeoff",

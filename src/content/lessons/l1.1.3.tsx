@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { DegreeViz } from "@/components/viz/DegreeViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -113,6 +114,66 @@ export const lesson: LessonContent = {
         kind: "choice",
         options: ["Collect more training data", "Use a simpler family of models", "Penalise large coefficients", "Train for longer on the same data"],
         correct: [0, 1, 2],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+x = np.linspace(0, 1, 8)
+y = 2 * x + np.array([0.1, -0.1, 0.05, 0.0, -0.05, 0.1, -0.1, 0.0])
+for deg in (1, 7):
+    c = np.polyfit(x, y, deg)
+    print(deg, round(float(np.abs(np.polyval(c, x) - y).max()), 3))`}</Code>
+          <p>A line and a degree-7 polynomial through 8 noisy points. What is the largest training error of the degree-7 fit?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 0.0, tolerance: 0.001 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>poly_errors(x_tr, y_tr, x_te, y_te, degrees)</C>, which fits <C>np.polyfit</C> of each degree to the training data and returns a list of (degree, train MSE, test MSE). Then write <C>best(results)</C>, which returns the degree with the lowest test error.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def poly_errors(x_tr, y_tr, x_te, y_te, degrees):
+    return []
+
+def best(results):
+    return max(d for d, _, _ in results)
+`,
+        solution: `import numpy as np
+
+def poly_errors(x_tr, y_tr, x_te, y_te, degrees):
+    out = []
+    for d in degrees:
+        c = np.polyfit(x_tr, y_tr, d)
+        tr = np.mean((np.polyval(c, x_tr) - y_tr) ** 2)
+        te = np.mean((np.polyval(c, x_te) - y_te) ** 2)
+        out.append((d, tr, te))
+    return out
+
+def best(results):
+    return min(results, key=lambda r: r[2])[0]
+`,
+        tests: [
+          { name: "u shape", code: `import numpy as np
+rng = np.random.default_rng(1)
+x = rng.uniform(-1, 1, 40); y = x ** 3 - x + rng.normal(0, 0.1, 40)
+res = poly_errors(x[:20], y[:20], x[20:], y[20:], [1, 3, 15])
+trs = [r[1] for r in res]
+assert trs[0] > trs[1] > trs[2] and best(res) == 3, 'Training error always falls with degree; test error is lowest at the true degree.'` },
+        ],
       },
     },
     {

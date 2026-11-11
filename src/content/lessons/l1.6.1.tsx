@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { KMeansLloydViz } from "@/components/viz/KMeansLloydViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -149,6 +150,60 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>A cluster holds <M>{"(2, 4), (4, 0), (6, 2)"}</M>. What is its sum of squared distances to its mean?</p>,
       answer: { kind: "numeric", value: 16 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+X = np.array([[0, 0], [0, 1], [10, 10], [10, 11]], dtype=float)
+C = np.array([[0, 0], [10, 10]], dtype=float)
+labels = ((X[:, None] - C[None]) ** 2).sum(-1).argmin(1)
+print(labels, np.array([X[labels == k].mean(0) for k in range(2)]).tolist())`}</Code>
+          <p>One assign-and-update step of k-means. What are the new centres?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[[0.0, 0.5], [10.0, 10.5]]", "[[0.0, 0.0], [10.0, 10.0]]", "[[5.0, 5.5], [5.0, 5.5]]", "[[0.0, 1.0], [10.0, 11.0]]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>kmeans(X, k, steps, seed)</C> with numpy: start from k distinct rows chosen by <C>np.random.default_rng(seed).choice(len(X), k, replace=False)</C>, then alternate assignment and mean updates for <C>steps</C> rounds (keep a centre with no points where it is). Return (centres, labels, inertia), where inertia is the total squared distance to assigned centres.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def kmeans(X, k, steps, seed):
+    C = X[:k]
+    return C, np.zeros(len(X), dtype=int), 0.0
+`,
+        solution: `import numpy as np
+
+def kmeans(X, k, steps, seed):
+    C = X[np.random.default_rng(seed).choice(len(X), k, replace=False)].astype(float)
+    for _ in range(steps):
+        d = ((X[:, None, :] - C[None, :, :]) ** 2).sum(-1)
+        labels = d.argmin(1)
+        C = np.array([X[labels == j].mean(0) if (labels == j).any() else C[j] for j in range(k)])
+    d = ((X[:, None, :] - C[None, :, :]) ** 2).sum(-1)
+    labels = d.argmin(1)
+    return C, labels, float(d[np.arange(len(X)), labels].sum())
+`,
+        tests: [
+          { name: "blobs", code: `import numpy as np
+from sklearn.datasets import make_blobs
+X, y = make_blobs(300, centers=[[0, 0], [8, 0], [0, 8]], cluster_std=0.5, random_state=0)
+C, labels, inertia = kmeans(X, 3, 20, 0)
+assert sorted(np.round(C).astype(int).tolist()) == [[0, 0], [0, 8], [8, 0]] and inertia < 200, 'Each centre should settle in one blob.'` },
+        ],
+      },
     },
     {
       key: "terminate",

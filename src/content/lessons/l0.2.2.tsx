@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { RegressionViz } from "@/components/viz/RegressionViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -135,6 +136,51 @@ export const lesson: LessonContent = {
         kind: "choice",
         options: ["Extrapolation: children stop growing, so the pattern does not continue past the data", "Overfitting to noise", "The loss function was wrong"],
         correct: [0],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`xs = [1, 2, 3, 4]
+ys = [3, 5, 7, 9]
+slope = (ys[-1] - ys[0]) / (xs[-1] - xs[0])
+print(slope, ys[0] - slope * xs[0], slope * 10 + ys[0] - slope * xs[0])`}</Code>
+          <p>Regression predicts a number. What does this print, including the prediction at x = 10?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2.0 1.0 21.0", "2.0 3.0 23.0", "2.0 1.0 20.0", "1.5 1.0 16.0"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>fit_line(xs, ys)</C>, which returns the least-squares slope and intercept using the formulas slope = Σ(x − x̄)(y − ȳ) / Σ(x − x̄)² and intercept = ȳ − slope · x̄.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def fit_line(xs, ys):
+    return (ys[-1] - ys[0]) / (xs[-1] - xs[0]), ys[0]
+`,
+        solution: `def fit_line(xs, ys):
+    n = len(xs)
+    mx, my = sum(xs) / n, sum(ys) / n
+    sxy = sum((x - mx) * (y - my) for x, y in zip(xs, ys))
+    sxx = sum((x - mx) ** 2 for x in xs)
+    m = sxy / sxx
+    return m, my - m * mx
+`,
+        tests: [
+          { name: "exact", code: `m, c = fit_line([1, 2, 3, 4], [3, 5, 7, 9])
+assert abs(m - 2) < 1e-9 and abs(c - 1) < 1e-9, 'Points on y = 2x + 1.'` },
+          { name: "noisy", code: `m, c = fit_line([0, 1, 2, 3], [1, 2, 2, 5])
+assert abs(m - 1.2) < 1e-9 and abs(c - 0.7) < 1e-9, 'Least squares uses every point, not just the ends.'` },
+        ],
       },
     },
     {

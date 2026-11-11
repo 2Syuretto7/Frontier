@@ -1,5 +1,6 @@
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { ImageNetViz } from "@/components/viz/ImageNetViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -125,6 +126,52 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>From 28.2% in 2010 to 3.6% in 2015, by what factor did the winning error fall? Give one decimal place.</p>,
       answer: { kind: "numeric", value: 7.8, tolerance: 0.01 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+relu = lambda z: max(0.0, z)
+sig = lambda z: 1 / (1 + math.exp(-z))
+d = lambda f, z: (f(z + 1e-6) - f(z - 1e-6)) / 2e-6
+print(round(d(sig, 6), 4), round(d(relu, 6), 4))`}</Code>
+          <p>Gradients of sigmoid and ReLU at z = 6. Why did ReLU help deep networks train?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.0025 1.0", "0.25 1.0", "0.0025 0.0", "1.0 1.0"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>xor_net(x1, x2)</C>, a two-layer network of step neurons with hand-chosen weights that computes XOR: one hidden neuron for OR, one for AND, and an output that fires for OR and not AND. Use <C>step(z)</C>, which returns 1 when z &gt; 0.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def step(z):
+    return 1 if z > 0 else 0
+
+def xor_net(x1, x2):
+    return step(x1 + x2 - 0.5)
+`,
+        solution: `def step(z):
+    return 1 if z > 0 else 0
+
+def xor_net(x1, x2):
+    h_or = step(x1 + x2 - 0.5)
+    h_and = step(x1 + x2 - 1.5)
+    return step(h_or - h_and - 0.5)
+`,
+        tests: [
+          { name: "xor", code: `assert [xor_net(a, b) for a, b in [(0, 0), (0, 1), (1, 0), (1, 1)]] == [0, 1, 1, 0], 'A hidden layer makes XOR possible.'` },
+        ],
+      },
     },
     {
       key: "why-now",

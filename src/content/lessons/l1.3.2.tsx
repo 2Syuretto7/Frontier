@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { BoundaryLogitViz } from "@/components/viz/BoundaryLogitViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -120,6 +121,51 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>For threshold 0.8, class 1 requires <M>{"z \\ge \\ln 4"}</M>. What is <M>{"\\ln 4"}</M>, to two decimal places?</p>,
       answer: { kind: "numeric", value: 1.39, tolerance: 0.004 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`w = [1.0, -1.0]; b = 0.0
+pts = [(2, 1), (1, 2), (3, 3)]
+print([w[0] * x + w[1] * y + b > 0 for x, y in pts])`}</Code>
+          <p>The boundary x − y = 0. Which side is each point on?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[True, False, False]", "[True, False, True]", "[False, True, False]", "[True, True, False]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>boundary_y(w, b, x)</C>, the y-coordinate where the line w₀x + w₁y + b = 0 crosses the vertical line at x (w₁ ≠ 0), and <C>margin(w, b, point)</C>, the signed distance from a point to that boundary.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def boundary_y(w, b, x):
+    return -b
+
+def margin(w, b, point):
+    return w[0] * point[0] + w[1] * point[1] + b
+`,
+        solution: `import math
+
+def boundary_y(w, b, x):
+    return -(w[0] * x + b) / w[1]
+
+def margin(w, b, point):
+    return (w[0] * point[0] + w[1] * point[1] + b) / math.hypot(w[0], w[1])
+`,
+        tests: [
+          { name: "boundary", code: `assert abs(boundary_y([1, -1], 0, 3) - 3) < 1e-9 and abs(boundary_y([2, 1], -4, 1) - 2) < 1e-9, 'Solve w₀x + w₁y + b = 0 for y.'` },
+          { name: "distance", code: `assert abs(margin([3, 4], -5, (3, 4)) - 4) < 1e-9, 'Divide the score by the length of w.'` },
+        ],
+      },
     },
     {
       key: "ring",

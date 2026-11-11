@@ -1,5 +1,6 @@
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { KMeansViz } from "@/components/viz/KMeansViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -134,6 +135,53 @@ export const lesson: LessonContent = {
         kind: "choice",
         options: ["Because the total always falls as k grows, reaching zero when every point has its own centre", "Because k-means does not compute distances", "Because the total is the same for every k"],
         correct: [0],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`pts = [1, 2, 3, 10, 11, 12]
+centres = [2, 11]
+labels = [min(range(2), key=lambda k: abs(p - centres[k])) for p in pts]
+print(labels)`}</Code>
+          <p>Clustering assigns each point to its nearest centre. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0, 0, 0, 1, 1, 1]", "[0, 1, 0, 1, 0, 1]", "[1, 1, 1, 0, 0, 0]", "[0, 0, 1, 1, 1, 1]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>kmeans_1d(xs, centres, steps)</C>, which runs k-means on numbers: assign each x to its nearest centre, move each centre to the mean of its points (leave it if it has none), and repeat <C>steps</C> times. Return the sorted list of centres.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def kmeans_1d(xs, centres, steps):
+    return sorted(centres)
+`,
+        solution: `def kmeans_1d(xs, centres, steps):
+    c = list(centres)
+    for _ in range(steps):
+        groups = [[] for _ in c]
+        for x in xs:
+            k = min(range(len(c)), key=lambda i: abs(x - c[i]))
+            groups[k].append(x)
+        c = [sum(g) / len(g) if g else c[i] for i, g in enumerate(groups)]
+    return sorted(c)
+`,
+        tests: [
+          { name: "two groups", code: `c = kmeans_1d([1, 2, 3, 10, 11, 12], [0, 5], 10)
+assert abs(c[0] - 2) < 1e-9 and abs(c[1] - 11) < 1e-9, 'Each centre should settle at the mean of its group.'` },
+          { name: "empty cluster", code: `c = kmeans_1d([1, 2, 3], [2, 100], 3)
+assert abs(c[0] - 2) < 1e-9 and c[1] == 100, 'A centre with no points stays where it is.'` },
+        ],
       },
     },
     {

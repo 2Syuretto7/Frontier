@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { LeastSquaresViz } from "@/components/viz/LeastSquaresViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -130,6 +131,58 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>What does that line predict at <M>{"x = 4"}</M>? Give two decimal places.</p>,
       answer: { kind: "numeric", value: 6.67, tolerance: 0.002 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+X = np.array([[1, 0], [1, 1], [1, 2]], dtype=float)
+y = np.array([1, 3, 5], dtype=float)
+print(np.linalg.solve(X.T @ X, X.T @ y))`}</Code>
+          <p>The normal equations for a line through three points. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[1. 2.]", "[2. 1.]", "[0. 2.]", "[1. 3.]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>least_squares(X, y)</C>, which adds a column of ones to X for the intercept and returns the coefficient vector (intercept first) using <C>np.linalg.lstsq</C>, and <C>predict(w, X)</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def least_squares(X, y):
+    return np.linalg.lstsq(X, y, rcond=None)[0]
+
+def predict(w, X):
+    return X @ w
+`,
+        solution: `import numpy as np
+
+def least_squares(X, y):
+    A = np.column_stack([np.ones(len(X)), X])
+    return np.linalg.lstsq(A, y, rcond=None)[0]
+
+def predict(w, X):
+    return w[0] + X @ w[1:]
+`,
+        tests: [
+          { name: "recover", code: `import numpy as np
+rng = np.random.default_rng(0)
+X = rng.normal(size=(100, 2)); y = 3 + X @ np.array([2.0, -1.0])
+w = least_squares(X, y)
+assert np.allclose(w, [3, 2, -1]) and np.allclose(predict(w, X), y), 'Prepend a column of ones so the intercept is fitted too.'` },
+        ],
+      },
     },
     {
       key: "sumzero",

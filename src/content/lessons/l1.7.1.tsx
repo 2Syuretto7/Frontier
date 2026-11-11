@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ScalingViz } from "@/components/viz/ScalingViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -132,6 +133,63 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>A feature takes five values: Pune, Delhi, Chennai, Kolkata and Mumbai. How many binary columns does one-hot encoding, with one column per value, create?</p>,
       answer: { kind: "numeric", value: 5 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import pandas as pd
+df = pd.DataFrame({"city": ["Pune", "Delhi", "Pune"]})
+print(pd.get_dummies(df, columns=["city"], dtype=int).values.tolist())`}</Code>
+          <p>One-hot encoding a category, columns in alphabetical order. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[[0, 1], [1, 0], [0, 1]]", "[[1, 0], [0, 1], [1, 0]]", "[[1], [0], [1]]", "[[0, 1, 0], [1, 0, 0], [0, 1, 0]]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write a class <C>Scaler</C> with <C>fit(self, X)</C>, which stores each column&rsquo;s mean and standard deviation (a standard deviation of 0 is replaced by 1) and returns self, and <C>transform(self, X)</C>, which applies them. Fitting on training data and reusing the numbers on test data is the whole point.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+class Scaler:
+    def fit(self, X):
+        return self
+    def transform(self, X):
+        return (X - X.mean(0)) / X.std(0)
+`,
+        solution: `import numpy as np
+
+class Scaler:
+    def fit(self, X):
+        self.mean = X.mean(axis=0)
+        sd = X.std(axis=0)
+        self.sd = np.where(sd == 0, 1, sd)
+        return self
+    def transform(self, X):
+        return (X - self.mean) / self.sd
+`,
+        tests: [
+          { name: "reuse", code: `import numpy as np
+Xtr = np.array([[0.0, 5.0], [2.0, 5.0]]); Xte = np.array([[4.0, 5.0]])
+s = Scaler().fit(Xtr)
+assert np.allclose(s.transform(Xte), [[3.0, 0.0]]), 'Use the training mean and standard deviation on the test rows.'` },
+          { name: "sklearn", code: `import numpy as np
+from sklearn.preprocessing import StandardScaler
+rng = np.random.default_rng(0)
+X = rng.normal(3, 2, size=(50, 3))
+assert np.allclose(Scaler().fit(X).transform(X), StandardScaler().fit_transform(X)), 'Match StandardScaler.'` },
+        ],
+      },
     },
     {
       key: "invariance",

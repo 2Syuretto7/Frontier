@@ -1,6 +1,7 @@
 import { M } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { BigramViz } from "@/components/viz/BigramViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -130,6 +131,58 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 1 / 3, tolerance: 0.02 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import random
+random.seed(0)
+counts = {"a": 4, "b": 1}
+text = "".join(random.choices(list(counts), weights=counts.values(), k=4000))
+print(round(text.count("a") / len(text), 1))`}</Code>
+          <p>A generative model samples from what it learned: 'a' four times as often as 'b'. What fraction of the output is 'a', to one decimal place?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 0.8, tolerance: 0.001 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>bigram_model(text)</C>, which returns a dict from each character to a dict of counts of the characters that follow it, and <C>most_likely_next(model, ch)</C>, which returns the most frequent follower (ties broken by the alphabetically smallest).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def bigram_model(text):
+    return {}
+
+def most_likely_next(model, ch):
+    return ch
+`,
+        solution: `def bigram_model(text):
+    model = {}
+    for a, b in zip(text, text[1:]):
+        model.setdefault(a, {})
+        model[a][b] = model[a].get(b, 0) + 1
+    return model
+
+def most_likely_next(model, ch):
+    follow = model[ch]
+    return min(follow, key=lambda c: (-follow[c], c))
+`,
+        tests: [
+          { name: "counts", code: `m = bigram_model('abab')
+assert m == {'a': {'b': 2}, 'b': {'a': 1}}, 'Count each pair of neighbouring characters.'` },
+          { name: "next", code: `m = bigram_model('the then there')
+assert most_likely_next(m, 't') == 'h' and most_likely_next(m, 'h') == 'e', 'After t comes h every time.'` },
+        ],
+      },
     },
     {
       key: "memory",

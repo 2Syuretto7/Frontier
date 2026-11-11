@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark, Theorem } from "@/components/lesson/Blocks";
 import { KnnRegionViz } from "@/components/viz/KnnRegionViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -136,6 +137,54 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Training pairs <M>{"(1, 10), (2, 14), (4, 20), (6, 30)"}</M>. What does 3-nearest-neighbour regression predict at <M>{"x = 3"}</M>? Give two decimal places.</p>,
       answer: { kind: "numeric", value: 44 / 3, tolerance: 0.0004 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from sklearn.neighbors import KNeighborsClassifier
+X = [[0], [1], [2], [10], [11]]
+y = [0, 0, 0, 1, 1]
+print(KNeighborsClassifier(1).fit(X, y).predict([[6.5]]), KNeighborsClassifier(5).fit(X, y).predict([[10.5]]))`}</Code>
+          <p>k = 1 against k = 5. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[1] [0]", "[0] [1]", "[1] [1]", "[0] [0]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>knn_predict(X_train, y_train, X_test, k)</C> with numpy: compute all squared distances at once, take the k nearest with <C>np.argsort</C>, and vote with <C>np.bincount</C> (ties go to the smaller label). Labels are small non-negative integers.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def knn_predict(X_train, y_train, X_test, k):
+    return np.zeros(len(X_test), dtype=int)
+`,
+        solution: `import numpy as np
+
+def knn_predict(X_train, y_train, X_test, k):
+    d = ((X_test[:, None, :] - X_train[None, :, :]) ** 2).sum(-1)
+    idx = np.argsort(d, axis=1, kind='stable')[:, :k]
+    return np.array([np.bincount(y_train[row]).argmax() for row in idx])
+`,
+        tests: [
+          { name: "sklearn", code: `from sklearn.neighbors import KNeighborsClassifier
+from sklearn.datasets import make_blobs
+X, y = make_blobs(200, centers=3, random_state=0)
+ours = knn_predict(X[:150], y[:150], X[150:], 5)
+ref = KNeighborsClassifier(5).fit(X[:150], y[:150]).predict(X[150:])
+assert (ours == ref).mean() > 0.97, 'Match scikit-learn’s k-nearest neighbours.'` },
+        ],
+      },
     },
     {
       key: "zero",

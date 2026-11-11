@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { DendroViz } from "@/components/viz/DendroViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -127,6 +128,56 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>How many clusters do you get by cutting the single-linkage tree for 0, 1, 3, 7 at height 2.5?</p>,
       answer: { kind: "numeric", value: 2 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from scipy.cluster.hierarchy import linkage
+import numpy as np
+X = np.array([[0.0], [1.0], [5.0], [6.0], [20.0]])
+Z = linkage(X, "single")
+print(Z[:, 2].tolist())`}</Code>
+          <p>Single-linkage merge heights, in the order merges happen. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[1.0, 1.0, 4.0, 14.0]", "[1.0, 4.0, 14.0, 20.0]", "[0.0, 1.0, 5.0, 6.0]", "[1.0, 1.0, 5.0, 15.0]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>single_linkage(points, k)</C> for a list of numbers: start with each point in its own cluster and repeatedly merge the two clusters whose closest members are nearest, until k clusters remain. Return the clusters as sorted lists, sorted by their first element.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def single_linkage(points, k):
+    return [[p] for p in sorted(points)][:k]
+`,
+        solution: `def single_linkage(points, k):
+    clusters = [[p] for p in points]
+    while len(clusters) > k:
+        best = None
+        for i in range(len(clusters)):
+            for j in range(i + 1, len(clusters)):
+                d = min(abs(a - b) for a in clusters[i] for b in clusters[j])
+                if best is None or d < best[0]:
+                    best = (d, i, j)
+        _, i, j = best
+        clusters[i] = clusters[i] + clusters[j]
+        del clusters[j]
+    return sorted(sorted(c) for c in clusters)
+`,
+        tests: [
+          { name: "three", code: `assert single_linkage([0, 1, 5, 6, 20], 3) == [[0, 1], [5, 6], [20]], 'Merge the closest clusters first.'` },
+          { name: "chain", code: `assert single_linkage([0, 2, 4, 6, 30], 2) == [[0, 2, 4, 6], [30]], 'Single linkage chains evenly spaced points together.'` },
+        ],
+      },
     },
     {
       key: "mono",

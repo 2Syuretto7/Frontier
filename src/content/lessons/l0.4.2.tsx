@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark, Theorem } from "@/components/lesson/Blocks";
 import { PerceptronViz } from "@/components/viz/PerceptronViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -130,6 +131,60 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>On which data will the perceptron rule keep making updates for ever?</p>,
       answer: { kind: "choice", options: ["Data that no straight line separates", "Data that a straight line separates", "Any data with more than 10 points"], correct: [0] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`w, b = [0.0, 0.0], 0.0
+data = [((0, 0), 0), ((0, 1), 0), ((1, 0), 0), ((1, 1), 1)]
+for _ in range(10):
+    for x, y in data:
+        pred = 1 if w[0] * x[0] + w[1] * x[1] + b > 0 else 0
+        w = [w[0] + (y - pred) * x[0], w[1] + (y - pred) * x[1]]
+        b += y - pred
+print(all((1 if w[0] * x[0] + w[1] * x[1] + b > 0 else 0) == y for x, y in data))`}</Code>
+          <p>The perceptron learning rule on AND. Does it end up classifying all four points correctly?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True", "False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>perceptron(data, epochs)</C>, which starts from zero weights and bias and applies the update w ← w + (y − ŷ)x, b ← b + (y − ŷ) for each example in order, for the given number of epochs, and returns (w, b). Data is a list of (x, y) with x a tuple and y 0 or 1. On XOR it cannot succeed, which helped cause the first AI winter.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def perceptron(data, epochs):
+    n = len(data[0][0])
+    return [0.0] * n, 0.0
+`,
+        solution: `def perceptron(data, epochs):
+    n = len(data[0][0])
+    w, b = [0.0] * n, 0.0
+    for _ in range(epochs):
+        for x, y in data:
+            pred = 1 if sum(wi * xi for wi, xi in zip(w, x)) + b > 0 else 0
+            w = [wi + (y - pred) * xi for wi, xi in zip(w, x)]
+            b += y - pred
+    return w, b
+`,
+        tests: [
+          { name: "or", code: `data = [((0, 0), 0), ((0, 1), 1), ((1, 0), 1), ((1, 1), 1)]
+w, b = perceptron(data, 10)
+assert all((sum(a * c for a, c in zip(w, x)) + b > 0) == bool(y) for x, y in data), 'OR is linearly separable, so the perceptron learns it.'` },
+          { name: "xor", code: `data = [((0, 0), 0), ((0, 1), 1), ((1, 0), 1), ((1, 1), 0)]
+w, b = perceptron(data, 100)
+assert not all((sum(a * c for a, c in zip(w, x)) + b > 0) == bool(y) for x, y in data) and (w, b) != ([0.0, 0.0], 0.0), 'Apply the updates; XOR still cannot be learned by one neuron.'` },
+        ],
+      },
     },
     {
       key: "why-push",

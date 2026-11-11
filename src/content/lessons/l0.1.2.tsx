@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { LossCurveViz } from "@/components/viz/LossCurveViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -133,6 +134,58 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>For the same data, 4, 7, 7, 10, 22, which constant prediction has the smallest mean absolute error?</p>,
       answer: { kind: "numeric", value: 7 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`ys = [3, 5, 4]
+preds = [2.5, 5.0, 6.0]
+print(sum((y - p) ** 2 for y, p in zip(ys, preds)) / len(ys))`}</Code>
+          <p>Mean squared error of three predictions. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 1.4166666666666667, tolerance: 0.001 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>mse(ys, preds)</C> and <C>mae(ys, preds)</C>, the mean squared and mean absolute errors, and <C>best_constant(ys, loss)</C>, which returns the constant prediction c minimising the given loss over a grid of 1001 values evenly spaced between min(ys) and max(ys).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def mse(ys, preds):
+    return 0.0
+
+def mae(ys, preds):
+    return 0.0
+
+def best_constant(ys, loss):
+    return ys[0]
+`,
+        solution: `def mse(ys, preds):
+    return sum((y - p) ** 2 for y, p in zip(ys, preds)) / len(ys)
+
+def mae(ys, preds):
+    return sum(abs(y - p) for y, p in zip(ys, preds)) / len(ys)
+
+def best_constant(ys, loss):
+    lo, hi = min(ys), max(ys)
+    grid = [lo + (hi - lo) * i / 1000 for i in range(1001)]
+    return min(grid, key=lambda c: loss(ys, [c] * len(ys)))
+`,
+        tests: [
+          { name: "losses", code: `assert abs(mse([3, 5, 4], [2.5, 5, 6]) - 4.25 / 3) < 1e-9 and abs(mae([3, 5, 4], [2.5, 5, 6]) - 2.5 / 3) < 1e-9, 'Average the squared or absolute errors.'` },
+          { name: "mean and median", code: `ys = [1, 2, 3, 10]
+assert abs(best_constant(ys, mse) - 4) < 0.01 and 2 <= best_constant(ys, mae) <= 3, 'Squared error is minimised by the mean, absolute error by a median.'` },
+        ],
+      },
     },
     {
       key: "median",

@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { CrossValViz } from "@/components/viz/CrossValViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -122,6 +123,55 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>How many models are trained to compare 12 hyperparameter settings by 10-fold cross-validation?</p>,
       answer: { kind: "numeric", value: 120 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`n, k = 10, 3
+folds = [list(range(i, n, k)) for i in range(k)]
+print(folds[0], sum(len(f) for f in folds))`}</Code>
+          <p>Splitting 10 indices into 3 folds by stepping. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0, 3, 6, 9] 10", "[0, 1, 2] 9", "[0, 3, 6] 10", "[0, 3, 6, 9] 12"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>kfold_score(model_fn, X, y, k)</C>, which splits the rows in order into k contiguous folds with <C>np.array_split</C>, trains a fresh <C>model_fn()</C> on k − 1 folds, scores it on the held-out fold, and returns the mean score.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def kfold_score(model_fn, X, y, k):
+    return model_fn().fit(X, y).score(X, y)
+`,
+        solution: `import numpy as np
+
+def kfold_score(model_fn, X, y, k):
+    folds = np.array_split(np.arange(len(X)), k)
+    scores = []
+    for i, test in enumerate(folds):
+        train = np.concatenate([f for j, f in enumerate(folds) if j != i])
+        scores.append(model_fn().fit(X[train], y[train]).score(X[test], y[test]))
+    return float(np.mean(scores))
+`,
+        tests: [
+          { name: "sklearn", code: `import numpy as np
+from sklearn.model_selection import cross_val_score, KFold
+from sklearn.linear_model import LogisticRegression
+from sklearn.datasets import make_classification
+X, y = make_classification(200, random_state=0)
+ref = cross_val_score(LogisticRegression(), X, y, cv=KFold(5)).mean()
+assert abs(kfold_score(lambda: LogisticRegression(), X, y, 5) - ref) < 1e-9, 'Match cross_val_score with unshuffled folds.'` },
+        ],
+      },
     },
     {
       key: "nested",

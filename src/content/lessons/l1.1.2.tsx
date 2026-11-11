@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { LearningCurveViz } from "@/components/viz/LearningCurveViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -123,6 +124,55 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>A model&rsquo;s training error is 0.02 and its test error 0.40, far above the noise level. Which change is most likely to help?</p>,
       answer: { kind: "choice", options: ["More training data or a simpler model", "A more flexible model", "Measuring training error more carefully"], correct: [0] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+from sklearn.tree import DecisionTreeRegressor
+rng = np.random.default_rng(0)
+X = rng.uniform(0, 1, (200, 1)); y = np.sin(6 * X[:, 0]) + rng.normal(0, 0.3, 200)
+m = DecisionTreeRegressor().fit(X[:100], y[:100])
+print(m.score(X[:100], y[:100]) == 1.0, m.score(X[100:], y[100:]) < 0.9)`}</Code>
+          <p>An unlimited tree on noisy data: R² on its training half, and on the held-out half. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True True", "True False", "False True", "False False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>errors(model, X, y, n_train)</C>, which fits the model on the first n_train rows and returns (training MSE, test MSE) on the two parts. The gap between them is what this lesson is about.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def errors(model, X, y, n_train):
+    model.fit(X, y)
+    e = ((model.predict(X) - y) ** 2).mean()
+    return (e, e)
+`,
+        solution: `def errors(model, X, y, n_train):
+    model.fit(X[:n_train], y[:n_train])
+    tr = ((model.predict(X[:n_train]) - y[:n_train]) ** 2).mean()
+    te = ((model.predict(X[n_train:]) - y[n_train:]) ** 2).mean()
+    return (tr, te)
+`,
+        tests: [
+          { name: "gap", code: `import numpy as np
+from sklearn.tree import DecisionTreeRegressor
+rng = np.random.default_rng(0)
+X = rng.uniform(0, 1, (200, 1)); y = np.sin(6 * X[:, 0]) + rng.normal(0, 0.3, 200)
+tr, te = errors(DecisionTreeRegressor(random_state=0), X, y, 100)
+assert tr < 1e-12 and te > 0.05, 'Train on the first part only; the test error must use rows the model never saw.'` },
+        ],
+      },
     },
     {
       key: "optimistic",

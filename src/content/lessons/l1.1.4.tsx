@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { BestOfKViz } from "@/components/viz/BestOfKViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -117,6 +118,55 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>A student tunes a model&rsquo;s threshold until its test accuracy is highest, then reports that accuracy. The reported number is most likely:</p>,
       answer: { kind: "choice", options: ["Too optimistic", "Too pessimistic", "Unbiased"], correct: [0] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`n = 1000
+idx = list(range(n))
+train, val, test = idx[:700], idx[700:850], idx[850:]
+print(len(train), len(val), len(test), set(train) & set(test) == set())`}</Code>
+          <p>A 70/15/15 split. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["700 150 150 True", "700 150 150 False", "700 15 15 True", "700 150 149 True"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>select_and_report(models, X, y)</C>. Split the rows in order 60/20/20 into train, validation and test. Fit every model on train, pick the one with the best validation score, and return (index of that model, its test score). The test set is touched once, at the end.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def select_and_report(models, X, y):
+    scores = [m.fit(X, y).score(X, y) for m in models]
+    i = scores.index(max(scores))
+    return i, scores[i]
+`,
+        solution: `def select_and_report(models, X, y):
+    n = len(X)
+    a, b = int(0.6 * n), int(0.8 * n)
+    val = [m.fit(X[:a], y[:a]).score(X[a:b], y[a:b]) for m in models]
+    i = val.index(max(val))
+    return i, models[i].score(X[b:], y[b:])
+`,
+        tests: [
+          { name: "choose", code: `import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+rng = np.random.default_rng(0)
+X = rng.normal(size=(500, 2)); y = (X[:, 0] + 0.5 * rng.normal(size=500) > 0).astype(int)
+models = [DecisionTreeClassifier(max_depth=d, random_state=0) for d in (1, 2, None)]
+i, s = select_and_report(models, X, y)
+assert i != 2 and 0.7 < s < 1.0, 'Choose on validation data; the unlimited tree only wins on training data.'` },
+        ],
+      },
     },
     {
       key: "why",

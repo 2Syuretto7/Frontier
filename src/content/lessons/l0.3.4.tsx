@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { NeuronViz } from "@/components/viz/NeuronViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -134,6 +135,51 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Select every pattern a single step neuron with two inputs can compute.</p>,
       answer: { kind: "choice", options: ["AND", "OR", "XOR", "Output equals the first input"], correct: [0, 1, 3] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`w, b = [2.0, -1.0], -0.5
+x = [1.0, 1.0]
+z = sum(wi * xi for wi, xi in zip(w, x)) + b
+print(z, 1 if z > 0 else 0)`}</Code>
+          <p>One neuron: a weighted sum plus a bias, then a step. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.5 1", "1.0 1", "-0.5 0", "0.5 0"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>neuron(w, b, x)</C>, which returns 1 when w · x + b &gt; 0 and 0 otherwise. Then set <C>AND_W</C>, <C>AND_B</C>, <C>OR_W</C> and <C>OR_B</C> so the neuron computes AND and OR of two 0/1 inputs.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def neuron(w, b, x):
+    return 0
+
+AND_W, AND_B = [1, 1], 0
+OR_W, OR_B = [1, 1], 0
+`,
+        solution: `def neuron(w, b, x):
+    return 1 if sum(wi * xi for wi, xi in zip(w, x)) + b > 0 else 0
+
+AND_W, AND_B = [1, 1], -1.5
+OR_W, OR_B = [1, 1], -0.5
+`,
+        tests: [
+          { name: "neuron", code: `assert neuron([2, -1], -0.5, [1, 1]) == 1 and neuron([2, -1], -0.5, [0, 1]) == 0, 'Fire when the weighted sum plus bias is positive.'` },
+          { name: "gates", code: `ins = [(0, 0), (0, 1), (1, 0), (1, 1)]
+assert [neuron(AND_W, AND_B, x) for x in ins] == [0, 0, 0, 1] and [neuron(OR_W, OR_B, x) for x in ins] == [0, 1, 1, 1], 'AND needs both inputs: try a bias between −2 and −1.'` },
+        ],
+      },
     },
     {
       key: "xor-proof",

@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { ConfusionViz } from "@/components/viz/ConfusionViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -110,6 +111,54 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Missing a case is far worse than a false alarm. Which way should the threshold move?</p>,
       answer: { kind: "choice", options: ["Lower, to flag more cases", "Higher, to flag fewer cases", "It should stay at 0.5"], correct: [0] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from sklearn.metrics import confusion_matrix
+y = [1, 1, 1, 0, 0, 0, 0, 0]
+p = [1, 0, 1, 1, 0, 0, 0, 0]
+print(confusion_matrix(y, p).ravel())`}</Code>
+          <p>scikit-learn orders the cells tn, fp, fn, tp. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[4 1 1 2]", "[2 1 1 4]", "[4 1 2 1]", "[1 1 4 2]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>confusion(y, p)</C>, which returns a dict with counts <C>"tp"</C>, <C>"fp"</C>, <C>"fn"</C> and <C>"tn"</C> for 0/1 labels, and <C>accuracy_from(c)</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def confusion(y, p):
+    return {'tp': 0, 'fp': 0, 'fn': 0, 'tn': 0}
+
+def accuracy_from(c):
+    return 0.0
+`,
+        solution: `def confusion(y, p):
+    c = {'tp': 0, 'fp': 0, 'fn': 0, 'tn': 0}
+    for a, b in zip(y, p):
+        c[('t' if a == b else 'f') + ('p' if b == 1 else 'n')] += 1
+    return c
+
+def accuracy_from(c):
+    return (c['tp'] + c['tn']) / sum(c.values())
+`,
+        tests: [
+          { name: "counts", code: `c = confusion([1, 1, 1, 0, 0, 0, 0, 0], [1, 0, 1, 1, 0, 0, 0, 0])
+assert c == {'tp': 2, 'fp': 1, 'fn': 1, 'tn': 4}, 'A false positive predicts 1 when the truth is 0.'` },
+          { name: "accuracy", code: `assert accuracy_from({'tp': 2, 'fp': 1, 'fn': 1, 'tn': 4}) == 0.75, '6 of 8 are right.'` },
+        ],
+      },
     },
     {
       key: "explain",

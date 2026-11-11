@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { PolyFeaturesViz } from "@/components/viz/PolyFeaturesViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -111,6 +112,57 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>A degree-4 fit of fuel use against speed was trained on speeds from 20 to 120 km/h. How far should you trust its prediction at 200 km/h?</p>,
       answer: { kind: "choice", options: ["Not at all: it is far outside the data", "Fully, since the fit is good", "More than its predictions at 60 km/h"], correct: [0] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from sklearn.preprocessing import PolynomialFeatures
+import numpy as np
+print(PolynomialFeatures(degree=2).fit_transform(np.array([[2.0, 3.0]])))`}</Code>
+          <p>Degree-2 features of (a, b) = (2, 3): 1, a, b, a², ab, b². What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[[1. 2. 3. 4. 6. 9.]]", "[[2. 3. 4. 9.]]", "[[1. 2. 3. 4. 9.]]", "[[1. 2. 3. 6.]]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>poly_features(x, degree)</C>, which turns a 1-D array into the matrix with columns 1, x, x², …, x<sup>degree</sup>, and <C>fit_poly(x, y, degree)</C>, which returns least-squares coefficients for those columns. A linear model on polynomial features fits a curve.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def poly_features(x, degree):
+    return np.column_stack([np.ones(len(x)), x])
+
+def fit_poly(x, y, degree):
+    return np.linalg.lstsq(poly_features(x, degree), y, rcond=None)[0]
+`,
+        solution: `import numpy as np
+
+def poly_features(x, degree):
+    return np.column_stack([x ** k for k in range(degree + 1)])
+
+def fit_poly(x, y, degree):
+    return np.linalg.lstsq(poly_features(x, degree), y, rcond=None)[0]
+`,
+        tests: [
+          { name: "features", code: `import numpy as np
+F = poly_features(np.array([2.0, 3.0]), 3)
+assert F.shape == (2, 4) and np.allclose(F[1], [1, 3, 9, 27]), 'Columns are x to the powers 0 to degree.'` },
+          { name: "fit", code: `import numpy as np
+x = np.linspace(-2, 2, 30); y = 1 - 2 * x + 0.5 * x ** 2
+assert np.allclose(fit_poly(x, y, 2), [1, -2, 0.5]), 'Recover the quadratic exactly.'` },
+        ],
+      },
     },
     {
       key: "why",
