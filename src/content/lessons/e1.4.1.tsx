@@ -2,6 +2,7 @@ import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { C, Code } from "@/components/lesson/Code";
 import { ImportViz } from "@/components/viz/ImportViz";
 import type { LessonContent } from "@/lib/types";
+import { Playground } from "@/components/code/Playground";
 
 export const lesson: LessonContent = {
   id: "e1.4.1",
@@ -56,12 +57,12 @@ export const lesson: LessonContent = {
       </Definition>
 
       <Example title="the main guard">
-        <Code>{`# metrics.py
+        <Playground code={`# metrics.py
 def accuracy(pred, true):
     return sum(p == t for p, t in zip(pred, true)) / len(true)
 
 if __name__ == "__main__":
-    print(accuracy([1, 0, 1], [1, 1, 1]))   # runs only with: python metrics.py`}</Code>
+    print(accuracy([1, 0, 1], [1, 1, 1]))   # runs only with: python metrics.py`} />
         <p>
           When a file is run directly, its <C>__name__</C> is <C>&quot;__main__&quot;</C>; when it is imported, it is the
           module&rsquo;s name. The guard lets one file be both a reusable module and a small script, without the demonstration
@@ -117,6 +118,58 @@ if __name__ == "__main__":
       rung: "apply",
       prompt: <p><C>import tqdm</C> fails with <C>ModuleNotFoundError</C>, but you are sure you installed it. What is the most likely cause?</p>,
       answer: { kind: "choice", options: ["It was installed into a different Python from the one running the script", "The module is corrupted", "Imports must be at the top of the file"], correct: [0] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import sys, types
+mod = types.ModuleType("geometry")
+exec("PI = 3.14159\\ndef area(r):\\n    return PI * r * r", mod.__dict__)
+sys.modules["geometry"] = mod
+from geometry import area
+import geometry
+geometry.PI = 3
+print(area(2))`}</Code>
+          <p>area looks up PI in its module each time it runs. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 12 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A package <C>stats</C> has been written to the file system with a module <C>stats/basic.py</C> holding <C>mean</C>. Complete <C>stats/__init__.py</C> by writing a string <C>INIT</C> containing the import that lets users write <C>from stats import mean</C>. The tests write your string to the file and import it.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `INIT = ""
+`,
+        solution: `INIT = "from .basic import mean\\n"
+`,
+        tests: [
+          { name: "import", code: `import sys, importlib
+sys.path.insert(0, '.')
+with open('stats/__init__.py', 'w') as f:
+    f.write(INIT)
+for m in [k for k in sys.modules if k == 'stats' or k.startswith('stats.')]:
+    del sys.modules[m]
+importlib.invalidate_caches()
+import stats
+assert hasattr(stats, 'mean') and stats.mean([1, 2, 3]) == 2, 'Use a relative import: from .basic import mean.'` },
+        ],
+        setup: `import os
+os.makedirs('stats', exist_ok=True)
+with open('stats/basic.py', 'w') as f:
+    f.write('def mean(xs):\\n    return sum(xs) / len(xs)\\n')
+`,
+      },
     },
     {
       key: "explain",

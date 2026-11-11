@@ -135,6 +135,53 @@ command`}</Code>
       answer: { kind: "numeric", value: 4 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import posixpath
+cwd = "/home/asha/projects"
+print(posixpath.normpath(posixpath.join(cwd, "../data/./raw")))`}</Code>
+          <p>cd ../data/./raw from /home/asha/projects. Where do you end up?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["/home/asha/data/raw", "/home/asha/projects/data/raw", "/home/data/raw", "/home/asha/projects/../data/raw"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>cd(cwd, path)</C>, which returns the new working directory after <C>cd path</C> from <C>cwd</C>. Handle absolute paths, <C>.</C> and <C>..</C> yourself, without <C>posixpath</C> or <C>os.path</C>; <C>..</C> at the root stays at the root.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def cd(cwd, path):
+    return cwd + '/' + path
+`,
+        solution: `def cd(cwd, path):
+    parts = [] if path.startswith('/') else [p for p in cwd.split('/') if p]
+    for p in path.split('/'):
+        if p in ('', '.'):
+            continue
+        if p == '..':
+            if parts:
+                parts.pop()
+        else:
+            parts.append(p)
+    return '/' + '/'.join(parts)
+`,
+        tests: [
+          { name: "relative", code: `assert cd('/home/asha/projects', '../data/./raw') == '/home/asha/data/raw', '.. goes up one level and . stays put.'` },
+          { name: "absolute", code: `assert cd('/home/asha', '/etc') == '/etc', 'A path starting with / ignores the current directory.'` },
+          { name: "root", code: `assert cd('/', '../..') == '/', 'You cannot go above the root.'` },
+        ],
+      },
+    },
+    {
       key: "explain",
       rung: "prove",
       prompt: (

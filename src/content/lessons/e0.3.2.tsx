@@ -151,6 +151,44 @@ print(y)
       answer: { kind: "choice", options: ["8, then None", "8, then 8", "None, then 8", "Only 8"], correct: [0] },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def f(a, b=10, *rest):
+    return a + b + sum(rest)
+
+print(f(1), f(1, 2), f(1, 2, 3, 4))`}</Code>
+          <p>A default parameter and extra arguments. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["11 3 10", "11 3 3", "1 3 10", "11 12 20"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>split_bill(total, people, tip=0.1)</C>, which returns each person&rsquo;s share of the total plus the tip, rounded to 2 decimal places.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def split_bill(total, people, tip):
+    return total / people
+`,
+        solution: `def split_bill(total, people, tip=0.1):
+    return round(total * (1 + tip) / people, 2)
+`,
+        tests: [
+          { name: "default tip", code: `assert split_bill(1000, 4) == 275.0, '1000 plus 10% shared by 4 is 275.'` },
+          { name: "custom tip", code: `assert split_bill(900, 3, tip=0) == 300.0 and split_bill(100, 3, 0.2) == 40.0, 'tip can be given by name or position.'` },
+        ],
+      },
+    },
+    {
       key: "printreturn",
       rung: "prove",
       prompt: (

@@ -145,6 +145,55 @@ def grade(score):
       answer: { kind: "numeric", value: 3 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def clean(s):
+    return s.strip().lower()
+
+def words(s):
+    return clean(s).split()
+
+print(len(words("  The Quick brown FOX  ")))`}</Code>
+          <p>Two small functions build on each other. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 4 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Break the task into functions. Write <C>parse(line)</C>, which turns <C>"name,marks"</C> into a tuple (name, int marks), and <C>topper(lines)</C>, which uses <C>parse</C> to return the name with the highest marks.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def parse(line):
+    return line.split(',')
+
+def topper(lines):
+    return lines[0]
+`,
+        solution: `def parse(line):
+    name, marks = line.split(',')
+    return (name, int(marks))
+
+def topper(lines):
+    best = max((parse(l) for l in lines), key=lambda t: t[1])
+    return best[0]
+`,
+        tests: [
+          { name: "parse", code: `assert parse('Meera,88') == ('Meera', 88), 'Split on the comma and convert the marks to int.'` },
+          { name: "topper", code: `assert topper(['Meera,88', 'Arjun,92', 'Zoya,9']) == 'Arjun', 'Compare marks as numbers: as text, "9" beats "88".'` },
+        ],
+      },
+    },
+    {
       key: "design",
       rung: "prove",
       prompt: (

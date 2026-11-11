@@ -113,6 +113,56 @@ dist = np.sqrt((diff ** 2).sum(axis=-1))   # (5, 7): every distance, no loop`}</
       answer: { kind: "choice", options: ["An error, because (100, 8) and (100,) do not broadcast", "Each row is divided by its sum", "Each column is divided by its sum"], correct: [0] },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+a = np.ones((3, 1))
+b = np.arange(4)
+print((a + b).shape, (a * b).sum())`}</Code>
+          <p>Broadcasting stretches axes of length 1. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["(3, 4) 18.0", "(3, 1) 6.0", "(4, 3) 18.0", "An error"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>standardise(X)</C>, which subtracts each column&rsquo;s mean and divides by each column&rsquo;s standard deviation, using broadcasting. Columns with standard deviation 0 should become all zeros instead of NaN.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def standardise(X):
+    return (X - X.mean()) / X.std()
+`,
+        solution: `import numpy as np
+
+def standardise(X):
+    mu = X.mean(axis=0)
+    sd = X.std(axis=0)
+    sd = np.where(sd == 0, 1, sd)
+    return (X - mu) / sd
+`,
+        tests: [
+          { name: "columns", code: `import numpy as np
+X = np.array([[1.0, 10.0], [3.0, 30.0], [5.0, 50.0]])
+Z = standardise(X)
+assert np.allclose(Z.mean(axis=0), 0) and np.allclose(Z.std(axis=0), 1), 'Use axis=0 for per-column statistics.'` },
+          { name: "constant", code: `import numpy as np
+Z = standardise(np.array([[1.0, 7.0], [2.0, 7.0]]))
+assert not np.isnan(Z).any() and np.allclose(Z[:, 1], 0), 'A constant column has standard deviation 0.'` },
+        ],
+      },
+    },
+    {
       key: "trap",
       rung: "prove",
       prompt: (

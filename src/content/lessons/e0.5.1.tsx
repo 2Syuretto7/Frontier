@@ -154,6 +154,56 @@ print(len(lines))
       answer: { kind: "numeric", value: 3 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`with open("notes.txt", "w") as f:
+    f.write("one\\ntwo\\n")
+with open("notes.txt", "a") as f:
+    f.write("three\\n")
+with open("notes.txt") as f:
+    print(len(f.readlines()))`}</Code>
+          <p>Writing, appending and reading back a file. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 3 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A file <C>marks.txt</C> holds one whole number per line. Write <C>file_total(path)</C>, which opens the file and returns the sum of its numbers, skipping blank lines.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def file_total(path):
+    return 0
+`,
+        solution: `def file_total(path):
+    total = 0
+    with open(path) as f:
+        for line in f:
+            if line.strip():
+                total += int(line)
+    return total
+`,
+        tests: [
+          { name: "sum", code: `assert file_total('marks.txt') == 50, '12 + 30 + 8 = 50; skip the blank line.'` },
+          { name: "other file", code: `with open('more.txt', 'w') as f:
+    f.write('5\\n5\\n')
+assert file_total('more.txt') == 10, 'Use the path you are given.'` },
+        ],
+        setup: `with open('marks.txt', 'w') as f:
+    f.write('12\\n30\\n\\n8\\n')
+`,
+      },
+    },
+    {
       key: "modes",
       rung: "prove",
       prompt: (

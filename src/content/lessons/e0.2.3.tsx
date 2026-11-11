@@ -3,6 +3,7 @@ import { C, Code } from "@/components/lesson/Code";
 import { TraceViz } from "@/components/viz/TraceViz";
 import { code, steps } from "@/content/traces/e0.2.3";
 import type { LessonContent } from "@/lib/types";
+import { Playground } from "@/components/code/Playground";
 
 export const lesson: LessonContent = {
   id: "e0.2.3",
@@ -16,14 +17,14 @@ export const lesson: LessonContent = {
   puzzle: (
     <>
       <p>Without running it, predict what this program prints:</p>
-      <Code>{`
+      <Playground code={`
 n = 4729
 s = 0
 while n > 0:
     s = s + n % 10
     n = n // 10
 print(s)
-`}</Code>
+`} />
       <p>
         How confident are you? What could you write on paper, as you go, to make sure you do not lose track of the values?
       </p>
@@ -152,6 +153,52 @@ print(b)
       rung: "apply",
       prompt: <p>Change the first line of the traced program to <C>n = 7</C>. Trace it on paper. How many steps are printed?</p>,
       answer: { kind: "numeric", value: 16 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`a, b = 1, 1
+for i in range(4):
+    a, b = b, a + b
+print(a, b)`}</Code>
+          <p>Trace the table of a and b through four passes. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["5 8", "3 5", "8 13", "4 5"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            This function should return the largest number in a non-empty list, but it has a bug that a hand trace on <C>[-3, -1, -2]</C> reveals. Fix it.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def largest(xs):
+    best = 0
+    for x in xs:
+        if x > best:
+            best = x
+    return best
+`,
+        solution: `def largest(xs):
+    best = xs[0]
+    for x in xs:
+        if x > best:
+            best = x
+    return best
+`,
+        tests: [
+          { name: "positive", code: `assert largest([3, 9, 2]) == 9, 'The largest of 3, 9, 2 is 9.'` },
+          { name: "negative", code: `assert largest([-3, -1, -2]) == -1, 'Starting best at 0 is wrong when every number is negative.'` },
+        ],
+      },
     },
     {
       key: "offbyone",

@@ -3,6 +3,7 @@ import { C, Code } from "@/components/lesson/Code";
 import { TraceViz } from "@/components/viz/TraceViz";
 import { code, steps } from "@/content/traces/e0.2.2";
 import type { LessonContent } from "@/lib/types";
+import { Playground } from "@/components/code/Playground";
 
 export const lesson: LessonContent = {
   id: "e0.2.2",
@@ -72,12 +73,12 @@ export const lesson: LessonContent = {
       </Definition>
 
       <Example title="the accumulator pattern">
-        <Code>{`
+        <Playground code={`
 total = 0
 for n in range(1, 1001):
     total = total + n
 print(total)    # 500500
-`}</Code>
+`} />
         <p>
           A variable that starts at a neutral value and is updated on every pass is called an <strong>accumulator</strong>.
           Starting at 0 suits sums; for a product, start at 1. This is the summation sign of mathematics turned into
@@ -159,6 +160,53 @@ print(count)
         </>
       ),
       answer: { kind: "numeric", value: 5 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`n, steps = 6, 0
+while n != 1:
+    n = n // 2 if n % 2 == 0 else 3 * n + 1
+    steps += 1
+print(steps)`}</Code>
+          <p>Trace the loop from n = 6. How many steps until n is 1?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 8 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>count_vowels(text)</C>, which loops over the characters of a string and counts the vowels a, e, i, o and u, in either case.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def count_vowels(text):
+    count = 0
+    for ch in text:
+        if ch in 'aeiou':
+            count += 1
+    return count
+`,
+        solution: `def count_vowels(text):
+    count = 0
+    for ch in text:
+        if ch.lower() in 'aeiou':
+            count += 1
+    return count
+`,
+        tests: [
+          { name: "simple", code: `assert count_vowels('banana') == 3 and count_vowels('') == 0, 'Loop over each character.'` },
+          { name: "capitals", code: `assert count_vowels('Indian Ocean') == 6, 'Capital vowels count too.'` },
+        ],
+      },
     },
     {
       key: "forever",

@@ -114,6 +114,67 @@ out = np.einsum("bhqk,bhkd->bhqd", weights, V)`}</Code>
       answer: { kind: "numeric", value: 262144 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+A = np.arange(6).reshape(2, 3)
+print(np.einsum("ij->j", A), np.einsum("ij,ij->", A, A))`}</Code>
+          <p>Indices left out of the output are summed. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[3 5 7] 55", "[ 3 12] 55", "[3 5 7] 15", "[0 1 4] 55"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write each with one <C>np.einsum</C> call: <C>batch_matmul(A, B)</C> for arrays of shape (b, n, k) and (b, k, m), <C>trace(M)</C>, and <C>attention_scores(Q, K)</C> returning the (n, n) matrix of dot products of rows of Q with rows of K.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def batch_matmul(A, B):
+    return np.einsum('bnk,bkm->bnk', A, B)
+
+def trace(M):
+    return np.einsum('ij->', M)
+
+def attention_scores(Q, K):
+    return np.einsum('id,jd->ij', Q, Q)
+`,
+        solution: `import numpy as np
+
+def batch_matmul(A, B):
+    return np.einsum('bnk,bkm->bnm', A, B)
+
+def trace(M):
+    return np.einsum('ii->', M)
+
+def attention_scores(Q, K):
+    return np.einsum('id,jd->ij', Q, K)
+`,
+        tests: [
+          { name: "batch", code: `import numpy as np
+rng = np.random.default_rng(1)
+A, B = rng.normal(size=(4, 2, 3)), rng.normal(size=(4, 3, 5))
+assert np.allclose(batch_matmul(A, B), A @ B), 'Sum over k and keep b, n and m.'` },
+          { name: "trace", code: `import numpy as np
+assert trace(np.arange(9).reshape(3, 3)) == 12, 'A repeated index ii reads the diagonal.'` },
+          { name: "scores", code: `import numpy as np
+rng = np.random.default_rng(2)
+Q, K = rng.normal(size=(3, 4)), rng.normal(size=(3, 4))
+assert np.allclose(attention_scores(Q, K), Q @ K.T), 'Scores are Q Kᵀ.'` },
+        ],
+      },
+    },
+    {
       key: "cost",
       rung: "prove",
       prompt: (

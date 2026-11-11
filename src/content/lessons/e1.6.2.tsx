@@ -139,6 +139,44 @@ ax.set_ylabel("accuracy (%), mean ± 2 sd over 5 seeds")`}</Code>
       },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`a, b = 102, 104
+print(round((b - a) / a * 100, 1), round((b - 100) / (a - 100), 1))`}</Code>
+          <p>Two bars of 102 and 104. Their real difference in per cent, and how many times taller b looks when the axis starts at 100. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2.0 2.0", "2.0 1.0", "1.9 2.0", "2.0 4.0"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>lie_factor(a, b, baseline)</C>, Tufte&rsquo;s ratio of the size of an effect shown in a bar chart to the size of the effect in the data, for two positive values a &lt; b when the axis starts at <C>baseline</C> instead of 0. An honest chart has lie factor 1.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def lie_factor(a, b, baseline):
+    return 1.0
+`,
+        solution: `def lie_factor(a, b, baseline):
+    shown = (b - baseline) / (a - baseline) - 1
+    real = b / a - 1
+    return shown / real
+`,
+        tests: [
+          { name: "honest", code: `assert abs(lie_factor(50, 75, 0) - 1) < 1e-9, 'Starting at zero is honest.'` },
+          { name: "truncated", code: `assert abs(lie_factor(102, 104, 100) - 51) < 1e-9, 'A 2% change drawn as a doubling exaggerates 51 times.'` },
+        ],
+      },
+    },
+    {
       key: "lines",
       rung: "prove",
       prompt: (

@@ -128,6 +128,55 @@ lr = 1e-3
       answer: { kind: "numeric", value: 2 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`parents = {"A": [], "B": ["A"], "C": ["B"], "D": ["B"], "E": ["C", "D"]}
+def ancestors(c):
+    out = {c}
+    for p in parents[c]:
+        out |= ancestors(p)
+    return out
+print(sorted(ancestors("C") & ancestors("D")))`}</Code>
+          <p>Commits shared by branches C and D. Which is their merge base, the newest common ancestor?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["B", "A", "E", "C"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>merge3(base, ours, theirs)</C> for three lists of lines of equal length (no lines added or removed). For each line: if only one side changed it, take that side; if both made the same change, take it; if they changed it differently, put <C>"CONFLICT"</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def merge3(base, ours, theirs):
+    return ours
+`,
+        solution: `def merge3(base, ours, theirs):
+    out = []
+    for b, o, t in zip(base, ours, theirs):
+        if o == t or t == b:
+            out.append(o)
+        elif o == b:
+            out.append(t)
+        else:
+            out.append('CONFLICT')
+    return out
+`,
+        tests: [
+          { name: "clean", code: `assert merge3(['a', 'b', 'c'], ['A', 'b', 'c'], ['a', 'b', 'C']) == ['A', 'b', 'C'], 'Take each side’s change where the other left the line alone.'` },
+          { name: "conflict", code: `assert merge3(['x'], ['y'], ['z']) == ['CONFLICT'] and merge3(['x'], ['y'], ['y']) == ['y'], 'Different changes to one line conflict; the same change does not.'` },
+        ],
+      },
+    },
+    {
       key: "base",
       rung: "prove",
       prompt: (

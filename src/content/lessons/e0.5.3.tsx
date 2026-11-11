@@ -177,6 +177,60 @@ finally:
       answer: { kind: "choice", options: ["good, then done", "bad, then done", "good", "done"], correct: [0] },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def safe_div(a, b):
+    try:
+        return a / b
+    except ZeroDivisionError:
+        return None
+    finally:
+        print("checked", end=" ")
+print(safe_div(1, 0))`}</Code>
+          <p>finally runs whether or not an exception happened. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["checked None", "None checked", "None", "An error"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>parse_age(text)</C>, which returns the integer in <C>text</C>, but returns <C>None</C> when the text is not a whole number and raises <C>ValueError("age out of range")</C> when the number is negative or above 150.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def parse_age(text):
+    return int(text)
+`,
+        solution: `def parse_age(text):
+    try:
+        n = int(text)
+    except ValueError:
+        return None
+    if n < 0 or n > 150:
+        raise ValueError('age out of range')
+    return n
+`,
+        tests: [
+          { name: "good", code: `assert parse_age('42') == 42, 'A valid age comes back as an int.'` },
+          { name: "not a number", code: `assert parse_age('forty') is None, 'Catch the ValueError from int() and return None.'` },
+          { name: "out of range", code: `try:
+    parse_age('200')
+    ok = False
+except ValueError as e:
+    ok = 'range' in str(e)
+assert ok, 'Raise ValueError("age out of range") for 200.'` },
+        ],
+      },
+    },
+    {
       key: "bare",
       rung: "prove",
       prompt: (

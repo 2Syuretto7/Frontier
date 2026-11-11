@@ -115,6 +115,56 @@ m.sum(axis=0)                  # sum down each column: array([12, 15, 18, 21])`}
       answer: { kind: "numeric", value: 6 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+a = np.arange(12, dtype=np.float32).reshape(3, 4)
+print(a.shape, a.ndim, a.nbytes, a[1, 2])`}</Code>
+          <p>Shape, rank, memory and one element. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["(3, 4) 2 48 6.0", "(3, 4) 2 96 6.0", "(4, 3) 2 48 9.0", "(3, 4) 12 48 6.0"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>describe(a)</C>, which returns a dict with the array&rsquo;s <C>"shape"</C> (a tuple), <C>"dtype"</C> (its name as a string), <C>"size"</C> and <C>"bytes"</C>, and <C>as_image(flat, h, w)</C>, which turns a flat array of h·w values into an h × w uint8 array.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def describe(a):
+    return {}
+
+def as_image(flat, h, w):
+    return flat
+`,
+        solution: `import numpy as np
+
+def describe(a):
+    return {'shape': a.shape, 'dtype': a.dtype.name, 'size': a.size, 'bytes': a.nbytes}
+
+def as_image(flat, h, w):
+    return np.asarray(flat).reshape(h, w).astype(np.uint8)
+`,
+        tests: [
+          { name: "describe", code: `import numpy as np
+assert describe(np.zeros((2, 5), dtype=np.float64)) == {'shape': (2, 5), 'dtype': 'float64', 'size': 10, 'bytes': 80}, 'float64 uses 8 bytes per element.'` },
+          { name: "image", code: `import numpy as np
+im = as_image(np.arange(6), 2, 3)
+assert im.shape == (2, 3) and im.dtype == np.uint8 and im[1, 0] == 3, 'Reshape, then convert the dtype.'` },
+        ],
+      },
+    },
+    {
       key: "dtype",
       rung: "prove",
       prompt: (

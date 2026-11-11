@@ -116,6 +116,57 @@ git bisect reset`}</Code>
       answer: { kind: "numeric", value: 72 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`log = [("f3a", "Fix off-by-one in loader"), ("b21", "Add loader"), ("9c0", "Initial commit")]
+good = {"9c0": True, "b21": False, "f3a": True}
+print(next(h for h, _ in reversed(log) if not good[h]))`}</Code>
+          <p>Commits listed newest first, with whether tests passed at each. Which commit is the first bad one?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["b21", "f3a", "9c0", "None of them"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>bisect(commits, is_good)</C>, which finds the first bad commit in a list ordered oldest to newest, where the first is good, the last is bad, and once bad every later commit is bad. Use binary search, calling <C>is_good</C> as few times as possible, as <C>git bisect</C> does.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def bisect(commits, is_good):
+    for c in commits:
+        if not is_good(c):
+            return c
+`,
+        solution: `def bisect(commits, is_good):
+    lo, hi = 0, len(commits) - 1
+    while hi - lo > 1:
+        mid = (lo + hi) // 2
+        if is_good(commits[mid]):
+            lo = mid
+        else:
+            hi = mid
+    return commits[hi]
+`,
+        tests: [
+          { name: "finds", code: `cs = list(range(100))
+assert bisect(cs, lambda c: c < 37) == 37, 'The first bad commit here is 37.'` },
+          { name: "few checks", code: `calls = []
+def good(c):
+    calls.append(c)
+    return c < 600
+assert bisect(list(range(1000)), good) == 600 and len(calls) <= 10, 'Halve the range each time: about log₂ 1000 ≈ 10 checks.'` },
+        ],
+      },
+    },
+    {
       key: "assume",
       rung: "prove",
       prompt: (

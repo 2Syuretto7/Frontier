@@ -154,6 +154,50 @@ print(sum(stock.values()))
       answer: { kind: "numeric", value: 4 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`stock = {"tea": 3, "rice": 10}
+stock["tea"] += 2
+stock["salt"] = stock.get("salt", 0) + 1
+print(sorted(stock.items()))`}</Code>
+          <p>Updating and adding dictionary entries. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[('rice', 10), ('salt', 1), ('tea', 5)]", "[('tea', 5), ('rice', 10), ('salt', 1)]", "[('rice', 10), ('tea', 5)]", "A KeyError"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>word_counts(text)</C>, which returns a dictionary from each word (split on whitespace, lower-cased) to the number of times it appears.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def word_counts(text):
+    counts = {}
+    for w in text.split():
+        counts[w] = 1
+    return counts
+`,
+        solution: `def word_counts(text):
+    counts = {}
+    for w in text.lower().split():
+        counts[w] = counts.get(w, 0) + 1
+    return counts
+`,
+        tests: [
+          { name: "counts", code: `assert word_counts('the cat and the hat') == {'the': 2, 'cat': 1, 'and': 1, 'hat': 1}, 'Add one to the count each time a word appears.'` },
+          { name: "case", code: `assert word_counts('Go go GO') == {'go': 3}, 'Lower-case each word first.'` },
+        ],
+      },
+    },
+    {
       key: "phonebook",
       rung: "prove",
       prompt: (

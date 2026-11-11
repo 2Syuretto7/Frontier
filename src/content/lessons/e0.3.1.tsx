@@ -3,6 +3,7 @@ import { C, Code } from "@/components/lesson/Code";
 import { TraceViz } from "@/components/viz/TraceViz";
 import { code, steps } from "@/content/traces/e0.3.1";
 import type { LessonContent } from "@/lib/types";
+import { Playground } from "@/components/code/Playground";
 
 export const lesson: LessonContent = {
   id: "e0.3.1",
@@ -66,13 +67,13 @@ def name(parameter_1, parameter_2):
       </Definition>
 
       <Example title="a function used in a loop">
-        <Code>{`
+        <Playground code={`
 def line(n):
     print("*" * n)
 
 for k in range(1, 4):
     line(k)
-`}</Code>
+`} />
         <p>
           This prints a triangle of 1, 2 and 3 stars. To change how each row looks, for example to use <C>#</C> instead
           of <C>*</C>, you edit one line inside the function, and every row changes.
@@ -150,6 +151,51 @@ def greet(name):
         kind: "choice",
         options: ["It stops with a NameError, because greet is not yet defined on line 1", "It prints Hello, Asha", "It prints nothing"],
         correct: [0],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def greet(name):
+    print("Hello,", name)
+
+r = greet("Ravi")
+print(r)`}</Code>
+          <p>A function that prints but has no return statement. What is the second line printed?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["None", "Hello, Ravi", "Ravi", "An error"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>area(w, h)</C>, the area of a rectangle, and <C>perimeter(w, h)</C>. Return the values; do not print them.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def area(w, h):
+    print(w * h)
+
+def perimeter(w, h):
+    print(2 * (w + h))
+`,
+        solution: `def area(w, h):
+    return w * h
+
+def perimeter(w, h):
+    return 2 * (w + h)
+`,
+        tests: [
+          { name: "area", code: `assert area(3, 4) == 12, 'area must return w × h, not print it.'` },
+          { name: "perimeter", code: `assert perimeter(3, 4) == 14, 'perimeter is 2(w + h).'` },
+        ],
       },
     },
     {

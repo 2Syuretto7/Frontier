@@ -127,6 +127,52 @@ checkpoints/
       answer: { kind: "numeric", value: 268435456 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import hashlib
+def blob_id(text):
+    data = text.encode()
+    return hashlib.sha1(b"blob %d\\0" % len(data) + data).hexdigest()
+print(blob_id("hello\\n")[:7], blob_id("hello\\n") == blob_id("hello\\n"))`}</Code>
+          <p>Git names a file's contents by a hash. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["ce01362 True", "ce01362 False", "aaf4c61 True", "a different hash each run"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Git stores commits by content. Write <C>commit_id(tree, parent, message)</C>, which returns the SHA-1 hex digest of the text <C>"tree " + tree + "\n" + "parent " + parent + "\n" + "\n" + message</C>, leaving out the parent line when <C>parent</C> is <C>None</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import hashlib
+
+def commit_id(tree, parent, message):
+    return hashlib.sha1(message.encode()).hexdigest()
+`,
+        solution: `import hashlib
+
+def commit_id(tree, parent, message):
+    head = f'tree {tree}\\n' + (f'parent {parent}\\n' if parent else '')
+    return hashlib.sha1((head + '\\n' + message).encode()).hexdigest()
+`,
+        tests: [
+          { name: "root", code: `import hashlib
+assert commit_id('t1', None, 'init') == hashlib.sha1(b'tree t1\\n\\ninit').hexdigest(), 'A first commit has no parent line.'` },
+          { name: "chain", code: `import hashlib
+assert commit_id('t2', 'abc', 'fix') == hashlib.sha1(b'tree t2\\nparent abc\\n\\nfix').hexdigest(), 'Include the parent, so changing history changes every later id.'` },
+        ],
+      },
+    },
+    {
       key: "staging",
       rung: "prove",
       prompt: (

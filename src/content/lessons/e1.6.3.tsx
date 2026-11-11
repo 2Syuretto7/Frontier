@@ -140,6 +140,70 @@ hist & scatter`}</Code>
       answer: { kind: "numeric", value: 10000 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`events = []
+def on_change(value):
+    events.append(value * 2)
+for v in [1, 2, 3]:
+    on_change(v)
+print(events)`}</Code>
+          <p>An interactive chart calls a handler each time a slider moves. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[2, 4, 6]", "[1, 2, 3]", "[6]", "[]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write a class <C>Slider</C> with <C>__init__(self, value)</C>, a method <C>on_change(self, f)</C> that registers a callback, and a method <C>set(self, v)</C> that stores the new value and calls every callback with it, but only when the value actually changed.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `class Slider:
+    def __init__(self, value):
+        self.value = value
+    def on_change(self, f):
+        pass
+    def set(self, v):
+        self.value = v
+`,
+        solution: `class Slider:
+    def __init__(self, value):
+        self.value = value
+        self.callbacks = []
+    def on_change(self, f):
+        self.callbacks.append(f)
+    def set(self, v):
+        if v == self.value:
+            return
+        self.value = v
+        for f in self.callbacks:
+            f(v)
+`,
+        tests: [
+          { name: "callbacks", code: `seen = []
+s = Slider(0)
+s.on_change(seen.append)
+s.on_change(lambda v: seen.append(-v))
+s.set(3)
+assert seen == [3, -3] and s.value == 3, 'Call every registered callback with the new value.'` },
+          { name: "no change", code: `seen = []
+s = Slider(5)
+s.on_change(seen.append)
+s.set(5)
+assert seen == [], 'Setting the same value should not redraw.'` },
+        ],
+      },
+    },
+    {
       key: "forking",
       rung: "prove",
       prompt: (

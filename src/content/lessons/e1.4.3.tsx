@@ -116,6 +116,60 @@ uv lock --upgrade  # deliberately move to newer versions, then rerun the tests`}
       answer: { kind: "choice", options: ["Yes, so every machine installs the same versions", "No, it is generated", "Only on the main branch"], correct: [0] },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def parse(v):
+    return tuple(int(x) for x in v.split("."))
+versions = ["1.10.0", "1.9.3", "1.2.11"]
+print(max(versions), max(versions, key=parse))`}</Code>
+          <p>Comparing versions as text and as tuples of numbers. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1.9.3 1.10.0", "1.10.0 1.10.0", "1.9.3 1.9.3", "1.2.11 1.10.0"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>satisfies(version, spec)</C> for specs like <C>"&gt;=1.4,&lt;2.0"</C> or <C>"==1.26.4"</C>: comma-separated clauses, each an operator from <C>==</C>, <C>&gt;=</C>, <C>&lt;=</C>, <C>&gt;</C>, <C>&lt;</C> followed by a dotted version. Compare versions as tuples of integers.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def satisfies(version, spec):
+    return version in spec
+`,
+        solution: `import operator
+
+OPS = [('==', operator.eq), ('>=', operator.ge), ('<=', operator.le), ('>', operator.gt), ('<', operator.lt)]
+
+def parse(v):
+    return tuple(int(x) for x in v.split('.'))
+
+def satisfies(version, spec):
+    v = parse(version)
+    for clause in spec.split(','):
+        clause = clause.strip()
+        for sym, op in OPS:
+            if clause.startswith(sym):
+                if not op(v, parse(clause[len(sym):])):
+                    return False
+                break
+    return True
+`,
+        tests: [
+          { name: "range", code: `assert satisfies('1.10.0', '>=1.4,<2.0') and not satisfies('2.0.0', '>=1.4,<2.0'), 'Every clause must hold.'` },
+          { name: "numeric", code: `assert not satisfies('1.9.0', '>=1.10'), 'Compare numbers, not text: 9 < 10.'` },
+          { name: "pin", code: `assert satisfies('1.26.4', '==1.26.4') and not satisfies('1.26.3', '==1.26.4'), 'A pin allows one version.'` },
+        ],
+      },
+    },
+    {
       key: "policy",
       rung: "prove",
       prompt: (

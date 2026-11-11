@@ -182,6 +182,53 @@ bump()
       },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`x = 5
+def f():
+    x = 10
+    return x
+def g():
+    return x + 1
+print(f(), g(), x)`}</Code>
+          <p>Each function has its own local names. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["10 6 5", "10 11 10", "10 6 10", "5 6 5"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            This counter does not work, because <C>count</C> inside the function is local. Rewrite <C>tick(count)</C> so it takes the current count and returns the new one, with no global variables.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `count = 0
+
+def tick():
+    count = 0
+    count = count + 1
+    return count
+`,
+        solution: `def tick(count):
+    return count + 1
+`,
+        tests: [
+          { name: "ticks", code: `c = 0
+for _ in range(3):
+    c = tick(c)
+assert c == 3, 'Pass the count in and return the new value.'` },
+        ],
+      },
+    },
+    {
       key: "noglobals",
       rung: "prove",
       prompt: (

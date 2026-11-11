@@ -2,6 +2,7 @@ import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { C, Code } from "@/components/lesson/Code";
 import { ObjectsViz } from "@/components/viz/ObjectsViz";
 import type { LessonContent } from "@/lib/types";
+import { Playground } from "@/components/code/Playground";
 
 export const lesson: LessonContent = {
   id: "e1.3.1",
@@ -15,10 +16,10 @@ export const lesson: LessonContent = {
   puzzle: (
     <>
       <p>Predict what this prints before reading on.</p>
-      <Code>{`weights = [0.5, 0.5]
+      <Playground code={`weights = [0.5, 0.5]
 backup = weights
 weights[0] = 0.9
-print(backup)`}</Code>
+print(backup)`} />
       <p>
         Most people new to Python expect <C>[0.5, 0.5]</C>. It prints <C>[0.9, 0.5]</C>. What must <C>backup = weights</C>{" "}
         really mean for that to happen?
@@ -66,12 +67,12 @@ print(backup)`}</Code>
       </Definition>
 
       <Example title="copies, shallow and deep">
-        <Code>{`import copy
+        <Playground code={`import copy
 a = [[1, 2], [3, 4]]
 b = list(a)            # shallow copy: a new outer list, the same inner lists
 c = copy.deepcopy(a)   # deep copy: new objects all the way down
 a[0].append(99)
-print(b[0], c[0])      # [1, 2, 99] [1, 2]`}</Code>
+print(b[0], c[0])      # [1, 2, 99] [1, 2]`} />
       </Example>
 
       <Remark title="two classic traps">
@@ -135,6 +136,50 @@ print(len(add(3)))`}</Code>
       rung: "apply",
       prompt: <p><C>grid = [[0] * 3] * 2</C>, then <C>grid[0][0] = 1</C>. What is <C>sum(map(sum, grid))</C>?</p>,
       answer: { kind: "numeric", value: 2 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`a = [1, 2]
+b = a
+c = list(a)
+a += [3]
+print(b, c, a is b, a == c)`}</Code>
+          <p>Names refer to objects; += on a list changes it in place. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[1, 2, 3] [1, 2] True False", "[1, 2] [1, 2] False False", "[1, 2, 3] [1, 2, 3] True True", "[1, 2, 3] [1, 2] False False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            This function has the mutable-default bug: calls share one list. Fix <C>add_item(item, basket=None)</C> so each call without a basket starts a fresh list.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def add_item(item, basket=[]):
+    basket.append(item)
+    return basket
+`,
+        solution: `def add_item(item, basket=None):
+    if basket is None:
+        basket = []
+    basket.append(item)
+    return basket
+`,
+        tests: [
+          { name: "fresh", code: `assert add_item('a') == ['a'] and add_item('b') == ['b'], 'A default list is created once and shared; use None instead.'` },
+          { name: "given", code: `mine = ['x']
+assert add_item('y', mine) is mine and mine == ['x', 'y'], 'A basket that is passed in is still updated.'` },
+        ],
+      },
     },
     {
       key: "fix",

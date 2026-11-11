@@ -141,6 +141,59 @@ grep -c "$1" orders.csv`}</Code>
       answer: { kind: "numeric", value: 1 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`text = "b\\na\\nb\\nc\\nb\\n"
+lines = sorted(text.split())
+uniq = [l for i, l in enumerate(lines) if i == 0 or l != lines[i - 1]]
+print(len(uniq))`}</Code>
+          <p>This is sort | uniq | wc -l written in Python. What does it print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 3 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>pipeline(text, *stages)</C>, which feeds text through each stage function in turn, like a shell pipe. Then write <C>grep(word)</C>, which returns a stage keeping only the lines containing <C>word</C>, and <C>wc_l(text)</C>, which counts lines.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def pipeline(text, *stages):
+    return text
+
+def grep(word):
+    return lambda text: text
+
+def wc_l(text):
+    return 0
+`,
+        solution: `def pipeline(text, *stages):
+    for stage in stages:
+        text = stage(text)
+    return text
+
+def grep(word):
+    return lambda text: ''.join(l for l in text.splitlines(keepends=True) if word in l)
+
+def wc_l(text):
+    return text.count('\\n')
+`,
+        tests: [
+          { name: "grep", code: `assert grep('err')('ok\\nerror 1\\nerr 2\\n') == 'error 1\\nerr 2\\n', 'Keep whole lines, newlines included.'` },
+          { name: "pipe", code: `log = 'INFO a\\nERROR b\\nINFO c\\nERROR d\\n'
+assert pipeline(log, grep('ERROR'), wc_l) == 2, 'Each stage receives the previous stage’s output.'` },
+        ],
+      },
+    },
+    {
       key: "script",
       rung: "prove",
       prompt: (

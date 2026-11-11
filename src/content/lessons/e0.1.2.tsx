@@ -142,6 +142,48 @@ print(x)
       answer: { kind: "choice", options: ["6", "'42'", "42", "An error"], correct: [1] },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`a = "7"
+b = 7
+print(a * 2, b * 2, type(a * 2).__name__)`}</Code>
+          <p>The same symbol does different things to different types. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["77 14 str", "14 14 int", "77 77 str", "14 77 int"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            The variable <C>raw</C> holds the text <C>"42"</C>. Make <C>n</C> the integer it represents, <C>doubled</C> twice that number, and <C>label</C> the string <C>"42 items"</C> built from <C>raw</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `raw = "42"
+n = raw
+doubled = n * 2
+label = raw
+`,
+        solution: `raw = "42"
+n = int(raw)
+doubled = n * 2
+label = raw + " items"
+`,
+        tests: [
+          { name: "convert", code: `assert n == 42 and type(n) is int, 'Use int(raw) to turn text into a number.'` },
+          { name: "double", code: `assert doubled == 84, 'Doubling the text "42" would give "4242".'` },
+          { name: "label", code: `assert label == '42 items', 'Join strings with +, including the space.'` },
+        ],
+      },
+    },
+    {
       key: "equals",
       rung: "prove",
       prompt: (

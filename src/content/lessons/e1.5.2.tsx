@@ -116,6 +116,60 @@ frac_positive = (x > 0).mean()          # True counts as 1: 0.666...`}</Code>
       answer: { kind: "numeric", value: 0.75 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+x = np.array([1.0, 2.0, 3.0, 4.0])
+print((x - x.mean()) @ (x - x.mean()) / len(x))`}</Code>
+          <p>One vectorised line computes a statistic. What value does it print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 1.25 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>pairwise_dist(X)</C>, which returns the n × n matrix of Euclidean distances between the rows of an n × d array, with no Python loops. Use ‖a − b‖² = ‖a‖² + ‖b‖² − 2a·b and clip small negatives to 0 before the square root.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def pairwise_dist(X):
+    n = len(X)
+    D = np.zeros((n, n))
+    for i in range(n):
+        for j in range(n):
+            D[i, j] = np.abs(X[i] - X[j]).sum()
+    return D
+`,
+        solution: `import numpy as np
+
+def pairwise_dist(X):
+    sq = (X ** 2).sum(axis=1)
+    D2 = sq[:, None] + sq[None, :] - 2 * X @ X.T
+    return np.sqrt(np.clip(D2, 0, None))
+`,
+        tests: [
+          { name: "small", code: `import numpy as np
+D = pairwise_dist(np.array([[0.0, 0.0], [3.0, 4.0], [6.0, 8.0]]))
+assert np.allclose(D, [[0, 5, 10], [5, 0, 5], [10, 5, 0]]), 'Distances are Euclidean, not the sum of absolute differences.'` },
+          { name: "random", code: `import numpy as np
+rng = np.random.default_rng(0)
+X = rng.normal(size=(50, 8))
+ref = np.sqrt(((X[:, None, :] - X[None, :, :]) ** 2).sum(-1))
+assert np.allclose(pairwise_dist(X), ref, atol=1e-6), 'Check the formula on random data.'` },
+        ],
+      },
+    },
+    {
       key: "acc",
       rung: "prove",
       prompt: (

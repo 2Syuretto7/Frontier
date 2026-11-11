@@ -144,6 +144,60 @@ rows = con.execute(
       answer: { kind: "numeric", value: 9 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import sqlite3
+db = sqlite3.connect(":memory:")
+db.execute("create table t (dept text, pay int)")
+db.executemany("insert into t values (?, ?)", [("ml", 90), ("ml", 70), ("infra", 80), ("infra", 60), ("infra", 100)])
+print(db.execute("select dept, count(*), avg(pay) from t group by dept having count(*) > 2").fetchall())`}</Code>
+          <p>GROUP BY with HAVING filters whole groups. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[('infra', 3, 80.0)]", "[('infra', 3, 80.0), ('ml', 2, 80.0)]", "[('ml', 2, 80.0)]", "[]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A SQLite database <C>db</C> has tables <C>students(id, name)</C> and <C>marks(student_id, subject, score)</C>. Set <C>QUERY</C> to SQL that returns each student&rsquo;s name and average score, highest average first, for students with at least two marks. Use a JOIN.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `QUERY = "select name from students"
+`,
+        solution: `QUERY = """
+select s.name, avg(m.score) as avg_score
+from students s join marks m on m.student_id = s.id
+group by s.id, s.name
+having count(*) >= 2
+order by avg_score desc
+"""
+`,
+        tests: [
+          { name: "result", code: `rows = db.execute(QUERY).fetchall()
+assert [(r[0], round(r[1], 2)) for r in rows] == [('Asha', 85.0), ('Ravi', 80.0)], 'Join, group by student, keep groups with count(*) >= 2, order by the average. Zoya has only one mark.'` },
+          { name: "columns", code: `rows = db.execute(QUERY).fetchall()
+assert len(rows) == 2 and len(rows[0]) == 2, 'Return two columns: name and average.'` },
+        ],
+        setup: `import sqlite3
+db = sqlite3.connect(':memory:')
+db.executescript('''
+create table students (id int, name text);
+create table marks (student_id int, subject text, score int);
+insert into students values (1, 'Asha'), (2, 'Ravi'), (3, 'Zoya');
+insert into marks values (1, 'maths', 90), (1, 'physics', 80), (2, 'maths', 60), (2, 'physics', 90), (2, 'chemistry', 90), (3, 'maths', 100);
+''')
+`,
+      },
+    },
+    {
       key: "alias",
       rung: "prove",
       prompt: (

@@ -132,6 +132,56 @@ with timer("epoch"):
       answer: { kind: "numeric", value: 4 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def countdown(n):
+    while n > 0:
+        yield n
+        n -= 1
+g = countdown(3)
+print(next(g), list(g), list(g))`}</Code>
+          <p>A generator runs until it is exhausted, and only once. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["3 [2, 1] []", "3 [3, 2, 1] [3, 2, 1]", "3 [2, 1] [2, 1]", "[3, 2, 1] [] []"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write a generator <C>batches(items, size)</C> that yields lists of up to <C>size</C> items in order, without building all the batches at once. It must work on any iterable, including another generator.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def batches(items, size):
+    items = list(items)
+    return [items[i:i + size] for i in range(0, len(items), size)]
+`,
+        solution: `def batches(items, size):
+    batch = []
+    for x in items:
+        batch.append(x)
+        if len(batch) == size:
+            yield batch
+            batch = []
+    if batch:
+        yield batch
+`,
+        tests: [
+          { name: "batches", code: `assert list(batches(range(7), 3)) == [[0, 1, 2], [3, 4, 5], [6]], 'The last batch may be short.'` },
+          { name: "lazy", code: `import types
+b = batches((x * x for x in range(5)), 2)
+assert isinstance(b, types.GeneratorType) and next(b) == [0, 1] and next(b) == [4, 9], 'Use yield, so batches are produced one at a time, even from another generator.'` },
+        ],
+      },
+    },
+    {
       key: "lines",
       rung: "prove",
       prompt: (

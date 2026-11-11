@@ -142,6 +142,46 @@ kill -9 48213            # force it (signal KILL), only if it ignores the first`
       answer: { kind: "numeric", value: 0 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`mode = 0o754
+bits = "rwxrwxrwx"
+print("".join(b if mode >> (8 - i) & 1 else "-" for i, b in enumerate(bits)))`}</Code>
+          <p>File permissions 754 in octal, as ls -l shows them. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["rwxr-xr--", "rwxr-x-r-", "rwxrw-r--", "r-xr-xrwx"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>to_octal(perms)</C>, which turns a 9-character permission string such as <C>"rw-r--r--"</C> into its octal number as an int (here <C>0o644</C>, which is 420).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def to_octal(perms):
+    return int(perms.count('r'))
+`,
+        solution: `def to_octal(perms):
+    n = 0
+    for ch in perms:
+        n = n * 2 + (ch != '-')
+    return n
+`,
+        tests: [
+          { name: "644", code: `assert to_octal('rw-r--r--') == 0o644, 'Each character is one bit: set unless it is -.'` },
+          { name: "others", code: `assert to_octal('rwxr-xr-x') == 0o755 and to_octal('---------') == 0, 'rwx is 7, r-x is 5.'` },
+        ],
+      },
+    },
+    {
       key: "stop",
       rung: "prove",
       prompt: (

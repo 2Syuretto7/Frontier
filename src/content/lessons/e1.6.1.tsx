@@ -142,6 +142,58 @@ fig.savefig("loss.png", dpi=150, bbox_inches="tight")`}</Code>
       answer: { kind: "numeric", value: 100 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import matplotlib.pyplot as plt
+fig, axes = plt.subplots(2, 3)
+axes[1, 2].plot([0, 1], [0, 1])
+print(axes.shape, len(axes[1, 2].lines), len(axes[0, 0].lines))`}</Code>
+          <p>A grid of subplots, with one line drawn. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["(2, 3) 1 0", "(3, 2) 1 0", "(2, 3) 1 1", "(6,) 1 0"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>plot_runs(runs)</C>, which takes a dict from run name to a list of losses, draws one labelled line per run against step number on a single axes, sets the y-axis to log scale, labels both axes, adds a legend, and returns the <C>Axes</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import matplotlib.pyplot as plt
+
+def plot_runs(runs):
+    fig, ax = plt.subplots()
+    return ax
+`,
+        solution: `import matplotlib.pyplot as plt
+
+def plot_runs(runs):
+    fig, ax = plt.subplots()
+    for name, losses in runs.items():
+        ax.plot(range(len(losses)), losses, label=name)
+    ax.set_yscale('log')
+    ax.set_xlabel('step')
+    ax.set_ylabel('loss')
+    ax.legend()
+    return ax
+`,
+        tests: [
+          { name: "lines", code: `ax = plot_runs({'a': [3, 2, 1], 'b': [4, 2, 0.5]})
+assert len(ax.lines) == 2 and sorted(l.get_label() for l in ax.lines) == ['a', 'b'], 'One labelled line per run.'` },
+          { name: "axes", code: `ax = plot_runs({'a': [3, 2, 1]})
+assert ax.get_yscale() == 'log' and ax.get_xlabel() and ax.get_ylabel() and ax.get_legend() is not None, 'Log scale, axis labels and a legend.'` },
+        ],
+      },
+    },
+    {
       key: "inverse",
       rung: "prove",
       prompt: (

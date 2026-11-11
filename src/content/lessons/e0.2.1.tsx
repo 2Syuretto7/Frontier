@@ -183,6 +183,61 @@ print(count)
       answer: { kind: "numeric", value: 3 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`t = 31
+if t > 35:
+    print("hot")
+elif t > 25:
+    print("warm")
+elif t > 30:
+    print("very warm")
+else:
+    print("cool")`}</Code>
+          <p>Only the first true branch runs. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["warm", "very warm", "hot", "warm and very warm"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>grade(marks)</C> returning <C>"A"</C> for 80 or more, <C>"B"</C> for 60 to 79, <C>"C"</C> for 40 to 59 and <C>"F"</C> below 40.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def grade(marks):
+    if marks >= 40:
+        return 'C'
+    elif marks >= 60:
+        return 'B'
+    elif marks >= 80:
+        return 'A'
+    return 'F'
+`,
+        solution: `def grade(marks):
+    if marks >= 80:
+        return 'A'
+    elif marks >= 60:
+        return 'B'
+    elif marks >= 40:
+        return 'C'
+    return 'F'
+`,
+        tests: [
+          { name: "boundaries", code: `assert [grade(m) for m in (80, 79, 60, 59, 40, 39)] == ['A', 'B', 'B', 'C', 'C', 'F'], 'Test the highest threshold first.'` },
+          { name: "extremes", code: `assert grade(100) == 'A' and grade(0) == 'F', 'Check the ends of the range.'` },
+        ],
+      },
+    },
+    {
       key: "fix",
       rung: "prove",
       prompt: (
