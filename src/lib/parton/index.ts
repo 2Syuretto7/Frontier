@@ -11,6 +11,7 @@ import {
   HINT_RULES,
   HINT_SCHEMA,
   MARK_RULES,
+  acceptWritten,
   MARK_SCHEMA,
   RUNGS,
   TEACHBACK_RULES,
@@ -257,7 +258,7 @@ export async function markWritten(ref: ExerciseRef, response: string): Promise<M
       content: `${exerciseText(ref)}\n\nRubric:\n${answer.rubric.map((r, i) => `${i + 1}. ${r}`).join("\n")}\n\nThe learner's answer:\n<<<\n${response}\n>>>`,
     }],
   });
-  const accepted = out.criteria.length >= answer.rubric.length && out.criteria.every((c) => c.met);
+  const accepted = acceptWritten(out, answer.rubric.length);
   const feedback = accepted ? out.feedback : await guard(out.feedback, describeAnswer(answer), 3);
   await note(ref.lessonId, ref.id, "misconception", out.misconception);
   return { accepted, feedback };

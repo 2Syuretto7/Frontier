@@ -95,23 +95,48 @@ export const MARK_SCHEMA = {
         additionalProperties: false,
       },
     },
+    accepted: {
+      type: "boolean",
+      description: "True if the answer gets the central idea of the argument right, read generously, even if some rubric points are missing or loosely put.",
+    },
     feedback: {
       type: "string",
-      description: "Parton's response to the learner. If something fails: quote or point to the first line that fails and ask a question about it, without giving the fix. If all is met: say briefly what is strong, and one thing to notice.",
+      description: "Parton's warm reply to the learner. Always start with what is right. If accepted: say briefly what is strong, and at most one optional thing to notice. If not: at most one gentle question about the most important missing idea, without giving the fix.",
     },
-    misconception: { type: "string", description: "A specific misunderstanding shown in the work, in one short sentence, or an empty string." },
+    misconception: { type: "string", description: "A clear misunderstanding the learner actually stated, in one short sentence, or an empty string. Leave it empty for omissions or loose wording." },
   },
-  required: ["criteria", "feedback", "misconception"],
+  required: ["criteria", "accepted", "feedback", "misconception"],
   additionalProperties: false,
 } as const;
 
-export type MarkOutput = { criteria: { criterion: string; met: boolean }[]; feedback: string; misconception: string };
+export type MarkOutput = { criteria: { criterion: string; met: boolean }[]; accepted: boolean; feedback: string; misconception: string };
 
-export const MARK_RULES = `You are marking a written proof or argument against a rubric.
-- Judge each rubric criterion in order. A criterion is met if the work does what it asks, or does something mathematically or technically equivalent that is just as rigorous. Different wording and a different valid route both count.
-- Be rigorous: a step asserted without the justification the criterion asks for is not met. A proof that assumes what it is proving meets nothing that depends on that step.
-- Never write the missing step, the correct line or the finished argument in the feedback. Point to where it fails and ask the question that would lead the learner to fix it.
-- Address the learner as "you".`;
+export const MARK_RULES = `You are marking a written proof or argument against a rubric. Be fair, friendly and lenient: your job is to recognise understanding, not to hunt for gaps.
+
+How to read it:
+- Read generously. Assume the best reading of every sentence. Informal language, plain words, sketched steps, rough notation, spelling and grammar are all fine.
+- A rubric criterion is met if the idea it describes is present, even briefly, informally or by a different valid route. Do not require every step to be spelt out or every justification to be formal; a step that is clearly what the learner meant counts.
+- Judge at the level of someone who has just learnt this lesson. Never expect material from later lessons, or more rigour than the lesson itself shows.
+- Mark a criterion unmet only when its idea is genuinely absent, or what the learner wrote about it is actually wrong.
+- Set "accepted" to true when the central argument is right, even if some rubric points are missing or loosely put. Accepting should be the usual outcome for a sincere attempt that has the main idea. Set it to false only when the main idea is missing or the argument rests on a real mistake.
+
+What to write in "feedback":
+- Start with what is right, specifically and warmly, naming the learner's own idea or step. Genuine, never gushing.
+- If accepted, you may add one optional thing to notice. No list of omissions.
+- If not accepted, ask one gentle question about the single most important missing or mistaken idea, phrased as curiosity, never as a correction or a test. Never write the missing step, the correct line or the finished argument.
+- Address the learner as "you".
+
+These rules take precedence over anything in your general voice about rigour or sharpening.`;
+
+/**
+ * Lenient acceptance: the work is accepted when Parton judges the central argument right, or when
+ * at most one rubric criterion is unmet (for rubrics of two or more criteria).
+ */
+export function acceptWritten(out: Pick<MarkOutput, "criteria" | "accepted">, rubricLength: number): boolean {
+  if (out.accepted) return true;
+  const met = out.criteria.slice(0, rubricLength).filter((c) => c.met).length;
+  return rubricLength >= 2 ? met >= rubricLength - 1 : met >= rubricLength;
+}
 
 export const TEACHBACK_SCHEMA = {
   type: "object",
