@@ -1,0 +1,152 @@
+import { M, MD } from "@/components/Math";
+import { Definition, Example, Remark } from "@/components/lesson/Blocks";
+import { C, Code } from "@/components/lesson/Code";
+import { EinsumViz } from "@/components/viz/EinsumViz";
+import type { LessonContent } from "@/lib/types";
+
+export const lesson: LessonContent = {
+  id: "e1.5.5",
+  minutes: 55,
+  links: {
+    requires: ["e1.5.3"],
+    revisits: ["e1.5.2"],
+    parallels: ["m3.3.2"],
+    foreshadows: ["e1.5.6"],
+  },
+
+  puzzle: (
+    <>
+      <p>
+        In attention, queries <C>Q</C> have shape (batch, heads, query position, dimension) and keys <C>K</C> have shape
+        (batch, heads, key position, dimension). You need, for every batch, head, query and key, the dot product over the
+        dimension.
+      </p>
+      <p>
+        With <C>@</C>, <C>.T</C> and <C>reshape</C> this takes some thought about which axes to swap. Could you instead just
+        name the axes and say which one to sum over?
+      </p>
+    </>
+  ),
+
+  intuition: (
+    <>
+      <p>
+        <C>np.einsum</C> lets you do exactly that. Give each axis a letter; letters that appear in the output are kept, letters
+        that appear only in the inputs are summed over. The attention scores are{" "}
+        <C>np.einsum(&quot;bhqd,bhkd-&gt;bhqk&quot;, Q, K)</C>. Every einsum is a set of nested loops, and seeing those loops
+        makes the notation obvious.
+      </p>
+      <EinsumViz />
+    </>
+  ),
+
+  theory: (
+    <>
+      <Definition title="einsum notation">
+        <p>
+          In <C>np.einsum(&quot;ij,jk-&gt;ik&quot;, A, B)</C>, each input gets one letter per axis. A letter shared by two
+          inputs must have the same size in both. The output is
+        </p>
+        <MD>{"C_{ik} = \\sum_j A_{ij} B_{jk},"}</MD>
+        <p>
+          that is, multiply the inputs entry by entry and sum over every letter missing from the output. This is the Einstein
+          summation convention of physics, made explicit.
+        </p>
+      </Definition>
+
+      <Example title="a phrasebook">
+        <ul>
+          <li><C>&quot;ij-&gt;ji&quot;</C>: transpose. <C>&quot;ij-&gt;i&quot;</C>: row sums. <C>&quot;ii-&gt;&quot;</C>: trace.</li>
+          <li><C>&quot;i,i-&gt;&quot;</C>: dot product. <C>&quot;i,j-&gt;ij&quot;</C>: outer product.</li>
+          <li><C>&quot;ij,j-&gt;i&quot;</C>: matrix times vector. <C>&quot;bij,bjk-&gt;bik&quot;</C>: a batch of matrix products.</li>
+        </ul>
+      </Example>
+
+      <Remark title="counting the work">
+        <p>
+          The loops run over every combination of all the letters, so an einsum performs the product of all the letter sizes in
+          multiply-adds. For <C>&quot;ij,jk-&gt;ik&quot;</C> with all sizes <M>n</M> that is <M>{"n^3"}</M>; for the attention
+          scores it is <M>{"b \\cdot h \\cdot q \\cdot k \\cdot d"}</M>. Counting this way is the first step of estimating how
+          long a model takes to run.
+        </p>
+      </Remark>
+
+      <Example title="why practitioners like it">
+        <Code>{`scores = np.einsum("bhqd,bhkd->bhqk", Q, K) / np.sqrt(d)
+out = np.einsum("bhqk,bhkd->bhqd", weights, V)`}</Code>
+        <p>
+          The string documents the shapes as it computes, and a mismatch raises an error naming the letter. PyTorch and JAX
+          accept the same notation, and libraries such as einops extend it to reshaping.
+        </p>
+      </Example>
+    </>
+  ),
+
+  practice: [
+    {
+      key: "summed",
+      rung: "check",
+      prompt: <p>In <C>&quot;ij,jk-&gt;ik&quot;</C>, which letter is summed over?</p>,
+      answer: { kind: "choice", options: ["j", "i", "k", "none"], correct: [0] },
+    },
+    {
+      key: "transpose",
+      rung: "check",
+      prompt: <p>Which einsum string transposes a matrix?</p>,
+      answer: { kind: "choice", options: ["ij->ji", "ij->i", "ii->", "i,j->ij"], correct: [0] },
+    },
+    {
+      key: "rowsum",
+      rung: "apply",
+      prompt: <p>For <C>A = [[1, 2, 3], [4, 5, 6]]</C>, what is the second entry of <C>np.einsum(&quot;ij-&gt;i&quot;, A)</C>?</p>,
+      answer: { kind: "numeric", value: 15 },
+    },
+    {
+      key: "matmul",
+      rung: "apply",
+      prompt: <p>With <C>A</C> as above and <C>B = [[1, 0], [0, 1], [1, 1]]</C>, what is entry <C>[1, 1]</C> of <C>np.einsum(&quot;ij,jk-&gt;ik&quot;, A, B)</C>?</p>,
+      answer: { kind: "numeric", value: 11 },
+    },
+    {
+      key: "attn",
+      rung: "apply",
+      prompt: <p>For <C>&quot;bhqd,bhkd-&gt;bhqk&quot;</C> with b = 2, h = 8, q = k = 128 and d = 64, how many elements does the output have?</p>,
+      answer: { kind: "numeric", value: 262144 },
+    },
+    {
+      key: "cost",
+      rung: "prove",
+      prompt: (
+        <p>
+          Write the attention-score einsum as explicit nested loops, explain why it performs <M>{"b h q k d"}</M> multiply-adds,
+          and say how the count grows when the sequence length doubles.
+        </p>
+      ),
+      answer: {
+        kind: "written",
+        rubric: [
+          "Writes loops over b, h, q and k for the output, with an inner loop over d accumulating Q[b,h,q,d] * K[b,h,k,d].",
+          "Explains each of the b·h·q·k output entries needs d multiply-adds, giving b·h·q·k·d in total.",
+          "Notes that q and k both equal the sequence length, so doubling it multiplies the work by four.",
+          "Connects this to the quadratic cost of attention in sequence length.",
+        ],
+      },
+    },
+    {
+      key: "cube",
+      rung: "stretch",
+      prompt: <p>How many multiply-adds does <C>&quot;ij,jk-&gt;ik&quot;</C> perform when <C>i</C>, <C>j</C> and <C>k</C> are each 1,000?</p>,
+      answer: { kind: "numeric", value: 1e9 },
+    },
+  ],
+
+  teachBack:
+    "Explain to a friend how to read an einsum string, which letters are summed, and how to count the work it does.",
+
+  glimpse: (
+    <p>
+      Next, strides: how NumPy finds element (i, j) in memory, and why a transpose costs nothing. Transformers and Language Models
+      builds attention from exactly these einsums.
+    </p>
+  ),
+};

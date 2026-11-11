@@ -1,0 +1,166 @@
+import { Definition, Example, Remark } from "@/components/lesson/Blocks";
+import { C, Code } from "@/components/lesson/Code";
+import { GitBranchViz } from "@/components/viz/GitBranchViz";
+import type { LessonContent } from "@/lib/types";
+
+export const lesson: LessonContent = {
+  id: "e1.2.2",
+  minutes: 50,
+  links: {
+    requires: ["e1.2.1"],
+    revisits: ["m4.3.4"],
+    parallels: ["m4.3.2"],
+    foreshadows: ["e1.2.3"],
+  },
+
+  puzzle: (
+    <>
+      <p>
+        Your training code works. You want to try a risky new optimiser, which might take days and might fail, while still
+        fixing small bugs in the working version whenever they turn up.
+      </p>
+      <p>
+        How could one repository hold both lines of work without them getting in each other&rsquo;s way? And if the experiment
+        succeeds, how would you bring the two lines back together?
+      </p>
+    </>
+  ),
+
+  intuition: (
+    <>
+      <p>
+        Commits form a graph: each points back to its parent. A <strong>branch</strong> is nothing more than a name attached
+        to one commit, and that name moves forward each time you commit on it. Two branches are two names that can move
+        independently, so the graph can fork. A <strong>merge</strong> joins the forks again.
+      </p>
+      <GitBranchViz />
+      <p>
+        Try two scenarios from Reset. First, commit on feature, switch to main and merge: main simply jumps forward. Then
+        commit on both branches before merging: now Git must create a commit with two parents.
+      </p>
+    </>
+  ),
+
+  theory: (
+    <>
+      <Definition title="branches and HEAD">
+        <p>
+          A <strong>branch</strong> is a movable name for a commit. <strong>HEAD</strong> records which branch you are on; a
+          new commit gets the current commit as its parent, and the current branch moves to it.
+        </p>
+        <Code>{`git switch -c new-optimiser   # create a branch here and move onto it
+git switch main               # go back; the working files change to match
+git branch                    # list branches; * marks the current one`}</Code>
+      </Definition>
+
+      <Definition title="merging">
+        <p>
+          <C>git merge feature</C>, run on main, brings feature&rsquo;s commits into main. There are two cases:
+        </p>
+        <ul>
+          <li>
+            If main has no commits of its own since the branches split, main is an ancestor of feature, and Git does a{" "}
+            <strong>fast-forward</strong>: it moves the name main to feature&rsquo;s commit.
+          </li>
+          <li>
+            Otherwise Git performs a <strong>three-way merge</strong>, comparing both tips with their latest common ancestor,
+            the <strong>merge base</strong>, and records the result as a <strong>merge commit</strong> with two parents.
+          </li>
+        </ul>
+      </Definition>
+
+      <Example title="how three-way merging decides">
+        <p>
+          For each part of each file, Git compares three versions: the base, main&rsquo;s and feature&rsquo;s. If only one side
+          changed it, that change wins. If neither changed it, it stays. If both changed it differently, that is a{" "}
+          <strong>conflict</strong>, and Git stops and marks the file:
+        </p>
+        <Code>{`<<<<<<< HEAD
+lr = 3e-4
+=======
+lr = 1e-3
+>>>>>>> feature`}</Code>
+        <p>
+          You edit the file to the version you want, delete the markers, then <C>git add</C> and <C>git commit</C> to finish the
+          merge. Conflicts are not errors; they are Git declining to guess.
+        </p>
+      </Example>
+
+      <Remark title="rebase, briefly">
+        <p>
+          <C>git rebase main</C>, run on a feature branch, replays its commits on top of main&rsquo;s latest commit, giving a
+          straight history with no merge commit. It creates new commits with new hashes, so rebase only commits nobody else has
+          built on: never rewrite history that others have pulled.
+        </p>
+      </Remark>
+    </>
+  ),
+
+  practice: [
+    {
+      key: "what",
+      rung: "check",
+      prompt: <p>What is a Git branch?</p>,
+      answer: { kind: "choice", options: ["A name that points to a commit and moves forward as you commit", "A full copy of the repository", "A folder inside .git holding changed files"], correct: [0] },
+    },
+    {
+      key: "ff",
+      rung: "check",
+      prompt: <p>When can merging feature into main be a fast-forward?</p>,
+      answer: { kind: "choice", options: ["When main has no commits that feature lacks", "When both branches changed different files", "Always"], correct: [0] },
+    },
+    {
+      key: "count1",
+      rung: "apply",
+      prompt: <p>From the starting graph (A, B), you commit twice on feature, switch to main and merge. How many commits does the graph have?</p>,
+      answer: { kind: "numeric", value: 4 },
+    },
+    {
+      key: "count2",
+      rung: "apply",
+      prompt: <p>From the start again, you commit twice on feature, then once on main, then merge feature into main. How many commits does the graph have now?</p>,
+      answer: { kind: "numeric", value: 6 },
+    },
+    {
+      key: "parents",
+      rung: "apply",
+      prompt: <p>How many parents does an ordinary merge commit have?</p>,
+      answer: { kind: "numeric", value: 2 },
+    },
+    {
+      key: "base",
+      rung: "prove",
+      prompt: (
+        <p>
+          Explain why Git needs the merge base, and not just the two branch tips, to merge correctly. Use an example of a line
+          that one branch changed and the other left alone.
+        </p>
+      ),
+      answer: {
+        kind: "written",
+        rubric: [
+          "Notes that comparing only the two tips shows that a line differs, but not which side changed it.",
+          "Uses the base to see which side departed from the original: if main changed a line and feature kept the base version, main's change should win.",
+          "Explains that a conflict arises only when both sides changed the same part differently from the base.",
+          "Gives a concrete example, such as a learning rate changed on one branch only.",
+        ],
+      },
+    },
+    {
+      key: "threeway",
+      rung: "stretch",
+      prompt: <p>The merge base sets <C>lr = 0.001</C>. Main changed it to <C>0.002</C>; feature left it alone. What value of <C>lr</C> does the merge produce?</p>,
+      answer: { kind: "numeric", value: 0.002 },
+    },
+  ],
+
+  teachBack:
+    "Explain to a friend what a branch really is, the difference between a fast-forward and a merge commit, and what a conflict is.",
+
+  glimpse: (
+    <p>
+      Next, sharing branches with others through GitHub and pull requests. The commit graph is a directed acyclic graph, the same
+      structure that orders the steps of a computation when a neural network is differentiated.
+    </p>
+  ),
+};

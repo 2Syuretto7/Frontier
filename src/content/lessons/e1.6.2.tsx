@@ -1,0 +1,184 @@
+import { Definition, Example, Remark } from "@/components/lesson/Blocks";
+import { C, Code } from "@/components/lesson/Code";
+import { M, MD } from "@/components/Math";
+import { HonestViz } from "@/components/viz/HonestViz";
+import type { LessonContent } from "@/lib/types";
+
+export const lesson: LessonContent = {
+  id: "e1.6.2",
+  minutes: 45,
+  links: {
+    requires: ["e1.6.1"],
+    revisits: ["m0.8.2"],
+    foreshadows: ["l10.2.1", "e1.6.3"],
+  },
+
+  puzzle: (
+    <>
+      <p>
+        A slide shows two bars: the baseline at 91.2% accuracy and a new method at 92.0%. The new bar is more than twice as
+        tall as the old one. Nothing on the slide is false: every number is correct and every bar is drawn exactly where its
+        axis says.
+      </p>
+      <p>So how can the slide still mislead, and what would you change so it cannot?</p>
+    </>
+  ),
+
+  intuition: (
+    <>
+      <p>
+        A reader takes in a chart through its marks: lengths, positions, areas and colours. An honest chart makes the visual
+        size of a difference match the size of the difference in the data, and shows how much the data would vary if the
+        experiment were repeated. Toggle the axis and the error bars below and compare what each version invites you to
+        believe.
+      </p>
+      <HonestViz />
+    </>
+  ),
+
+  theory: (
+    <>
+      <Definition title="encodings">
+        <p>
+          Each chart type encodes values with a visual channel. People judge <strong>position</strong> on a common axis most
+          accurately, then length, then angle and area, and colour least accurately. Bars encode values by length from a
+          baseline, so a bar chart&rsquo;s axis must start at zero. Points and lines encode by position, so their axis may
+          start wherever the data are, as long as it is labelled.
+        </p>
+      </Definition>
+
+      <Definition title="lie factor">
+        <p>Edward Tufte&rsquo;s lie factor compares the size of an effect in the graphic with its size in the data:</p>
+        <MD>{"\\text{lie factor} = \\frac{\\text{relative change shown in the graphic}}{\\text{relative change in the data}}."}</MD>
+        <p>An honest chart has a lie factor near 1.</p>
+      </Definition>
+
+      <Example title="showing variation">
+        <Code>{`means = runs.groupby("method")["acc"].mean()
+sds   = runs.groupby("method")["acc"].std()
+ax.errorbar(range(len(means)), means, yerr=2 * sds, fmt="o", capsize=4)
+ax.set_xticks(range(len(means)), means.index)
+ax.set_ylabel("accuracy (%), mean ± 2 sd over 5 seeds")`}</Code>
+        <p>
+          A point with error bars, on an axis that need not start at zero, shows both the difference and the noise. Always say
+          in the label what the bars mean: standard deviation, standard error and confidence intervals differ greatly.
+        </p>
+      </Example>
+
+      <Remark title="colour">
+        <p>
+          Use a <strong>sequential</strong> colour map, from light to dark in one hue, for quantities that run from low to
+          high, and a <strong>diverging</strong> map, with a neutral middle, for quantities with a meaningful centre such as
+          correlations from <M>{"-1"}</M> to <M>{"1"}</M>. Rainbow maps such as <C>jet</C> create false boundaries where the
+          hue changes quickly, and they fail for colour-blind readers.
+        </p>
+      </Remark>
+
+      <Remark title="a checklist">
+        <p>
+          Does every axis have a label and units? Do bars start at zero? Is variation shown, and is it said what it is? Are
+          the axes of compared panels the same? Would the chart&rsquo;s message survive a reader who checks the numbers?
+        </p>
+      </Remark>
+    </>
+  ),
+
+  practice: [
+    {
+      key: "zero",
+      rung: "check",
+      prompt: <p>Why must a bar chart&rsquo;s value axis start at zero?</p>,
+      answer: {
+        kind: "choice",
+        options: ["Bars encode values by length from the baseline", "Charting libraries require it", "Zero is always in the data"],
+        correct: [0],
+      },
+    },
+    {
+      key: "cmap",
+      rung: "check",
+      prompt: <p>Which colour map suits a heatmap of correlations from −1 to 1?</p>,
+      answer: { kind: "choice", options: ["Diverging, with a neutral middle", "Sequential, light to dark", "Rainbow"], correct: [0] },
+    },
+    {
+      key: "taller",
+      rung: "apply",
+      prompt: (
+        <p>
+          Bars of 91.2 and 92.0 are drawn on an axis starting at 90.5. How many times taller does the 92.0 bar look than the
+          91.2 bar? Give two decimal places.
+        </p>
+      ),
+      answer: { kind: "numeric", value: 2.14, tolerance: 0.003 },
+    },
+    {
+      key: "lie",
+      rung: "apply",
+      prompt: (
+        <p>
+          For the same chart, compute the lie factor: the relative increase in bar height divided by the relative increase in
+          accuracy. Round to the nearest whole number.
+        </p>
+      ),
+      answer: { kind: "numeric", value: 130, tolerance: 0.01 },
+    },
+    {
+      key: "fix",
+      rung: "apply",
+      prompt: <p>Which of these make the two-model comparison more honest? Select all that apply.</p>,
+      answer: {
+        kind: "choice",
+        options: [
+          "Start the bar axis at zero",
+          "Plot points with error bars over several seeds",
+          "Say in the axis label what the error bars show",
+          "Use a 3D bar chart",
+          "Remove the axis so the difference stands out",
+        ],
+        correct: [0, 1, 2],
+      },
+    },
+    {
+      key: "lines",
+      rung: "prove",
+      prompt: (
+        <p>
+          Explain why a line chart of training loss may use an axis that does not start at zero, while a bar chart of two
+          accuracies may not. Then explain why showing the spread over several seeds can change the conclusion drawn from two
+          bars.
+        </p>
+      ),
+      answer: {
+        kind: "written",
+        rubric: [
+          "Explains that lines and points encode values by position, which can be read against any labelled axis.",
+          "Explains that bars encode by length from the baseline, so a truncated axis distorts the ratio of the values.",
+          "Explains that a single run per method hides seed-to-seed variation.",
+          "Notes that if the spread is comparable to the difference, the difference may be noise, so the claim needs more runs or a test.",
+        ],
+      },
+    },
+    {
+      key: "se",
+      rung: "stretch",
+      prompt: (
+        <p>
+          Each model is run with 5 seeds. The baseline&rsquo;s accuracy has standard deviation 0.5 and the new method&rsquo;s
+          0.6. What is the standard error of the difference between the two mean accuracies, <M>{"\\sqrt{s_1^2/n + s_2^2/n}"}</M>?
+          Give two decimal places.
+        </p>
+      ),
+      answer: { kind: "numeric", value: 0.35, tolerance: 0.01 },
+    },
+  ],
+
+  teachBack:
+    "Explain to a friend how a chart can mislead with correct numbers, using a truncated bar axis and a missing error bar as examples.",
+
+  glimpse: (
+    <p>
+      Next, interactive charts: views you can filter and link, so that a selection in one picture lights up the same data in
+      another. Later, in evaluation, error bars become a subject of their own.
+    </p>
+  ),
+};
