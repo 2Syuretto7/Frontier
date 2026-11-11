@@ -1,70 +1,70 @@
 "use client";
 
-import { useState } from "react";
-import { Axes, scales, type View } from "./Plot";
+import { useMemo, useState } from "react";
+import { Chart } from "./Chart";
+import { scales, type View } from "./Plot";
+import { clusters, inertiaOf, kmeans } from "./ml";
 
-const V: View = { xmin: 0, xmax: 10, ymin: 0, ymax: 10, w: 400, h: 400 };
-const PTS: [number, number][] = [
-  [1.5, 2], [2.2, 1.4], [2.8, 2.6], [1.2, 3.1], [2.4, 3.3], [3.1, 1.6],
-  [7.2, 2.4], [8.1, 1.7], [8.6, 3], [7.6, 3.4], [6.9, 1.5], [8.9, 2.2],
-  [4.6, 7.6], [5.4, 8.4], [4.1, 8.6], [5.9, 7.4], [5, 6.8], [3.8, 7.3],
-];
-const STARTS: Record<number, [number, number][]> = {
-  2: [[1, 9], [2, 8]],
-  3: [[1, 9], [2, 8], [3, 9]],
-  4: [[1, 9], [2, 8], [3, 9], [9, 9]],
-};
-const SHAPES = ["plot-point", "plot-hot", "viz-node is-paired", "viz-node"];
+const V: View = { xmin: 0, xmax: 1, ymin: 0, ymax: 1, w: 320, h: 320 };
+const KMAX = 8;
+const E: View = { xmin: 1, xmax: KMAX, ymin: 0, ymax: 1, w: 440, h: 150 };
+const CLR = ["var(--accent)", "var(--danger)", "var(--success)", "var(--text-muted)"];
+const CENTRES = [{ x: 0.25, y: 0.72 }, { x: 0.68, y: 0.78 }, { x: 0.3, y: 0.25 }, { x: 0.76, y: 0.32 }];
 
-const d2 = (a: number[], b: number[]) => (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2;
+const dot = (c: number) => (c < 4 ? { fill: CLR[c], stroke: "var(--surface)", strokeWidth: 1.5 } : { fill: "var(--surface)", stroke: CLR[c % 4], strokeWidth: 2 });
 
-/** k-means, one step at a time: give each point to its nearest centre, then move each centre to the middle of its points. */
+/** Lloyd's algorithm step by step, restarts, and the elbow in the within-cluster sum of squares. */
 export function KMeansViz() {
-  const [k, setK] = useState(3);
-  const [centres, setCentres] = useState<[number, number][]>(STARTS[3]);
-  const [assign, setAssign] = useState<number[] | null>(null);
-  const [steps, setSteps] = useState(0);
+  const [k, setK] = useState(4);
+  const [seed, setSeed] = useState(2);
+  const [step, setStep] = useState(0);
+  const pts = useMemo(() => clusters(21, CENTRES, 30, 0.07), []);
+  const run = useMemo(() => kmeans(pts, k, seed), [pts, k, seed]);
+  const best = useMemo(() => Array.from({ length: KMAX }, (_, i) => Math.min(...Array.from({ length: 10 }, (_, s) => kmeans(pts, i + 1, 100 + s).inertia))), [pts]);
+  const s = Math.min(step, run.history.length - 1);
+  const cs = run.history[s];
+  const labels = run.assign(cs);
+  const inertia = inertiaOf(pts, cs);
+  const done = s === run.history.length - 1;
   const { X, Y } = scales(V);
-
-  const nearest = (cs: [number, number][]) => PTS.map((p) => cs.reduce((best, c, j) => (d2(p, c) < d2(p, cs[best]) ? j : best), 0));
-  const reset = (kk: number) => { setK(kk); setCentres(STARTS[kk]); setAssign(null); setSteps(0); };
-  const doAssign = () => { setAssign(nearest(centres)); setSteps(steps + 1); };
-  const doMove = () => {
-    if (!assign) return;
-    setCentres(centres.map((c, j) => {
-      const mine = PTS.filter((_, i) => assign[i] === j);
-      return mine.length ? [mine.reduce((s, p) => s + p[0], 0) / mine.length, mine.reduce((s, p) => s + p[1], 0) / mine.length] : c;
-    }));
-    setSteps(steps + 1);
-  };
-  const spread = assign ? PTS.reduce((s, p, i) => s + d2(p, centres[assign[i]]), 0) : null;
-  const settled = assign !== null && nearest(centres).every((a, i) => a === assign[i]);
-
+  const e = scales(E);
+  const top = best[0];
   return (
     <figure className="viz">
-      <Axes v={V} label={`k-means with ${k} centres after ${steps} steps`}>
-        {assign && PTS.map((p, i) => <line key={`l${i}`} x1={X(p[0])} y1={Y(p[1])} x2={X(centres[assign[i]][0])} y2={Y(centres[assign[i]][1])} className="plot-mirror" />)}
-        {PTS.map((p, i) => <circle key={i} cx={X(p[0])} cy={Y(p[1])} r={5.5} className={assign ? SHAPES[assign[i]] : "viz-node"} style={{ strokeWidth: 2 }} />)}
-        {centres.map((c, j) => (
-          <g key={`c${j}`} transform={`translate(${X(c[0])} ${Y(c[1])})`}>
-            <path d="M-9 -9 L9 9 M9 -9 L-9 9" style={{ stroke: "var(--text)", strokeWidth: 3.5 }} />
-            <text x={11} y={-8} className="viz-label">{j + 1}</text>
-          </g>
-        ))}
-      </Axes>
-      <div className="viz-controls">
-        <button type="button" className="btn btn-primary" onClick={doAssign}>1. Assign to nearest centre</button>
-        <button type="button" className="btn" onClick={doMove} disabled={!assign}>2. Move centres to the middle</button>
-        <span className="viz-sep" />
-        {[2, 3, 4].map((kk) => (
-          <button key={kk} type="button" className={k === kk ? "btn btn-primary" : "btn"} aria-pressed={k === kk} onClick={() => reset(kk)}>k = {kk}</button>
-        ))}
+      <div className="viz-controls" style={{ marginTop: 0 }}>
+        <button type="button" className="btn" onClick={() => setStep(s + 1)} disabled={done}>Step</button>
+        <button type="button" className="btn" onClick={() => setStep(run.history.length - 1)} disabled={done}>Run to the end</button>
+        <button type="button" className="btn" onClick={() => { setSeed(seed + 1); setStep(0); }}>New random start</button>
+      </div>
+      <div style={{ maxWidth: 380, margin: "12px auto 0" }}>
+        <Chart v={V} label={`k-means with k = ${k}, after ${s} steps`} xticks={[0, 0.5, 1]} yticks={[0, 0.5, 1]}>
+          {pts.map((p, i) => <circle key={i} cx={X(p.x)} cy={Y(p.y)} r={4} style={dot(labels[i])} />)}
+          {cs.map((c, j) => (
+            <g key={j}>
+              <path d={`M${X(c.x) - 9} ${Y(c.y)}h18M${X(c.x)} ${Y(c.y) - 9}v18`} style={{ stroke: "var(--text)", strokeWidth: 4 }} />
+              <path d={`M${X(c.x) - 8} ${Y(c.y)}h16M${X(c.x)} ${Y(c.y) - 8}v16`} style={{ stroke: CLR[j % 4], strokeWidth: 2.5 }} />
+            </g>
+          ))}
+        </Chart>
+      </div>
+      <div className="ml-stats">
+        <div className="ml-stat"><b>{inertia.toFixed(2)}</b><span>within-cluster sum of squares</span></div>
+        <div className="ml-stat"><b>{best[k - 1].toFixed(2)}</b><span>best of 10 restarts for this k</span></div>
+      </div>
+      <Chart v={E} label="Best within-cluster sum of squares against k" xticks={[1, 2, 3, 4, 5, 6, 7, 8]} yticks={[0, 0.5, 1]} yfmt={(v) => `${Math.round(v * 100)}%`} xlabel="number of clusters k">
+        <path d={best.map((b, i) => `${i ? "L" : "M"}${e.X(i + 1).toFixed(1)} ${e.Y(b / top).toFixed(1)}`).join(" ")} className="plot-curve" />
+        {best.map((b, i) => <circle key={i} cx={e.X(i + 1)} cy={e.Y(b / top)} r={i + 1 === k ? 5 : 3} className={i + 1 === k ? "plot-hot" : "plot-point"} />)}
+      </Chart>
+      <div className="viz-sliders">
+        <label>
+          k = {k}
+          <input type="range" min={1} max={KMAX} value={k} onChange={(ev) => { setK(Number(ev.target.value)); setStep(0); }} />
+        </label>
       </div>
       <figcaption className="viz-caption" aria-live="polite">
-        {assign === null
-          ? <>The {k} crosses start in a poor place, bunched in a corner. Nobody has told the algorithm which points belong together. Press step 1.</>
-          : <>After {steps} steps, the total squared distance from points to their centres is <span className="mono">{spread!.toFixed(1)}</span>.{" "}
-              {settled ? "Assigning again would change nothing: the algorithm has settled." : "Keep alternating the two steps until nothing changes."}</>}
+        {s === 0 ? "The crosses start on randomly chosen points. Each step assigns every point to its nearest cross, then moves each cross to the mean of its points." : done ? `Converged after ${s} step${s === 1 ? "" : "s"}.` : `After ${s} step${s === 1 ? "" : "s"}; the sum of squares has fallen.`}{" "}
+        {done && inertia > best[k - 1] * 1.05 ? "This run is stuck in a worse solution than the best restart: try a new random start." : ""}{" "}
+        The lower chart shows the best sum of squares as a share of the k = 1 value; it always falls as k grows, but the bend at k = 4 marks where extra clusters stop paying.
       </figcaption>
     </figure>
   );
