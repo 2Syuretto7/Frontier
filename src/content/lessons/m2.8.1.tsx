@@ -1,6 +1,6 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
-import { SequenceViz } from "@/components/viz/SequenceViz";
+import { ConvergeViz } from "@/components/viz/ConvergeViz";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -32,7 +32,7 @@ export const lesson: LessonContent = {
         only one direction to go, towards infinity. Its limit is L if, however narrow a band you draw round L, the terms
         eventually enter the band and never leave. Choose a sequence and a band width below, and see where the terms settle in.
       </p>
-      <SequenceViz />
+      <ConvergeViz />
     </>
   ),
 

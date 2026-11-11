@@ -1,6 +1,6 @@
 import { M, MD } from "@/components/Math";
 import { Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
-import { GrowthViz } from "@/components/viz/GrowthViz";
+import { GrowthRateViz } from "@/components/viz/GrowthRateViz";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -33,7 +33,7 @@ export const lesson: LessonContent = {
         front. The plot uses logarithmic scales on both axes, which is the only way to fit them on one page. Move n and read off
         how long each would take on a fast computer.
       </p>
-      <GrowthViz />
+      <GrowthRateViz />
     </>
   ),
 
