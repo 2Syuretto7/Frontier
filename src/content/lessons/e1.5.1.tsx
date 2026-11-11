@@ -128,6 +128,21 @@ print(a.shape, a.ndim, a.nbytes, a[1, 2])`}</Code>
       answer: { kind: "choice", options: ["(3, 4) 2 48 6.0", "(3, 4) 2 96 6.0", "(4, 3) 2 48 9.0", "(3, 4) 12 48 6.0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+a = np.array([200, 100], dtype=np.uint8)
+b = a + a
+c = a.astype(np.int16) + a
+print(b, c, b.dtype, np.array([1, 2.5]).dtype)`}</Code>
+          <p>Arithmetic in an 8-bit unsigned type wraps around. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[144 200] [400 200] uint8 float64", "[400 200] [400 200] uint8 float64", "[255 200] [400 200] uint8 float64", "[144 200] [144 200] uint8 int64"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -161,6 +176,66 @@ assert describe(np.zeros((2, 5), dtype=np.float64)) == {'shape': (2, 5), 'dtype'
           { name: "image", code: `import numpy as np
 im = as_image(np.arange(6), 2, 3)
 assert im.shape == (2, 3) and im.dtype == np.uint8 and im[1, 0] == 3, 'Reshape, then convert the dtype.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Quantise weights to save memory. Write <C>quantise(x, bits)</C>, symmetric quantisation: scale = max |x| / (2^(bits − 1) − 1) (use 1.0 if x is all zeros), q = round(x / scale) clipped to ±(2^(bits − 1) − 1), stored as <C>np.int8</C> for bits ≤ 8, <C>np.int16</C> for bits ≤ 16 and <C>np.int32</C> otherwise; return (q, scale). Then write <C>dequantise(q, scale)</C> (float64) and <C>memory_saving(x, bits)</C>, the ratio of <C>x.nbytes</C> to the quantised array&rsquo;s nbytes.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def quantise(x, bits):
+    return x.astype(np.int32), 1.0
+
+def dequantise(q, scale):
+    return q * scale
+
+def memory_saving(x, bits):
+    return 1.0
+`,
+        solution: `import numpy as np
+
+def quantise(x, bits):
+    m = 2 ** (bits - 1) - 1
+    top = np.max(np.abs(x)) if x.size else 0
+    scale = float(top / m) if top > 0 else 1.0
+    dt = np.int8 if bits <= 8 else np.int16 if bits <= 16 else np.int32
+    q = np.clip(np.round(x / scale), -m, m).astype(dt)
+    return q, scale
+
+def dequantise(q, scale):
+    return q.astype(np.float64) * scale
+
+def memory_saving(x, bits):
+    return x.nbytes / quantise(x, bits)[0].nbytes
+`,
+        tests: [
+          { name: "error", code: `import numpy as np
+rng = np.random.default_rng(0)
+x = rng.normal(size=10000)
+for bits in (4, 8, 12):
+    q, s = quantise(x, bits)
+    assert np.max(np.abs(dequantise(q, s) - x)) <= s / 2 + 1e-12 and np.max(np.abs(q)) == 2 ** (bits - 1) - 1, 'Error at most half a step; the largest value uses the top level.'` },
+          { name: "dtypes", code: `import numpy as np
+x = np.linspace(-1, 1, 11)
+assert quantise(x, 8)[0].dtype == np.int8 and quantise(x, 16)[0].dtype == np.int16 and quantise(x, 20)[0].dtype == np.int32
+q, s = quantise(np.zeros(5), 8)
+assert s == 1.0 and (q == 0).all()` },
+          { name: "exact", code: `import numpy as np
+q, s = quantise(np.array([-2.0, -1.0, 0.0, 0.5, 2.0]), 3)
+assert s == 2 / 3 and q.tolist() == [-3, -2, 0, 1, 3], '3 bits give the levels −3 … 3.'` },
+          { name: "memory", code: `import numpy as np
+x = np.ones(1000, dtype=np.float32)
+assert memory_saving(x, 8) == 4 and memory_saving(x.astype(np.float64), 16) == 4` },
         ],
       },
     },

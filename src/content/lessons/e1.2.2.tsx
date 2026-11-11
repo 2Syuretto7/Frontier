@@ -145,6 +145,24 @@ print(sorted(ancestors("C") & ancestors("D")))`}</Code>
       answer: { kind: "choice", options: ["B", "A", "E", "C"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`parents = {"A": [], "B": ["A"], "C": ["B"], "D": ["A"], "E": ["D"]}
+def anc(c):
+    s = {c}
+    for p in parents[c]:
+        s |= anc(p)
+    return s
+common = anc("C") & anc("E")
+print(sorted(common), len(anc("C") - anc("E")))`}</Code>
+          <p>Two branches that split after commit A. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["['A'] 2", "['A', 'B'] 2", "['A'] 3", "[] 3"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -173,6 +191,57 @@ print(sorted(ancestors("C") & ancestors("D")))`}</Code>
         tests: [
           { name: "clean", code: `assert merge3(['a', 'b', 'c'], ['A', 'b', 'c'], ['a', 'b', 'C']) == ['A', 'b', 'C'], 'Take each side’s change where the other left the line alone.'` },
           { name: "conflict", code: `assert merge3(['x'], ['y'], ['z']) == ['CONFLICT'] and merge3(['x'], ['y'], ['y']) == ['y'], 'Different changes to one line conflict; the same change does not.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Commit graphs map each commit to its list of parents. Write <C>ancestors(parents, c)</C>, the set of c and everything reachable from it (iteratively); <C>merge_bases(parents, a, b)</C>, the sorted common ancestors that are not ancestors of another common ancestor (usually one, but criss-cross merges give two); and <C>is_fast_forward(parents, a, b)</C>, true when moving a branch from a to b needs no merge commit, that is when a is an ancestor of b.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def ancestors(parents, c):
+    return {c}
+
+def merge_bases(parents, a, b):
+    return []
+
+def is_fast_forward(parents, a, b):
+    return False
+`,
+        solution: `def ancestors(parents, c):
+    seen, stack = set(), [c]
+    while stack:
+        x = stack.pop()
+        if x not in seen:
+            seen.add(x)
+            stack.extend(parents[x])
+    return seen
+
+def merge_bases(parents, a, b):
+    common = ancestors(parents, a) & ancestors(parents, b)
+    return sorted(c for c in common if not any(c != d and c in ancestors(parents, d) for d in common))
+
+def is_fast_forward(parents, a, b):
+    return a in ancestors(parents, b)
+`,
+        tests: [
+          { name: "simple", code: `P = {'A': [], 'B': ['A'], 'C': ['B'], 'D': ['A'], 'E': ['D'], 'M': ['C', 'E']}
+assert merge_bases(P, 'C', 'E') == ['A'] and merge_bases(P, 'M', 'E') == ['E'] and ancestors(P, 'M') == set('ABCDEM')` },
+          { name: "criss-cross", code: `P = {'A': [], 'B': ['A'], 'C': ['A'], 'X': ['B', 'C'], 'Y': ['C', 'B']}
+assert merge_bases(P, 'X', 'Y') == ['B', 'C'], 'A criss-cross merge has two best common ancestors.'` },
+          { name: "ff", code: `P = {'A': [], 'B': ['A'], 'C': ['B'], 'D': ['A']}
+assert is_fast_forward(P, 'A', 'C') and not is_fast_forward(P, 'C', 'A') and not is_fast_forward(P, 'C', 'D') and is_fast_forward(P, 'B', 'B')` },
+          { name: "long", code: `P = {0: []}
+for i in range(1, 5000):
+    P[i] = [i - 1]
+assert len(ancestors(P, 4999)) == 5000, 'No recursion limit for long histories.'` },
         ],
       },
     },

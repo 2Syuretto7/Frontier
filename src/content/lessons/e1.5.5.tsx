@@ -127,6 +127,19 @@ print(np.einsum("ij->j", A), np.einsum("ij,ij->", A, A))`}</Code>
       answer: { kind: "choice", options: ["[3 5 7] 55", "[ 3 12] 55", "[3 5 7] 15", "[0 1 4] 55"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+a = np.array([1, 2, 3]); b = np.array([4, 5])
+print(np.einsum("i,j->ij", a, b).tolist(), np.einsum("i,i->", a, a), np.einsum("ii->i", np.eye(2) * 3).tolist())`}</Code>
+          <p>An outer product, a dot product and a diagonal, all with einsum. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[[4, 5], [8, 10], [12, 15]] 14 [3.0, 3.0]", "[[4, 8, 12], [5, 10, 15]] 14 [3.0, 3.0]", "[[4, 5], [8, 10], [12, 15]] 6 [3.0, 3.0]", "[[4, 5], [8, 10], [12, 15]] 14 6.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -171,6 +184,62 @@ assert trace(np.arange(9).reshape(3, 3)) == 12, 'A repeated index ii reads the d
 rng = np.random.default_rng(2)
 Q, K = rng.normal(size=(3, 4)), rng.normal(size=(3, 4))
 assert np.allclose(attention_scores(Q, K), Q @ K.T), 'Scores are Q Kᵀ.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Implement einsum yourself for two operands. <C>my_einsum(spec, A, B)</C> takes a spec such as <C>"ij,jk-&gt;ik"</C> with an explicit output: find the size of every letter from the shapes (raising <C>ValueError</C> if a letter has two different sizes), then loop over every combination of all letters with <C>itertools.product</C>, adding A[...]·B[...] into the output entry. Letters may repeat within an operand (<C>"ii,j-&gt;j"</C> uses A&rsquo;s diagonal) and the output may be a scalar (<C>"ij,ij-&gt;"</C>). Return a NumPy array.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def my_einsum(spec, A, B):
+    return A @ B
+`,
+        solution: `import numpy as np
+
+import itertools
+
+def my_einsum(spec, A, B):
+    ins, out = spec.split('->')
+    sa, sb = ins.split(',')
+    size = {}
+    for subs, arr in ((sa, A), (sb, B)):
+        for c, n in zip(subs, arr.shape):
+            if size.setdefault(c, n) != n:
+                raise ValueError(f'size mismatch for {c}')
+    letters = sorted(size)
+    res = np.zeros(tuple(size[c] for c in out))
+    for combo in itertools.product(*(range(size[c]) for c in letters)):
+        v = dict(zip(letters, combo))
+        res[tuple(v[c] for c in out)] += A[tuple(v[c] for c in sa)] * B[tuple(v[c] for c in sb)]
+    return res
+`,
+        tests: [
+          { name: "matmul", code: `import numpy as np
+rng = np.random.default_rng(0)
+A, B = rng.normal(size=(3, 4)), rng.normal(size=(4, 2))
+assert np.allclose(my_einsum('ij,jk->ik', A, B), A @ B)` },
+          { name: "many", code: `import numpy as np
+rng = np.random.default_rng(1)
+cases = [('i,j->ij', (3,), (4,)), ('ij,ij->', (2, 3), (2, 3)), ('ii,j->j', (3, 3), (2,)), ('bij,bjk->bik', (2, 3, 4), (2, 4, 5)), ('ij,kj->ik', (3, 2), (4, 2)), ('ijk,k->ji', (2, 3, 4), (4,))]
+for spec, sa, sb in cases:
+    A, B = rng.normal(size=sa), rng.normal(size=sb)
+    assert np.allclose(my_einsum(spec, A, B), np.einsum(spec, A, B)), spec` },
+          { name: "mismatch", code: `import numpy as np
+try:
+    my_einsum('ij,jk->ik', np.ones((2, 3)), np.ones((4, 2)))
+    assert False, 'j has sizes 3 and 4.'
+except ValueError:
+    pass` },
         ],
       },
     },

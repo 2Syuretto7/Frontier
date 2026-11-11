@@ -155,6 +155,22 @@ print("".join(b if mode >> (8 - i) & 1 else "-" for i, b in enumerate(bits)))`}<
       answer: { kind: "choice", options: ["rwxr-xr--", "rwxr-x-r-", "rwxrw-r--", "r-xr-xrwx"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import os
+os.makedirs("proj/src", exist_ok=True)
+for name in ("proj/a.txt", "proj/src/b.py", "proj/src/c.py"):
+    open(name, "w").close()
+found = sorted(os.path.join(d, f) for d, _, fs in os.walk("proj") for f in fs)
+print(found, len(next(os.walk("proj"))[1]))`}</Code>
+          <p>Walking a directory tree. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["['proj/a.txt', 'proj/src/b.py', 'proj/src/c.py'] 1", "['a.txt', 'b.py', 'c.py'] 1", "['proj/a.txt', 'proj/src/b.py', 'proj/src/c.py'] 2", "['proj/a.txt'] 1"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -178,6 +194,64 @@ print("".join(b if mode >> (8 - i) & 1 else "-" for i, b in enumerate(bits)))`}<
         tests: [
           { name: "644", code: `assert to_octal('rw-r--r--') == 0o644, 'Each character is one bit: set unless it is -.'` },
           { name: "others", code: `assert to_octal('rwxr-xr-x') == 0o755 and to_octal('---------') == 0, 'rwx is 7, r-x is 5.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Processes form a tree. Given a list of (pid, ppid, name) rows, write <C>ps_tree(procs)</C>, the lines of a tree view: each process as <C>{`f"{pid} {name}"`}</C> indented by two spaces per level, children listed under their parent in pid order, and roots (whose parent is not in the list) in pid order. Then write <C>kill_tree(procs, pid)</C>, the sorted pids that killing pid and all its descendants would stop (an empty list for an unknown pid).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def ps_tree(procs):
+    return [f'{p} {n}' for p, _, n in procs]
+
+def kill_tree(procs, pid):
+    return [pid]
+`,
+        solution: `def _children(procs):
+    kids = {}
+    for pid, ppid, name in procs:
+        kids.setdefault(ppid, []).append(pid)
+    return {k: sorted(v) for k, v in kids.items()}
+
+def ps_tree(procs):
+    names = {pid: name for pid, _, name in procs}
+    kids = _children(procs)
+    roots = sorted(pid for pid, ppid, _ in procs if ppid not in names)
+    out = []
+    def walk(pid, depth):
+        out.append('  ' * depth + f'{pid} {names[pid]}')
+        for c in kids.get(pid, []):
+            walk(c, depth + 1)
+    for r in roots:
+        walk(r, 0)
+    return out
+
+def kill_tree(procs, pid):
+    if pid not in {p for p, _, _ in procs}:
+        return []
+    kids = _children(procs)
+    out, stack = [], [pid]
+    while stack:
+        p = stack.pop()
+        out.append(p)
+        stack.extend(kids.get(p, []))
+    return sorted(out)
+`,
+        tests: [
+          { name: "tree", code: `procs = [(1, 0, 'init'), (40, 1, 'sshd'), (12, 1, 'cron'), (41, 40, 'bash'), (77, 41, 'python'), (78, 41, 'vim'), (5, 999, 'orphan')]
+assert ps_tree(procs) == ['1 init', '  12 cron', '  40 sshd', '    41 bash', '      77 python', '      78 vim', '5 orphan'], 'Indent two spaces per level; sort children by pid.'` },
+          { name: "kill", code: `procs = [(1, 0, 'init'), (40, 1, 'sshd'), (12, 1, 'cron'), (41, 40, 'bash'), (77, 41, 'python'), (78, 41, 'vim')]
+assert kill_tree(procs, 40) == [40, 41, 77, 78] and kill_tree(procs, 78) == [78] and kill_tree(procs, 3) == [] and len(kill_tree(procs, 1)) == 6` },
+          { name: "deep", code: `procs = [(i, i - 1, 'p') for i in range(1, 3000)]
+assert len(kill_tree(procs, 1)) == 2999, 'Use a stack, not deep recursion, for long chains.'` },
         ],
       },
     },

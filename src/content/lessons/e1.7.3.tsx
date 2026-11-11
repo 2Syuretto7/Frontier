@@ -159,6 +159,20 @@ print(db.execute("select dept, count(*), avg(pay) from t group by dept having co
       answer: { kind: "choice", options: ["[('infra', 3, 80.0)]", "[('infra', 3, 80.0), ('ml', 2, 80.0)]", "[('ml', 2, 80.0)]", "[]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import sqlite3
+db = sqlite3.connect(":memory:")
+db.executescript("create table s(name, city); insert into s values ('a','Pune'),('b','Delhi'),('c','Pune'),('d',NULL);")
+print(db.execute("select count(*), count(city), count(distinct city) from s").fetchone(), db.execute("select city, count(*) from s group by city order by 2 desc, 1 limit 1").fetchone())`}</Code>
+          <p>COUNT(*) against COUNT(column) when a value is NULL, and a grouped query. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["(4, 3, 2) ('Pune', 2)", "(4, 4, 3) ('Pune', 2)", "(3, 3, 2) ('Pune', 2)", "(4, 3, 2) ('Delhi', 1)"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -195,6 +209,82 @@ insert into students values (1, 'Asha'), (2, 'Ravi'), (3, 'Zoya');
 insert into marks values (1, 'maths', 90), (1, 'physics', 80), (2, 'maths', 60), (2, 'physics', 90), (2, 'chemistry', 90), (3, 'maths', 100);
 ''')
 `,
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>create_schema(db)</C> for an SQLite connection: tables <C>customers(id INTEGER PRIMARY KEY, name TEXT NOT NULL UNIQUE)</C> and <C>orders(id INTEGER PRIMARY KEY, customer_id INTEGER NOT NULL REFERENCES customers(id), item TEXT, qty INTEGER CHECK (qty &gt; 0), price REAL)</C>, with foreign keys switched on. Write <C>place_order(db, name, items)</C>, which inserts the customer if new and one row per (item, qty, price) inside a single transaction (<C>with db:</C>), so that if any row fails (an <C>sqlite3.IntegrityError</C>) nothing is saved and the error propagates. Then write <C>totals(db)</C>, a list of (name, total spend) for every customer, including those with no orders (0), highest first, then by name, using a LEFT JOIN and parameterised queries throughout.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def create_schema(db):
+    pass
+
+def place_order(db, name, items):
+    pass
+
+def totals(db):
+    return []
+`,
+        solution: `import sqlite3
+
+def create_schema(db):
+    db.execute('PRAGMA foreign_keys = ON')
+    db.executescript('''
+        CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT NOT NULL UNIQUE);
+        CREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER NOT NULL REFERENCES customers(id), item TEXT, qty INTEGER CHECK (qty > 0), price REAL);
+    ''')
+
+def place_order(db, name, items):
+    with db:
+        db.execute('INSERT OR IGNORE INTO customers(name) VALUES (?)', (name,))
+        (cid,) = db.execute('SELECT id FROM customers WHERE name = ?', (name,)).fetchone()
+        db.executemany('INSERT INTO orders(customer_id, item, qty, price) VALUES (?, ?, ?, ?)', [(cid, i, q, p) for i, q, p in items])
+
+def totals(db):
+    return db.execute('''
+        SELECT c.name, COALESCE(SUM(o.qty * o.price), 0) AS total
+        FROM customers c LEFT JOIN orders o ON o.customer_id = c.id
+        GROUP BY c.id ORDER BY total DESC, c.name
+    ''').fetchall()
+`,
+        tests: [
+          { name: "orders", code: `import sqlite3
+db = sqlite3.connect(':memory:')
+create_schema(db)
+place_order(db, 'Asha', [('pen', 2, 10.0), ('book', 1, 250.0)])
+place_order(db, 'Ravi', [('pen', 5, 10.0)])
+place_order(db, 'Asha', [('ink', 1, 30.0)])
+assert totals(db) == [('Asha', 300.0), ('Ravi', 50.0)] and db.execute('select count(*) from customers').fetchone() == (2,)` },
+          { name: "atomic", code: `import sqlite3
+db = sqlite3.connect(':memory:')
+create_schema(db)
+place_order(db, 'Asha', [('pen', 1, 10.0)])
+try:
+    place_order(db, 'Zoya', [('pen', 1, 10.0), ('bad', 0, 5.0)])
+    assert False, 'qty 0 breaks the CHECK constraint.'
+except sqlite3.IntegrityError:
+    pass
+assert totals(db) == [('Asha', 10.0)], 'The failed order leaves nothing behind, not even the new customer.'` },
+          { name: "left join", code: `import sqlite3
+db = sqlite3.connect(':memory:')
+create_schema(db)
+db.execute("insert into customers(name) values ('Dev')")
+place_order(db, 'Cara', [('x', 1, 1.0)])
+assert totals(db) == [('Cara', 1.0), ('Dev', 0)]
+try:
+    with db:
+        db.execute('insert into orders(customer_id, item, qty, price) values (99, ?, 1, 1.0)', ('ghost',))
+    assert False, 'Foreign keys must be enforced.'
+except sqlite3.IntegrityError:
+    pass` },
+        ],
       },
     },
     {

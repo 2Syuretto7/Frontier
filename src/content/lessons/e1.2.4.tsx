@@ -129,6 +129,24 @@ print(next(h for h, _ in reversed(log) if not good[h]))`}</Code>
       answer: { kind: "choice", options: ["b21", "f3a", "9c0", "None of them"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`log = """a1 2026-01-03 Asha Fix tokenizer
+b2 2026-01-02 Ravi Add tokenizer
+c3 2026-01-01 Asha Initial commit"""
+rows = [l.split(" ", 3) for l in log.splitlines()]
+by = {}
+for _, _, who, _ in rows:
+    by[who] = by.get(who, 0) + 1
+print(by, rows[-1][3], min(r[1] for r in rows))`}</Code>
+          <p>Summarising a one-line-per-commit log. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["{'Asha': 2, 'Ravi': 1} Initial commit 2026-01-01", "{'Asha': 2, 'Ravi': 1} Initial 2026-01-01", "{'Asha': 1, 'Ravi': 1} Initial commit 2026-01-03", "{'Asha': 2, 'Ravi': 1} Fix tokenizer 2026-01-01"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -163,6 +181,47 @@ def good(c):
     calls.append(c)
     return c < 600
 assert bisect(list(range(1000)), good) == 600 and len(calls) <= 10, 'Halve the range each time: about log₂ 1000 ≈ 10 checks.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>blame(versions)</C>, which says which commit introduced each line of a file. versions is a list of (commit_id, lines) from oldest to newest. Every line of the first version belongs to its commit; for each later version, compare it with the previous one using <C>difflib.SequenceMatcher(None, old, new, autojunk=False).get_opcodes()</C>: lines in <C>equal</C> blocks keep their old attribution and all other lines of the new version belong to the new commit. Return a list of (commit_id, line) for the final version.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def blame(versions):
+    cid, lines = versions[-1]
+    return [(cid, l) for l in lines]
+`,
+        solution: `import difflib
+
+def blame(versions):
+    cid, lines = versions[0]
+    owners = [cid] * len(lines)
+    old = lines
+    for cid, new in versions[1:]:
+        nxt = [cid] * len(new)
+        for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, old, new, autojunk=False).get_opcodes():
+            if tag == 'equal':
+                nxt[j1:j2] = owners[i1:i2]
+        owners, old = nxt, new
+    return list(zip(owners, old))
+`,
+        tests: [
+          { name: "simple", code: `v = [('c1', ['a', 'b', 'c']), ('c2', ['a', 'B', 'c']), ('c3', ['a', 'B', 'c', 'd'])]
+assert blame(v) == [('c1', 'a'), ('c2', 'B'), ('c1', 'c'), ('c3', 'd')]` },
+          { name: "insert", code: `v = [('c1', ['x', 'y']), ('c2', ['new', 'x', 'y']), ('c3', ['new', 'x', 'mid', 'y'])]
+assert blame(v) == [('c2', 'new'), ('c1', 'x'), ('c3', 'mid'), ('c1', 'y')], 'Inserting lines does not steal ownership of the lines around them.'` },
+          { name: "delete and revert", code: `v = [('c1', ['a', 'b']), ('c2', ['a']), ('c3', ['a', 'b'])]
+assert blame(v) == [('c1', 'a'), ('c3', 'b')], 'A line deleted and added back belongs to the commit that re-added it.'
+assert blame([('only', [])]) == []` },
         ],
       },
     },

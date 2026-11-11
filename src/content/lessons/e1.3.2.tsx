@@ -152,6 +152,25 @@ print(a(), b())`}</Code>
       answer: { kind: "choice", options: ["3 1", "1 1", "3 4", "2 1"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def deco(f):
+    def wrapper(*args):
+        return f(*args) * 2
+    return wrapper
+@deco
+def add(a, b):
+    return a + b
+fs = [lambda: i for i in range(3)]
+print(add(2, 3), add.__name__, [f() for f in fs])`}</Code>
+          <p>A decorator without functools.wraps, and closures created in a loop. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["10 wrapper [2, 2, 2]", "10 add [0, 1, 2]", "5 wrapper [0, 1, 2]", "10 add [2, 2, 2]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -188,6 +207,98 @@ assert [sq(3), sq(3), sq(4)] == [9, 9, 16] and sq.calls == 2, 'The second sq(3) 
 def fib(n):
     return n if n < 2 else fib(n - 1) + fib(n - 2)
 assert fib(24) == 46368 and fib.calls == 25, 'Recursive calls go through the wrapper too.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write a decorator factory <C>retry(times, exceptions)</C>: the decorated function is called up to <C>times</C> times while it raises one of the exception classes in the tuple <C>exceptions</C>, the last such exception is re-raised if every attempt fails, other exceptions pass through at once, and the wrapper keeps the original name and docstring (<C>functools.wraps</C>) and records the attempts used by its latest call in <C>wrapper.attempts</C>. Then write a decorator <C>once</C>, which runs the function the first time and returns that first result on every later call.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def retry(times, exceptions):
+    def deco(f):
+        return f
+    return deco
+
+def once(f):
+    return f
+`,
+        solution: `import functools
+
+def retry(times, exceptions):
+    def deco(f):
+        @functools.wraps(f)
+        def wrapper(*args, **kwargs):
+            for i in range(1, times + 1):
+                wrapper.attempts = i
+                try:
+                    return f(*args, **kwargs)
+                except exceptions:
+                    if i == times:
+                        raise
+        wrapper.attempts = 0
+        return wrapper
+    return deco
+
+def once(f):
+    done, result = False, None
+    @functools.wraps(f)
+    def wrapper(*args, **kwargs):
+        nonlocal done, result
+        if not done:
+            result = f(*args, **kwargs)
+            done = True
+        return result
+    return wrapper
+`,
+        tests: [
+          { name: "retry", code: `calls = []
+@retry(4, (ConnectionError,))
+def flaky(x):
+    '''Fetch something.'''
+    calls.append(x)
+    if len(calls) < 3:
+        raise ConnectionError('down')
+    return x * 10
+assert flaky(7) == 70 and flaky.attempts == 3 and len(calls) == 3 and flaky.__name__ == 'flaky' and flaky.__doc__ == 'Fetch something.'` },
+          { name: "give up", code: `n = [0]
+@retry(3, (ValueError, KeyError))
+def bad():
+    n[0] += 1
+    raise KeyError(n[0])
+try:
+    bad()
+    assert False
+except KeyError as e:
+    assert e.args == (3,) and n[0] == 3, 'Re-raise the last exception after three tries.'` },
+          { name: "other errors", code: `m = [0]
+@retry(5, (ValueError,))
+def boom():
+    m[0] += 1
+    raise TypeError('no')
+try:
+    boom()
+except TypeError:
+    pass
+assert m[0] == 1, 'Exceptions not listed are not retried.'` },
+          { name: "once", code: `k = [0]
+@once
+def setup(x):
+    k[0] += 1
+    return x + k[0]
+assert setup(10) == 11 and setup(99) == 11 and k[0] == 1 and setup.__name__ == 'setup'
+@once
+def nothing():
+    k[0] += 100
+nothing(); nothing()
+assert k[0] == 101, 'Even a None result is remembered.'` },
         ],
       },
     },

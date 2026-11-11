@@ -148,6 +148,32 @@ print(next(g), list(g), list(g))`}</Code>
       answer: { kind: "choice", options: ["3 [2, 1] []", "3 [3, 2, 1] [3, 2, 1]", "3 [2, 1] [2, 1]", "[3, 2, 1] [] []"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from contextlib import contextmanager
+log = []
+@contextmanager
+def tag(name):
+    log.append("<" + name)
+    try:
+        yield len(log)
+    finally:
+        log.append(name + ">")
+try:
+    with tag("a") as n:
+        log.append(n)
+        raise ValueError
+except ValueError:
+    log.append("caught")
+print(log)`}</Code>
+          <p>A context manager built from a generator, with an exception inside the with block. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["['<a', 1, 'a>', 'caught']", "['<a', 1, 'caught', 'a>']", "['<a', 1, 'caught']", "['<a', 0, 'a>', 'caught']"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -178,6 +204,91 @@ print(next(g), list(g), list(g))`}</Code>
           { name: "lazy", code: `import types
 b = batches((x * x for x in range(5)), 2)
 assert isinstance(b, types.GeneratorType) and next(b) == [0, 1] and next(b) == [4, 9], 'Use yield, so batches are produced one at a time, even from another generator.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write a generator <C>windows(iterable, n)</C> that yields tuples of n consecutive items, holding only n items at a time (use <C>collections.deque(maxlen=n)</C>); a class <C>Peekable</C> that wraps any iterator, supports <C>for</C> loops and <C>next</C>, and has <C>peek(default)</C>, which returns the next item without consuming it (or default when exhausted); and a generator <C>interleave(*iterables)</C> that takes one item from each in turn, skipping those that have run out.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def windows(iterable, n):
+    items = list(iterable)
+    for i in range(len(items) - n + 1):
+        yield tuple(items[i:i + n])
+
+class Peekable:
+    def __init__(self, it):
+        self.it = iter(it)
+    def __iter__(self):
+        return self
+    def __next__(self):
+        return next(self.it)
+    def peek(self, default=None):
+        return default
+
+def interleave(*iterables):
+    for it in iterables:
+        yield from it
+`,
+        solution: `from collections import deque
+
+def windows(iterable, n):
+    d = deque(maxlen=n)
+    for x in iterable:
+        d.append(x)
+        if len(d) == n:
+            yield tuple(d)
+
+class Peekable:
+    _EMPTY = object()
+    def __init__(self, it):
+        self.it = iter(it)
+        self.buf = self._EMPTY
+    def __iter__(self):
+        return self
+    def __next__(self):
+        if self.buf is not self._EMPTY:
+            x, self.buf = self.buf, self._EMPTY
+            return x
+        return next(self.it)
+    def peek(self, default=None):
+        if self.buf is self._EMPTY:
+            try:
+                self.buf = next(self.it)
+            except StopIteration:
+                return default
+        return self.buf
+
+def interleave(*iterables):
+    its = deque(iter(i) for i in iterables)
+    while its:
+        it = its.popleft()
+        try:
+            x = next(it)
+        except StopIteration:
+            continue
+        yield x
+        its.append(it)
+`,
+        tests: [
+          { name: "windows", code: `import itertools
+assert list(windows([1, 2, 3, 4], 2)) == [(1, 2), (2, 3), (3, 4)] and list(windows([1], 3)) == []
+assert list(itertools.islice(windows(itertools.count(), 3), 2)) == [(0, 1, 2), (1, 2, 3)], 'Works on an infinite generator.'` },
+          { name: "peek", code: `p = Peekable(iter([1, 2, 3]))
+assert p.peek() == 1 and p.peek() == 1 and next(p) == 1 and list(p) == [2, 3] and p.peek('end') == 'end'
+q = Peekable([None, 5])
+assert q.peek(7) is None and next(q) is None and q.peek(7) == 5, 'None is a real item, not a missing one.'` },
+          { name: "interleave", code: `import itertools
+assert list(interleave('abc', [1], (True, False))) == ['a', 1, True, 'b', False, 'c']
+assert list(itertools.islice(interleave(itertools.count(), 'xy'), 6)) == [0, 'x', 1, 'y', 2, 3] and list(interleave()) == []` },
         ],
       },
     },

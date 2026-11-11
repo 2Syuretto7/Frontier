@@ -120,6 +120,19 @@ print(a.strides, a.T.strides, a.T.flags["C_CONTIGUOUS"])`}</Code>
       answer: { kind: "choice", options: ["(32, 8) (8, 32) False", "(8, 32) (32, 8) False", "(32, 8) (32, 8) True", "(4, 1) (1, 4) False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+a = np.arange(12, dtype=np.int32).reshape(3, 4)
+print(a.strides, a[:, ::2].strides, a.T.strides, a.ravel(order="F")[:4].tolist())`}</Code>
+          <p>Strides in bytes for a 3 × 4 array of 4-byte integers, a strided slice and the transpose. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["(16, 4) (16, 8) (4, 16) [0, 4, 8, 1]", "(4, 16) (8, 16) (16, 4) [0, 1, 2, 3]", "(16, 4) (16, 4) (4, 16) [0, 4, 8, 1]", "(4, 1) (4, 2) (1, 4) [0, 4, 8, 1]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -157,6 +170,62 @@ assert offset((1, 2, 3), a.strides) == a[1, 2, 3] * 8, 'Multiply each index by i
           { name: "transpose", code: `import numpy as np
 a = np.arange(12, dtype=np.int64).reshape(3, 4).T
 assert offset((3, 1), a.strides) // 8 == a[3, 1], 'The same rule works for a transposed view.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Use strides to make views without copying. Write <C>sliding_windows(x, w)</C> for a 1-D array, the (n − w + 1) × w view of every window, built with <C>np.lib.stride_tricks.as_strided</C> from x&rsquo;s own stride. Then write <C>im2col(img, k)</C> for a 2-D image of shape (H, W): the ((H − k + 1)·(W − k + 1)) × k² matrix whose rows are the flattened k × k patches in row-major order of their top-left corners, made from a 4-D strided view and then reshaped. These are how convolutions become matrix products.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def sliding_windows(x, w):
+    return np.array([x[i:i + w] for i in range(len(x) - w + 1)])
+
+def im2col(img, k):
+    return np.zeros(((img.shape[0] - k + 1) * (img.shape[1] - k + 1), k * k))
+`,
+        solution: `import numpy as np
+
+from numpy.lib.stride_tricks import as_strided
+
+def sliding_windows(x, w):
+    s = x.strides[0]
+    return as_strided(x, shape=(len(x) - w + 1, w), strides=(s, s), writeable=False)
+
+def im2col(img, k):
+    H, W = img.shape
+    s0, s1 = img.strides
+    v = as_strided(img, shape=(H - k + 1, W - k + 1, k, k), strides=(s0, s1, s0, s1), writeable=False)
+    return v.reshape(-1, k * k)
+`,
+        tests: [
+          { name: "windows", code: `import numpy as np
+x = np.arange(6.0)
+v = sliding_windows(x, 3)
+assert v.tolist() == [[0, 1, 2], [1, 2, 3], [2, 3, 4], [3, 4, 5]] and np.shares_memory(v, x), 'A view, not a copy.'
+y = np.arange(20)[::2]
+assert sliding_windows(y, 2).tolist()[:2] == [[0, 2], [2, 4]], 'Use the input’s own stride.'` },
+          { name: "im2col", code: `import numpy as np
+rng = np.random.default_rng(0)
+img = rng.normal(size=(6, 5))
+M = im2col(img, 3)
+want = np.array([img[i:i + 3, j:j + 3].ravel() for i in range(4) for j in range(3)])
+assert M.shape == (12, 9) and np.allclose(M, want)` },
+          { name: "convolution", code: `import numpy as np
+from scipy.signal import correlate2d
+rng = np.random.default_rng(1)
+img, ker = rng.normal(size=(8, 7)), rng.normal(size=(3, 3))
+out = (im2col(img, 3) @ ker.ravel()).reshape(6, 5)
+assert np.allclose(out, correlate2d(img, ker, mode='valid')), 'A convolution layer as one matrix product.'` },
         ],
       },
     },

@@ -130,6 +130,20 @@ print(max(versions), max(versions, key=parse))`}</Code>
       answer: { kind: "choice", options: ["1.9.3 1.10.0", "1.10.0 1.10.0", "1.9.3 1.9.3", "1.2.11 1.10.0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`reqs = ["numpy==1.26.4", "pandas>=2.0", "requests"]
+pinned = [r for r in reqs if "==" in r]
+names = [r.split("==")[0].split(">=")[0] for r in reqs]
+print(pinned, names)`}</Code>
+          <p>Which requirements are pinned to an exact version? What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["['numpy==1.26.4'] ['numpy', 'pandas', 'requests']", "['numpy==1.26.4', 'pandas>=2.0'] ['numpy', 'pandas', 'requests']", "['numpy==1.26.4'] ['numpy==1.26.4', 'pandas>=2.0', 'requests']", "[] ['numpy', 'pandas', 'requests']"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -166,6 +180,90 @@ def satisfies(version, spec):
           { name: "range", code: `assert satisfies('1.10.0', '>=1.4,<2.0') and not satisfies('2.0.0', '>=1.4,<2.0'), 'Every clause must hold.'` },
           { name: "numeric", code: `assert not satisfies('1.9.0', '>=1.10'), 'Compare numbers, not text: 9 < 10.'` },
           { name: "pin", code: `assert satisfies('1.26.4', '==1.26.4') and not satisfies('1.26.3', '==1.26.4'), 'A pin allows one version.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write a tiny dependency resolver. The index maps each package name to a dict from version string to that version&rsquo;s own requirements (a dict from name to spec). <C>satisfies(version, spec)</C> is given. Write <C>resolve(index, requirements)</C>, which returns a dict from every needed package to a chosen version so that every requirement of the top level and of every chosen version is satisfied, or <C>None</C> if that is impossible. Search by backtracking: pick packages in alphabetical order of name, and try versions from newest to oldest.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def _v(s):
+    return tuple(int(x) for x in s.split('.'))
+
+def satisfies(version, spec):
+    if not spec:
+        return True
+    for clause in spec.split(','):
+        for op in ('==', '>=', '<=', '>', '<'):
+            if clause.startswith(op):
+                a, b = _v(version), _v(clause[len(op):])
+                if not {'==': a == b, '>=': a >= b, '<=': a <= b, '>': a > b, '<': a < b}[op]:
+                    return False
+                break
+    return True
+
+def resolve(index, requirements):
+    return None
+`,
+        solution: `def _v(s):
+    return tuple(int(x) for x in s.split('.'))
+
+def satisfies(version, spec):
+    if not spec:
+        return True
+    for clause in spec.split(','):
+        for op in ('==', '>=', '<=', '>', '<'):
+            if clause.startswith(op):
+                a, b = _v(version), _v(clause[len(op):])
+                if not {'==': a == b, '>=': a >= b, '<=': a <= b, '>': a > b, '<': a < b}[op]:
+                    return False
+                break
+    return True
+
+def resolve(index, requirements):
+    def constraints(chosen):
+        cons = [(n, s) for n, s in requirements.items()]
+        for n, v in chosen.items():
+            cons += list(index[n][v].items())
+        return cons
+    def ok(chosen):
+        return all(n not in chosen or satisfies(chosen[n], s) for n, s in constraints(chosen))
+    def search(chosen):
+        needed = sorted({n for n, _ in constraints(chosen)} - set(chosen))
+        if not needed:
+            return dict(chosen)
+        name = needed[0]
+        if name not in index:
+            return None
+        for v in sorted(index[name], key=_v, reverse=True):
+            chosen[name] = v
+            if ok(chosen):
+                r = search(chosen)
+                if r is not None:
+                    return r
+            del chosen[name]
+        return None
+    return search({})
+`,
+        tests: [
+          { name: "simple", code: `index = {'app': {'1.0.0': {'lib': '>=2.0'}}, 'lib': {'1.5.0': {}, '2.1.0': {}, '2.3.0': {}}}
+assert resolve(index, {'app': ''}) == {'app': '1.0.0', 'lib': '2.3.0'}, 'Newest versions that fit.'` },
+          { name: "backtrack", code: `index = {
+    'a': {'2.0.0': {'c': '>=2.0'}, '1.0.0': {'c': '<2.0'}},
+    'b': {'1.0.0': {'c': '<2.0'}},
+    'c': {'1.0.0': {}, '2.0.0': {}},
+}
+assert resolve(index, {'a': '', 'b': ''}) == {'a': '1.0.0', 'b': '1.0.0', 'c': '1.0.0'}, 'a 2.0 needs c ≥ 2 but b needs c < 2, so fall back to a 1.0.'` },
+          { name: "impossible", code: `index = {'x': {'1.0.0': {'y': '==1.0.0'}}, 'y': {'2.0.0': {}}}
+assert resolve(index, {'x': ''}) is None and resolve({'p': {'1.0.0': {}}}, {'p': '>=2.0'}) is None and resolve({}, {}) == {}` },
         ],
       },
     },

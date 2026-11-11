@@ -155,6 +155,19 @@ print(len(uniq))`}</Code>
       answer: { kind: "numeric", value: 3 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`lines = ["b 3", "a 10", "c 2", "a 1"]
+out = sorted(lines, key=lambda l: int(l.split()[1]), reverse=True)[:2]
+print(out, sorted(lines)[0])`}</Code>
+          <p>The Python version of sort -k2 -n -r | head -2, and of plain sort. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["['a 10', 'b 3'] a 1", "['b 3', 'c 2'] a 1", "['a 10', 'b 3'] a 10", "['c 2', 'b 3'] a 1"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -190,6 +203,62 @@ def wc_l(text):
           { name: "grep", code: `assert grep('err')('ok\\nerror 1\\nerr 2\\n') == 'error 1\\nerr 2\\n', 'Keep whole lines, newlines included.'` },
           { name: "pipe", code: `log = 'INFO a\\nERROR b\\nINFO c\\nERROR d\\n'
 assert pipeline(log, grep('ERROR'), wc_l) == 2, 'Each stage receives the previous stage’s output.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Scripts take arguments. Write <C>make_parser()</C>, an <C>argparse.ArgumentParser</C> with prog name <C>"train"</C>, a positional <C>data</C>, <C>--lr</C> (float, default 0.001), <C>--epochs</C> (int, default 10), <C>--device</C> (one of <C>cpu</C>, <C>gpu</C>; default <C>cpu</C>) and a flag <C>--verbose</C>. Then write <C>main(argv)</C>, which parses the list argv and returns the exit code: 0 after printing <C>{`f"{data} lr={lr} epochs={epochs} device={device}"`}</C>, or the code argparse exits with on bad input or <C>--help</C> (catch <C>SystemExit</C>).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import argparse
+
+def make_parser():
+    return argparse.ArgumentParser(prog='train')
+
+def main(argv):
+    return 0
+`,
+        solution: `import argparse
+
+def make_parser():
+    p = argparse.ArgumentParser(prog='train')
+    p.add_argument('data')
+    p.add_argument('--lr', type=float, default=0.001)
+    p.add_argument('--epochs', type=int, default=10)
+    p.add_argument('--device', choices=['cpu', 'gpu'], default='cpu')
+    p.add_argument('--verbose', action='store_true')
+    return p
+
+def main(argv):
+    try:
+        a = make_parser().parse_args(argv)
+    except SystemExit as e:
+        return e.code
+    print(f'{a.data} lr={a.lr} epochs={a.epochs} device={a.device}')
+    return 0
+`,
+        tests: [
+          { name: "parse", code: `a = make_parser().parse_args(['x.csv', '--lr', '0.1', '--epochs=3', '--verbose'])
+assert (a.data, a.lr, a.epochs, a.device, a.verbose) == ('x.csv', 0.1, 3, 'cpu', True), 'Types are converted; --epochs=3 also works.'
+b = make_parser().parse_args(['y.csv'])
+assert (b.lr, b.epochs, b.device, b.verbose) == (0.001, 10, 'cpu', False), 'Defaults.'` },
+          { name: "main", code: `import io, contextlib
+buf = io.StringIO()
+with contextlib.redirect_stdout(buf):
+    code = main(['d.csv', '--device', 'gpu', '--epochs', '2'])
+assert code == 0 and buf.getvalue().strip() == 'd.csv lr=0.001 epochs=2 device=gpu'` },
+          { name: "errors", code: `import io, contextlib
+with contextlib.redirect_stderr(io.StringIO()), contextlib.redirect_stdout(io.StringIO()):
+    codes = [main([]), main(['d.csv', '--epochs', 'two']), main(['d.csv', '--device', 'tpu']), main(['--help'])]
+assert codes == [2, 2, 2, 0], 'argparse exits with 2 on errors and 0 for --help.'` },
         ],
       },
     },

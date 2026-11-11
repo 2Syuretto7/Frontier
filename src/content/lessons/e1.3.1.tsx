@@ -153,6 +153,21 @@ print(b, c, a is b, a == c)`}</Code>
       answer: { kind: "choice", options: ["[1, 2, 3] [1, 2] True False", "[1, 2] [1, 2] False False", "[1, 2, 3] [1, 2, 3] True True", "[1, 2, 3] [1, 2] False False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`a = (1, [2, 3])
+b = a
+a[1].append(4)
+c = {"k": a}
+print(b, a is b, c["k"][1] is a[1], len({1, 1.0, True}))`}</Code>
+          <p>A tuple holding a list, shared references, and equal-hashing keys. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["(1, [2, 3, 4]) True True 1", "(1, [2, 3]) True True 3", "(1, [2, 3, 4]) False True 1", "(1, [2, 3, 4]) True True 3"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -178,6 +193,72 @@ print(b, c, a is b, a == c)`}</Code>
           { name: "fresh", code: `assert add_item('a') == ['a'] and add_item('b') == ['b'], 'A default list is created once and shared; use None instead.'` },
           { name: "given", code: `mine = ['x']
 assert add_item('y', mine) is mine and mine == ['x', 'y'], 'A basket that is passed in is still updated.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write a class <C>Interval</C> for closed integer intervals with <C>__init__(self, lo, hi)</C> (raise <C>ValueError</C> if lo &gt; hi), <C>__contains__</C> (for <C>x in iv</C>), <C>__len__</C> (the number of integers in it), <C>__eq__</C> and <C>__hash__</C> (so intervals work in sets and as dict keys), <C>__lt__</C> (by lo, then hi, so sorted works), <C>__and__</C> (the intersection, or <C>None</C>) and <C>__repr__</C> giving <C>Interval(1, 3)</C>. Then write <C>merge_all(intervals)</C>, which merges overlapping or touching intervals (such as [1, 3] and [4, 6]) into a sorted list.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `class Interval:
+    def __init__(self, lo, hi):
+        self.lo, self.hi = lo, hi
+
+def merge_all(intervals):
+    return list(intervals)
+`,
+        solution: `class Interval:
+    def __init__(self, lo, hi):
+        if lo > hi:
+            raise ValueError('lo > hi')
+        self.lo, self.hi = lo, hi
+    def __contains__(self, x):
+        return self.lo <= x <= self.hi
+    def __len__(self):
+        return self.hi - self.lo + 1
+    def __eq__(self, other):
+        return isinstance(other, Interval) and (self.lo, self.hi) == (other.lo, other.hi)
+    def __hash__(self):
+        return hash((self.lo, self.hi))
+    def __lt__(self, other):
+        return (self.lo, self.hi) < (other.lo, other.hi)
+    def __and__(self, other):
+        lo, hi = max(self.lo, other.lo), min(self.hi, other.hi)
+        return Interval(lo, hi) if lo <= hi else None
+    def __repr__(self):
+        return f'Interval({self.lo}, {self.hi})'
+
+def merge_all(intervals):
+    out = []
+    for iv in sorted(intervals):
+        if out and iv.lo <= out[-1].hi + 1:
+            out[-1] = Interval(out[-1].lo, max(out[-1].hi, iv.hi))
+        else:
+            out.append(iv)
+    return out
+`,
+        tests: [
+          { name: "basics", code: `iv = Interval(2, 5)
+assert 2 in iv and 5 in iv and 6 not in iv and len(iv) == 4 and repr(iv) == 'Interval(2, 5)'
+try:
+    Interval(3, 1)
+    assert False
+except ValueError:
+    pass` },
+          { name: "hashing", code: `s = {Interval(1, 2), Interval(1, 2), Interval(2, 3)}
+d = {Interval(0, 0): 'zero'}
+assert len(s) == 2 and d[Interval(0, 0)] == 'zero' and Interval(1, 2) != (1, 2), 'Equal intervals hash equally.'` },
+          { name: "order and intersection", code: `assert sorted([Interval(3, 4), Interval(1, 9), Interval(1, 2)]) == [Interval(1, 2), Interval(1, 9), Interval(3, 4)]
+assert (Interval(1, 5) & Interval(4, 9)) == Interval(4, 5) and (Interval(1, 2) & Interval(3, 4)) is None and (Interval(1, 3) & Interval(3, 3)) == Interval(3, 3)` },
+          { name: "merge", code: `assert merge_all([Interval(8, 10), Interval(1, 3), Interval(4, 6), Interval(2, 2), Interval(12, 12)]) == [Interval(1, 6), Interval(8, 10), Interval(12, 12)] and merge_all([]) == [], 'Touching integer intervals merge.'` },
         ],
       },
     },

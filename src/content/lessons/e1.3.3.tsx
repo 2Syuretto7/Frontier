@@ -168,6 +168,27 @@ print(Money(250) + Money(1075))`}</Code>
       answer: { kind: "choice", options: ["Rs 13.25", "Rs 1325", "Rs 13.025", "<Money object>"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`class A:
+    count = 0
+    def __init__(self):
+        A.count += 1
+        self.items = []
+class B(A):
+    def __repr__(self):
+        return f"B({len(self.items)})"
+x, y = A(), B()
+y.items.append(1)
+print(A.count, x.items, y, isinstance(y, A), B.__mro__[1].__name__)`}</Code>
+          <p>A class attribute, instance attributes and inheritance. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2 [] B(1) True A", "1 [] B(1) True A", "2 [1] B(1) True A", "2 [] B(1) False object"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -202,6 +223,79 @@ class Vec:
         tests: [
           { name: "arithmetic", code: `assert Vec(1, 2) + Vec(3, 4) == Vec(4, 6) and Vec(1, 2) * 3 == Vec(3, 6), 'Define __add__, __mul__ and __eq__.'` },
           { name: "length and repr", code: `assert abs(Vec(3, 4)) == 5 and repr(Vec(3, 4)) == 'Vec(3, 4)', 'abs() calls __abs__; repr() calls __repr__.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write a class <C>Poly</C> for polynomials with integer or float coefficients stored lowest power first, with trailing zeros removed (the zero polynomial has an empty list). Give it <C>__call__</C> (evaluate by Horner&rsquo;s rule), <C>__add__</C>, <C>__mul__</C>, <C>__eq__</C>, <C>__repr__</C> giving <C>Poly([1, 0, 2])</C>, a property <C>degree</C> (−1 for zero), and a method <C>derivative()</C>. Adding or multiplying by a plain number must also work on either side (<C>__radd__</C>, <C>__rmul__</C>).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `class Poly:
+    def __init__(self, coeffs):
+        self.coeffs = list(coeffs)
+`,
+        solution: `class Poly:
+    def __init__(self, coeffs):
+        c = list(coeffs)
+        while c and c[-1] == 0:
+            c.pop()
+        self.coeffs = c
+    @staticmethod
+    def _lift(x):
+        return x if isinstance(x, Poly) else Poly([x])
+    def __call__(self, x):
+        r = 0
+        for c in reversed(self.coeffs):
+            r = r * x + c
+        return r
+    def __add__(self, other):
+        o = self._lift(other)
+        n = max(len(self.coeffs), len(o.coeffs))
+        a = self.coeffs + [0] * (n - len(self.coeffs))
+        b = o.coeffs + [0] * (n - len(o.coeffs))
+        return Poly([x + y for x, y in zip(a, b)])
+    __radd__ = __add__
+    def __mul__(self, other):
+        o = self._lift(other)
+        if not self.coeffs or not o.coeffs:
+            return Poly([])
+        out = [0] * (len(self.coeffs) + len(o.coeffs) - 1)
+        for i, x in enumerate(self.coeffs):
+            for j, y in enumerate(o.coeffs):
+                out[i + j] += x * y
+        return Poly(out)
+    __rmul__ = __mul__
+    def __eq__(self, other):
+        return isinstance(other, Poly) and self.coeffs == other.coeffs
+    def __repr__(self):
+        return f'Poly({self.coeffs})'
+    @property
+    def degree(self):
+        return len(self.coeffs) - 1
+    def derivative(self):
+        return Poly([i * c for i, c in enumerate(self.coeffs)][1:])
+`,
+        tests: [
+          { name: "basics", code: `p = Poly([1, 0, 2, 0, 0])
+assert p.coeffs == [1, 0, 2] and repr(p) == 'Poly([1, 0, 2])' and p.degree == 2 and p(3) == 19 and Poly([0, 0]).degree == -1 and Poly([]) == Poly([0])` },
+          { name: "arithmetic", code: `p, q = Poly([1, 1]), Poly([-1, 1])
+assert p * q == Poly([-1, 0, 1]) and p + q == Poly([0, 2]) and (p + Poly([-1, -1])).degree == -1, '(1 + x)(x − 1) = x² − 1.'
+assert 2 * p == Poly([2, 2]) and p * 2 == Poly([2, 2]) and 3 + p == Poly([4, 1]) and p + 3 == Poly([4, 1]), 'Numbers on either side.'` },
+          { name: "derivative", code: `p = Poly([5, 3, 0, 4])
+assert p.derivative() == Poly([3, 0, 12]) and Poly([7]).derivative() == Poly([]) and p.derivative().derivative()(1) == 24` },
+          { name: "numpy", code: `import numpy as np
+rng = np.random.default_rng(0)
+a, b = rng.integers(-5, 5, 6).tolist(), rng.integers(-5, 5, 4).tolist()
+prod = Poly(a) * Poly(b)
+assert np.allclose(prod.coeffs, np.trim_zeros(np.polynomial.polynomial.polymul(a, b), 'b')) and abs(Poly(a)(1.5) - np.polynomial.polynomial.polyval(1.5, a)) < 1e-9` },
         ],
       },
     },
