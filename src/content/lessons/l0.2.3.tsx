@@ -152,6 +152,20 @@ print(labels)`}</Code>
       answer: { kind: "choice", options: ["[0, 0, 0, 1, 1, 1]", "[0, 1, 0, 1, 0, 1]", "[1, 1, 1, 0, 0, 0]", "[0, 0, 1, 1, 1, 1]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`xs = [1, 2, 3, 10, 11, 30]
+cs = [0, 12]
+groups = {c: [x for x in xs if min(cs, key=lambda c2: abs(x - c2)) == c] for c in cs}
+print(groups, [sum(g) / len(g) for g in groups.values()])`}</Code>
+          <p>One assignment step and one update step of k-means. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["{0: [1, 2, 3], 12: [10, 11, 30]} [2.0, 17.0]", "{0: [1, 2, 3, 10], 12: [11, 30]} [4.0, 20.5]", "{0: [1, 2, 3], 12: [10, 11]} [2.0, 10.5]", "{0: [1, 2, 3], 12: [10, 11, 30]} [2.0, 12.0]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -181,6 +195,66 @@ print(labels)`}</Code>
 assert abs(c[0] - 2) < 1e-9 and abs(c[1] - 11) < 1e-9, 'Each centre should settle at the mean of its group.'` },
           { name: "empty cluster", code: `c = kmeans_1d([1, 2, 3], [2, 100], 3)
 assert abs(c[0] - 2) < 1e-9 and c[1] == 100, 'A centre with no points stays where it is.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>kmeans(points, centres, steps)</C> for points in the plane given as (x, y) tuples: alternate assigning each point to its nearest centre (the lowest index on ties) and moving each centre to the mean of its points (a centre with no points stays where it is), for at most <C>steps</C> rounds or until the labels stop changing. Return (centres, labels) with centres as a list of (x, y) tuples. Then write <C>inertia(points, centres, labels)</C>, the sum of squared distances from points to their centres.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def kmeans(points, centres, steps):
+    return list(centres), [0] * len(points)
+
+def inertia(points, centres, labels):
+    return 0.0
+`,
+        solution: `def _d2(p, c):
+    return (p[0] - c[0]) ** 2 + (p[1] - c[1]) ** 2
+
+def kmeans(points, centres, steps):
+    centres = [tuple(c) for c in centres]
+    labels = None
+    for _ in range(steps):
+        new = [min(range(len(centres)), key=lambda j: _d2(p, centres[j])) for p in points]
+        if new == labels:
+            break
+        labels = new
+        for j in range(len(centres)):
+            mine = [p for p, l in zip(points, labels) if l == j]
+            if mine:
+                centres[j] = (sum(p[0] for p in mine) / len(mine), sum(p[1] for p in mine) / len(mine))
+    return centres, labels
+
+def inertia(points, centres, labels):
+    return sum(_d2(p, centres[l]) for p, l in zip(points, labels))
+`,
+        tests: [
+          { name: "blobs", code: `pts = [(0, 0), (0, 1), (1, 0), (10, 10), (10, 11), (11, 10)]
+cs, labels = kmeans(pts, [(0, 0), (1, 0)], 20)
+assert labels in ([0, 0, 0, 1, 1, 1], [1, 1, 1, 0, 0, 0]) and sorted(cs) == [(1 / 3, 1 / 3), (31 / 3, 31 / 3)], 'Two clusters, centres at the means.'` },
+          { name: "inertia", code: `pts = [(0, 0), (2, 0), (10, 0)]
+assert inertia(pts, [(1, 0), (10, 0)], [0, 0, 1]) == 2 and inertia(pts, [(4, 0)], [0, 0, 0]) == 16 + 4 + 36` },
+          { name: "empty", code: `pts = [(0, 0), (1, 0)]
+cs, labels = kmeans(pts, [(0, 0), (100, 100)], 5)
+assert cs[1] == (100, 100) and labels == [0, 0] and cs[0] == (0.5, 0), 'A centre with no points stays put.'` },
+          { name: "monotone", code: `import random
+random.seed(1)
+pts = [(random.gauss(cx, 1), random.gauss(cy, 1)) for cx, cy in [(0, 0), (6, 0), (3, 5)] for _ in range(30)]
+init = pts[:3]
+prev = float('inf')
+for s in range(1, 8):
+    cs, labels = kmeans(pts, init, s)
+    J = inertia(pts, cs, labels)
+    assert J <= prev + 1e-9, 'Each round of k-means can only lower the inertia.'
+    prev = J` },
         ],
       },
     },

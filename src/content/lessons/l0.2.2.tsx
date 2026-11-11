@@ -153,6 +153,21 @@ print(slope, ys[0] - slope * xs[0], slope * 10 + ys[0] - slope * xs[0])`}</Code>
       answer: { kind: "choice", options: ["2.0 1.0 21.0", "2.0 3.0 23.0", "2.0 1.0 20.0", "1.5 1.0 16.0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`xs = [0, 1, 2, 3]
+ys = [1, 3, 5, 7]
+mx, my = sum(xs) / 4, sum(ys) / 4
+m = sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sum((x - mx) ** 2 for x in xs)
+print(m, my - m * mx)`}</Code>
+          <p>The least-squares slope and intercept from centred sums. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2.0 1.0", "2.0 4.0", "1.0 2.0", "2.0 0.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -180,6 +195,59 @@ print(slope, ys[0] - slope * xs[0], slope * 10 + ys[0] - slope * xs[0])`}</Code>
 assert abs(m - 2) < 1e-9 and abs(c - 1) < 1e-9, 'Points on y = 2x + 1.'` },
           { name: "noisy", code: `m, c = fit_line([0, 1, 2, 3], [1, 2, 2, 5])
 assert abs(m - 1.2) < 1e-9 and abs(c - 0.7) < 1e-9, 'Least squares uses every point, not just the ends.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>r_squared(ys, preds)</C>, 1 − (sum of squared residuals)/(sum of squared deviations from the mean of ys). Then write <C>fit_quadratic(xs, ys)</C>, the least-squares (a, b, c) for y ≈ a + bx + cx², by forming the 3 × 3 normal equations (sums of powers of x up to x⁴, and of xᵏy) and solving them with your own Gaussian elimination with partial pivoting, without NumPy.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def r_squared(ys, preds):
+    return 0.0
+
+def fit_quadratic(xs, ys):
+    return (0.0, 0.0, 0.0)
+`,
+        solution: `def r_squared(ys, preds):
+    my = sum(ys) / len(ys)
+    ss_res = sum((y - p) ** 2 for y, p in zip(ys, preds))
+    ss_tot = sum((y - my) ** 2 for y in ys)
+    return 1 - ss_res / ss_tot
+
+def fit_quadratic(xs, ys):
+    S = [sum(x ** k for x in xs) for k in range(5)]
+    T = [sum(y * x ** k for x, y in zip(xs, ys)) for k in range(3)]
+    A = [[S[i + j] for j in range(3)] + [T[i]] for i in range(3)]
+    for c in range(3):
+        r = max(range(c, 3), key=lambda i: abs(A[i][c]))
+        A[c], A[r] = A[r], A[c]
+        for i in range(c + 1, 3):
+            f = A[i][c] / A[c][c]
+            A[i] = [a - f * b for a, b in zip(A[i], A[c])]
+    sol = [0.0] * 3
+    for i in range(2, -1, -1):
+        sol[i] = (A[i][3] - sum(A[i][j] * sol[j] for j in range(i + 1, 3))) / A[i][i]
+    return tuple(sol)
+`,
+        tests: [
+          { name: "r2", code: `assert r_squared([1, 2, 3], [1, 2, 3]) == 1 and r_squared([1, 2, 3], [2, 2, 2]) == 0 and abs(r_squared([1, 2, 3, 4], [1, 3, 2, 4]) - 0.6) < 1e-12, 'Perfect is 1; predicting the mean is 0.'` },
+          { name: "exact", code: `a, b, c = fit_quadratic([-2, -1, 0, 1, 2, 3], [2 - 3 * x + 0.5 * x * x for x in [-2, -1, 0, 1, 2, 3]])
+assert abs(a - 2) < 1e-9 and abs(b + 3) < 1e-9 and abs(c - 0.5) < 1e-9, 'Recover y = 2 − 3x + 0.5x².'` },
+          { name: "noisy", code: `import numpy as np
+rng = np.random.default_rng(0)
+xs = list(rng.uniform(-3, 3, 40)); ys = [1 + x - 2 * x * x + rng.normal() for x in xs]
+want = np.polyfit(xs, ys, 2)[::-1]
+assert np.allclose(fit_quadratic(xs, ys), want, atol=1e-8), 'Agree with numpy.polyfit.'` },
+          { name: "pivot", code: `a, b, c = fit_quadratic([10, 11, 12, 13], [5, 7, 9, 11])
+assert abs(b - 2) < 1e-6 and abs(c) < 1e-7 and abs(a + 15) < 1e-5, 'A straight line away from 0: the x² coefficient must come out as 0.'` },
         ],
       },
     },

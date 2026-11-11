@@ -155,6 +155,26 @@ print(chain)`}</Code>
       answer: { kind: "choice", options: ["['socrates', 'man', 'mortal']", "['socrates', 'mortal']", "['socrates', 'man']", "An infinite loop"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`facts = {"rain"}
+rules = [({"rain"}, "wet"), ({"wet", "cold"}, "ice"), ({"wet"}, "slippery")]
+changed = True
+while changed:
+    changed = False
+    for body, head in rules:
+        if body <= facts and head not in facts:
+            facts.add(head)
+            changed = True
+print(sorted(facts))`}</Code>
+          <p>Forward chaining until nothing new can be derived. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["['rain', 'slippery', 'wet']", "['ice', 'rain', 'slippery', 'wet']", "['rain', 'wet']", "['rain', 'slippery', 'wet', 'cold']"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -185,6 +205,77 @@ print(chain)`}</Code>
 assert forward_chain({'fever', 'cough'}, rules) == {'fever', 'cough', 'flu', 'rest'}, 'flu follows, and then rest follows from flu.'` },
           { name: "order", code: `rules = [({'b'}, 'c'), ({'a'}, 'b')]
 assert forward_chain({'a'}, rules) == {'a', 'b', 'c'}, 'Keep looping until nothing new is added.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Work backwards from a goal. Rules are (body, head) pairs where body is a set of facts. Write <C>explain(goal, facts, rules)</C>, which returns a proof tree (goal, [subproofs]) or <C>None</C>: a known fact has the proof (fact, []); otherwise try each rule with that head in order and prove every fact in its body (sorted alphabetically). Guard against cycles by refusing to prove a goal that is already being proved further up. Then write <C>provable(goal, facts, rules)</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def explain(goal, facts, rules):
+    return None
+
+def provable(goal, facts, rules):
+    return goal in facts
+`,
+        solution: `def explain(goal, facts, rules, _stack=()):
+    if goal in facts:
+        return (goal, [])
+    if goal in _stack:
+        return None
+    for body, head in rules:
+        if head != goal:
+            continue
+        subs = []
+        for b in sorted(body):
+            s = explain(b, facts, rules, _stack + (goal,))
+            if s is None:
+                break
+            subs.append(s)
+        else:
+            return (goal, subs)
+    return None
+
+def provable(goal, facts, rules):
+    return explain(goal, facts, rules) is not None
+`,
+        tests: [
+          { name: "simple", code: `rules = [({'rain'}, 'wet'), ({'wet', 'cold'}, 'ice'), ({'wet'}, 'slippery')]
+assert explain('slippery', {'rain'}, rules) == ('slippery', [('wet', [('rain', [])])]) and explain('ice', {'rain'}, rules) is None, 'Without cold there is no ice.'
+assert explain('ice', {'rain', 'cold'}, rules) == ('ice', [('cold', []), ('wet', [('rain', [])])]), 'Body facts in alphabetical order.'` },
+          { name: "alternatives", code: `rules = [({'x'}, 'g'), ({'y'}, 'g')]
+assert explain('g', {'y'}, rules) == ('g', [('y', [])]), 'If the first rule fails, try the next.'` },
+          { name: "cycle", code: `rules = [({'b'}, 'a'), ({'a'}, 'b'), ({'c'}, 'b')]
+assert not provable('a', set(), rules) and explain('a', {'c'}, rules) == ('a', [('b', [('c', [])])]), 'Cycles must not loop forever.'` },
+          { name: "valid", code: `import random
+random.seed(4)
+def check(t, facts, rules):
+    g, subs = t
+    if not subs:
+        return g in facts or any(h == g and not b for b, h in rules)
+    return any(h == g and set(b) == {s[0] for s in subs} for b, h in rules) and all(check(s, facts, rules) for s in subs)
+atoms = 'abcdefgh'
+for _ in range(200):
+    rules = [(set(random.sample(atoms, random.randint(1, 2))), random.choice(atoms)) for _ in range(8)]
+    facts = set(random.sample(atoms, 2))
+    fc = set(facts); ch = True
+    while ch:
+        ch = False
+        for b, h in rules:
+            if b <= fc and h not in fc:
+                fc.add(h); ch = True
+    for g in atoms:
+        t = explain(g, facts, rules)
+        assert (t is not None) == (g in fc), 'Backward chaining proves exactly what forward chaining derives.'
+        assert t is None or check(t, facts, rules), 'Every step of the proof must use a real rule.'` },
         ],
       },
     },

@@ -143,6 +143,21 @@ print(d[0][1], [lab for _, lab in d[:3]])`}</Code>
       answer: { kind: "choice", options: ["red ['red', 'red', 'blue']", "red ['red', 'blue', 'red']", "blue ['blue', 'red', 'red']", "red ['red', 'red', 'red']"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`train = [((0, 0), "red"), ((1, 0), "red"), ((5, 5), "blue"), ((6, 5), "blue"), ((2, 1), "blue")]
+q = (1, 1)
+d = sorted((abs(x - q[0]) + abs(y - q[1]), lab) for (x, y), lab in train)
+top = [l for _, l in d[:3]]
+print(d[:3], max(set(top), key=top.count))`}</Code>
+          <p>Three nearest neighbours under Manhattan distance. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[(1, 'blue'), (1, 'red'), (2, 'red')] red", "[(1, 'red'), (1, 'blue'), (2, 'red')] red", "[(1, 'blue'), (1, 'red'), (2, 'red')] blue", "[(1, 'red'), (2, 'red'), (8, 'blue')] red"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -173,6 +188,58 @@ def knn(train, q, k):
 assert knn(train, (2, 2), 3) == 'red' and knn(train, (5, 4), 3) == 'blue', 'Take the majority of the k nearest.'` },
           { name: "tie", code: `train = [((0, 0), 'a'), ((3, 0), 'b'), ((10, 0), 'c')]
 assert knn(train, (1, 0), 2) == 'a', 'A one-one tie goes to the nearest point.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Nearest neighbours for numbers. Write <C>knn_regress(train, q, k)</C> for a list of (point, target) pairs with points as tuples: the mean target of the k training points closest to q in Euclidean distance (ties broken by position in the list). Then write <C>loo_mse(train, k)</C>, the leave-one-out mean squared error (predict each point from all the others), and <C>best_k(train, ks)</C>, the k in ks with the lowest leave-one-out error (the smallest on ties).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def knn_regress(train, q, k):
+    return sum(t for _, t in train) / len(train)
+
+def loo_mse(train, k):
+    return 0.0
+
+def best_k(train, ks):
+    return ks[0]
+`,
+        solution: `import math
+
+def knn_regress(train, q, k):
+    order = sorted(range(len(train)), key=lambda i: (math.dist(train[i][0], q), i))
+    return sum(train[i][1] for i in order[:k]) / k
+
+def loo_mse(train, k):
+    err = 0.0
+    for i, (x, y) in enumerate(train):
+        rest = train[:i] + train[i + 1:]
+        err += (knn_regress(rest, x, k) - y) ** 2
+    return err / len(train)
+
+def best_k(train, ks):
+    return min(ks, key=lambda k: (loo_mse(train, k), k))
+`,
+        tests: [
+          { name: "regress", code: `train = [((0,), 0), ((1,), 10), ((2,), 20), ((10,), 100)]
+assert knn_regress(train, (1.2,), 1) == 10 and knn_regress(train, (1.2,), 2) == 15 and knn_regress(train, (1.5,), 2) == 15, 'Average the k closest targets; ties go to the earlier point.'
+assert knn_regress(train, (0,), 4) == 32.5` },
+          { name: "loo", code: `train = [((0,), 0), ((1,), 1), ((2,), 2), ((3,), 3)]
+assert loo_mse(train, 1) == 1.0 and abs(loo_mse(train, 2) - (2.25 + 0 + 0 + 2.25) / 4) < 1e-12, 'Each point is predicted from the others; ties go to the earlier point.'` },
+          { name: "best", code: `import random
+random.seed(2)
+train = [((x,), x * x / 10 + random.gauss(0, 3)) for x in [random.uniform(-10, 10) for _ in range(60)]]
+k = best_k(train, [1, 3, 5, 9, 25, 59])
+assert k in (3, 5, 9), f'Neither 1 (too noisy) nor 59 (the mean) should win; got {k}.'
+assert loo_mse(train, 59) > loo_mse(train, k)` },
         ],
       },
     },

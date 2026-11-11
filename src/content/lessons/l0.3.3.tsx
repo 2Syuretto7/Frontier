@@ -146,6 +146,22 @@ print(tree(25, 60), tree(40, 10), tree(29, 50))`}</Code>
       answer: { kind: "choice", options: ["buy rent buy", "buy rent rent", "rent rent buy", "buy buy buy"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def gini(ls):
+    n = len(ls)
+    return 1 - sum((ls.count(c) / n) ** 2 for c in set(ls))
+left, right = ["a", "a", "b"], ["b", "b", "b", "a"]
+w = (len(left) * gini(left) + len(right) * gini(right)) / 7
+print(round(gini(left), 4), round(gini(right), 4), round(w, 4))`}</Code>
+          <p>Gini impurity of the two sides of a split and their weighted average. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.4444 0.375 0.4048", "0.4444 0.375 0.4097", "0.5 0.375 0.4286", "0.4444 0.4375 0.4405"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -184,6 +200,81 @@ def best_split(xs, ys):
         tests: [
           { name: "gini", code: `assert gini(['a', 'a']) == 0 and abs(gini(['a', 'b']) - 0.5) < 1e-9 and abs(gini(['a', 'b', 'c']) - 2 / 3) < 1e-9, 'A pure group has impurity 0.'` },
           { name: "split", code: `assert best_split([1, 2, 3, 4, 5, 6], ['n', 'n', 'n', 'y', 'y', 'y']) == 4, 'x < 4 and x ≥ 4 separate the labels perfectly.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Grow a whole tree. Write <C>build_tree(X, y, max_depth)</C> for rows of numbers X and labels y. A leaf is a label (the majority, the smallest label on ties); an internal node is a tuple (feature, threshold, left, right) where rows with x[feature] ≤ threshold go left. Make a leaf when the labels are pure, the depth limit is reached, or no split lowers the weighted Gini impurity; otherwise use the split with the lowest weighted Gini, trying thresholds at midpoints between consecutive distinct values (lowest feature, then lowest threshold, on ties). Then write <C>predict(tree, x)</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def build_tree(X, y, max_depth):
+    return y[0]
+
+def predict(tree, x):
+    return tree
+`,
+        solution: `def _gini(ls):
+    n = len(ls)
+    return 1 - sum((ls.count(c) / n) ** 2 for c in set(ls))
+
+def _majority(y):
+    return min(set(y), key=lambda c: (-y.count(c), c))
+
+def build_tree(X, y, max_depth):
+    if len(set(y)) == 1 or max_depth == 0:
+        return _majority(y)
+    best, here = None, _gini(y)
+    for f in range(len(X[0])):
+        vals = sorted(set(r[f] for r in X))
+        for a, b in zip(vals, vals[1:]):
+            t = (a + b) / 2
+            L = [lab for r, lab in zip(X, y) if r[f] <= t]
+            Rr = [lab for r, lab in zip(X, y) if r[f] > t]
+            g = (len(L) * _gini(L) + len(Rr) * _gini(Rr)) / len(y)
+            if g < here - 1e-12 and (best is None or g < best[0] - 1e-12):
+                best = (g, f, t)
+    if best is None:
+        return _majority(y)
+    _, f, t = best
+    li = [i for i, r in enumerate(X) if r[f] <= t]
+    ri = [i for i, r in enumerate(X) if r[f] > t]
+    return (f, t, build_tree([X[i] for i in li], [y[i] for i in li], max_depth - 1), build_tree([X[i] for i in ri], [y[i] for i in ri], max_depth - 1))
+
+def predict(tree, x):
+    while isinstance(tree, tuple):
+        f, t, L, Rr = tree
+        tree = L if x[f] <= t else Rr
+    return tree
+`,
+        tests: [
+          { name: "stump", code: `X = [[1], [2], [3], [10], [11]]
+y = ['a', 'a', 'a', 'b', 'b']
+t = build_tree(X, y, 3)
+assert t == (0, 6.5, 'a', 'b') and predict(t, [5]) == 'a' and predict(t, [7]) == 'b', 'One split at the midpoint 6.5 separates them.'` },
+          { name: "depth zero", code: `assert build_tree([[0], [1], [2]], ['b', 'a', 'b'], 0) == 'b' and build_tree([[0], [1]], ['b', 'a'], 0) == 'a', 'Majority, smallest label on ties.'` },
+          { name: "xor", code: `X = [[0, 0], [0, 1], [1, 0], [1, 1]] * 3
+y = [0, 1, 1, 0] * 3
+t = build_tree(X, y, 2)
+assert t == 0, 'Balanced XOR: no single split lowers the impurity, so the greedy tree stops at a leaf (0 wins the tie).'
+X2 = [[0, 0], [0, 1], [1, 0], [1, 1], [1, 1]]
+y2 = [0, 1, 1, 0, 0]
+t2 = build_tree(X2, y2, 2)
+assert all(predict(t2, x) == lab for x, lab in zip(X2, y2)), 'A slight imbalance lets the greedy tree find XOR in two levels.'` },
+          { name: "fit", code: `import random
+random.seed(3)
+X = [[random.uniform(0, 10), random.uniform(0, 10)] for _ in range(200)]
+y = [int(a > 4) + int(b > 6) for a, b in X]
+t = build_tree(X, y, 4)
+acc = sum(predict(t, x) == lab for x, lab in zip(X, y)) / len(y)
+assert acc == 1.0, f'Axis-aligned regions are learned exactly; training accuracy {acc}.'` },
         ],
       },
     },

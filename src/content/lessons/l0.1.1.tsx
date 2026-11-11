@@ -185,6 +185,19 @@ print(sum(rule(w) == y for w, y in examples.items()))`}</Code>
       answer: { kind: "numeric", value: 2 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`emails = [("win money now", 1), ("meeting at noon", 0), ("win a prize", 1), ("lunch money", 0)]
+rule = lambda t: "win" in t or "money" in t
+print(sum(rule(t) == bool(y) for t, y in emails), [t for t, y in emails if rule(t) != bool(y)])`}</Code>
+          <p>A hand-written spam rule checked against labelled emails. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["3 ['lunch money']", "4 []", "3 ['meeting at noon']", "2 ['lunch money', 'win a prize']"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -207,6 +220,50 @@ print(sum(rule(w) == y for w, y in examples.items()))`}</Code>
         tests: [
           { name: "separable", code: `assert learn_threshold([1, 2, 3, 8, 9, 10], [0, 0, 0, 1, 1, 1]) == 8, 'The rule x ≥ 8 makes no mistakes.'` },
           { name: "noisy", code: `assert learn_threshold([1, 2, 3, 4, 5, 6], [0, 0, 1, 0, 1, 1]) == 3, 'x ≥ 3 makes one mistake, and so does x ≥ 5; take the smaller.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Learn the spam rule from examples instead. Write <C>learn_keywords(emails, k)</C> for a list of (text, label) pairs with label 1 for spam: split each text into lower-case words, count each word once per email, score each word by (spam emails containing it) − (normal emails containing it), and return the k highest-scoring words, breaking ties alphabetically. Then write <C>classify(text, words)</C>, which returns 1 if any word of the text is in <C>words</C>, else 0, and <C>accuracy(emails, words)</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def learn_keywords(emails, k):
+    return []
+
+def classify(text, words):
+    return 0
+
+def accuracy(emails, words):
+    return 0.0
+`,
+        solution: `def learn_keywords(emails, k):
+    score = {}
+    for text, y in emails:
+        for w in set(text.lower().split()):
+            score[w] = score.get(w, 0) + (1 if y == 1 else -1)
+    return sorted(score, key=lambda w: (-score[w], w))[:k]
+
+def classify(text, words):
+    return int(any(w in words for w in text.lower().split()))
+
+def accuracy(emails, words):
+    return sum(classify(t, words) == y for t, y in emails) / len(emails)
+`,
+        tests: [
+          { name: "learn", code: `emails = [("Win money now", 1), ("meeting at noon", 0), ("win a prize", 1), ("lunch money", 0), ("free prize inside", 1)]
+assert learn_keywords(emails, 2) == ['prize', 'win'], 'prize and win each score 2; ties go alphabetically.'` },
+          { name: "once per email", code: `assert learn_keywords([("buy buy buy", 1), ("buy now", 0), ("cheap", 1)], 1) == ['cheap'], 'buy scores 1 − 1 = 0 because repeats in one email count once.'` },
+          { name: "classify", code: `assert classify("WIN big", ["win"]) == 1 and classify("winner", ["win"]) == 0 and classify("", ["win"]) == 0, 'Match whole lower-case words.'` },
+          { name: "accuracy", code: `emails = [("Win money now", 1), ("meeting at noon", 0), ("win a prize", 1), ("lunch money", 0), ("free prize inside", 1)]
+assert accuracy(emails, learn_keywords(emails, 2)) == 1.0 and accuracy(emails, ['money']) == 0.4, 'The learned words separate this data.'` },
         ],
       },
     },

@@ -148,6 +148,24 @@ print(round(text.count("a") / len(text), 1))`}</Code>
       answer: { kind: "numeric", value: 0.8, tolerance: 0.001 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`probs = {"a": 0.5, "b": 0.3, "c": 0.2}
+def sample(u):
+    acc = 0
+    for ch, p in probs.items():
+        acc += p
+        if u < acc:
+            return ch
+print([sample(u) for u in (0.1, 0.5, 0.79, 0.81, 0.99)])`}</Code>
+          <p>Sampling from a distribution by walking along its cumulative sums. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["['a', 'b', 'b', 'c', 'c']", "['a', 'a', 'b', 'c', 'c']", "['a', 'b', 'c', 'c', 'c']", "['a', 'b', 'b', 'b', 'c']"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -181,6 +199,73 @@ def most_likely_next(model, ch):
 assert m == {'a': {'b': 2}, 'b': {'a': 1}}, 'Count each pair of neighbouring characters.'` },
           { name: "next", code: `m = bigram_model('the then there')
 assert most_likely_next(m, 't') == 'h' and most_likely_next(m, 'h') == 'e', 'After t comes h every time.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>with_temperature(probs, T)</C>, which turns a dict of probabilities into a new dict proportional to p^(1/T) (T &lt; 1 sharpens, T &gt; 1 flattens). Then write <C>sample(probs, rng)</C>, one draw by inverse CDF using <C>u = rng.random()</C> and the dict&rsquo;s order, and <C>generate(model, start, n, seed)</C> for a character model mapping each character to a dict of next-character probabilities: starting from <C>start</C>, append up to n sampled characters using one <C>random.Random(seed)</C>, stopping early at a character with no entry in the model.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def with_temperature(probs, T):
+    return dict(probs)
+
+def sample(probs, rng):
+    return next(iter(probs))
+
+def generate(model, start, n, seed):
+    return start
+`,
+        solution: `import random
+
+def with_temperature(probs, T):
+    w = {k: p ** (1 / T) for k, p in probs.items()}
+    z = sum(w.values())
+    return {k: v / z for k, v in w.items()}
+
+def sample(probs, rng):
+    u = rng.random()
+    acc = 0.0
+    last = None
+    for k, p in probs.items():
+        acc += p
+        last = k
+        if u < acc:
+            return k
+    return last
+
+def generate(model, start, n, seed):
+    rng = random.Random(seed)
+    out = start
+    for _ in range(n):
+        ch = out[-1]
+        if ch not in model:
+            break
+        out += sample(model[ch], rng)
+    return out
+`,
+        tests: [
+          { name: "temperature", code: `t = with_temperature({'a': 0.5, 'b': 0.3, 'c': 0.2}, 1)
+assert all(abs(t[k] - v) < 1e-12 for k, v in {'a': 0.5, 'b': 0.3, 'c': 0.2}.items())
+s = with_temperature({'a': 0.5, 'b': 0.3, 'c': 0.2}, 0.5)
+assert abs(s['a'] - 0.25 / 0.38) < 1e-12 and abs(sum(s.values()) - 1) < 1e-12, 'T = 0.5 squares and renormalises.'
+f = with_temperature({'a': 0.9, 'b': 0.1}, 100)
+assert 0.5 < f['a'] < 0.52, 'High temperature is almost uniform.'` },
+          { name: "frequencies", code: `import random
+rng = random.Random(0)
+draws = [sample({'x': 0.7, 'y': 0.2, 'z': 0.1}, rng) for _ in range(20000)]
+assert abs(draws.count('x') / 20000 - 0.7) < 0.02 and abs(draws.count('z') / 20000 - 0.1) < 0.01, 'Frequencies match the probabilities.'` },
+          { name: "generate", code: `model = {'a': {'b': 1.0}, 'b': {'a': 0.5, 'c': 0.5}}
+g = generate(model, 'a', 50, 3)
+assert g[0] == 'a' and all(x + y in ('ab', 'ba', 'bc') for x, y in zip(g, g[1:])) and (len(g) == 51 or g[-1] == 'c'), 'Only allowed transitions; stop at c.'
+assert generate(model, 'a', 50, 3) == g and generate({}, 'q', 5, 0) == 'q', 'Seeded, and stops when there is no entry.'` },
         ],
       },
     },

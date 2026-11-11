@@ -133,6 +133,19 @@ print(f"{6 * params * tokens:.1e}")`}</Code>
       answer: { kind: "choice", options: ["8.4e+22", "8.4e+21", "1.4e+22", "8.4e+23"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`params, tokens = 1e9, 20e9
+C = 6 * params * tokens
+print(f"{C:.1e}", tokens / params)`}</Code>
+          <p>Training compute for a 1-billion-parameter model on 20 billion tokens. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1.2e+20 20.0", "1.2e+19 20.0", "2.0e+19 20.0", "1.2e+20 0.05"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -154,6 +167,65 @@ print(f"{6 * params * tokens:.1e}")`}</Code>
         tests: [
           { name: "estimate", code: `d = train_days(7e9, 2e12, 1024, 1e15, 0.4)
 assert abs(d - 6 * 7e9 * 2e12 / (1024 * 1e15 * 0.4) / 86400) < 1e-6 and 2 < d < 3, 'Divide by the effective FLOP/s, then convert seconds to days.'` },
+          { name: "unit", code: `assert abs(train_days(1, 86400, 1, 6, 1) - 1) < 1e-12, '6 × 1 × 86400 FLOPs at 6 FLOP/s is one day.'` },
+          { name: "scaling", code: `a = train_days(7e10, 1e12, 512, 1e15, 0.5)
+assert abs(train_days(7e10, 1e12, 1024, 1e15, 0.5) - a / 2) < 1e-9 and abs(train_days(7e10, 1e12, 512, 1e15, 0.25) - 2 * a) < 1e-9, 'Twice the GPUs halves the time; half the utilisation doubles it.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Compute-optimal scaling. Use the Chinchilla fit L(N, D) = E + A/N^α + B/D^β with E = 1.69, A = 406.4, B = 410.7, α = 0.34, β = 0.28 (N parameters, D tokens) and compute C = 6ND. Write <C>loss(N, D)</C>; <C>rule_of_thumb(C)</C>, the (N, D) with D = 20N and 6ND = C; and <C>best_split(C, steps)</C>, which searches N on a grid of <C>steps</C> points spaced evenly in log₁₀ N from 10⁶ to 10¹³ (endpoints included), sets D = C/(6N), and returns the (N, D) with the lowest loss.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def loss(N, D):
+    return 0.0
+
+def rule_of_thumb(C):
+    return (C, C)
+
+def best_split(C, steps):
+    return (1e6, C / 6e6)
+`,
+        solution: `import math
+
+E, A, B, ALPHA, BETA = 1.69, 406.4, 410.7, 0.34, 0.28
+
+def loss(N, D):
+    return E + A / N ** ALPHA + B / D ** BETA
+
+def rule_of_thumb(C):
+    N = math.sqrt(C / 120)
+    return (N, 20 * N)
+
+def best_split(C, steps):
+    best = None
+    for i in range(steps):
+        N = 10 ** (6 + 7 * i / (steps - 1))
+        D = C / (6 * N)
+        l = loss(N, D)
+        if best is None or l < best[0]:
+            best = (l, N, D)
+    return (best[1], best[2])
+`,
+        tests: [
+          { name: "loss", code: `assert abs(loss(1e9, 2e10) - (1.69 + 406.4 / 1e9 ** 0.34 + 410.7 / 2e10 ** 0.28)) < 1e-12 and loss(1e30, 1e30) < 1.7, 'With infinite data and parameters the loss tends to E.'` },
+          { name: "thumb", code: `N, D = rule_of_thumb(1.2e20)
+assert abs(N - 1e9) < 1 and abs(D - 2e10) < 20, '6 · 10⁹ · 2 · 10¹⁰ = 1.2 · 10²⁰.'` },
+          { name: "search", code: `for C in (1e20, 1e22, 1e24):
+    N, D = best_split(C, 2001)
+    assert abs(6 * N * D - C) / C < 1e-9, 'Spend exactly the budget.'
+    for f in (0.8, 1.25):
+        assert loss(N, D) <= loss(N * f, C / (6 * N * f)) + 1e-12, 'No nearby split is better.'
+N1, _ = best_split(1e20, 2001); N2, _ = best_split(1e22, 2001)
+assert 3 < N2 / N1 < 30, 'A hundred times the compute buys roughly ten times the parameters.'` },
         ],
       },
     },

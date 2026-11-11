@@ -147,6 +147,22 @@ print(max(scores, key=scores.get))`}</Code>
       answer: { kind: "choice", options: ["dog", "cat", "fox", "3.4"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`ys    = [1, 0, 1, 1, 0, 0, 1, 0]
+preds = [1, 0, 0, 1, 1, 0, 1, 0]
+tp = sum(y == 1 and p == 1 for y, p in zip(ys, preds))
+fp = sum(y == 0 and p == 1 for y, p in zip(ys, preds))
+fn = sum(y == 1 and p == 0 for y, p in zip(ys, preds))
+print(tp, fp, fn, tp / (tp + fp), tp / (tp + fn))`}</Code>
+          <p>True positives, false positives, false negatives, precision and recall. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["3 1 1 0.75 0.75", "3 1 1 0.75 0.6", "4 1 1 0.8 0.8", "3 2 1 0.6 0.75"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -176,6 +192,64 @@ def majority_baseline(train_ys, test_ys):
         tests: [
           { name: "accuracy", code: `assert accuracy(['a', 'b', 'a', 'a'], ['a', 'a', 'a', 'b']) == 0.5, 'Two of four are right.'` },
           { name: "baseline", code: `assert majority_baseline(['spam', 'ham', 'ham', 'ham'], ['ham', 'spam', 'ham', 'ham', 'ham']) == 0.8, 'Always predicting ham gets 4 of 5 right.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Classification with more than two classes. Write <C>confusion(ys, preds, labels)</C>, the matrix as a list of lists where entry [i][j] counts examples whose true label is labels[i] and predicted label is labels[j]. From it, write <C>recalls(ys, preds, labels)</C>, the recall of each class (0.0 for a class with no examples), and <C>macro_f1(ys, preds, labels)</C>, the unweighted mean over classes of 2PR/(P + R), with F1 = 0 when P + R = 0.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def confusion(ys, preds, labels):
+    return [[0] * len(labels) for _ in labels]
+
+def recalls(ys, preds, labels):
+    return [1.0] * len(labels)
+
+def macro_f1(ys, preds, labels):
+    return 1.0
+`,
+        solution: `def confusion(ys, preds, labels):
+    idx = {l: i for i, l in enumerate(labels)}
+    M = [[0] * len(labels) for _ in labels]
+    for y, p in zip(ys, preds):
+        M[idx[y]][idx[p]] += 1
+    return M
+
+def recalls(ys, preds, labels):
+    M = confusion(ys, preds, labels)
+    return [M[i][i] / sum(M[i]) if sum(M[i]) else 0.0 for i in range(len(labels))]
+
+def macro_f1(ys, preds, labels):
+    M = confusion(ys, preds, labels)
+    k = len(labels)
+    f1s = []
+    for i in range(k):
+        col = sum(M[r][i] for r in range(k))
+        P = M[i][i] / col if col else 0.0
+        Rr = M[i][i] / sum(M[i]) if sum(M[i]) else 0.0
+        f1s.append(2 * P * Rr / (P + Rr) if P + Rr else 0.0)
+    return sum(f1s) / k
+`,
+        tests: [
+          { name: "matrix", code: `ys = ['cat', 'dog', 'cat', 'bird', 'dog', 'cat']
+ps = ['cat', 'cat', 'cat', 'bird', 'dog', 'dog']
+assert confusion(ys, ps, ['bird', 'cat', 'dog']) == [[1, 0, 0], [0, 2, 1], [0, 1, 1]], 'Rows are true labels, columns predictions.'` },
+          { name: "recall", code: `ys = ['cat', 'dog', 'cat', 'bird', 'dog', 'cat']
+ps = ['cat', 'cat', 'cat', 'bird', 'dog', 'dog']
+r = recalls(ys, ps, ['bird', 'cat', 'dog', 'fish'])
+assert r[0] == 1.0 and abs(r[1] - 2 / 3) < 1e-12 and r[2] == 0.5 and r[3] == 0.0, 'A class with no examples gets recall 0.'` },
+          { name: "macro", code: `ys = ['cat', 'dog', 'cat', 'bird', 'dog', 'cat']
+ps = ['cat', 'cat', 'cat', 'bird', 'dog', 'dog']
+assert abs(macro_f1(ys, ps, ['bird', 'cat', 'dog']) - (1 + 2 / 3 + 0.5) / 3) < 1e-12, 'Average the per-class F1 scores.'
+assert macro_f1([0, 0, 0, 1], [0, 0, 0, 0], [0, 1]) == (2 * 0.75 / 1.75 + 0) / 2, 'Always predicting the majority class scores badly on the minority.'` },
         ],
       },
     },

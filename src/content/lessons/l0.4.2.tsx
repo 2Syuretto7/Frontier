@@ -151,6 +151,23 @@ print(all((1 if w[0] * x[0] + w[1] * x[1] + b > 0 else 0) == y for x, y in data)
       answer: { kind: "choice", options: ["True", "False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`w, b = [0, 0], 0
+data = [((1, 1), 1), ((0, 0), -1), ((1, 0), -1)]
+for x, y in data:
+    if y * (w[0] * x[0] + w[1] * x[1] + b) <= 0:
+        w = [w[0] + y * x[0], w[1] + y * x[1]]
+        b += y
+print(w, b)`}</Code>
+          <p>One pass of the perceptron rule over three points. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0, 1] -1", "[1, 1] 0", "[1, 1] 1", "[0, 1] 0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -183,6 +200,70 @@ assert all((sum(a * c for a, c in zip(w, x)) + b > 0) == bool(y) for x, y in dat
           { name: "xor", code: `data = [((0, 0), 0), ((0, 1), 1), ((1, 0), 1), ((1, 1), 0)]
 w, b = perceptron(data, 100)
 assert not all((sum(a * c for a, c in zip(w, x)) + b > 0) == bool(y) for x, y in data) and (w, b) != ([0.0, 0.0], 0.0), 'Apply the updates; XOR still cannot be learned by one neuron.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>train_perceptron(data, max_epochs)</C> for points with labels ±1, starting from zero and passing over the data in order with the update w ← w + yx, b ← b + y whenever y(w·x + b) ≤ 0. Return (w, b, mistakes, converged), where converged is <C>True</C> if some epoch made no mistakes. Then write <C>margin(w, b, data)</C>, the smallest y(w·x + b)/‖w‖ over the data (negative if some point is misclassified).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def train_perceptron(data, max_epochs):
+    return [0.0] * len(data[0][0]), 0.0, 0, True
+
+def margin(w, b, data):
+    return 0.0
+`,
+        solution: `import math
+
+def train_perceptron(data, max_epochs):
+    w = [0.0] * len(data[0][0])
+    b = 0.0
+    mistakes = 0
+    for _ in range(max_epochs):
+        clean = True
+        for x, y in data:
+            if y * (sum(wi * xi for wi, xi in zip(w, x)) + b) <= 0:
+                w = [wi + y * xi for wi, xi in zip(w, x)]
+                b += y
+                mistakes += 1
+                clean = False
+        if clean:
+            return w, b, mistakes, True
+    return w, b, mistakes, False
+
+def margin(w, b, data):
+    nw = math.sqrt(sum(wi * wi for wi in w))
+    return min(y * (sum(wi * xi for wi, xi in zip(w, x)) + b) / nw for x, y in data)
+`,
+        tests: [
+          { name: "and", code: `data = [((0, 0), -1), ((0, 1), -1), ((1, 0), -1), ((1, 1), 1)]
+w, b, m, ok = train_perceptron(data, 100)
+assert ok and margin(w, b, data) > 0, 'AND is linearly separable.'` },
+          { name: "xor", code: `data = [((0, 0), -1), ((0, 1), 1), ((1, 0), 1), ((1, 1), -1)]
+w, b, m, ok = train_perceptron(data, 100)
+assert not ok and m >= 100, 'XOR never converges.'` },
+          { name: "margin", code: `assert abs(margin([3, 4], -5, [((3, 4), 1), ((0, 0), -1)]) - 1) < 1e-12 and margin([1, 0], 0, [((-1, 0), 1)]) == -1` },
+          { name: "novikoff", code: `import random, math
+random.seed(5)
+for _ in range(20):
+    data = []
+    while len(data) < 60:
+        x = (random.uniform(-1, 1), random.uniform(-1, 1))
+        s = x[0] + 2 * x[1] - 0.3
+        if abs(s) > 0.2:
+            data.append(((x[0], x[1], 1.0), 1 if s > 0 else -1))
+    w, b, m, ok = train_perceptron([((x[0], x[1]), y) for x, y in data], 1000)
+    gamma = margin([1, 2, -0.3], 0, data)
+    Rr = max(math.sqrt(sum(t * t for t in x)) for x, _ in data)
+    assert ok and m <= (Rr / gamma) ** 2, 'Novikoff: at most (R/γ)² mistakes.'` },
         ],
       },
     },

@@ -139,6 +139,22 @@ print(eps_greedy(False), eps_greedy(True))`}</Code>
       answer: { kind: "choice", options: ["right stay", "stay right", "right right", "left stay"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`Q = {"left": 0.0, "right": 0.0}
+N = {"left": 0, "right": 0}
+for a, r in [("left", 1), ("right", 0), ("left", 0), ("right", 1), ("right", 1)]:
+    N[a] += 1
+    Q[a] += (r - Q[a]) / N[a]
+print(Q, max(Q, key=Q.get))`}</Code>
+          <p>Running averages of reward for two actions. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["{'left': 0.5, 'right': 0.6666666666666666} right", "{'left': 0.5, 'right': 0.5} left", "{'left': 1.0, 'right': 0.6666666666666666} left", "{'left': 0.5, 'right': 1.0} right"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -174,6 +190,68 @@ def bandit(probs, steps, eps, seed):
 assert sum(pulls) == 3000 and pulls.index(max(pulls)) == 2, 'Exploring lets the agent discover that arm 2 pays best.'` },
           { name: "explores", code: `pulls = bandit([0.2, 0.5, 0.8], 3000, 0.1, 0)
 assert min(pulls) > 0, 'With eps > 0 every arm gets tried.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Planning in a small Markov decision process. States are 0 … n − 1; <C>P[s][a]</C> is a list of (probability, next state) pairs and <C>Rw[s][a]</C> the immediate reward. Write <C>value_iteration(P, Rw, gamma, tol)</C>, repeating V(s) ← maxₐ [Rw[s][a] + γ Σ p·V(s′)] from V = 0 until no value changes by more than tol, and return (V, policy) where policy[s] is the best action (the lowest index on ties within 1e−9). Then write <C>policy_value(P, Rw, gamma, policy, sweeps)</C>, the value of a fixed policy by repeated backups.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def value_iteration(P, Rw, gamma, tol):
+    n = len(P)
+    return [0.0] * n, [0] * n
+
+def policy_value(P, Rw, gamma, policy, sweeps):
+    return [0.0] * len(P)
+`,
+        solution: `def _q(P, Rw, gamma, V, s, a):
+    return Rw[s][a] + gamma * sum(p * V[t] for p, t in P[s][a])
+
+def value_iteration(P, Rw, gamma, tol):
+    n = len(P)
+    V = [0.0] * n
+    while True:
+        new = [max(_q(P, Rw, gamma, V, s, a) for a in range(len(P[s]))) for s in range(n)]
+        done = max(abs(x - y) for x, y in zip(new, V)) <= tol
+        V = new
+        if done:
+            break
+    policy = []
+    for s in range(n):
+        qs = [_q(P, Rw, gamma, V, s, a) for a in range(len(P[s]))]
+        best = max(qs)
+        policy.append(next(a for a, q in enumerate(qs) if q >= best - 1e-9))
+    return V, policy
+
+def policy_value(P, Rw, gamma, policy, sweeps):
+    V = [0.0] * len(P)
+    for _ in range(sweeps):
+        V = [_q(P, Rw, gamma, V, s, policy[s]) for s in range(len(P))]
+    return V
+`,
+        tests: [
+          { name: "myopic", code: `P = [[[(1.0, 0)], [(1.0, 1)]], [[(1.0, 1)], [(1.0, 0)]]]
+Rw = [[1, 0], [0, 5]]
+V, pol = value_iteration(P, Rw, 0.0, 1e-12)
+assert V == [1, 5] and pol == [0, 1], 'With γ = 0, take the best immediate reward.'` },
+          { name: "patience", code: `P = [[[(1.0, 0)], [(1.0, 1)]], [[(1.0, 1)], [(1.0, 0)]]]
+Rw = [[1, 0], [2, 0]]
+V, pol = value_iteration(P, Rw, 0.9, 1e-10)
+assert pol == [1, 0] and abs(V[1] - 20) < 1e-6 and abs(V[0] - 18) < 1e-6, 'Give up 1 now to reach the state paying 2 forever: V = 2/(1 − 0.9).'` },
+          { name: "policy", code: `P = [[[(0.5, 0), (0.5, 1)]], [[(1.0, 1)]]]
+Rw = [[1], [0]]
+V = policy_value(P, Rw, 0.5, [0, 0], 200)
+assert abs(V[0] - 1 / (1 - 0.25)) < 1e-9 and V[1] == 0, 'V(0) = 1 + 0.5·0.5·V(0).'
+V2, pol = value_iteration(P, Rw, 0.5, 1e-12)
+assert abs(V2[0] - V[0]) < 1e-9, 'With one action, both methods agree.'` },
         ],
       },
     },

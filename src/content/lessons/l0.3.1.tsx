@@ -142,6 +142,19 @@ for m, c in [(2, 1), (1.5, 1.5)]:
       answer: { kind: "numeric", value: 0.5, tolerance: 1e-09 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`pts = [(0, 1), (1, 2), (2, 2), (3, 5)]
+for m, c in [(1, 1), (1.2, 0.7)]:
+    print(m, c, round(sum((y - (m * x + c)) ** 2 for x, y in pts), 2))`}</Code>
+          <p>Two lines guessed by eye, scored by the sum of squared errors. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1 1 2\n1.2 0.7 1.8", "1 1 2\n1.2 0.7 2.2", "1 1 1.8\n1.2 0.7 2", "1 1 4\n1.2 0.7 1.8"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -164,6 +177,57 @@ for m, c in [(2, 1), (1.5, 1.5)]:
         tests: [
           { name: "grid", code: `pts = [(0, 1), (1, 3), (2, 5), (3, 7)]
 assert grid_fit(pts, [0, 1, 2, 3], [-1, 0, 1, 2]) == (2, 1), 'y = 2x + 1 fits exactly.'` },
+          { name: "noisy", code: `pts = [(0, 0.1), (1, 0.9), (2, 2.2), (3, 2.9)]
+assert grid_fit(pts, [0.5, 1, 1.5], [-0.5, 0, 0.5]) == (1, 0), 'With noise, pick the pair with the least squared error.'` },
+          { name: "single", code: `assert grid_fit([(1, 1)], [3], [7]) == (3, 7) and grid_fit([(0, 0), (1, 1)], [2, 1], [0]) == (1, 0), 'Return a pair from the lists you were given.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Replace the eye with gradient descent. Write <C>closed_form(pts)</C>, the least-squares (m, c) from the centred formulas, and <C>gradient_fit(pts, lr, steps)</C>, which starts at m = c = 0 and repeats m ← m − lr·∂L/∂m, c ← c − lr·∂L/∂c for the mean squared error L = (1/n) Σ (mx + c − y)², updating both from the same gradient, and returns (m, c).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def closed_form(pts):
+    return (0.0, 0.0)
+
+def gradient_fit(pts, lr, steps):
+    return (0.0, 0.0)
+`,
+        solution: `def closed_form(pts):
+    n = len(pts)
+    mx = sum(x for x, _ in pts) / n
+    my = sum(y for _, y in pts) / n
+    m = sum((x - mx) * (y - my) for x, y in pts) / sum((x - mx) ** 2 for x, _ in pts)
+    return (m, my - m * mx)
+
+def gradient_fit(pts, lr, steps):
+    n = len(pts)
+    m = c = 0.0
+    for _ in range(steps):
+        gm = sum(2 * (m * x + c - y) * x for x, y in pts) / n
+        gc = sum(2 * (m * x + c - y) for x, y in pts) / n
+        m, c = m - lr * gm, c - lr * gc
+    return (m, c)
+`,
+        tests: [
+          { name: "closed", code: `m, c = closed_form([(0, 1), (1, 2), (2, 2), (3, 5)])
+assert abs(m - 1.2) < 1e-12 and abs(c - 0.7) < 1e-12, 'The best line is y = 1.2x + 0.7.'` },
+          { name: "one step", code: `m, c = gradient_fit([(1, 2), (3, 4)], 0.1, 1)
+assert abs(m - 1.4) < 1e-12 and abs(c - 0.6) < 1e-12, 'From 0: ∂L/∂m = −14, ∂L/∂c = −6.'` },
+          { name: "converge", code: `pts = [(0, 1), (1, 2), (2, 2), (3, 5)]
+m, c = gradient_fit(pts, 0.05, 5000)
+M, C = closed_form(pts)
+assert abs(m - M) < 1e-6 and abs(c - C) < 1e-6, 'Gradient descent reaches the closed-form answer.'` },
+          { name: "diverge", code: `m, c = gradient_fit([(0, 1), (1, 2), (2, 2), (3, 5)], 0.5, 50)
+assert abs(m) > 1e6, 'Too large a step makes it blow up.'` },
         ],
       },
     },

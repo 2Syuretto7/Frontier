@@ -143,6 +143,22 @@ print(round(d(sig, 6), 4), round(d(relu, 6), 4))`}</Code>
       answer: { kind: "choice", options: ["0.0025 1.0", "0.25 1.0", "0.0025 0.0", "1.0 1.0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+s = lambda z: 1 / (1 + math.exp(-z))
+g = 1.0
+for _ in range(10):
+    g *= s(0) * (1 - s(0))
+print(g, 0.25 ** 10, 1.0 ** 10)`}</Code>
+          <p>Ten sigmoid layers multiply their slopes; ReLU&rsquo;s slope is 1. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["9.5367431640625e-07 9.5367431640625e-07 1.0", "0.25 9.5367431640625e-07 1.0", "9.5367431640625e-07 0.25 1.0", "2.5 2.5 10.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -170,6 +186,72 @@ def xor_net(x1, x2):
 `,
         tests: [
           { name: "xor", code: `assert [xor_net(a, b) for a, b in [(0, 0), (0, 1), (1, 0), (1, 1)]] == [0, 1, 1, 0], 'A hidden layer makes XOR possible.'` },
+          { name: "step", code: `assert step(0) == 0 and step(0.1) == 1 and step(-3) == 0, 'step fires only for z > 0.'` },
+          { name: "ints", code: `assert all(isinstance(xor_net(a, b), int) for a in (0, 1) for b in (0, 1)), 'The network outputs 0 or 1.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Backpropagation by hand for a network with one hidden layer of tanh units: h = tanh(W₁x + b₁), ŷ = W₂·h + b₂ (one output), loss L = ½(ŷ − y)². Write <C>forward(x, W1, b1, W2, b2)</C>, returning (h, ŷ), and <C>backward(x, y, W1, b1, W2, b2)</C>, returning the gradients (dW1, db1, dW2, db2) with the same shapes as the parameters (lists and lists of lists), using the chain rule and tanh′(z) = 1 − tanh²(z). No NumPy.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def forward(x, W1, b1, W2, b2):
+    return [0.0] * len(b1), 0.0
+
+def backward(x, y, W1, b1, W2, b2):
+    return [[0.0] * len(x) for _ in b1], [0.0] * len(b1), [0.0] * len(b1), 0.0
+`,
+        solution: `import math
+
+def forward(x, W1, b1, W2, b2):
+    h = [math.tanh(sum(w * xi for w, xi in zip(row, x)) + b) for row, b in zip(W1, b1)]
+    return h, sum(w * hi for w, hi in zip(W2, h)) + b2
+
+def backward(x, y, W1, b1, W2, b2):
+    h, yhat = forward(x, W1, b1, W2, b2)
+    d = yhat - y
+    dW2 = [d * hi for hi in h]
+    db2 = d
+    dz = [d * w * (1 - hi * hi) for w, hi in zip(W2, h)]
+    dW1 = [[g * xi for xi in x] for g in dz]
+    return dW1, dz, dW2, db2
+`,
+        tests: [
+          { name: "forward", code: `h, y = forward([1.0, 2.0], [[0.0, 0.0], [1.0, 0.0]], [0.0, 0.0], [2.0, 3.0], 0.5)
+import math
+assert h[0] == 0 and abs(h[1] - math.tanh(1)) < 1e-12 and abs(y - (3 * math.tanh(1) + 0.5)) < 1e-12` },
+          { name: "output layer", code: `dW1, db1, dW2, db2 = backward([1.0, 2.0], 1.0, [[0.0, 0.0], [1.0, 0.0]], [0.0, 0.0], [2.0, 3.0], 0.5)
+import math
+d = 3 * math.tanh(1) + 0.5 - 1
+assert abs(db2 - d) < 1e-12 and abs(dW2[1] - d * math.tanh(1)) < 1e-12 and dW2[0] == 0, 'dL/dW₂ = (ŷ − y)·h.'` },
+          { name: "finite differences", code: `import random, copy
+random.seed(6)
+for _ in range(10):
+    x = [random.uniform(-1, 1) for _ in range(3)]; y = random.uniform(-1, 1)
+    W1 = [[random.uniform(-1, 1) for _ in range(3)] for _ in range(4)]; b1 = [random.uniform(-1, 1) for _ in range(4)]
+    W2 = [random.uniform(-1, 1) for _ in range(4)]; b2 = random.uniform(-1, 1)
+    L = lambda W1, b1, W2, b2: 0.5 * (forward(x, W1, b1, W2, b2)[1] - y) ** 2
+    dW1, db1, dW2, db2 = backward(x, y, W1, b1, W2, b2)
+    e = 1e-6
+    for i in range(4):
+        for j in range(3):
+            P = copy.deepcopy(W1); P[i][j] += e; M = copy.deepcopy(W1); M[i][j] -= e
+            assert abs((L(P, b1, W2, b2) - L(M, b1, W2, b2)) / (2 * e) - dW1[i][j]) < 1e-7, 'dW1 disagrees with finite differences.'
+        P = b1[:]; P[i] += e; M = b1[:]; M[i] -= e
+        assert abs((L(W1, P, W2, b2) - L(W1, M, W2, b2)) / (2 * e) - db1[i]) < 1e-7, 'db1 disagrees.'
+        P = W2[:]; P[i] += e; M = W2[:]; M[i] -= e
+        assert abs((L(W1, b1, P, b2) - L(W1, b1, M, b2)) / (2 * e) - dW2[i]) < 1e-7, 'dW2 disagrees.'
+    assert abs((L(W1, b1, W2, b2 + e) - L(W1, b1, W2, b2 - e)) / (2 * e) - db2) < 1e-7` },
+          { name: "shapes", code: `dW1, db1, dW2, db2 = backward([1.0, 2.0, 3.0], 0.0, [[0.1] * 3] * 2, [0.0] * 2, [1.0] * 2, 0.0)
+assert len(dW1) == 2 and all(len(r) == 3 for r in dW1) and len(db1) == 2 and len(dW2) == 2 and isinstance(db2, float)` },
         ],
       },
     },

@@ -153,6 +153,21 @@ print(np.round(w, 2))`}</Code>
       answer: { kind: "choice", options: ["[0.42 0.16 0.42]", "[0.33 0.33 0.33]", "[0.5 0.  0.5]", "[1. 0. 1.]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+scores = [2.0, 1.0, 0.0]
+e = [math.exp(s) for s in scores]
+w = [x / sum(e) for x in e]
+print([round(x, 3) for x in w], round(sum(w), 6))`}</Code>
+          <p>Softmax turns attention scores into weights. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0.665, 0.245, 0.09] 1.0", "[0.667, 0.333, 0.0] 1.0", "[0.5, 0.333, 0.167] 1.0", "[0.665, 0.245, 0.09] 3.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -186,6 +201,66 @@ assert np.allclose(attention(Q, K, V), [[2.0], [2.0]]), 'Equal scores give the a
 Q = np.array([[100.0, 0.0]]); K = np.array([[100.0, 0.0], [0.0, 0.0]]); V = np.array([[1.0, 0.0], [0.0, 1.0]])
 out = attention(Q, K, V)
 assert np.allclose(out, [[1.0, 0.0]]) and not np.isnan(out).any(), 'Subtract the row maximum to avoid overflow.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>causal_attention(Q, K, V)</C> in pure Python for lists of n vectors: position i attends only to positions j ≤ i, with scores qᵢ·kⱼ/√d and a numerically stable softmax (subtract the largest score first), returning the n output vectors. Then write <C>positional_encoding(n, d)</C>, the sinusoidal encoding with PE[pos][2i] = sin(pos/10000^(2i/d)) and PE[pos][2i+1] = cos(pos/10000^(2i/d)) for even d.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def causal_attention(Q, K, V):
+    return [list(v) for v in V]
+
+def positional_encoding(n, d):
+    return [[0.0] * d for _ in range(n)]
+`,
+        solution: `import math
+
+def causal_attention(Q, K, V):
+    d = len(Q[0])
+    out = []
+    for i, q in enumerate(Q):
+        s = [sum(a * b for a, b in zip(q, K[j])) / math.sqrt(d) for j in range(i + 1)]
+        m = max(s)
+        e = [math.exp(x - m) for x in s]
+        z = sum(e)
+        out.append([sum(e[j] * V[j][c] for j in range(i + 1)) / z for c in range(len(V[0]))])
+    return out
+
+def positional_encoding(n, d):
+    pe = [[0.0] * d for _ in range(n)]
+    for pos in range(n):
+        for i in range(d // 2):
+            ang = pos / 10000 ** (2 * i / d)
+            pe[pos][2 * i] = math.sin(ang)
+            pe[pos][2 * i + 1] = math.cos(ang)
+    return pe
+`,
+        tests: [
+          { name: "first", code: `out = causal_attention([[1.0, 0.0], [0.0, 1.0]], [[1.0, 0.0], [0.0, 1.0]], [[5.0, 6.0], [7.0, 8.0]])
+assert out[0] == [5.0, 6.0], 'Position 0 can only see itself.'` },
+          { name: "numpy", code: `import numpy as np
+rng = np.random.default_rng(7)
+Q, K, V = rng.normal(size=(6, 4)), rng.normal(size=(6, 4)), rng.normal(size=(6, 3))
+S = Q @ K.T / 2.0
+S[np.triu_indices(6, 1)] = -np.inf
+A = np.exp(S - S.max(axis=1, keepdims=True)); A /= A.sum(axis=1, keepdims=True)
+assert np.allclose(causal_attention(Q.tolist(), K.tolist(), V.tolist()), A @ V), 'Agree with the matrix formula.'` },
+          { name: "stable", code: `out = causal_attention([[1000.0], [1000.0]], [[1000.0], [999.0]], [[1.0], [3.0]])
+import math
+assert abs(out[1][0] - (1 + 3 * math.exp(-1000)) / (1 + math.exp(-1000))) < 1e-9 and out[0] == [1.0], 'Huge scores must not overflow.'` },
+          { name: "positions", code: `import math
+pe = positional_encoding(50, 8)
+assert pe[0] == [0.0, 1.0] * 4 and abs(pe[1][0] - math.sin(1)) < 1e-12 and abs(pe[3][5] - math.cos(3 / 10000 ** (4 / 8))) < 1e-12, 'sin on even columns, cos on odd.'
+assert all(abs(pe[p][2 * i] ** 2 + pe[p][2 * i + 1] ** 2 - 1) < 1e-12 for p in range(50) for i in range(4))` },
         ],
       },
     },
