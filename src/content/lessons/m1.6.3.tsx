@@ -1,0 +1,183 @@
+import { M } from "@/components/Math";
+import { Definition, Example, Remark } from "@/components/lesson/Blocks";
+import { HasseViz } from "@/components/viz/HasseViz";
+import type { LessonContent } from "@/lib/types";
+
+export const lesson: LessonContent = {
+  id: "m1.6.3",
+  minutes: 60,
+  links: {
+    revisits: ["m1.4.2", "m1.5.3"],
+  },
+
+  puzzle: (
+    <>
+      <p>
+        To get dressed you must put on socks before shoes, and a shirt before a tie. But there is no rule about socks and the
+        shirt: either can come first. Some tasks must be done in order; others are simply not comparable.
+      </p>
+      <p>
+        By contrast, any two whole numbers can be compared: one is smaller, or they are equal. What separates an ordering in
+        which everything is comparable from one in which some pairs are not, and why is the second kind so common?
+      </p>
+    </>
+  ),
+
+  intuition: (
+    <>
+      <p>
+        &ldquo;Before&rdquo; on the dressing tasks, &ldquo;is a subset of&rdquo; on sets, and &ldquo;divides&rdquo; on the
+        positive integers all share three properties: everything comes before or equals itself, two different things cannot
+        each come before the other, and before passes along chains. But in each, some pairs are incomparable.
+      </p>
+      <p>
+        Below are the divisors of a number, ordered by divisibility. Each line goes up from a number to a multiple of it, with
+        nothing in between. Click a number to see which others it can be compared with. Which choice of n gives a single
+        chain?
+      </p>
+      <HasseViz />
+    </>
+  ),
+
+  theory: (
+    <>
+      <Definition title="partial order">
+        <p>
+          A <strong>partial order</strong> on a set P is a relation <M>{"\\preceq"}</M> that is reflexive, antisymmetric and
+          transitive. The pair <M>{"(P, \\preceq)"}</M> is a <strong>partially ordered set</strong>, or{" "}
+          <strong>poset</strong>. Elements a and b are <strong>comparable</strong> if <M>{"a \\preceq b"}</M> or{" "}
+          <M>{"b \\preceq a"}</M>, and <strong>incomparable</strong> otherwise.
+        </p>
+      </Definition>
+
+      <Definition title="total order">
+        <p>
+          A partial order is a <strong>total order</strong> (or linear order) if every two elements are comparable. A{" "}
+          <strong>chain</strong> in a poset is a subset on which the order is total.
+        </p>
+      </Definition>
+
+      <Example title="three posets">
+        <ul>
+          <li><M>{"(\\mathbb{R}, \\le)"}</M> is a total order.</li>
+          <li>
+            The subsets of a set S under <M>{"\\subseteq"}</M> form a poset; <M>{"\\{1\\}"}</M> and <M>{"\\{2\\}"}</M> are
+            incomparable whenever <M>{"S"}</M> contains 1 and 2.
+          </li>
+          <li>
+            The positive integers under divisibility form a poset: antisymmetry holds because if <M>{"a \\mid b"}</M> and{" "}
+            <M>{"b \\mid a"}</M> with both positive, then <M>{"a \\le b \\le a"}</M>. On all the integers it fails, since{" "}
+            <M>{"2 \\mid -2"}</M> and <M>{"-2 \\mid 2"}</M>.
+          </li>
+        </ul>
+      </Example>
+
+      <Definition title="least, greatest, minimal, maximal">
+        <p>
+          In a poset, a <strong>least</strong> element lies below every element, while a <strong>minimal</strong> element has
+          nothing strictly below it. In a total order the two notions agree, but not in general: in{" "}
+          <M>{"\\{2, 3, 4, 6\\}"}</M> under divisibility, 2 and 3 are both minimal, and there is no least element.
+        </p>
+      </Definition>
+
+      <Remark title="Hasse diagrams">
+        <p>
+          A finite poset can be drawn by putting a above b and joining them with a line when <M>{"b \\prec a"}</M> with nothing
+          strictly in between. The rest of the order is recovered by transitivity: going upwards along lines. Such pictures are
+          named after the number theorist Helmut Hasse.
+        </p>
+      </Remark>
+
+      <Example title="well-orders">
+        <p>
+          A total order is a <strong>well-order</strong> if every non-empty subset has a least element. By the well-ordering
+          principle, <M>{"(\\mathbb{N}, \\le)"}</M> is one; <M>{"(\\mathbb{Z}, \\le)"}</M> and <M>{"([0, 1], \\le)"}</M> are
+          not. Well-orders are exactly the orders that support proof by induction, and their study leads to the ordinals of set
+          theory.
+        </p>
+      </Example>
+    </>
+  ),
+
+  practice: [
+    {
+      key: "is-partial",
+      rung: "check",
+      prompt: <p>Which of these are partial orders?</p>,
+      answer: {
+        kind: "choice",
+        options: ["≤ on the real numbers", "< on the real numbers", "⊆ on the subsets of {1, 2}", "divides on the positive integers"],
+        correct: [0, 2, 3],
+      },
+    },
+    {
+      key: "total",
+      rung: "check",
+      prompt: <p>Which of these are total orders?</p>,
+      answer: {
+        kind: "choice",
+        options: ["≤ on the integers", "⊆ on the subsets of {1, 2}", "divides on {1, 2, 4, 8}", "divides on {1, 2, 3, 6}"],
+        correct: [0, 2],
+      },
+    },
+    {
+      key: "incomparable",
+      rung: "apply",
+      prompt: <p>Under divisibility on the divisors of 36, how many divisors are incomparable with 4?</p>,
+      answer: { kind: "numeric", value: 4 },
+    },
+    {
+      key: "lines",
+      rung: "apply",
+      prompt: <p>How many lines does the Hasse diagram of the divisors of 30 have?</p>,
+      answer: { kind: "numeric", value: 12 },
+    },
+    {
+      key: "minimal",
+      rung: "apply",
+      prompt: <p>In <M>{"\\{2, 3, 4, 5, 6, 8, 9, 10\\}"}</M> under divisibility, how many minimal elements are there?</p>,
+      answer: { kind: "numeric", value: 3 },
+    },
+    {
+      key: "unique-least",
+      rung: "prove",
+      prompt: <p>Prove that a poset has at most one least element.</p>,
+      answer: {
+        kind: "written",
+        rubric: [
+          "Supposes a and b are both least elements.",
+          "Uses that a is least to get a ⪯ b, and that b is least to get b ⪯ a.",
+          "Applies antisymmetry to conclude a = b.",
+        ],
+      },
+    },
+    {
+      key: "finite-minimal",
+      rung: "stretch",
+      prompt: (
+        <p>
+          Prove that every non-empty finite poset has a minimal element. Then show by example that it need not have a least
+          element, and that an infinite poset need not have a minimal element.
+        </p>
+      ),
+      answer: {
+        kind: "written",
+        rubric: [
+          "Starts from any element and repeatedly steps to a strictly smaller one if possible.",
+          "Argues the process cannot repeat an element (by antisymmetry and transitivity) and so stops, since the poset is finite.",
+          "Gives an example with two minimal elements and no least one, such as {2, 3} under divisibility.",
+          "Gives an infinite example with no minimal element, such as the integers under ≤.",
+        ],
+      },
+    },
+  ],
+
+  teachBack:
+    "Explain to a friend the difference between a partial order and a total order, using getting dressed and the divisors of 12 as examples.",
+
+  glimpse: (
+    <p>
+      This completes the chapter on relations. The next chapter shows that a function is a special kind of relation. The order axioms of the real numbers open Real Analysis, and partial orders reappear in Data Structures and Algorithms as the dependencies that a topological sort must respect.
+    </p>
+  ),
+};
