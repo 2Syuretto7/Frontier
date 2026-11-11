@@ -890,3 +890,113 @@ label { font-size: 13px; font-weight: 500; color: var(--text); }
 .ml-stat { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 10px; }
 .ml-stat b { display: block; font-family: var(--font-mono); font-size: 16px; font-weight: 600; color: var(--text); }
 .ml-stat span { font-size: 12px; color: var(--text-muted); }
+
+/* Practice terminal */
+.term-wrap { display: grid; gap: 12px; }
+.term-wrap.has-tree { grid-template-columns: minmax(0, 3fr) minmax(0, 1fr); }
+@media (max-width: 640px) { .term-wrap.has-tree { grid-template-columns: minmax(0, 1fr); } }
+.term { font-family: var(--font-mono); font-size: 13px; line-height: 1.55; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; max-height: 420px; overflow-y: auto; overflow-wrap: anywhere; }
+.term-prompt { color: var(--accent); font-weight: 600; }
+.term-out { white-space: pre-wrap; color: var(--text); }
+.term-err { color: var(--danger); }
+.term-dim { color: var(--text-faint); }
+.term-stages { border-left: 2px solid var(--border-strong); padding-left: 10px; margin: 4px 0; }
+.term-input { display: flex; gap: 8px; align-items: center; margin-top: 4px; }
+.term-input input { flex: 1; min-width: 0; font: inherit; color: var(--text); background: transparent; border: 0; border-bottom: 1px dashed var(--border-strong); padding: 2px 0; outline: none; }
+.term-input input:focus { border-bottom-color: var(--accent); }
+.term-btn-code { font-family: var(--font-mono); font-size: 12.5px; margin-left: 6px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.term-tree { list-style: none; margin: 0; padding: 8px 10px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.7; border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-muted); }
+.term-tree li.is-on { color: var(--accent); font-weight: 600; }
+.btn.term-run { height: auto; min-height: 40px; white-space: normal; text-align: left; max-width: 100%; padding: 6px 14px; }
+.ssh-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.ssh-party { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 12px; }
+.ssh-party h4 { margin: 0 0 4px; font-size: 13px; }
+.ssh-party ul { margin: 0; padding-left: 16px; font-family: var(--font-mono); font-size: 11.5px; color: var(--text-muted); overflow-wrap: anywhere; }
+.ssh-msgs { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 6px; }
+.ssh-msg { font-size: 13.5px; padding: 6px 10px; border: 1px solid var(--border); border-radius: var(--radius-md); max-width: 85%; color: var(--text-muted); }
+.ssh-msg.is-you { justify-self: start; }
+.ssh-msg.is-server { justify-self: end; text-align: right; }
+.ssh-msg.is-on { border-color: var(--accent); color: var(--text); background: var(--accent-soft); }
+.ssh-msg.is-alarm { border-color: var(--danger); color: var(--danger); background: var(--danger-soft); font-weight: 600; }
+.ssh-who { display: block; font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); }
+/* Git visualisations */
+.git-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 640px) { .git-cols { grid-template-columns: minmax(0, 1fr); } }
+.git-col { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 10px; min-width: 0; }
+.git-col h4 { margin: 0 0 6px; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-faint); font-weight: 500; }
+.git-file { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 4px; font-family: var(--font-mono); font-size: 13px; padding: 4px 6px; border-radius: var(--radius); border-left: 3px solid transparent; }
+.git-file small { color: var(--text-faint); }
+.git-file.is-modified, .git-file.is-staged { border-left-color: var(--accent); background: var(--accent-soft); }
+.git-file.is-modified { border-left-color: var(--danger); background: var(--danger-soft); }
+.git-acts { display: inline-flex; gap: 2px; }
+.git-acts .seg { font-size: 12px; padding: 2px 6px; height: auto; }
+.git-log { list-style: none; margin: 0; padding: 0; font-size: 13px; display: grid; gap: 4px; }
+.git-log code { font-family: var(--font-mono); color: var(--accent); }
+.git-head { font-family: var(--font-mono); font-size: 11px; color: var(--success); font-weight: 600; }
+.git-status { margin: 12px 0 0; font-family: var(--font-mono); font-size: 12.5px; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.git-edge { fill: none; stroke: var(--border-strong); stroke-width: 2; }
+.git-node { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
+.git-node.is-merge { fill: var(--accent-soft); }
+.git-node-text { font-family: var(--font-mono); font-size: 12px; fill: var(--text); }
+.git-tag { fill: var(--bg-subtle); stroke: var(--border-strong); }
+.git-tag.is-head { fill: var(--accent); stroke: var(--accent); }
+.git-tag-text { font-family: var(--font-mono); font-size: 11px; fill: var(--text); }
+.git-tag.is-head + .git-tag-text { fill: var(--accent-text); }
+.pr-card { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; }
+.pr-title { font-weight: 600; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.pr-badge { font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--success-soft); color: var(--success); }
+.pr-badge.is-merged { background: var(--accent-soft); color: var(--accent); }
+.pr-rows { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 6px 12px; margin: 10px 0 0; font-size: 13px; }
+.pr-rows dt { color: var(--text-faint); font-size: 12px; }
+.pr-rows dd { margin: 0; font-weight: 500; }
+.pr-rows dd.is-bad { color: var(--danger); }
+.pr-rows dd.is-good { color: var(--success); }
+.pr-diff { margin: 10px 0 0; font-family: var(--font-mono); font-size: 12.5px; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 6px 0; overflow-x: auto; }
+.pr-diff span { display: block; padding: 0 10px; white-space: pre; }
+.pr-add { background: var(--success-soft); }
+.pr-add.is-commented { outline: 2px solid var(--danger); outline-offset: -2px; }
+.pr-ctx { color: var(--text-muted); }
+.pr-comment { margin-top: 8px; font-size: 13.5px; border-left: 3px solid var(--border-strong); padding: 4px 10px; color: var(--text-muted); display: grid; gap: 4px; }
+.bisect-row { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; }
+.bisect-cell { font-family: var(--font-mono); font-size: 12.5px; text-align: center; padding: 6px 0; border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-faint); }
+.bisect-cell.is-open { color: var(--text); border-color: var(--border-strong); }
+.bisect-cell.is-good { background: var(--success-soft); color: var(--success); border-color: var(--success); }
+.bisect-cell.is-bad { background: var(--danger-soft); color: var(--danger); border-color: var(--danger); }
+.bisect-cell.is-mid { outline: 2px solid var(--accent); outline-offset: 1px; }
+.bisect-cell.is-found { font-weight: 700; outline: 2px solid var(--danger); outline-offset: 1px; }
+.obj-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 10px; font-size: 13px; }
+.obj-names, .obj-objs { display: grid; gap: 6px; align-content: start; }
+.obj-name { font-family: var(--font-mono); padding: 2px 4px; border-radius: var(--radius); }
+.obj-name.is-new, .obj-box.is-new { background: var(--accent-soft); }
+.obj-box { border: 1px solid var(--border-strong); border-radius: var(--radius-md); padding: 4px 8px; overflow-wrap: anywhere; }
+.obj-box small { color: var(--text-faint); }
+.obj-ref { font-family: var(--font-mono); font-weight: 600; font-size: 12px; }
+.obj-ref.r1 { color: var(--accent); }
+.obj-ref.r2 { color: var(--danger); }
+.obj-ref.r3 { color: var(--success); }
+.obj-ref.r4 { color: var(--text-muted); }
+.imp-path { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
+.imp-path li { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 10px; }
+.imp-path li.is-hit { border-color: var(--accent); background: var(--accent-soft); }
+.imp-path li.is-skip { opacity: 0.45; }
+.imp-dir { font-size: 13px; overflow-wrap: anywhere; }
+.imp-dir code { font-family: var(--font-mono); font-size: 12px; }
+.imp-dir small { color: var(--text-faint); margin-left: 4px; }
+.imp-mods { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.segmented .seg code { font-family: var(--font-mono); font-size: 12px; }
+.env-projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.env-proj { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px; display: grid; gap: 6px; justify-items: start; }
+.env-proj small { color: var(--text-faint); font-family: var(--font-mono); }
+.env-status { font-size: 13px; color: var(--text-faint); }
+.env-status.is-ok { color: var(--success); font-weight: 600; }
+.env-status.is-bad { color: var(--danger); font-weight: 600; }
+.env-envs { display: grid; gap: 6px; margin-top: 12px; }
+.env-env { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-size: 13px; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 6px 10px; }
+.env-env code { font-family: var(--font-mono); font-size: 12px; overflow-wrap: anywhere; }
+.lock-releases { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 6px; }
+.lock-releases li { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 6px 8px; display: grid; font-size: 12.5px; }
+.lock-releases li code { font-family: var(--font-mono); font-weight: 600; }
+.lock-releases li small { color: var(--text-faint); }
+.lock-releases li.is-future { opacity: 0.35; border-style: dashed; }
+.lock-releases li.is-breaking code { color: var(--danger); }
+.lock-releases li.is-chosen { border-color: var(--accent); background: var(--accent-soft); }
