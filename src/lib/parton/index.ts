@@ -4,6 +4,7 @@ import { query } from "@/lib/db";
 import { EXERCISES, GRAPH, LESSON_BY_ID, exerciseId, type ExerciseRef } from "@/lib/curriculum";
 import { PartonError, partonConnected, structured } from "./claude";
 import { toPlainText } from "./plaintext";
+import { parseCodeSubmission } from "@/lib/check";
 import {
   CHECK_SCHEMA,
   CHECK_SYSTEM,
@@ -47,7 +48,21 @@ function exerciseText(ref: ExerciseRef): string {
   if (a.kind === "choice") lines.push(`Options: ${a.options.map((o, i) => `(${String.fromCharCode(97 + i)}) ${o}`).join("; ")}`);
   if (a.kind === "expression") lines.push(`The answer is an expression in ${a.variables.join(", ")}.`);
   if (a.kind === "written") lines.push("The learner writes a full proof or argument.");
+  if (a.kind === "code") {
+    lines.push(`The learner writes Python that runs in the browser and must pass these checks: ${a.tests.map((t) => t.name).join("; ")}.`);
+    lines.push(`The editor starts with:\n${a.starter}`);
+    if (a.setup) lines.push(`Before their code runs, this setup runs:\n${a.setup}`);
+  }
   return lines.join("\n");
+}
+
+/** One past attempt as Parton reads it. Code attempts show the program and the checks that failed. */
+function attemptText(ref: ExerciseRef, response: string): string {
+  if (ref.exercise.answer.kind !== "code") return `"${response.slice(0, 600)}"`;
+  const sub = parseCodeSubmission(response);
+  if (!sub) return `"${response.slice(0, 1500)}"`;
+  const failed = sub.results.filter((r) => !r.passed).map((r) => `${r.name}${r.message ? ` (${r.message})` : ""}`);
+  return `program:\n${sub.source.slice(0, 1500)}\nfailed checks: ${failed.join("; ") || "none"}`;
 }
 
 export function lessonBrief(lessonId: string): string {
@@ -146,7 +161,10 @@ export async function conversation(lessonId: string): Promise<PartonMessage[]> {
 
 export type AskResult = { ok: true; question: PartonMessage; reply: PartonMessage } | { ok: false; error: string; offline?: boolean };
 
-export async function askParton(lessonId: string, exercise: string | null, message: string): Promise<AskResult> {
+/** What is in the learner's code editor when they ask, for code exercises. */
+export type EditorSnapshot = { source: string; error: string | null; output: string };
+
+export async function askParton(lessonId: string, exercise: string | null, message: string, editor: EditorSnapshot | null = null): Promise<AskResult> {
   if (!partonConnected()) return { ok: false, offline: true, error: "Parton is not connected yet." };
   const ref = exercise ? EXERCISES.get(exercise) : undefined;
   if (exercise && (!ref || ref.lessonId !== lessonId)) return { ok: false, error: "That question isn't part of this lesson." };
@@ -172,9 +190,15 @@ export async function askParton(lessonId: string, exercise: string | null, messa
     context.push(`The learner is asking about ${exerciseLabel(ref)}.`);
     context.push(state?.solved ? "They have already solved it; they may want to understand it better. Still do not state the answer." : "They have not solved it yet.");
     if (attempts.length) {
-      context.push(`Their recent attempts, newest first:\n${attempts.map((a) => `- "${a.response.slice(0, 600)}" (${a.correct ? "correct" : "not correct"})`).join("\n")}`);
+      context.push(`Their recent attempts, newest first:\n${attempts.map((a) => `- ${attemptText(ref, a.response)} (${a.correct ? "correct" : "not correct"})`).join("\n")}`);
       const misses = attempts.filter((a) => !a.correct).length;
       if (misses >= 3) context.push("They have missed it several times. Look for the misunderstanding behind the wrong answers, and name it in your notes.");
+    }
+    if (editor && ref.exercise.answer.kind === "code") {
+      context.push(`Their code in the editor right now:\n<<<\n${editor.source}\n>>>`);
+      if (editor.error) context.push(`Their last run stopped with this error:\n${editor.error}`);
+      else if (editor.output) context.push(`Their last run printed:\n${editor.output}`);
+      context.push("Point to a line of their code and ask a question about it. Never write the corrected code for them.");
     }
     context.push(`This is hint number ${previousHints + 1} on this question. Allowed level: ${RUNGS[rung - 1]} Go no further than this level.`);
   } else {

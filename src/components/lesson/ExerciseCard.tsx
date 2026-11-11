@@ -1,17 +1,19 @@
 "use client";
 
 import { useState, useTransition, type ReactNode } from "react";
-import { checkExerciseAction } from "@/app/actions";
+import { checkExerciseAction, codeTestsAction } from "@/app/actions";
+import { CodeRunner, type RunnerApi } from "@/components/code/CodeRunner";
 import { Pill } from "@/components/ui/Pill";
 import { Check, Close, Spark } from "@/components/ui/Icons";
 
 export type ExerciseView = {
   id: string;
   rung: "check" | "apply" | "prove" | "stretch";
-  kind: "numeric" | "expression" | "choice" | "written";
+  kind: "numeric" | "expression" | "choice" | "written" | "code";
   options?: string[];
   multiple?: boolean;
   variables?: string[];
+  code?: { starter: string; setup?: string; files?: Record<string, string>; checks: number };
   solved: boolean;
   response: string | null;
   verdict: "accepted" | "revise" | "pending" | null;
@@ -54,10 +56,12 @@ export function ExerciseCard({ view, context, children, index }: {
   const [pending, start] = useTransition();
   const picked = value.split(",").filter(Boolean).map(Number);
 
-  const submit = () =>
+  const [checking, setChecking] = useState(false);
+
+  const submit = (input: string = value) =>
     start(async () => {
       const attempt = tries + 1;
-      const res = await checkExerciseAction(view.id, value, context, attempt);
+      const res = await checkExerciseAction(view.id, input, context, attempt);
       if (res.message && !res.correct) { setStatus({ tone: "info", text: res.message }); return; }
       setTries(attempt);
       if (res.verdict) {
@@ -67,6 +71,13 @@ export function ExerciseCard({ view, context, children, index }: {
       } else if (res.correct) {
         setSolved(true);
         setStatus({ tone: "right", text: attempt === 1 ? "Correct." : "Correct, after another look. That counts." });
+      } else if (view.kind === "code") {
+        setStatus({
+          tone: "wrong",
+          text: attempt >= 2 && askable
+            ? "Not every check passed yet. Read the failed checks above, or ask Parton for a hint."
+            : "Not every check passed yet. Read the failed checks above, change your code and check again.",
+        });
       } else {
         setStatus({
           tone: "wrong",
@@ -84,7 +95,23 @@ export function ExerciseCard({ view, context, children, index }: {
     setValue([...set].sort((a, b) => a - b).join(","));
   };
 
-  const locked = solved && view.kind !== "written";
+  const checkCode = async (api: RunnerApi) => {
+    setChecking(true);
+    try {
+      const tests = await codeTestsAction(view.id);
+      if (!tests) { setStatus({ tone: "info", text: "This exercise has no checks." }); return; }
+      const result = await api.runChecks(tests);
+      if (!result || result.stopped === "user") return;
+      submit(JSON.stringify({ source: api.source, results: result.tests ?? [] }));
+    } catch {
+      setStatus({ tone: "info", text: "Could not fetch the checks. Check your connection and try again." });
+    } finally {
+      setChecking(false);
+    }
+  };
+
+  const locked = solved && view.kind !== "written" && view.kind !== "code";
+  const starter = view.code?.starter ?? "";
 
   return (
     <div className={`exercise ${solved ? "is-solved" : ""}`}>
@@ -93,12 +120,37 @@ export function ExerciseCard({ view, context, children, index }: {
         <span className={`rung rung-${view.rung}`}>{RUNG[view.rung]}</span>
         {view.rung === "stretch" && <span>Optional</span>}
         {solved && status?.tone === "right" && <Pill tone="success" icon="check">{view.kind === "written" ? "Accepted" : "Solved"}</Pill>}
-        {pending && <Pill tone="accent" icon="spin">{view.kind === "written" ? "Reading" : "Checking"}</Pill>}
+        {(pending || checking) && <Pill tone="accent" icon="spin">{view.kind === "written" ? "Reading" : "Checking"}</Pill>}
       </p>
       <div className="exercise-body">
       <div className="exercise-prompt">{children}</div>
 
-      <form className="exercise-form" onSubmit={(e) => { e.preventDefault(); if (!pending && value.trim()) submit(); }}>
+      {view.kind === "code" && view.code && (
+        <CodeRunner
+          initial={fresh ? starter : view.response ?? starter}
+          original={starter}
+          setup={view.code.setup}
+          files={view.code.files}
+          draftKey={context === "lesson" ? `frontier:code:${view.id}` : undefined}
+          workspaceKey={context === "lesson" ? view.id : undefined}
+          brief={children}
+          label={index !== undefined ? `Code editor for practice question ${index}` : "Code editor"}
+          actions={(api) => (
+            <>
+              <button type="button" className="btn btn-primary" disabled={api.busy || pending || checking || !api.source.trim()}
+                onClick={() => void checkCode(api)}>
+                <span className="code-check-mark" aria-hidden="true"><Check size={14} /></span>
+                {checking || pending ? "Checking…" : `Check${view.code!.checks ? ` (${view.code!.checks} ${view.code!.checks === 1 ? "check" : "checks"})` : ""}`}
+              </button>
+              {askable && !solved && (
+                <button type="button" className="btn" onClick={() => askParton(view.id, label)}><span className="parton-mark" aria-hidden="true">P</span>Ask Parton</button>
+              )}
+            </>
+          )}
+        />
+      )}
+
+      {view.kind !== "code" && <form className="exercise-form" onSubmit={(e) => { e.preventDefault(); if (!pending && value.trim()) submit(); }}>
         {view.kind === "choice" && (
           <div className="choices" role={view.multiple ? "group" : "radiogroup"}>
             {view.options!.map((opt, i) => (
@@ -131,7 +183,7 @@ export function ExerciseCard({ view, context, children, index }: {
             )}
           </div>
         )}
-      </form>
+      </form>}
       {status && (
         <p className={`feedback feedback-${status.tone}`} role="status">
           {status.tone === "right" ? <Check /> : status.tone === "wrong" ? <Close /> : <Spark />}

@@ -145,7 +145,7 @@ export async function attempt(id: string, input: string, context: Context, attem
        updated_at = now()`,
     [id, ref.lessonId, correct, input, verdict, feedback],
   );
-  await query("INSERT INTO attempt_log (exercise_id, response, correct, context) VALUES ($1, $2, $3, $4)", [id, input.slice(0, 4000), correct, context]);
+  await query("INSERT INTO attempt_log (exercise_id, response, correct, context) VALUES ($1, $2, $3, $4)", [id, input.slice(0, ref.exercise.answer.kind === "code" ? 20000 : 4000), correct, context]);
   if (written) {
     await query("INSERT INTO writings (lesson_id, kind, exercise_id, body) VALUES ($1, 'answer', $2, $3)", [ref.lessonId, id, input]);
   }

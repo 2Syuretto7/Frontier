@@ -1,4 +1,4 @@
-import type { Answer } from "./types";
+import type { Answer, CodeAnswer } from "./types";
 
 export type CheckResult = { correct: boolean; message?: string };
 
@@ -151,7 +151,38 @@ export function checkAnswer(answer: Answer, input: string): CheckResult {
       if (picked.length === 0) return { correct: false, message: "Choose an option first." };
       return { correct: picked.length === want.length && picked.every((v, i) => v === want[i]) };
     }
+    case "code":
+      return checkCode(answer, input);
     case "written":
       return { correct: input.trim().length >= 20, message: input.trim().length < 20 ? "Write a little more first." : undefined };
   }
+}
+
+// ---------- Code: the tests run in the learner's browser; the server checks the report. ----------
+
+export type CodeSubmission = { source: string; results: { name: string; passed: boolean; message?: string }[] };
+
+export function parseCodeSubmission(input: string): CodeSubmission | null {
+  try {
+    const v = JSON.parse(input) as Partial<CodeSubmission>;
+    if (typeof v.source !== "string" || !Array.isArray(v.results)) return null;
+    return { source: v.source, results: v.results.filter((r) => r && typeof r.name === "string").map((r) => ({ name: r.name, passed: r.passed === true, message: typeof r.message === "string" ? r.message : undefined })) };
+  } catch {
+    return null;
+  }
+}
+
+/** The program text of a stored code submission (older or malformed rows are shown as they are). */
+export const codeSource = (stored: string) => parseCodeSubmission(stored)?.source ?? stored;
+
+/**
+ * Correct when every one of the exercise's checks reported a pass. The learner's own browser runs them
+ * (Frontier never runs code on its servers), so this trusts the report, as a single-learner tutor can.
+ */
+export function checkCode(answer: CodeAnswer, input: string): CheckResult {
+  const sub = parseCodeSubmission(input);
+  if (!sub) return { correct: false, message: "Press Check in the editor to run the checks on your code." };
+  if (!sub.source.trim()) return { correct: false, message: "Write some code first." };
+  const passed = new Set(sub.results.filter((r) => r.passed).map((r) => r.name));
+  return { correct: answer.tests.every((t) => passed.has(t.name)) };
 }
