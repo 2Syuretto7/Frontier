@@ -143,6 +143,30 @@ import { lesson as m3_8_1 } from "./m3.8.1";
 import { lesson as m3_8_2 } from "./m3.8.2";
 import { lesson as m3_8_3 } from "./m3.8.3";
 import { lesson as m3_8_4 } from "./m3.8.4";
+import { lesson as m4_1_1 } from "./m4.1.1";
+import { lesson as m4_1_2 } from "./m4.1.2";
+import { lesson as m4_1_3 } from "./m4.1.3";
+import { lesson as m4_1_4 } from "./m4.1.4";
+import { lesson as m4_2_1 } from "./m4.2.1";
+import { lesson as m4_2_2 } from "./m4.2.2";
+import { lesson as m4_2_3 } from "./m4.2.3";
+import { lesson as m4_3_1 } from "./m4.3.1";
+import { lesson as m4_3_2 } from "./m4.3.2";
+import { lesson as m4_3_3 } from "./m4.3.3";
+import { lesson as m4_3_4 } from "./m4.3.4";
+import { lesson as m4_3_5 } from "./m4.3.5";
+import { lesson as m4_4_1 } from "./m4.4.1";
+import { lesson as m4_4_2 } from "./m4.4.2";
+import { lesson as m4_4_3 } from "./m4.4.3";
+import { lesson as m4_4_4 } from "./m4.4.4";
+import { lesson as m4_5_1 } from "./m4.5.1";
+import { lesson as m4_5_2 } from "./m4.5.2";
+import { lesson as m4_5_3 } from "./m4.5.3";
+import { lesson as m4_5_4 } from "./m4.5.4";
+import { lesson as m4_6_1 } from "./m4.6.1";
+import { lesson as m4_6_2 } from "./m4.6.2";
+import { lesson as m4_6_3 } from "./m4.6.3";
+import { lesson as m4_6_4 } from "./m4.6.4";
 import { lesson as l0_1_1 } from "./l0.1.1";
 import { lesson as l0_1_2 } from "./l0.1.2";
 import { lesson as l0_1_3 } from "./l0.1.3";
@@ -385,6 +409,30 @@ export const LESSONS: readonly LessonContent[] = [
   m3_8_2,
   m3_8_3,
   m3_8_4,
+  m4_1_1,
+  m4_1_2,
+  m4_1_3,
+  m4_1_4,
+  m4_2_1,
+  m4_2_2,
+  m4_2_3,
+  m4_3_1,
+  m4_3_2,
+  m4_3_3,
+  m4_3_4,
+  m4_3_5,
+  m4_4_1,
+  m4_4_2,
+  m4_4_3,
+  m4_4_4,
+  m4_5_1,
+  m4_5_2,
+  m4_5_3,
+  m4_5_4,
+  m4_6_1,
+  m4_6_2,
+  m4_6_3,
+  m4_6_4,
   l0_1_1,
   l0_1_2,
   l0_1_3,
