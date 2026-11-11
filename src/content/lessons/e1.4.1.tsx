@@ -163,6 +163,15 @@ for m in [k for k in sys.modules if k == 'stats' or k.startswith('stats.')]:
 importlib.invalidate_caches()
 import stats
 assert hasattr(stats, 'mean') and stats.mean([1, 2, 3]) == 2, 'Use a relative import: from .basic import mean.'` },
+          { name: "from import", code: `import sys, importlib
+sys.path.insert(0, '.')
+with open('stats/__init__.py', 'w') as f:
+    f.write(INIT)
+for m in [k for k in sys.modules if k == 'stats' or k.startswith('stats.')]:
+    del sys.modules[m]
+importlib.invalidate_caches()
+from stats import mean as m
+assert isinstance(INIT, str) and m([2, 4]) == 3 and 'stats.basic' in sys.modules, 'from stats import mean must work.'` },
         ],
         setup: `import os
 os.makedirs('stats', exist_ok=True)

@@ -171,6 +171,21 @@ print(a & b, len(a | b), x + y)`}</Code>
       answer: { kind: "choice", options: ["{3, 4} 5 9", "{3, 4} 7 9", "{1, 2, 5} 5 9", "{3, 4} 5 (2, 7)"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`point = (3, 4)
+x, y = point
+s = {3, 1, 3, 2}
+t = s | {5}
+print(x * y, len(s), sorted(t), 2 in s, (1, 2) + (3,))`}</Code>
+          <p>Unpacking a tuple, and set union and membership. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["12 3 [1, 2, 3, 5] True (1, 2, 3)", "12 4 [1, 2, 3, 3, 5] True (1, 2, 3)", "7 3 [1, 2, 3, 5] True (1, 2, 3)", "12 3 [1, 2, 3, 5] False (1, 2, (3,))"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -191,6 +206,62 @@ print(a & b, len(a | b), x + y)`}</Code>
 `,
         tests: [
           { name: "example", code: `assert common_and_unique([1, 2, 2, 3], [2, 3, 4]) == ([2, 3], 4), 'Turn each list into a set; duplicates disappear.'` },
+          { name: "edges", code: `assert common_and_unique([], []) == ([], 0) and common_and_unique(['b', 'a'], ['a', 'b', 'b']) == (['a', 'b'], 2), 'Empty lists, and repeated items.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>unique_in_order(xs)</C>, the list without repeats, keeping first occurrences, using a set of seen items; <C>anagram_groups(words)</C>, the groups of two or more words that are anagrams of each other (use the tuple of sorted letters as a dictionary key), each group sorted, and the groups sorted by their first word; and <C>pairs_with_sum(xs, target)</C>, the sorted list of distinct tuples (a, b) with a ≤ b, taken from different positions of xs, where a + b = target, in one pass with a set.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def unique_in_order(xs):
+    return list(set(xs))
+
+def anagram_groups(words):
+    return []
+
+def pairs_with_sum(xs, target):
+    return []
+`,
+        solution: `def unique_in_order(xs):
+    seen, out = set(), []
+    for x in xs:
+        if x not in seen:
+            seen.add(x)
+            out.append(x)
+    return out
+
+def anagram_groups(words):
+    groups = {}
+    for w in words:
+        groups.setdefault(tuple(sorted(w)), []).append(w)
+    return sorted(sorted(g) for g in groups.values() if len(g) >= 2)
+
+def pairs_with_sum(xs, target):
+    seen, found = set(), set()
+    for x in xs:
+        if target - x in seen:
+            found.add((min(x, target - x), max(x, target - x)))
+        seen.add(x)
+    return sorted(found)
+`,
+        tests: [
+          { name: "unique", code: `assert unique_in_order([3, 1, 3, 2, 1, 5]) == [3, 1, 2, 5] and unique_in_order('banana') == ['b', 'a', 'n'] and unique_in_order([]) == []` },
+          { name: "anagrams", code: `assert anagram_groups(['listen', 'enlist', 'google', 'silent', 'cat', 'act', 'dog']) == [['act', 'cat'], ['enlist', 'listen', 'silent']] and anagram_groups(['a', 'b']) == []` },
+          { name: "pairs", code: `assert pairs_with_sum([1, 5, 3, 3, 7, 2, 4], 6) == [(1, 5), (2, 4), (3, 3)] and pairs_with_sum([3], 6) == [] and pairs_with_sum([2, 2, 2], 4) == [(2, 2)], 'A number pairs with itself only if it appears twice.'
+import random
+random.seed(3)
+xs = [random.randint(-20, 20) for _ in range(60)]
+want = sorted({(min(xs[i], xs[j]), max(xs[i], xs[j])) for i in range(60) for j in range(i + 1, 60) if xs[i] + xs[j] == 5})
+assert pairs_with_sum(xs, 5) == want` },
         ],
       },
     },

@@ -195,6 +195,28 @@ print(safe_div(1, 0))`}</Code>
       answer: { kind: "choice", options: ["checked None", "None checked", "None", "An error"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def f(x):
+    try:
+        r = 10 / x
+    except ZeroDivisionError:
+        return "zero"
+    except TypeError as e:
+        return type(e).__name__
+    else:
+        return r
+    finally:
+        print("done", end=" ")
+print(f(2), f(0), f("a"))`}</Code>
+          <p>try, except, else and finally, called three times as arguments to one print. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["done done done 5.0 zero TypeError", "5.0 done zero done TypeError done", "5.0 zero TypeError done done done", "done 5.0 done zero done TypeError"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -227,6 +249,74 @@ print(safe_div(1, 0))`}</Code>
 except ValueError as e:
     ok = 'range' in str(e)
 assert ok, 'Raise ValueError("age out of range") for 200.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write a class <C>ConfigError(ValueError)</C> and <C>parse_config(lines)</C>, which turns lines like <C>"port = 8080"</C> into a dict of stripped strings. Skip blank lines and lines whose first non-space character is <C>#</C>. A line without <C>=</C>, or with an empty key, raises <C>ConfigError</C> whose message starts with <C>"line N: "</C> (N counting from 1); a key that appears twice also raises it. Then write <C>get_int(config, key, default)</C>, returning the value as an int, the default if the key is missing, and raising <C>ConfigError</C> if it is not a whole number.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `class ConfigError(ValueError):
+    pass
+
+def parse_config(lines):
+    return {}
+
+def get_int(config, key, default):
+    return default
+`,
+        solution: `class ConfigError(ValueError):
+    pass
+
+def parse_config(lines):
+    out = {}
+    for n, line in enumerate(lines, 1):
+        s = line.strip()
+        if not s or s.startswith('#'):
+            continue
+        if '=' not in s:
+            raise ConfigError(f'line {n}: missing =')
+        key, _, value = s.partition('=')
+        key = key.strip()
+        if not key:
+            raise ConfigError(f'line {n}: empty key')
+        if key in out:
+            raise ConfigError(f'line {n}: duplicate key {key}')
+        out[key] = value.strip()
+    return out
+
+def get_int(config, key, default):
+    if key not in config:
+        return default
+    try:
+        return int(config[key])
+    except ValueError:
+        raise ConfigError(f'{key} is not a whole number')
+`,
+        tests: [
+          { name: "parse", code: `c = parse_config(['# settings', '', 'host = example.org', '  port=8080  ', 'path = a=b'])
+assert c == {'host': 'example.org', 'port': '8080', 'path': 'a=b'}, 'Split at the first = only.'` },
+          { name: "errors", code: `for lines, n in ((['a = 1', 'oops'], 2), (['', '', ' = 3'], 3), (['x=1', 'y=2', 'x=3'], 3)):
+    try:
+        parse_config(lines)
+        assert False, 'Bad lines must raise ConfigError.'
+    except ConfigError as e:
+        assert str(e).startswith(f'line {n}: ') and isinstance(e, ValueError), f'The message must start with line {n}.'` },
+          { name: "ints", code: `c = {'port': '8080', 'name': 'x'}
+assert get_int(c, 'port', 0) == 8080 and get_int(c, 'missing', 7) == 7
+try:
+    get_int(c, 'name', 0)
+    assert False
+except ConfigError:
+    pass` },
         ],
       },
     },

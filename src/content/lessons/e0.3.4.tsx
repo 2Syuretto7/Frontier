@@ -162,6 +162,23 @@ print(len(words("  The Quick brown FOX  ")))`}</Code>
       answer: { kind: "numeric", value: 4 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def clean(s):
+    return s.strip().lower()
+def words(s):
+    return clean(s).split()
+def longest(s):
+    return max(words(s), key=len)
+print(longest("  The quick Brown fox  "), len(words("a  b   c")))`}</Code>
+          <p>Small functions built on each other. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["quick 3", "brown 3", "quick 5", "The 3"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -190,6 +207,62 @@ def topper(lines):
         tests: [
           { name: "parse", code: `assert parse('Meera,88') == ('Meera', 88), 'Split on the comma and convert the marks to int.'` },
           { name: "topper", code: `assert topper(['Meera,88', 'Arjun,92', 'Zoya,9']) == 'Arjun', 'Compare marks as numbers: as text, "9" beats "88".'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Build a marks report from small functions. Write <C>parse_line(line)</C>, turning <C>"Asha: 78, 91, 66"</C> into <C>("Asha", [78, 91, 66])</C> (spaces may vary); <C>average(marks)</C>; <C>letter(avg)</C>, which is <C>"A"</C> from 85, <C>"B"</C> from 70, <C>"C"</C> from 55 and otherwise <C>"F"</C>; and <C>report(lines)</C>, a list of strings like <C>"Asha 78.3 B"</C> (average to one decimal place) sorted by average from highest, then by name. <C>report</C> must use the other three.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def parse_line(line):
+    return ('', [])
+
+def average(marks):
+    return 0.0
+
+def letter(avg):
+    return 'F'
+
+def report(lines):
+    return []
+`,
+        solution: `def parse_line(line):
+    name, _, rest = line.partition(':')
+    return (name.strip(), [int(x) for x in rest.split(',')])
+
+def average(marks):
+    return sum(marks) / len(marks)
+
+def letter(avg):
+    if avg >= 85:
+        return 'A'
+    if avg >= 70:
+        return 'B'
+    if avg >= 55:
+        return 'C'
+    return 'F'
+
+def report(lines):
+    rows = []
+    for line in lines:
+        name, marks = parse_line(line)
+        a = average(marks)
+        rows.append((-a, name, f'{name} {a:.1f} {letter(a)}'))
+    return [r[2] for r in sorted(rows)]
+`,
+        tests: [
+          { name: "parse", code: `assert parse_line('Asha: 78, 91, 66') == ('Asha', [78, 91, 66]) and parse_line(' Ravi :100,0 ') == ('Ravi', [100, 0])` },
+          { name: "letters", code: `assert [letter(x) for x in (100, 85, 84.9, 70, 55, 54.99, 0)] == ['A', 'A', 'B', 'B', 'C', 'F', 'F'] and average([1, 2]) == 1.5` },
+          { name: "report", code: `r = report(['Asha: 78, 91, 66', 'Zoya: 90, 80', 'Ravi: 85, 85', 'Dev: 40, 50, 60'])
+assert r == ['Ravi 85.0 A', 'Zoya 85.0 A', 'Asha 78.3 B', 'Dev 50.0 F'], 'Highest average first; ties by name.'` },
         ],
       },
     },

@@ -169,6 +169,21 @@ print(r)`}</Code>
       answer: { kind: "choice", options: ["None", "Hello, Ravi", "Ravi", "An error"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def greet(name, greeting="Hello"):
+    return f"{greeting}, {name}!"
+def shout(f, *args):
+    return f(*args).upper()
+print(greet("Ravi"), shout(greet, "Asha", "Hi"))`}</Code>
+          <p>A default argument, and a function passed to another function. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["Hello, Ravi! HI, ASHA!", "Hello, Ravi! HELLO, ASHA!", "Hello, Ravi! Hi, Asha!", "Hello, Ravi! HI, ASHA"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -195,6 +210,55 @@ def perimeter(w, h):
         tests: [
           { name: "area", code: `assert area(3, 4) == 12, 'area must return w × h, not print it.'` },
           { name: "perimeter", code: `assert perimeter(3, 4) == 14, 'perimeter is 2(w + h).'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Functions are values. Write <C>compose(f, g)</C>, which returns a new function computing f(g(x)); <C>apply_n(f, n, x)</C>, which applies f to x n times (n = 0 returns x); and <C>make_counter()</C>, which returns a function that gives 1, 2, 3, … on successive calls, keeping its count in an enclosing variable with <C>nonlocal</C> (separate counters must not share a count).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def compose(f, g):
+    return f
+
+def apply_n(f, n, x):
+    return f(x)
+
+def make_counter():
+    return lambda: 1
+`,
+        solution: `def compose(f, g):
+    def h(x):
+        return f(g(x))
+    return h
+
+def apply_n(f, n, x):
+    for _ in range(n):
+        x = f(x)
+    return x
+
+def make_counter():
+    count = 0
+    def next_value():
+        nonlocal count
+        count += 1
+        return count
+    return next_value
+`,
+        tests: [
+          { name: "compose", code: `inc = lambda x: x + 1
+dbl = lambda x: 2 * x
+assert compose(inc, dbl)(5) == 11 and compose(dbl, inc)(5) == 12, 'f(g(x)): the inner function runs first.'` },
+          { name: "apply", code: `assert apply_n(lambda x: x * 2, 10, 1) == 1024 and apply_n(str.upper, 0, 'a') == 'a' and apply_n(lambda s: s + '!', 3, 'hi') == 'hi!!!'` },
+          { name: "counter", code: `c1, c2 = make_counter(), make_counter()
+assert [c1(), c1(), c1()] == [1, 2, 3] and c2() == 1 and c1() == 4, 'Each counter keeps its own count.'` },
         ],
       },
     },

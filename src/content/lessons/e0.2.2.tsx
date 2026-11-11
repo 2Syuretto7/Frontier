@@ -177,6 +177,24 @@ print(steps)`}</Code>
       answer: { kind: "numeric", value: 8 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`total = 0
+for i in range(1, 10, 3):
+    total += i
+n, steps = 10, 0
+while n != 1:
+    n = n // 2 if n % 2 == 0 else 3 * n + 1
+    steps += 1
+print(total, steps)`}</Code>
+          <p>A for loop with a step, and a while loop that runs until a condition fails. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["12 6", "15 6", "12 7", "22 6"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -205,6 +223,64 @@ print(steps)`}</Code>
         tests: [
           { name: "simple", code: `assert count_vowels('banana') == 3 and count_vowels('') == 0, 'Loop over each character.'` },
           { name: "capitals", code: `assert count_vowels('Indian Ocean') == 6, 'Capital vowels count too.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>primes_upto(n)</C>, the list of primes ≤ n, by the sieve of Eratosthenes: make a list of n + 1 flags, and for each p from 2 while p · p ≤ n that is still marked prime, cross out p², p² + p, …. Then write <C>collatz_steps(n)</C>, the number of steps for n to reach 1 (halve when even, 3n + 1 when odd), and <C>longest_collatz(limit)</C>, the start below limit with the most steps (the smallest on ties) as a tuple (start, steps).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def primes_upto(n):
+    return []
+
+def collatz_steps(n):
+    return 0
+
+def longest_collatz(limit):
+    return (1, 0)
+`,
+        solution: `def primes_upto(n):
+    if n < 2:
+        return []
+    flags = [True] * (n + 1)
+    flags[0] = flags[1] = False
+    p = 2
+    while p * p <= n:
+        if flags[p]:
+            for m in range(p * p, n + 1, p):
+                flags[m] = False
+        p += 1
+    return [i for i in range(n + 1) if flags[i]]
+
+def collatz_steps(n):
+    steps = 0
+    while n != 1:
+        n = n // 2 if n % 2 == 0 else 3 * n + 1
+        steps += 1
+    return steps
+
+def longest_collatz(limit):
+    best = (1, 0)
+    for s in range(1, limit):
+        k = collatz_steps(s)
+        if k > best[1]:
+            best = (s, k)
+    return best
+`,
+        tests: [
+          { name: "small", code: `assert primes_upto(30) == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29] and primes_upto(1) == [] and primes_upto(2) == [2]` },
+          { name: "many", code: `ps = primes_upto(100000)
+assert len(ps) == 9592 and ps[-1] == 99991, 'There are 9592 primes below 100000; the sieve makes this fast.'` },
+          { name: "collatz", code: `assert collatz_steps(1) == 0 and collatz_steps(10) == 6 and collatz_steps(27) == 111` },
+          { name: "longest", code: `assert longest_collatz(10) == (9, 19) and longest_collatz(1000) == (871, 178) and longest_collatz(2) == (1, 0)` },
         ],
       },
     },

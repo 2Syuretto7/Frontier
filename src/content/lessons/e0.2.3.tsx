@@ -169,6 +169,22 @@ print(a, b)`}</Code>
       answer: { kind: "choice", options: ["5 8", "3 5", "8 13", "4 5"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`xs = [5, 1, 5, 2]
+best, where = xs[0], 0
+for i in range(1, len(xs)):
+    if xs[i] >= best:
+        best, where = xs[i], i
+print(best, where)`}</Code>
+          <p>Trace the loop by hand: note the &gt;= when the maximum appears twice. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["5 2", "5 0", "5 3", "2 3"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -197,6 +213,54 @@ print(a, b)`}</Code>
         tests: [
           { name: "positive", code: `assert largest([3, 9, 2]) == 9, 'The largest of 3, 9, 2 is 9.'` },
           { name: "negative", code: `assert largest([-3, -1, -2]) == -1, 'Starting best at 0 is wrong when every number is negative.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Make the computer write the trace. Write <C>bubble_trace(xs)</C>, which bubble-sorts a copy of the list (repeated passes, swapping neighbours that are out of order, stopping after a pass with no swaps) and returns the list of states after every single swap, each a new list. Then write <C>count_inversions(xs)</C>, the number of pairs i &lt; j with xs[i] &gt; xs[j], by two nested loops. Every swap fixes exactly one inversion, so the trace length equals the inversion count.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def bubble_trace(xs):
+    return [sorted(xs)]
+
+def count_inversions(xs):
+    return 0
+`,
+        solution: `def bubble_trace(xs):
+    a = list(xs)
+    states = []
+    swapped = True
+    while swapped:
+        swapped = False
+        for i in range(len(a) - 1):
+            if a[i] > a[i + 1]:
+                a[i], a[i + 1] = a[i + 1], a[i]
+                states.append(list(a))
+                swapped = True
+    return states
+
+def count_inversions(xs):
+    return sum(1 for i in range(len(xs)) for j in range(i + 1, len(xs)) if xs[i] > xs[j])
+`,
+        tests: [
+          { name: "trace", code: `assert bubble_trace([3, 1, 2]) == [[1, 3, 2], [1, 2, 3]] and bubble_trace([1, 2]) == [] and bubble_trace([2, 1, 1]) == [[1, 2, 1], [1, 1, 2]], 'One state after every swap.'` },
+          { name: "copy", code: `xs = [3, 2, 1]
+t = bubble_trace(xs)
+assert xs == [3, 2, 1] and t[-1] == [1, 2, 3] and len({id(s) for s in t}) == len(t), 'Do not change the input; record new lists.'` },
+          { name: "inversions", code: `import random
+random.seed(1)
+for _ in range(100):
+    xs = [random.randint(0, 9) for _ in range(random.randint(0, 12))]
+    assert len(bubble_trace(xs)) == count_inversions(xs), f'Each swap removes one inversion: {xs}'
+assert count_inversions([3, 1, 2]) == 2 and count_inversions(list(range(10, 0, -1))) == 45` },
         ],
       },
     },

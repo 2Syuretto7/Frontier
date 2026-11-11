@@ -181,6 +181,21 @@ print(total)`}</Code>
       answer: { kind: "numeric", value: 180 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`x = 5
+x = x + 2
+y = x * 2
+x = 1
+print(x, y)`}</Code>
+          <p>Each line runs once, top to bottom. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1 14", "1 2", "7 14", "1 10"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -203,6 +218,46 @@ print("Monthly:", total)
         tests: [
           { name: "variable", code: `assert total == 21500, 'total should be rent + food.'` },
           { name: "output", code: `assert printed.strip() == 'Monthly: 21500', 'Print exactly Monthly: 21500.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>convert(value, unit)</C>, which converts a temperature: if unit is <C>"C"</C> the value is in Celsius and you return Fahrenheit (F = C × 9/5 + 32); if unit is <C>"F"</C> you return Celsius. Round the result to one decimal place with <C>round</C>. For any other unit, raise <C>ValueError</C>. Then write <C>table(start, stop, step)</C>, a list of strings like <C>"20 C = 68.0 F"</C> for Celsius values start, start + step, … below stop.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def convert(value, unit):
+    return value
+
+def table(start, stop, step):
+    return []
+`,
+        solution: `def convert(value, unit):
+    if unit == 'C':
+        return round(value * 9 / 5 + 32, 1)
+    if unit == 'F':
+        return round((value - 32) * 5 / 9, 1)
+    raise ValueError('unit must be C or F')
+
+def table(start, stop, step):
+    return [f'{c} C = {convert(c, "C")} F' for c in range(start, stop, step)]
+`,
+        tests: [
+          { name: "convert", code: `assert convert(100, 'C') == 212.0 and convert(37.5, 'C') == 99.5 and convert(-40, 'C') == -40.0, 'F = C × 9/5 + 32.'
+assert convert(212, 'F') == 100.0 and convert(98.6, 'F') == 37.0 and convert(0, 'F') == -17.8, 'C = (F − 32) × 5/9, rounded to one place.'` },
+          { name: "bad unit", code: `try:
+    convert(10, 'K')
+    assert False, 'An unknown unit must raise ValueError.'
+except ValueError:
+    pass` },
+          { name: "table", code: `assert table(0, 30, 10) == ['0 C = 32.0 F', '10 C = 50.0 F', '20 C = 68.0 F'] and table(5, 5, 1) == [], 'Stop is not included.'` },
         ],
       },
     },

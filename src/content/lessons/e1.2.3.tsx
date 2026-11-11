@@ -153,6 +153,7 @@ print(sum(1 for l in difflib.unified_diff(old, new, lineterm="") if l[:1] in "+-
         tests: [
           { name: "counts", code: `d = ['--- a/x.py', '+++ b/x.py', '@@ -1,2 +1,3 @@', ' a', '-b', '+B', '+c']
 assert review(d) == (2, 1), 'Skip the +++ and --- headers.'` },
+          { name: "edges", code: `assert review([]) == (0, 0) and review([' +x', ' -y', '@@ -1 +1 @@']) == (0, 0) and review(['++x', '--y', '+', '-']) == (2, 2), 'Only the first character decides; context lines start with a space.'` },
         ],
       },
     },

@@ -175,6 +175,22 @@ print(len(xs), xs[-2], xs[1:3])`}</Code>
       answer: { kind: "choice", options: ["6 5 [1, 4]", "5 1 [1, 4]", "6 5 [1, 4, 1]", "6 9 [3, 1]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`a = [1, 2, 3]
+b = a
+c = a[:]
+b.append(4)
+c.append(5)
+print(a, len(b), c, a[-1], a[1:3])`}</Code>
+          <p>Two names for one list, and a copy. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[1, 2, 3, 4] 4 [1, 2, 3, 5] 4 [2, 3]", "[1, 2, 3] 4 [1, 2, 3, 5] 3 [2, 3]", "[1, 2, 3, 4, 5] 5 [1, 2, 3, 4, 5] 5 [2, 3]", "[1, 2, 3, 4] 4 [1, 2, 3, 4, 5] 4 [1, 2]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -203,6 +219,60 @@ print(len(xs), xs[-2], xs[1:3])`}</Code>
           { name: "unchanged", code: `xs = [1, 2, 3]
 running_total(xs)
 assert xs == [1, 2, 3], 'Build a new list; do not change the one you were given.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>rotate(xs, k)</C>, a new list rotated right by k places (k may be negative, or larger than the length; an empty list stays empty); <C>chunk(xs, n)</C>, the list of consecutive pieces of length n (the last may be shorter); and <C>flatten(nested)</C>, all the non-list items of an arbitrarily nested list in order, using recursion. None of them may change the input.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def rotate(xs, k):
+    return xs
+
+def chunk(xs, n):
+    return [xs]
+
+def flatten(nested):
+    return nested
+`,
+        solution: `def rotate(xs, k):
+    if not xs:
+        return []
+    k %= len(xs)
+    return xs[-k:] + xs[:-k] if k else list(xs)
+
+def chunk(xs, n):
+    return [xs[i:i + n] for i in range(0, len(xs), n)]
+
+def flatten(nested):
+    out = []
+    for x in nested:
+        if isinstance(x, list):
+            out.extend(flatten(x))
+        else:
+            out.append(x)
+    return out
+`,
+        tests: [
+          { name: "rotate", code: `xs = [1, 2, 3, 4, 5]
+assert rotate(xs, 2) == [4, 5, 1, 2, 3] and rotate(xs, -1) == [2, 3, 4, 5, 1] and rotate(xs, 12) == [4, 5, 1, 2, 3] and rotate(xs, 0) == xs and rotate([], 3) == []
+r = rotate(xs, 0); r.append(9)
+assert xs == [1, 2, 3, 4, 5], 'Return a new list, even when k is 0.'` },
+          { name: "chunk", code: `assert chunk(list(range(7)), 3) == [[0, 1, 2], [3, 4, 5], [6]] and chunk([], 2) == [] and chunk([1, 2], 5) == [[1, 2]]` },
+          { name: "flatten", code: `n = [1, [2, [3, [4]], 5], [], [[6]], 'ab']
+assert flatten(n) == [1, 2, 3, 4, 5, 6, 'ab'] and n[1][1] == [3, [4]], 'Strings are items, not lists.'
+deep = [0]
+for i in range(1, 50):
+    deep = [deep, i]
+assert flatten(deep) == list(range(50))` },
         ],
       },
     },

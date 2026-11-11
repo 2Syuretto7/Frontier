@@ -177,6 +177,10 @@ def clean(df):
 raw = pd.DataFrame({'name': [' asha', 'Ravi ', 'ASHA', 'zoya'], 'age': ['31', 'unknown', '31', '27']})
 out = clean(raw)
 assert list(out['name']) == ['Asha', 'Zoya'] and list(out['age']) == [31, 27] and list(out.index) == [0, 1], 'Normalise names before dropping duplicates, and reset the index.'` },
+          { name: "types", code: `import pandas as pd
+raw = pd.DataFrame({'name': ['a ', ' b'], 'age': ['1', '2.5']})
+out = clean(raw)
+assert out['age'].dtype.kind == 'f' and list(out['age']) == [1.0, 2.5] and list(raw['name']) == ['a ', ' b'], 'Ages become numbers, and the input DataFrame is left unchanged.'` },
         ],
       },
     },

@@ -202,6 +202,25 @@ else:
       answer: { kind: "choice", options: ["warm", "very warm", "hot", "warm and very warm"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def f(x):
+    if x > 10:
+        return "big"
+    elif x > 5:
+        return "medium"
+    elif x > 10:
+        return "huge"
+    return "small"
+print([f(x) for x in (3, 5, 6, 11, 100)])`}</Code>
+          <p>Only the first true branch runs. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["['small', 'small', 'medium', 'big', 'big']", "['small', 'medium', 'medium', 'big', 'huge']", "['small', 'small', 'medium', 'big', 'huge']", "['small', 'medium', 'medium', 'big', 'big']"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -234,6 +253,46 @@ else:
         tests: [
           { name: "boundaries", code: `assert [grade(m) for m in (80, 79, 60, 59, 40, 39)] == ['A', 'B', 'B', 'C', 'C', 'F'], 'Test the highest threshold first.'` },
           { name: "extremes", code: `assert grade(100) == 'A' and grade(0) == 'F', 'Check the ends of the range.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>triangle_type(a, b, c)</C>, which returns <C>"invalid"</C> if any side is not positive or the longest side is at least the sum of the other two, and otherwise <C>"equilateral"</C>, <C>"isosceles"</C> or <C>"scalene"</C>. Then write <C>is_right(a, b, c)</C> for whole-number sides, true when the sides form a valid right-angled triangle in any order.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def triangle_type(a, b, c):
+    return 'scalene'
+
+def is_right(a, b, c):
+    return a * a + b * b == c * c
+`,
+        solution: `def triangle_type(a, b, c):
+    x, y, z = sorted((a, b, c))
+    if x <= 0 or z >= x + y:
+        return 'invalid'
+    if x == z:
+        return 'equilateral'
+    if x == y or y == z:
+        return 'isosceles'
+    return 'scalene'
+
+def is_right(a, b, c):
+    x, y, z = sorted((a, b, c))
+    return triangle_type(a, b, c) != 'invalid' and x * x + y * y == z * z
+`,
+        tests: [
+          { name: "types", code: `assert [triangle_type(*t) for t in [(3, 3, 3), (3, 3, 5), (5, 3, 3), (3, 4, 5), (1, 2, 3), (0, 1, 1), (-2, 3, 4), (10, 1, 1)]] == ['equilateral', 'isosceles', 'isosceles', 'scalene', 'invalid', 'invalid', 'invalid', 'invalid'], '1, 2, 3 is flat, so invalid.'` },
+          { name: "right", code: `assert is_right(3, 4, 5) and is_right(5, 3, 4) and is_right(13, 5, 12) and not is_right(3, 4, 6) and not is_right(0, 0, 0), 'Any order of the sides.'
+assert sum(is_right(a, b, c) for a in range(1, 30) for b in range(a, 30) for c in range(b, 30)) == 10` },
+          { name: "float sides", code: `assert triangle_type(2.5, 2.5, 4.9) == 'isosceles' and triangle_type(2.5, 2.5, 5.0) == 'invalid'` },
         ],
       },
     },

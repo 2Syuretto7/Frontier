@@ -148,6 +148,26 @@ except Exception as e:
       answer: { kind: "choice", options: ["KeyError 'b'", "IndexError b", "KeyError a", "NameError 'b'"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import traceback
+def a(x):
+    return b(x) + 1
+def b(x):
+    return [1, 2, 3][x]
+try:
+    a(5)
+except Exception as e:
+    tb = traceback.extract_tb(e.__traceback__)
+    print(type(e).__name__, e, [f.name for f in tb])`}</Code>
+          <p>The exception type, its message, and the chain of function calls from the traceback. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["IndexError list index out of range ['<module>', 'a', 'b']", "IndexError list index out of range ['b', 'a', '<module>']", "KeyError 5 ['<module>', 'a', 'b']", "IndexError 5 ['a', 'b']"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -169,6 +189,47 @@ print("Total: " + str(a + b))
 `,
         tests: [
           { name: "output", code: `assert printed.strip() == 'Total: 30', 'Add the numbers first, then turn the sum into text with str().'` },
+          { name: "values", code: `assert a == 10 and b == 20, 'Fix the printing, not the numbers.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>error_summary(code)</C>, which compiles the text <C>code</C> with the file name <C>"&lt;snippet&gt;"</C>, runs it with <C>exec</C> in a fresh dictionary, and returns <C>None</C> if it finishes, or the tuple (exception class name, message, line number) otherwise. The line number is that of the last traceback frame (from <C>traceback.extract_tb</C>) whose file name is <C>"&lt;snippet&gt;"</C>; for a <C>SyntaxError</C>, which happens before running, use the exception&rsquo;s own <C>lineno</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def error_summary(code):
+    return None
+`,
+        solution: `import traceback
+
+def error_summary(code):
+    try:
+        compiled = compile(code, '<snippet>', 'exec')
+    except SyntaxError as e:
+        return ('SyntaxError', e.msg, e.lineno)
+    try:
+        exec(compiled, {})
+    except Exception as e:
+        frames = [f for f in traceback.extract_tb(e.__traceback__) if f.filename == '<snippet>']
+        return (type(e).__name__, str(e), frames[-1].lineno)
+    return None
+`,
+        tests: [
+          { name: "fine", code: `assert error_summary('x = 1\\ny = x + 1') is None` },
+          { name: "runtime", code: `code = 'def f(d):\\n    return d["k"]\\n\\nx = 1\\nf({})\\n'
+assert error_summary(code) == ('KeyError', "'k'", 2), 'Point at the line inside f, not the call.'
+assert error_summary('a = 1\\nb = a + "2"')[:1] == ('TypeError',) and error_summary('a = 1\\nb = a + "2"')[2] == 2` },
+          { name: "syntax", code: `name, msg, line = error_summary('x = 1\\nif x > 0\\n    print(x)\\n')
+assert name == 'SyntaxError' and line == 2, 'A missing colon is reported on line 2.'` },
+          { name: "zero", code: `assert error_summary('\\n\\nprint(1 / 0)') == ('ZeroDivisionError', 'division by zero', 3)` },
         ],
       },
     },

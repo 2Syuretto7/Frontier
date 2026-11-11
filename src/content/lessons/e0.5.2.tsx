@@ -146,6 +146,20 @@ print(len(rows), max(rows, key=lambda r: int(r["temp"]))["city"])`}</Code>
       answer: { kind: "choice", options: ["3 Chennai", "4 Chennai", "3 Leh", "3 Pune"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import csv, io
+data = io.StringIO('name,city\\n"Rao, A",Pune\\nBose,Delhi\\n')
+rows = list(csv.reader(data))
+print(len(rows), rows[1], rows[1][0].split(",")[0])`}</Code>
+          <p>The csv module understands quoted fields that contain commas. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["3 ['Rao, A', 'Pune'] Rao", "3 ['\"Rao', ' A\"', 'Pune'] \"Rao", "2 ['Rao, A', 'Pune'] Rao", "3 ['Rao, A', 'Pune'] Rao, A"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -171,10 +185,63 @@ def totals(path):
 `,
         tests: [
           { name: "totals", code: `assert totals('sales.csv') == {'North': 120.0, 'South': 40.5}, 'Add each amount, as a float, to its region.'` },
+          { name: "another file", code: `with open('more.csv', 'w') as f:
+    f.write('region,amount\\nEast,1\\nWest,2.25\\nEast,3\\nEast,0.5\\n')
+t = totals('more.csv')
+assert t == {'East': 4.5, 'West': 2.25} and all(isinstance(v, float) for v in t.values()), 'Read whatever file you are given.'` },
         ],
         setup: `with open('sales.csv', 'w') as f:
     f.write('region,amount\\nNorth,100\\nSouth,40.5\\nNorth,20\\n')
 `,
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>write_rows(path, rows)</C>, which writes a list of dictionaries to a CSV file with <C>csv.DictWriter</C>, using the keys of the first row as the header (open with <C>newline=""</C>). Then write <C>read_typed(path, types)</C>, which reads it back with <C>csv.DictReader</C> and converts each column named in the dict <C>types</C> with its function (for example <C>int</C>), leaving other columns as strings, and <C>select(path, column, value)</C>, the rows (as dicts of strings) whose column equals value.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def write_rows(path, rows):
+    pass
+
+def read_typed(path, types):
+    return []
+
+def select(path, column, value):
+    return []
+`,
+        solution: `import csv
+
+def write_rows(path, rows):
+    with open(path, 'w', newline='') as f:
+        w = csv.DictWriter(f, fieldnames=list(rows[0]))
+        w.writeheader()
+        w.writerows(rows)
+
+def read_typed(path, types):
+    with open(path, newline='') as f:
+        return [{k: types[k](v) if k in types else v for k, v in row.items()} for row in csv.DictReader(f)]
+
+def select(path, column, value):
+    with open(path, newline='') as f:
+        return [row for row in csv.DictReader(f) if row[column] == value]
+`,
+        tests: [
+          { name: "roundtrip", code: `rows = [{'name': 'Rao, A', 'city': 'Pune', 'age': 31}, {'name': 'Bose "Jr"', 'city': 'Delhi', 'age': 45}]
+write_rows('people.csv', rows)
+assert read_typed('people.csv', {'age': int}) == rows, 'Commas and quotes inside values survive the round trip.'` },
+          { name: "header", code: `write_rows('t.csv', [{'b': 1, 'a': 2}])
+with open('t.csv') as f:
+    assert f.readline().strip() == 'b,a', 'The header follows the first row.'` },
+          { name: "select", code: `write_rows('s.csv', [{'k': 'x', 'v': 1}, {'k': 'y', 'v': 2}, {'k': 'x', 'v': 3}])
+assert select('s.csv', 'k', 'x') == [{'k': 'x', 'v': '1'}, {'k': 'x', 'v': '3'}] and select('s.csv', 'k', 'z') == []` },
+        ],
       },
     },
     {

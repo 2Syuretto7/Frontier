@@ -155,6 +155,21 @@ print(a * 2, b * 2, type(a * 2).__name__)`}</Code>
       answer: { kind: "choice", options: ["77 14 str", "14 14 int", "77 77 str", "14 77 int"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`a = "3" + "4"
+b = 3 + 4
+c = int("3") * 4
+d = "3" * 4
+print(a, b, c, d, type(a).__name__, type(c).__name__)`}</Code>
+          <p>The same operators on text and on numbers. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["34 7 12 3333 str int", "7 7 12 12 int int", "34 7 12 12 str int", "34 7 3333 3333 str str"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -180,6 +195,51 @@ label = raw + " items"
           { name: "convert", code: `assert n == 42 and type(n) is int, 'Use int(raw) to turn text into a number.'` },
           { name: "double", code: `assert doubled == 84, 'Doubling the text "42" would give "4242".'` },
           { name: "label", code: `assert label == '42 items', 'Join strings with +, including the space.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>kind(value)</C>, which returns <C>"bool"</C>, <C>"int"</C>, <C>"float"</C>, <C>"str"</C>, <C>"list"</C> or <C>"other"</C> (careful: <C>True</C> is also an int, so test for bool first). Then write <C>to_number(text)</C>: after removing spaces at both ends, return an <C>int</C> if the text is a whole number with an optional sign, a <C>float</C> if it is a decimal such as <C>"-2.5"</C> or <C>"3."</C>, and <C>None</C> for anything else. Use <C>try</C> and <C>except ValueError</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def kind(value):
+    return type(value).__name__
+
+def to_number(text):
+    return float(text)
+`,
+        solution: `def kind(value):
+    if isinstance(value, bool):
+        return 'bool'
+    for t in (int, float, str, list):
+        if isinstance(value, t):
+            return t.__name__
+    return 'other'
+
+def to_number(text):
+    text = text.strip()
+    try:
+        return int(text)
+    except ValueError:
+        pass
+    try:
+        return float(text)
+    except ValueError:
+        return None
+`,
+        tests: [
+          { name: "kind", code: `assert [kind(v) for v in (True, 3, 3.0, '3', [3], (3,), None)] == ['bool', 'int', 'float', 'str', 'list', 'other', 'other'], 'Check bool before int.'` },
+          { name: "numbers", code: `r = [to_number(t) for t in ('42', ' -7 ', '+3', '2.5', '3.', '-0.25')]
+assert r == [42, -7, 3, 2.5, 3.0, -0.25] and [type(x).__name__ for x in r] == ['int', 'int', 'int', 'float', 'float', 'float'], 'Whole numbers become int, decimals float.'` },
+          { name: "not numbers", code: `assert [to_number(t) for t in ('', 'abc', '4 2', '1,000', '--1')] == [None] * 5, 'Anything else gives None.'` },
         ],
       },
     },
