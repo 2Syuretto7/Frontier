@@ -172,6 +172,20 @@ print(counts)`}</Code>
       answer: { kind: "choice", options: ["[6 0 4]", "[3 3 4]", "[6 1 3]", "[4 2 4]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+xs = [1, 2, 2, 3, 3, 3, 4, 9]
+counts, edges = np.histogram(xs, bins=4, range=(1, 9))
+print(counts, edges)`}</Code>
+          <p>Four equal bins over [1, 9]. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[3 4 0 1] [1. 3. 5. 7. 9.]", "[6 1 0 1] [1. 3. 5. 7. 9.]", "[3 3 1 1] [1. 3. 5. 7. 9.]", "[3 4 0 1] [1. 2. 3. 4. 5.]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -200,6 +214,57 @@ print(counts)`}</Code>
 xs = [1, 2, 2, 3, 3, 3, 7, 8, 9, 10]
 assert histogram(xs, 1, 10, 3) == list(np.histogram(xs, bins=3, range=(1, 10))[0]), 'The bins are [1, 4), [4, 7) and [7, 10].'` },
           { name: "edges", code: `assert histogram([0, 5, 10, 11], 0, 10, 2) == [1, 2], '5 goes in the second bin, 10 in the last, 11 is outside.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>quantile(xs, q)</C>, the q-quantile (0 ≤ q ≤ 1) of a non-empty list by linear interpolation between order statistics: sort, take position h = (n − 1)q, and interpolate between the values at ⌊h⌋ and ⌈h⌉. Then write <C>five_number(xs)</C>, the tuple (min, Q1, median, Q3, max), and <C>outliers(xs)</C>, the sorted values more than 1.5 × IQR below Q1 or above Q3.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def quantile(xs, q):
+    s = sorted(xs)
+    return s[int(q * len(s))]
+
+def five_number(xs):
+    return (min(xs), 0, 0, 0, max(xs))
+
+def outliers(xs):
+    return []
+`,
+        solution: `import math
+
+def quantile(xs, q):
+    s = sorted(xs)
+    h = (len(s) - 1) * q
+    lo, hi = math.floor(h), math.ceil(h)
+    return s[lo] + (h - lo) * (s[hi] - s[lo])
+
+def five_number(xs):
+    return tuple(quantile(xs, q) for q in (0, 0.25, 0.5, 0.75, 1))
+
+def outliers(xs):
+    _, q1, _, q3, _ = five_number(xs)
+    k = 1.5 * (q3 - q1)
+    return sorted(x for x in xs if x < q1 - k or x > q3 + k)
+`,
+        tests: [
+          { name: "median", code: `assert quantile([3, 1, 2], 0.5) == 2 and quantile([4, 1, 3, 2], 0.5) == 2.5 and quantile([7], 0.9) == 7, 'Interpolate between the middle two.'` },
+          { name: "numpy", code: `import numpy as np, random
+random.seed(2)
+for _ in range(30):
+    xs = [random.randint(-50, 50) for _ in range(random.randint(1, 30))]
+    q = random.random()
+    assert abs(quantile(xs, q) - np.quantile(xs, q)) < 1e-9, (xs, q)` },
+          { name: "five", code: `assert five_number([1, 2, 3, 4, 5, 6, 7, 8, 9]) == (1, 3, 5, 7, 9), 'Quartiles at positions 2 and 6.'` },
+          { name: "outliers", code: `assert outliers([1, 2, 3, 4, 5, 6, 7, 8, 9, 50]) == [50] and outliers([10, 11, 12, 13]) == [] and outliers([-40, 1, 2, 3, 4, 5]) == [-40], 'Beyond 1.5 IQR from the quartiles.'` },
         ],
       },
     },

@@ -157,6 +157,22 @@ export const lesson: LessonContent = {
       answer: { kind: "choice", options: ["True", "False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def moves(n, a='A', b='B', c='C'):
+    if n == 0:
+        return []
+    return moves(n - 1, a, c, b) + [(a, c)] + moves(n - 1, b, a, c)
+m = moves(3)
+print(len(m), m[0], m[3])`}</Code>
+          <p>The Tower of Hanoi moves for three discs from A to C. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["7 ('A', 'C') ('A', 'C')", "7 ('A', 'B') ('A', 'C')", "8 ('A', 'C') ('A', 'C')", "7 ('A', 'C') ('B', 'C')"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -179,6 +195,47 @@ export const lesson: LessonContent = {
         tests: [
           { name: "small", code: `assert [tower(n) for n in range(5)] == [0, 1, 3, 7, 15], 'Move n − 1 discs off, the big disc across, then n − 1 discs back on.'` },
           { name: "closed form", code: `assert all(tower(n) == 2 ** n - 1 for n in range(30)), 'The recursion matches 2ⁿ − 1.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>check_induction(P, base, n_max)</C>, a tester for a proof by induction: it returns the smallest n from <C>base</C> to <C>n_max</C> at which the predicate <C>P(n)</C> fails, or <C>None</C>. Then write <C>tiles(n)</C>, the number of ways to tile a 2 × n strip with 1 × 2 dominoes (an induction on n: the last column is one vertical domino or the last two columns are two horizontal ones), computed iteratively so that n = 1000 is fast.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def check_induction(P, base, n_max):
+    return None
+
+def tiles(n):
+    if n <= 1:
+        return 1
+    return tiles(n - 1) + tiles(n - 2)
+`,
+        solution: `def check_induction(P, base, n_max):
+    for n in range(base, n_max + 1):
+        if not P(n):
+            return n
+    return None
+
+def tiles(n):
+    a, b = 1, 1
+    for _ in range(n - 1):
+        a, b = b, a + b
+    return b if n >= 1 else 1
+`,
+        tests: [
+          { name: "true claim", code: `assert check_induction(lambda n: sum(range(1, n + 1)) == n * (n + 1) // 2, 1, 200) is None, 'A true formula never fails.'` },
+          { name: "false claim", code: `assert check_induction(lambda n: n * n - n + 41 in {p for p in range(2, 2000) if all(p % d for d in range(2, int(p ** 0.5) + 1))}, 1, 100) == 41, 'n² − n + 41 is prime for n = 1 … 40 but not 41.'` },
+          { name: "base", code: `assert check_induction(lambda n: 2 ** n > n * n, 5, 100) is None and check_induction(lambda n: 2 ** n > n * n, 1, 100) == 2, 'Start at the given base.'` },
+          { name: "tiles", code: `assert [tiles(n) for n in range(1, 8)] == [1, 2, 3, 5, 8, 13, 21] and tiles(0) == 1, 'The counts are Fibonacci numbers.'` },
+          { name: "fast", code: `assert tiles(1000) % 1000000007 == 107579939, 'Iterate rather than recurse.'` },
         ],
       },
     },

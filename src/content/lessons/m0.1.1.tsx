@@ -232,6 +232,23 @@ print(n)`}</Code>
       answer: { kind: "numeric", value: 55 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`n, steps = 27, 0
+while n != 1:
+    n = n // 2 if n % 2 == 0 else 3 * n + 1
+    steps += 1
+    if steps == 5:
+        print(n)
+print(steps)`}</Code>
+          <p>The Collatz rule halves even numbers and sends odd n to 3n + 1. What is printed first, after five steps from 27?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 31 },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -256,6 +273,50 @@ print(n)`}</Code>
         tests: [
           { name: "examples", code: `assert digit_sum(0) == 0 and digit_sum(7) == 7 and digit_sum(1234) == 10, 'n % 10 is the last digit and n // 10 drops it.'` },
           { name: "large", code: `assert digit_sum(99999) == 45, 'Keep going until n reaches 0.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>to_base(n, b)</C>, which returns the digits of a natural number n in base b (2 ≤ b ≤ 10) as a string, most significant first, with <C>to_base(0, b) == "0"</C>, and <C>from_base(s, b)</C>, which turns such a string back into n by Horner&rsquo;s rule. Do not use <C>int(s, b)</C>, <C>bin</C> or <C>format</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def to_base(n, b):
+    return str(n)
+
+def from_base(s, b):
+    return int(s)
+`,
+        solution: `def to_base(n, b):
+    if n == 0:
+        return '0'
+    out = ''
+    while n > 0:
+        out = str(n % b) + out
+        n //= b
+    return out
+
+def from_base(s, b):
+    n = 0
+    for ch in s:
+        n = n * b + int(ch)
+    return n
+`,
+        tests: [
+          { name: "binary", code: `assert to_base(13, 2) == '1101' and to_base(1, 2) == '1' and to_base(0, 2) == '0', '13 = 8 + 4 + 1, so 1101.'` },
+          { name: "other bases", code: `assert to_base(255, 8) == '377' and to_base(100, 3) == '10201' and to_base(9, 10) == '9', 'Repeatedly take n % b and divide by b.'` },
+          { name: "back", code: `assert from_base('1101', 2) == 13 and from_base('377', 8) == 255 and from_base('0', 5) == 0, 'Horner: n = n·b + digit for each digit from the left.'` },
+          { name: "round trip", code: `assert all(from_base(to_base(n, b), b) == n for n in range(0, 500) for b in range(2, 11)), 'The two functions should undo each other.'` },
+          { name: "no shortcuts", code: `import inspect
+src = inspect.getsource(to_base) + inspect.getsource(from_base)
+assert 'bin(' not in src and 'format(' not in src and 'int(s, b)' not in src, 'Build the digits yourself.'` },
         ],
       },
     },

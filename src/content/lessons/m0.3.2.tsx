@@ -177,6 +177,57 @@ export const lesson: LessonContent = {
       },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`xs = [x / 2 for x in range(-4, 5)]
+ys = [x * x - 1 for x in xs]
+print(len(xs), min(ys), xs[ys.index(min(ys))], sum(1 for y in ys if y < 0))`}</Code>
+          <p>Sampling y = x² − 1 at x = −2, −1.5, …, 2. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["9 -1.0 0.0 3", "9 -1.0 0.0 2", "8 -1.0 0.0 3", "9 -1 0 3"], correct: [0] },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>sign_changes(f, a, b, n)</C>, which samples f at n + 1 evenly spaced points from a to b and returns the list of subintervals (x, x + h) on which f changes sign (from negative to positive or positive to negative), so a root lies inside. A sample exactly equal to 0 should count as a root interval (x, x) of its own, and it should not also produce a sign change with its neighbours.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def sign_changes(f, a, b, n):
+    return []
+`,
+        solution: `def sign_changes(f, a, b, n):
+    h = (b - a) / n
+    xs = [a + i * h for i in range(n + 1)]
+    ys = [f(x) for x in xs]
+    out = []
+    for i in range(n + 1):
+        if ys[i] == 0:
+            out.append((xs[i], xs[i]))
+        elif i < n and ys[i + 1] != 0 and (ys[i] < 0) != (ys[i + 1] < 0):
+            out.append((xs[i], xs[i + 1]))
+    return out
+`,
+        tests: [
+          { name: "two roots", code: `iv = sign_changes(lambda x: x * x - 2, -3, 3, 6)
+assert iv == [(-2.0, -1.0), (1.0, 2.0)], '±√2 lie in (−2, −1) and (1, 2).'` },
+          { name: "exact zero", code: `iv = sign_changes(lambda x: x * x - 1, -2, 2, 4)
+assert iv == [(-1.0, -1.0), (1.0, 1.0)], 'Samples at ±1 are roots themselves.'` },
+          { name: "none", code: `assert sign_changes(lambda x: x * x + 1, -5, 5, 10) == [], 'No sign change, no root found.'` },
+          { name: "cubic", code: `iv = sign_changes(lambda x: x ** 3 - x - 0.5, -2, 2, 8)
+assert len(iv) == 1 and iv[0][0] < 1.19 < iv[0][1], 'One real root near 1.19.'` },
+        ],
+      },
+    },
+    {
       key: "read",
       rung: "apply",
       prompt: (
@@ -210,6 +261,10 @@ print([x * x - 1 for x in xs])`}</Code>
         tests: [
           { name: "square", code: `pts = table(lambda x: x * x, 0, 2, 4)
 assert len(pts) == 5 and all(abs(x - y) < 1e-9 for (x, _), y in zip(pts, [0, 0.5, 1, 1.5, 2])) and abs(pts[3][1] - 2.25) < 1e-9, 'Step by (b − a)/n, and include both ends.'` },
+          { name: "reversed and one step", code: `pts = table(lambda x: 3 * x - 1, 1, -1, 1)
+assert pts == [(1, 2), (-1, -4)], 'n = 1 gives just the two ends, even when a > b.'` },
+          { name: "many points", code: `pts = table(abs, -3, 3, 6)
+assert [round(x, 9) for x, _ in pts] == [-3, -2, -1, 0, 1, 2, 3] and [y for _, y in pts] == [3, 2, 1, 0, 1, 2, 3], 'n steps give n + 1 points.'` },
         ],
       },
     },

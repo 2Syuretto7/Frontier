@@ -37,6 +37,14 @@ for (const lesson of LESSONS) {
       if (a.kind === "numeric") assert.ok(checkAnswer(a, String(a.value)).correct, `${e.key}: its own answer checks`);
       if (a.kind === "expression") assert.ok(checkAnswer(a, a.value).correct, `${e.key}: its own answer checks`);
       if (a.kind === "written") assert.ok(a.rubric.length >= 2, `${e.key}: has a real rubric`);
+      if (a.kind === "code") assert.ok(a.tests.length >= 2, `${e.key}: a code exercise has several checks`);
     }
+  });
+
+  test(`${lesson.id} has several code-reading and several code-writing exercises`, () => {
+    const reading = lesson.practice.filter((e) => e.key.startsWith("read") && e.answer.kind !== "code");
+    const writing = lesson.practice.filter((e) => e.answer.kind === "code");
+    assert.ok(reading.length >= 2, `has at least two code-reading exercises, found ${reading.length}`);
+    assert.ok(writing.length >= 2, `has at least two code-writing exercises, found ${writing.length}`);
   });
 }

@@ -176,6 +176,20 @@ print(min(range(-10, 11), key=g), g(2))`}</Code>
       answer: { kind: "choice", options: ["2 1", "-2 1", "2 -1", "-2 5"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = lambda x: x * x
+g = lambda x: 2 * f(x - 3) + 1
+h = lambda x: f(2 * x)
+print(g(3), g(4), h(3))`}</Code>
+          <p>g shifts f right 3, stretches it by 2 and lifts it 1; h squeezes it horizontally. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1 3 36", "1 3 18", "19 3 36", "1 9 36"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -198,6 +212,46 @@ print(min(range(-10, 11), key=g), g(2))`}</Code>
 assert g(3) == -1 and g(4) == 0, 'Moving right by h means feeding x − h into f.'` },
           { name: "stretch", code: `g = transform(abs, 0, 0, -2)
 assert g(-3) == -6, 'A negative a flips the graph and stretches it.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A transformed graph y = a·f(b(x − h)) + k moves each point of y = f(x). Write <C>move_point(x, y, a, b, h, k)</C>, which returns where the point (x, y) of the original graph ends up (with b ≠ 0), and <C>fit_shift(f, g, xs)</C>, which finds the integers h and k in −10…10 with g(x) = f(x − h) + k at every x in xs, or returns <C>None</C> if no such pair exists.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def move_point(x, y, a, b, h, k):
+    return (x + h, y + k)
+
+def fit_shift(f, g, xs):
+    return (0, 0)
+`,
+        solution: `def move_point(x, y, a, b, h, k):
+    return (x / b + h, a * y + k)
+
+def fit_shift(f, g, xs):
+    for h in range(-10, 11):
+        for k in range(-10, 11):
+            if all(abs(g(x) - (f(x - h) + k)) < 1e-9 for x in xs):
+                return (h, k)
+    return None
+`,
+        tests: [
+          { name: "shift", code: `assert move_point(1, 1, 1, 1, 3, -2) == (4, -1), 'A shift moves right by h and up by k.'` },
+          { name: "scale", code: `assert move_point(2, 4, 3, 2, 0, 0) == (1.0, 12), 'b = 2 squeezes x by half, a = 3 stretches y.'` },
+          { name: "check", code: `f = lambda x: x ** 3 - x
+for (x, y) in [(0.5, f(0.5)), (2, f(2)), (-1.5, f(-1.5))]:
+    X, Y = move_point(x, y, -2, 3, 1, 4)
+    assert abs(Y - (-2 * f(3 * (X - 1)) + 4)) < 1e-9, 'The moved point must lie on the new graph.'` },
+          { name: "fit", code: `f = lambda x: x * x
+assert fit_shift(f, lambda x: (x - 3) ** 2 - 5, range(-4, 5)) == (3, -5) and fit_shift(f, lambda x: 2 * x * x, range(-4, 5)) is None, 'Try every h and k.'` },
         ],
       },
     },

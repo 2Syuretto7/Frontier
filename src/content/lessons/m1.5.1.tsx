@@ -154,6 +154,19 @@ export const lesson: LessonContent = {
       answer: { kind: "choice", options: ["True", "False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def S(n):
+    return 1 if n == 1 else S(n - 1) + 2 * n - 1
+print([S(n) for n in range(1, 7)], all(S(n) == n * n for n in range(1, 200)))`}</Code>
+          <p>The sum of the first n odd numbers, defined recursively. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[1, 4, 9, 16, 25, 36] True", "[1, 3, 5, 7, 9, 11] False", "[1, 4, 9, 16, 25, 36] False", "[0, 1, 4, 9, 16, 25] True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -180,6 +193,56 @@ def check_step(n):
         tests: [
           { name: "formula", code: `assert all(sum_odds(n) == n * n for n in range(1, 200)), 'The first n odd numbers add up to n².'` },
           { name: "step", code: `assert all(check_step(n) for n in range(0, 200)), 'Adding the next odd number 2n + 1 to n² gives (n + 1)².'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Induction proves Bernoulli&rsquo;s inequality (1 + x)ⁿ ≥ 1 + nx for x ≥ −1. Write <C>bernoulli_gap(x, n)</C>, the value (1 + x)ⁿ − (1 + nx) computed exactly with <C>fractions.Fraction</C> for rational x, and <C>step_ok(x, n)</C>, which checks the inductive step numerically: assuming the gap at n is g ≥ 0, the gap at n + 1 equals (1 + x)·g + n·x², so it returns whether <C>bernoulli_gap(x, n + 1) == (1 + x) * bernoulli_gap(x, n) + n * x * x</C>. Finally write <C>first_failure(x, N)</C>, the least n ≤ N with negative gap, or <C>None</C> (it fails only for x &lt; −1).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `from fractions import Fraction
+
+def bernoulli_gap(x, n):
+    return 0
+
+def step_ok(x, n):
+    return True
+
+def first_failure(x, N):
+    return None
+`,
+        solution: `from fractions import Fraction
+
+def bernoulli_gap(x, n):
+    x = Fraction(x)
+    return (1 + x) ** n - (1 + n * x)
+
+def step_ok(x, n):
+    x = Fraction(x)
+    return bernoulli_gap(x, n + 1) == (1 + x) * bernoulli_gap(x, n) + n * x * x
+
+def first_failure(x, N):
+    for n in range(1, N + 1):
+        if bernoulli_gap(x, n) < 0:
+            return n
+    return None
+`,
+        tests: [
+          { name: "gap", code: `from fractions import Fraction
+assert bernoulli_gap(1, 3) == 4 and bernoulli_gap(Fraction(-1, 2), 2) == Fraction(1, 4) and bernoulli_gap(5, 1) == 0, '(1 + 1)³ − 4 = 4.'` },
+          { name: "step", code: `from fractions import Fraction
+assert all(step_ok(Fraction(p, 7), n) for p in range(-7, 20) for n in range(0, 15)), 'The step identity is exact algebra.'` },
+          { name: "holds", code: `from fractions import Fraction
+assert all(first_failure(Fraction(p, 5), 40) is None for p in range(-5, 30)), 'No failures for x ≥ −1.'` },
+          { name: "fails", code: `assert first_failure(-3, 10) == 5 and first_failure(-1, 50) is None, 'For x = −3 the gap is (−2)ⁿ − (1 − 3n), negative first at n = 5.'` },
         ],
       },
     },

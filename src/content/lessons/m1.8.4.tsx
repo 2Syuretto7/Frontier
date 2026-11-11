@@ -171,6 +171,20 @@ print(hits)`}</Code>
       answer: { kind: "numeric", value: 0 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import random
+random.seed(1)
+xs = [random.random() for _ in range(100000)]
+print(sum(1 for x in xs if x == 0.5), round(sum(1 for x in xs if x < 0.5) / len(xs), 1))`}</Code>
+          <p>With uniform samples from [0, 1), single points have probability 0 but intervals do not. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0 0.5", "1 0.5", "0 0.4", "50000 0.5"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -197,6 +211,63 @@ def estimate(event, n):
           { name: "interval", code: `assert abs(estimate(lambda x: 0.2 < x < 0.5, 100000) - 0.3) < 0.01, 'The probability of an interval is its length.'` },
           { name: "point", code: `assert estimate(lambda x: x == 0.25, 100000) == 0.0, 'A single point has probability 0.'` },
           { name: "rationals", code: `assert estimate(lambda x: (x * 8).is_integer(), 100000) == 0.0, 'Countably many points still have probability 0.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A countable set has measure zero: cover the k-th point by an interval of length ε/2ᵏ⁺¹. Write <C>cover_rationals(n, eps)</C>, which lists the first n rationals in [0, 1] in the order of increasing denominator (0/1, 1/1, 1/2, 1/3, 2/3, 1/4, 3/4, …, lowest terms only), and returns the list of intervals (r − ε/2ᵏ⁺², r + ε/2ᵏ⁺²) for k = 0, 1, … together with their total length. Then write <C>uncovered_fraction(intervals, samples, seed)</C>, which seeds <C>random</C> and returns the fraction of uniform samples in [0, 1) lying in none of the intervals.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def cover_rationals(n, eps):
+    return ([], 0.0)
+
+def uncovered_fraction(intervals, samples, seed):
+    return 0.0
+`,
+        solution: `import random
+from math import gcd
+
+def cover_rationals(n, eps):
+    rats = [(0, 1), (1, 1)]
+    q = 2
+    while len(rats) < n:
+        for p in range(1, q):
+            if gcd(p, q) == 1:
+                rats.append((p, q))
+        q += 1
+    rats = rats[:n]
+    ivs = []
+    for k, (p, q) in enumerate(rats):
+        r, h = p / q, eps / 2 ** (k + 2)
+        ivs.append((r - h, r + h))
+    return (ivs, sum(b - a for a, b in ivs))
+
+def uncovered_fraction(intervals, samples, seed):
+    random.seed(seed)
+    miss = 0
+    for _ in range(samples):
+        x = random.random()
+        if not any(a < x < b for a, b in intervals):
+            miss += 1
+    return miss / samples
+`,
+        tests: [
+          { name: "order", code: `ivs, L = cover_rationals(7, 1)
+mids = [round((a + b) / 2, 9) for a, b in ivs]
+assert mids == [0.0, 1.0, 0.5, round(1 / 3, 9), round(2 / 3, 9), 0.25, 0.75], 'Increasing denominators, lowest terms only.'` },
+          { name: "length", code: `ivs, L = cover_rationals(20, 0.1)
+assert abs(L - 0.1 * (1 - 0.5 ** 20)) < 1e-12, 'The lengths ε/2ᵏ⁺¹ sum to ε(1 − 2⁻ⁿ) < ε.'` },
+          { name: "mostly uncovered", code: `ivs, L = cover_rationals(300, 0.05)
+f = uncovered_fraction(ivs, 20000, 1)
+assert f > 0.94, f'Infinitely many rationals, yet {1 - f:.3f} of [0, 1) is covered.'` },
         ],
       },
     },

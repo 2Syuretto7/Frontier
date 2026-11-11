@@ -263,6 +263,18 @@ export const lesson: LessonContent = {
       answer: { kind: "choice", options: ["False True", "True True", "True False", "False False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`x = 0.1 + 0.2
+print(x == 0.3, round(x, 10) == 0.3, abs(x - 0.3) < 1e-12)`}</Code>
+          <p>Binary floating point cannot store 0.1 exactly. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["False True True", "True True True", "False False True", "False True False"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -292,6 +304,42 @@ assert e == 8 and abs(m - 2.99792458) < 1e-9, 'The speed of light is 2.99792458 
 assert e == -4 and abs(m - 4.2) < 1e-9, '0.00042 is 4.2 × 10⁻⁴.'` },
           { name: "negative", code: `m, e = sci(-5000)
 assert e == 3 and abs(m + 5) < 1e-9, 'Take the logarithm of |x| and keep the sign in m.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A rational number has a decimal expansion that ends or repeats. Write <C>decimal(p, q)</C> for 0 ≤ p &lt; q, which returns a pair of strings (non-repeating part, repeating part) of the digits after the point, found by long division and remembering each remainder. For example 1/6 = 0.1666… gives <C>("1", "6")</C> and 1/4 gives <C>("25", "")</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def decimal(p, q):
+    return (str(p / q)[2:], '')
+`,
+        solution: `def decimal(p, q):
+    digits, seen, r = '', {}, p
+    while r != 0 and r not in seen:
+        seen[r] = len(digits)
+        r *= 10
+        digits += str(r // q)
+        r %= q
+    if r == 0:
+        return (digits, '')
+    i = seen[r]
+    return (digits[:i], digits[i:])
+`,
+        tests: [
+          { name: "ending", code: `assert decimal(1, 4) == ('25', '') and decimal(3, 8) == ('375', '') and decimal(0, 5) == ('', ''), 'When the remainder hits 0 the expansion ends.'` },
+          { name: "repeating", code: `assert decimal(1, 3) == ('', '3') and decimal(1, 6) == ('1', '6') and decimal(1, 7) == ('', '142857'), 'A repeated remainder starts the cycle again.'` },
+          { name: "long cycle", code: `a, b = decimal(1, 97)
+assert a == '' and len(b) == 96, '1/97 has period 96.'` },
+          { name: "mixed", code: `assert decimal(7, 12) == ('58', '3') and decimal(22, 70) == ('3', '142857'), 'Record the position at which each remainder first appeared.'` },
         ],
       },
     },

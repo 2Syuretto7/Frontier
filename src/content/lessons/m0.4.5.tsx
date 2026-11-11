@@ -163,6 +163,19 @@ export const lesson: LessonContent = {
       answer: { kind: "numeric", value: 2.7169, tolerance: 0.0001 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+for n in (1, 10, 1000, 10 ** 6):
+    print(n, round((1 + 1 / n) ** n, 5))`}</Code>
+          <p>Compounding n times a year at 100%. What is the last value printed?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2.71828", "2.71692", "2.0", "2.70481"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -188,6 +201,49 @@ export const lesson: LessonContent = {
           { name: "few terms", code: `assert abs(e_series(0) - 1) < 1e-12 and abs(e_series(3) - (1 + 1 + 0.5 + 1 / 6)) < 1e-12, 'Each term is the previous one divided by k.'` },
           { name: "converges", code: `import math
 assert abs(e_series(15) - math.e) < 1e-10, 'The series reaches e quickly.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>exp_series(x)</C>, eˣ for any real x, accurately for |x| up to 50. Summing the series directly fails for large negative x because huge terms of alternating sign cancel, so compute e^|x| by adding terms xᵏ/k! (each built from the last) until a term is below 1e−17 of the sum, and use eˣ = 1/e^|x| when x &lt; 0. Do not use <C>math.exp</C> or <C>**</C> with a non-integer exponent.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def exp_series(x):
+    term, total, k = 1.0, 1.0, 0
+    while abs(term) > 1e-17 * abs(total):
+        k += 1
+        term *= x / k
+        total += term
+    return total
+`,
+        solution: `def exp_series(x):
+    ax = abs(x)
+    term, total, k = 1.0, 1.0, 0
+    while term > 1e-17 * total:
+        k += 1
+        term *= ax / k
+        total += term
+    return total if x >= 0 else 1 / total
+`,
+        tests: [
+          { name: "small", code: `import math
+assert all(abs(exp_series(x) - math.exp(x)) <= 1e-14 * math.exp(x) for x in [0, 1, -1, 0.5, 3, -3]), 'The series converges for every x.'` },
+          { name: "large", code: `import math
+assert abs(exp_series(50) - math.exp(50)) <= 1e-13 * math.exp(50), 'Keep adding until the terms are negligible.'` },
+          { name: "negative", code: `import math
+v = exp_series(-30)
+assert abs(v - math.exp(-30)) <= 1e-12 * math.exp(-30), f'Direct summation at −30 gives {v!r}; use 1/e^30.'` },
+          { name: "no exp", code: `import inspect
+src = inspect.getsource(exp_series)
+assert 'exp(' not in src.replace('exp_series(', '') and 'math' not in src, 'Use the series.'` },
         ],
       },
     },

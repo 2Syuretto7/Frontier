@@ -146,6 +146,18 @@ print(sorted(set.intersection(*A.values())))`}</Code>
       answer: { kind: "choice", options: ["[]", "[4]", "[2]", "[1, 2, 3, 4]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`family = [set(range(k, 3 * k + 1)) for k in range(1, 5)]
+print(sorted(set.intersection(*family)), len(set.union(*family)))`}</Code>
+          <p>The family A_k = {k, …, 3k} for k = 1 … 4. What do the big intersection and big union give?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[] 12", "[3, 4] 12", "[3] 12", "[] 9"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -180,6 +192,66 @@ def big_intersection(family):
 assert big_union(F) == set(range(10)) and big_intersection(F) == set(range(4, 10)), 'For the nested family {n, …, 9} the intersection starts at 4.'` },
           { name: "intervals", code: `F = [set(range(n, 2 * n + 1)) for n in range(1, 5)]
 assert big_intersection(F) == set(), 'The sets {n, …, 2n} for n = 1 to 4 have nothing in common.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>limsup(family)</C> and <C>liminf(family)</C> for a finite list of sets A₁, …, Aₙ, treating it as one period of an infinitely repeating sequence: the lim sup is the set of points in infinitely many Aₖ (here: in at least one), and the lim inf is the set of points in all but finitely many (here: in all). Then write <C>tail_union(family, m)</C> and <C>tail_intersection(family, m)</C>, the union and intersection of Aₘ, Aₘ₊₁, …, Aₙ (1-based), and check in the tests that the lim inf ⊆ lim sup.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def tail_union(family, m):
+    return set()
+
+def tail_intersection(family, m):
+    return set()
+
+def limsup(family):
+    return set()
+
+def liminf(family):
+    return set()
+`,
+        solution: `def tail_union(family, m):
+    out = set()
+    for A in family[m - 1:]:
+        out |= A
+    return out
+
+def tail_intersection(family, m):
+    tail = family[m - 1:]
+    out = set(tail[0])
+    for A in tail[1:]:
+        out &= A
+    return out
+
+def limsup(family):
+    return tail_union(family, 1)
+
+def liminf(family):
+    return tail_intersection(family, 1)
+`,
+        tests: [
+          { name: "tails", code: `F = [{1, 2, 3}, {2, 3, 4}, {3, 4, 5}]
+assert tail_union(F, 2) == {2, 3, 4, 5} and tail_intersection(F, 2) == {3, 4} and tail_intersection(F, 3) == {3, 4, 5}, 'Start from Aₘ.'` },
+          { name: "limits", code: `F = [{0, 1}, {0, 2}, {0, 1, 3}]
+assert limsup(F) == {0, 1, 2, 3} and liminf(F) == {0}, 'Only 0 is in every set of the period.'` },
+          { name: "nested", code: `import random
+random.seed(9)
+for _ in range(30):
+    F = [{random.randint(0, 9) for _ in range(6)} for _ in range(random.randint(1, 6))]
+    assert liminf(F) <= limsup(F) and all(tail_intersection(F, m) <= tail_union(F, m) for m in range(1, len(F) + 1))` },
+          { name: "copies", code: `F = [{1, 2}, {2, 3}]
+tail_intersection(F, 1)
+tail_union(F, 1)
+assert F == [{1, 2}, {2, 3}], 'Do not change the sets you were given.'` },
         ],
       },
     },

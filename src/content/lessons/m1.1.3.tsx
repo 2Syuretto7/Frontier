@@ -140,6 +140,21 @@ print(all((not (p and q)) == ((not p) or (not q)) for p, q in product([True, Fal
       answer: { kind: "choice", options: ["True", "False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from itertools import product
+lhs = lambda p, q, r: p and (q or r)
+rhs = lambda p, q, r: (p and q) or r
+bad = [v for v in product([True, False], repeat=3) if lhs(*v) != rhs(*v)]
+print(bad)`}</Code>
+          <p>Is p ∧ (q ∨ r) equivalent to (p ∧ q) ∨ r? The code lists the rows where they differ.</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[(False, True, True), (False, False, True)]", "[]", "[(False, False, True)]", "[(True, False, True), (False, False, True)]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -164,6 +179,51 @@ def equivalent(f, g, n):
         tests: [
           { name: "De Morgan", code: `assert equivalent(lambda p, q: not (p or q), lambda p, q: (not p) and (not q), 2), 'De Morgan: ¬(p ∨ q) ≡ ¬p ∧ ¬q.'` },
           { name: "not equivalent", code: `assert not equivalent(lambda p, q: (not p) or q, lambda p, q: p or (not q), 2), 'p → q and its converse are not equivalent.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>simplify_check(f, g, n)</C>, which returns <C>None</C> if the Boolean functions f and g of n variables are equivalent and otherwise the first assignment (a tuple, in <C>product([False, True], repeat=n)</C> order) where they differ. Then write <C>is_tautology(f, n)</C> and <C>is_satisfiable(f, n)</C>, both by calling <C>simplify_check</C> against a constant function.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def simplify_check(f, g, n):
+    return None
+
+def is_tautology(f, n):
+    return True
+
+def is_satisfiable(f, n):
+    return True
+`,
+        solution: `from itertools import product
+
+def simplify_check(f, g, n):
+    for v in product([False, True], repeat=n):
+        if bool(f(*v)) != bool(g(*v)):
+            return v
+    return None
+
+def is_tautology(f, n):
+    return simplify_check(f, lambda *v: True, n) is None
+
+def is_satisfiable(f, n):
+    return simplify_check(f, lambda *v: False, n) is not None
+`,
+        tests: [
+          { name: "de morgan", code: `assert simplify_check(lambda p, q: not (p and q), lambda p, q: (not p) or (not q), 2) is None, 'De Morgan holds.'` },
+          { name: "differs", code: `assert simplify_check(lambda p, q, r: p and (q or r), lambda p, q, r: (p and q) or r, 3) == (False, False, True), 'Return the first row where they differ.'` },
+          { name: "tautology", code: `assert is_tautology(lambda p, q: (p and (not p or q)) <= q, 2) and not is_tautology(lambda p, q: p or q, 2), 'Modus ponens is a tautology.'` },
+          { name: "satisfiable", code: `assert is_satisfiable(lambda a, b, c: a and not b and c, 3) and not is_satisfiable(lambda a, b: a and not a, 2), 'Satisfiable means true in some row.'` },
+          { name: "reuse", code: `import inspect
+assert 'simplify_check' in inspect.getsource(is_tautology) and 'simplify_check' in inspect.getsource(is_satisfiable), 'Call simplify_check.'` },
         ],
       },
     },

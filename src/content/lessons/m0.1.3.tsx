@@ -243,6 +243,20 @@ print(Fraction(1, 3) + Fraction(1, 6))`}</Code>
       answer: { kind: "choice", options: ["1/2", "2/9", "3/6", "1/9"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from fractions import Fraction
+x = Fraction(1, 3) + Fraction(1, 6)
+y = x * 4 - Fraction(1, 2)
+print(x, y)`}</Code>
+          <p>Fraction keeps exact rational numbers in lowest terms. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1/2 3/2", "3/6 3/2", "1/2 1.5", "0.5 1.5"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -273,6 +287,41 @@ def add(a, b, c, d):
           { name: "halves", code: `assert add(1, 2, 1, 3) == (5, 6), '1/2 + 1/3 = 3/6 + 2/6 = 5/6.'` },
           { name: "reduce", code: `assert add(1, 3, 1, 6) == (1, 2), 'Reduce by the greatest common divisor.'` },
           { name: "signs", code: `assert add(1, -4, 0, 1) == (-1, 4), 'Keep the denominator positive.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>egyptian(p, q)</C>, which writes a fraction 0 &lt; p/q &lt; 1 as a sum of distinct unit fractions by the greedy rule: repeatedly take the largest 1/n not exceeding what is left, and subtract it. Return the list of denominators in increasing order. Work with integers only.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def egyptian(p, q):
+    return [q]
+`,
+        solution: `def egyptian(p, q):
+    out = []
+    while p > 0:
+        n = -(-q // p)
+        out.append(n)
+        p, q = p * n - q, q * n
+    return out
+`,
+        tests: [
+          { name: "simple", code: `assert egyptian(1, 7) == [7] and egyptian(2, 3) == [2, 6] and egyptian(3, 4) == [2, 4], '2/3 = 1/2 + 1/6.'` },
+          { name: "classic", code: `assert egyptian(4, 13) == [4, 18, 468] and egyptian(5, 6) == [2, 3], 'The largest 1/n not above p/q has n = ⌈q/p⌉.'` },
+          { name: "exact", code: `from fractions import Fraction
+for p, q in [(7, 15), (5, 121), (11, 12), (3, 7)]:
+    ds = egyptian(p, q)
+    assert sum(Fraction(1, d) for d in ds) == Fraction(p, q) and len(set(ds)) == len(ds) and ds == sorted(ds), (p, q)` },
+          { name: "long", code: `ds = egyptian(5, 121)
+assert ds[:3] == [25, 757, 763309] and len(ds) == 5, 'Integer arithmetic keeps the huge denominators exact.'` },
         ],
       },
     },

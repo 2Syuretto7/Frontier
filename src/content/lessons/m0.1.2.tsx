@@ -237,6 +237,22 @@ export const lesson: LessonContent = {
       answer: { kind: "choice", options: ["-4 1 7", "-3 -1 7", "-3 1 7", "-4 -1 -7"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`xs = [5, -3, 8, -10, 2]
+total, low = 0, 0
+for x in xs:
+    total += x
+    low = min(low, total)
+print(total, low)`}</Code>
+          <p>A running balance starts at 0. What are the final balance and the lowest balance reached?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2 0", "2 -10", "2 -5", "-2 0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -267,6 +283,41 @@ def distance(a, b):
         tests: [
           { name: "sign", code: `assert [sign(-5), sign(0), sign(3)] == [-1, 0, 1], 'Three cases: negative, zero, positive.'` },
           { name: "distance", code: `assert distance(-3, 4) == 7 and distance(4, -3) == 7, 'Distance never depends on the order: use abs.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Python&rsquo;s <C>//</C> rounds towards minus infinity, but many languages truncate towards zero. Write <C>trunc_div(a, b)</C>, which rounds the quotient towards zero, and <C>trunc_mod(a, b)</C>, the remainder that goes with it, so that <C>a == b * trunc_div(a, b) + trunc_mod(a, b)</C>. Use integer arithmetic only, not floats or <C>math.trunc</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def trunc_div(a, b):
+    return a // b
+
+def trunc_mod(a, b):
+    return a % b
+`,
+        solution: `def trunc_div(a, b):
+    q = abs(a) // abs(b)
+    return q if (a < 0) == (b < 0) else -q
+
+def trunc_mod(a, b):
+    return a - b * trunc_div(a, b)
+`,
+        tests: [
+          { name: "positive", code: `assert trunc_div(7, 2) == 3 and trunc_mod(7, 2) == 1, 'For positive numbers both conventions agree.'` },
+          { name: "negative", code: `assert trunc_div(-7, 2) == -3 and trunc_mod(-7, 2) == -1 and trunc_div(7, -2) == -3 and trunc_mod(7, -2) == 1, 'Truncation drops the fraction: −3.5 becomes −3.'` },
+          { name: "both negative", code: `assert trunc_div(-7, -2) == 3 and trunc_mod(-7, -2) == -1, 'Two negatives give a positive quotient.'` },
+          { name: "identity", code: `assert all(a == b * trunc_div(a, b) + trunc_mod(a, b) and abs(trunc_mod(a, b)) < abs(b) for a in range(-30, 31) for b in list(range(-7, 0)) + list(range(1, 8))), 'The remainder takes the sign of a and is smaller than |b|.'` },
+          { name: "huge", code: `a = -10 ** 30 - 1
+assert trunc_div(a, 10) == -10 ** 29, 'Floats lose precision here; stay with integers.'` },
         ],
       },
     },

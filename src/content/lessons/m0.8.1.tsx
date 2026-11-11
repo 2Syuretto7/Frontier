@@ -167,6 +167,19 @@ print(st.mean(xs), st.median(xs), st.pstdev(xs))`}</Code>
       answer: { kind: "choice", options: ["5 4.5 2.0", "5 4 2.0", "5 4.5 4.0", "4.5 5 2.0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import statistics as st
+xs = [2, 4, 4, 4, 5, 5, 7, 9]
+print(st.mean(xs), st.median(xs), st.mode(xs), st.pstdev(xs))`}</Code>
+          <p>Mean, median, mode and population standard deviation. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["5 4.5 4 2.0", "5 4.5 4 2.138089935299395", "5 5 4 2.0", "5.0 4 4 2.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -195,6 +208,63 @@ print(st.mean(xs), st.median(xs), st.pstdev(xs))`}</Code>
 assert abs(m - 5) < 1e-9 and abs(med - 4.5) < 1e-9 and abs(sd - 2) < 1e-9, 'With an even count the median averages the middle two.'` },
           { name: "odd", code: `m, med, sd = summary([9, 1, 5])
 assert abs(med - 5) < 1e-9 and abs(sd - (32 / 3) ** 0.5) < 1e-9, 'Sort before taking the middle value.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>Running</C>, a class that keeps the count, mean and variance of a stream of numbers in one pass by Welford&rsquo;s method (for each new x: n += 1, d = x − mean, mean += d/n, M2 += d·(x − mean)), with methods <C>add(x)</C>, <C>mean()</C> and <C>variance()</C> (population variance M2/n, and 0 when n = 0). Welford avoids the cancellation of the formula mean(x²) − mean(x)², which the tests trigger with data near 10⁹.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `class Running:
+    def __init__(self):
+        self.n, self.s, self.s2 = 0, 0.0, 0.0
+    def add(self, x):
+        self.n += 1
+        self.s += x
+        self.s2 += x * x
+    def mean(self):
+        return self.s / self.n
+    def variance(self):
+        return self.s2 / self.n - (self.s / self.n) ** 2
+`,
+        solution: `class Running:
+    def __init__(self):
+        self.n, self.m, self.M2 = 0, 0.0, 0.0
+    def add(self, x):
+        self.n += 1
+        d = x - self.m
+        self.m += d / self.n
+        self.M2 += d * (x - self.m)
+    def mean(self):
+        return self.m
+    def variance(self):
+        return self.M2 / self.n if self.n else 0.0
+`,
+        tests: [
+          { name: "basic", code: `r = Running()
+for x in [2, 4, 4, 4, 5, 5, 7, 9]:
+    r.add(x)
+assert abs(r.mean() - 5) < 1e-12 and abs(r.variance() - 4) < 1e-12, 'Mean 5 and variance 4.'` },
+          { name: "empty", code: `assert Running().variance() == 0, 'No data, no spread.'` },
+          { name: "stable", code: `r = Running()
+for x in [1e9 + 4, 1e9 + 7, 1e9 + 13, 1e9 + 16]:
+    r.add(x)
+assert abs(r.variance() - 22.5) < 1e-6, f'Expected 22.5, got {r.variance()}: subtracting huge squares loses the answer.'` },
+          { name: "random", code: `import random, statistics
+random.seed(3)
+xs = [random.gauss(50, 10) for _ in range(5000)]
+r = Running()
+for x in xs:
+    r.add(x)
+assert abs(r.mean() - statistics.fmean(xs)) < 1e-9 and abs(r.variance() - statistics.pvariance(xs)) < 1e-7, 'Agree with the statistics module.'` },
         ],
       },
     },

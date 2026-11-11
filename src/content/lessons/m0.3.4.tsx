@@ -192,6 +192,24 @@ print(f(g(11)), g(f(11)), f(f(1)))`}</Code>
       answer: { kind: "choice", options: ["11.0 11.0 13", "11.0 11.0 5", "25 4.0 13", "11 11 13"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def compose(*fs):
+    def h(x):
+        for f in reversed(fs):
+            x = f(x)
+        return x
+    return h
+g = compose(lambda x: x + 1, lambda x: 2 * x, lambda x: x - 3)
+print(g(5), g(0))`}</Code>
+          <p>compose(f, g, h)(x) means f(g(h(x))). What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["5 -5", "9 -5", "5 -2", "13 3"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -220,6 +238,63 @@ def inverse_linear(m, c):
 assert h(3) == 10, 'f ∘ g applies g first: 3² + 1 = 10.'` },
           { name: "inverse", code: `inv = inverse_linear(2, 3)
 assert all(abs(inv(2 * x + 3) - x) < 1e-9 for x in range(-5, 6)), 'Undo the steps in reverse order: subtract c, then divide by m.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>inverse(f, lo, hi)</C> for a continuous, strictly increasing f on [lo, hi]. It returns a function g with g(y) ≈ f⁻¹(y) for f(lo) ≤ y ≤ f(hi), found by bisection to within 1e−12, and raises <C>ValueError</C> for y outside that range. Also write <C>iterate(f, n)</C>, which returns f composed with itself n times (the identity when n = 0).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def inverse(f, lo, hi):
+    return lambda y: y
+
+def iterate(f, n):
+    return f
+`,
+        solution: `def inverse(f, lo, hi):
+    def g(y):
+        if not f(lo) <= y <= f(hi):
+            raise ValueError('out of range')
+        a, b = lo, hi
+        while b - a > 1e-12:
+            m = (a + b) / 2
+            if f(m) < y:
+                a = m
+            else:
+                b = m
+        return (a + b) / 2
+    return g
+
+def iterate(f, n):
+    def h(x):
+        for _ in range(n):
+            x = f(x)
+        return x
+    return h
+`,
+        tests: [
+          { name: "cube root", code: `g = inverse(lambda x: x ** 3, 0, 10)
+assert abs(g(27) - 3) < 1e-9 and abs(g(2) - 2 ** (1 / 3)) < 1e-9, 'Bisect on x until f(x) = y.'` },
+          { name: "round trip", code: `import math
+f = lambda x: x + math.exp(x)
+g = inverse(f, -5, 5)
+assert all(abs(f(g(y)) - y) < 1e-9 for y in [-4, 0, 1, 2.5, 100]), 'f(g(y)) should be y.'` },
+          { name: "range", code: `g = inverse(lambda x: 2 * x, 0, 1)
+try:
+    g(3)
+    ok = False
+except ValueError:
+    ok = True
+assert ok, 'y must lie between f(lo) and f(hi).'` },
+          { name: "iterate", code: `assert iterate(lambda x: 2 * x, 10)(1) == 1024 and iterate(lambda x: x + 3, 0)(7) == 7 and iterate(lambda s: s + 'a', 3)('') == 'aaa', 'Apply f n times.'` },
         ],
       },
     },

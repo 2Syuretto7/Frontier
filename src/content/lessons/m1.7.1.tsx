@@ -157,6 +157,20 @@ print(is_function(f, {1, 2, 3}), is_function(g, {1, 2}))`}</Code>
       answer: { kind: "choice", options: ["f only", "g only", "Both", "Neither"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`R = {(1, 'a'), (2, 'b'), (2, 'c'), (4, 'a')}
+A = {1, 2, 3, 4}
+outs = {a: [b for x, b in R if x == a] for a in A}
+print(sorted(a for a in A if len(outs[a]) != 1))`}</Code>
+          <p>Which elements of A stop this relation from being a function from A?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[2, 3]", "[2]", "[3]", "[1, 4]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -184,6 +198,60 @@ print(is_function(f, {1, 2, 3}), is_function(g, {1, 2}))`}</Code>
           { name: "function", code: `assert as_function({(1, 'a'), (2, 'b'), (3, 'a')}, {1, 2, 3}) == {1: 'a', 2: 'b', 3: 'a'}, 'Each input has exactly one output.'` },
           { name: "two outputs", code: `assert as_function({(1, 'a'), (1, 'b')}, {1}) is None, '1 has two partners: not a function.'` },
           { name: "missing", code: `assert as_function({(1, 'a')}, {1, 2}) is None, '2 has no partner: not a function on {1, 2}.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>count_relations(m, n)</C>, the number of relations from an m-element set to an n-element set (2^(mn)), and <C>count_functions(m, n)</C> (nᵐ). Then write <C>random_function_check(m, n, trials, seed)</C>, which seeds <C>random</C>, draws <C>trials</C> relations by including each of the mn pairs independently with probability ½, and returns the fraction that are functions. Its expected value is nᵐ/2^(mn), which the tests compare against.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def count_relations(m, n):
+    return m * n
+
+def count_functions(m, n):
+    return m ** n
+
+def random_function_check(m, n, trials, seed):
+    return 0.0
+`,
+        solution: `import random
+
+def count_relations(m, n):
+    return 2 ** (m * n)
+
+def count_functions(m, n):
+    return n ** m
+
+def random_function_check(m, n, trials, seed):
+    random.seed(seed)
+    hits = 0
+    for _ in range(trials):
+        ok = True
+        for a in range(m):
+            k = sum(random.random() < 0.5 for _ in range(n))
+            if k != 1:
+                ok = False
+        hits += ok
+    return hits / trials
+`,
+        tests: [
+          { name: "counts", code: `assert count_relations(2, 3) == 64 and count_functions(2, 3) == 9 and count_functions(3, 2) == 8 and count_functions(0, 5) == 1, 'Each input chooses one of n outputs.'` },
+          { name: "brute", code: `from itertools import product
+m, n = 2, 2
+rels = [frozenset(p for p, keep in zip(product(range(m), range(n)), bits) if keep) for bits in product([0, 1], repeat=m * n)]
+funcs = [R for R in rels if all(sum(1 for a, b in R if a == x) == 1 for x in range(m))]
+assert len(rels) == count_relations(m, n) and len(funcs) == count_functions(m, n), 'Count by listing them all.'` },
+          { name: "simulate", code: `f = random_function_check(2, 2, 20000, 1)
+assert abs(f - 4 / 16) < 0.015, f'Expected about 0.25, got {f}.'` },
+          { name: "seeded", code: `assert random_function_check(3, 2, 2000, 7) == random_function_check(3, 2, 2000, 7), 'Seed the generator.'` },
         ],
       },
     },

@@ -159,6 +159,21 @@ print(len(classes), classes[1])`}</Code>
       answer: { kind: "numeric", value: 4 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`words = ['tea', 'eat', 'ate', 'tan', 'nat', 'bat']
+classes = {}
+for w in words:
+    classes.setdefault(''.join(sorted(w)), []).append(w)
+print(len(classes), sorted(classes.values(), key=len)[-1])`}</Code>
+          <p>'Is an anagram of' is an equivalence relation. How many classes, and which is largest?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["3 ['tea', 'eat', 'ate']", "4 ['tea', 'eat', 'ate']", "3 ['tan', 'nat']", "6 ['bat']"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -189,6 +204,84 @@ print(len(classes), classes[1])`}</Code>
 assert sorted(sorted(c) for c in P) == [[0, 3, 6], [1, 4, 7], [2, 5, 8]], 'Congruence mod 3 gives three classes.'` },
           { name: "words", code: `P = partition(['cat', 'dog', 'ox', 'emu', 'yak', 'be'], lambda a, b: len(a) == len(b))
 assert len(P) == 2, 'Same length splits these words into two classes.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>UnionFind</C>, the disjoint-set structure: <C>UnionFind(elements)</C>, <C>find(x)</C> returning the representative of x&rsquo;s class (with path compression), <C>union(x, y)</C> merging two classes (attach the smaller under the larger), and <C>classes()</C> returning the partition as a list of sorted lists, sorted by their first element. Then write <C>count_components(n, edges)</C>, the number of connected pieces of a graph on 0 … n − 1, using it.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `class UnionFind:
+    def __init__(self, elements):
+        self.parent = {x: x for x in elements}
+    def find(self, x):
+        return x
+    def union(self, x, y):
+        pass
+    def classes(self):
+        return [[x] for x in sorted(self.parent)]
+
+def count_components(n, edges):
+    return n
+`,
+        solution: `class UnionFind:
+    def __init__(self, elements):
+        self.parent = {x: x for x in elements}
+        self.size = {x: 1 for x in elements}
+    def find(self, x):
+        root = x
+        while self.parent[root] != root:
+            root = self.parent[root]
+        while self.parent[x] != root:
+            self.parent[x], x = root, self.parent[x]
+        return root
+    def union(self, x, y):
+        a, b = self.find(x), self.find(y)
+        if a == b:
+            return
+        if self.size[a] < self.size[b]:
+            a, b = b, a
+        self.parent[b] = a
+        self.size[a] += self.size[b]
+    def classes(self):
+        groups = {}
+        for x in self.parent:
+            groups.setdefault(self.find(x), []).append(x)
+        return sorted((sorted(g) for g in groups.values()), key=lambda g: g[0])
+
+def count_components(n, edges):
+    uf = UnionFind(range(n))
+    for a, b in edges:
+        uf.union(a, b)
+    return len(uf.classes())
+`,
+        tests: [
+          { name: "classes", code: `uf = UnionFind(range(7))
+for a, b in [(0, 3), (4, 5), (3, 6), (1, 1)]:
+    uf.union(a, b)
+assert uf.classes() == [[0, 3, 6], [1], [2], [4, 5]] and uf.find(6) == uf.find(0) != uf.find(4), 'Merge classes and list them.'` },
+          { name: "components", code: `assert count_components(5, []) == 5 and count_components(5, [(0, 1), (1, 2), (3, 4)]) == 2 and count_components(4, [(0, 1), (1, 0), (2, 3), (3, 2)]) == 2, 'Each union joins two pieces.'` },
+          { name: "large", code: `import random
+random.seed(1)
+n = 20000
+edges = [(random.randrange(n), random.randrange(n)) for _ in range(20000)]
+uf = UnionFind(range(n))
+for a, b in edges:
+    uf.union(a, b)
+r = uf.find(edges[0][0])
+assert all(uf.find(a) == uf.find(b) for a, b in edges), 'Both ends of an edge share a class.'` },
+          { name: "chain", code: `uf = UnionFind(range(100000))
+for i in range(99999):
+    uf.union(i, i + 1)
+assert uf.find(0) == uf.find(99999), 'A long chain must not overflow the stack or take forever.'` },
         ],
       },
     },

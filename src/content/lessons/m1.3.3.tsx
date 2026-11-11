@@ -166,6 +166,21 @@ print(found)`}</Code>
       answer: { kind: "choice", options: ["[]", "[Fraction(99, 70)]", "[Fraction(7, 5)]", "An error"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+primes = [2, 3, 5, 7, 11, 13]
+N = math.prod(primes) + 1
+f = next(d for d in range(2, N + 1) if N % d == 0)
+print(N, f, f in primes)`}</Code>
+          <p>Euclid's construction from the first six primes. Is the product plus one prime? What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["30031 59 False", "30031 30031 False", "30031 59 True", "30030 2 True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -195,6 +210,56 @@ print(found)`}</Code>
           { name: "composite case", code: `assert euclid_new_prime([2, 3, 5, 7, 11, 13]) == 59, '30031 = 59 × 509, so the new prime is 59.'` },
           { name: "new", code: `ps = [2, 3, 5, 7, 11, 13, 17]
 assert euclid_new_prime(ps) not in ps, 'The prime found is never in the list.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A proof by contradiction often ends in a smaller counterexample, which is impossible. Write <C>descent(a, b)</C> for the claim that √2 is irrational: given positive integers with a² = 2b², the proof produces a smaller pair (2b − a, a − b). Your function should apply this step repeatedly and raise <C>ValueError("not a solution")</C> as soon as a pair fails a² = 2b². Since no pair ever works, the tests check that it always raises, and that it raises on the first step. Also write <C>near_misses(N)</C>, the pairs (a, b) with b ≤ N and |a² − 2b²| = 1, the closest the equation can come.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def descent(a, b):
+    return (a, b)
+
+def near_misses(N):
+    return []
+`,
+        solution: `import math
+
+def descent(a, b):
+    while a > 0 and b > 0:
+        if a * a != 2 * b * b:
+            raise ValueError('not a solution')
+        a, b = 2 * b - a, a - b
+    raise ValueError('not a solution')
+
+def near_misses(N):
+    out = []
+    for b in range(1, N + 1):
+        a = math.isqrt(2 * b * b)
+        for c in (a, a + 1):
+            if abs(c * c - 2 * b * b) == 1:
+                out.append((c, b))
+    return out
+`,
+        tests: [
+          { name: "raises", code: `for a, b in [(3, 2), (7, 5), (17, 12), (99, 70), (10, 7)]:
+    try:
+        descent(a, b)
+        ok = False
+    except ValueError:
+        ok = True
+    assert ok, (a, b)` },
+          { name: "near", code: `assert near_misses(100) == [(1, 1), (3, 2), (7, 5), (17, 12), (41, 29), (99, 70)], 'The convergents of √2.'` },
+          { name: "ratio", code: `a, b = near_misses(10 ** 6)[-1]
+assert abs(a / b - 2 ** 0.5) < 1e-11, 'The near misses approach √2.'` },
         ],
       },
     },

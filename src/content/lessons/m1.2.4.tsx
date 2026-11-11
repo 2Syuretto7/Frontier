@@ -154,6 +154,19 @@ print(a, b)`}</Code>
       answer: { kind: "choice", options: ["False True", "True True", "True False", "False False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`D = range(5)
+R = lambda x, y: (x + y) % 5 == 0
+print(all(any(R(x, y) for y in D) for x in D), any(all(R(x, y) for y in D) for x in D))`}</Code>
+          <p>∀x∃y versus ∃y∀x for 'x + y is divisible by 5' on 0 … 4. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True False", "True True", "False False", "False True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -182,6 +195,47 @@ def exists_forall(R, D):
 D = range(3)
 assert forall_exists(R, D) and not exists_forall(R, D), 'Each x has some y ≠ x, but no single y differs from every x (including itself).'` },
           { name: "bounded", code: `assert exists_forall(lambda x, y: y >= x, range(5)), 'y = 4 is at least every x.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A function f on a finite list of real points is uniformly continuous-like at scale ε if ∀ε ∃δ ∀x ∀y (|x − y| &lt; δ → |f(x) − f(y)| &lt; ε). Write <C>best_delta(f, xs, eps)</C>, the largest δ among the candidate values {"{|x − y| : x, y in xs, x ≠ y}"} ∪ {"{infinity}"} that works for the ∀x∀y part (δ = ∞ if no pair of points violates the ε condition at all), and <C>witness_pair(f, xs, eps, delta)</C>, the first pair (x, y) in the order of a double loop over xs that breaks the condition for the given δ, or <C>None</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def witness_pair(f, xs, eps, delta):
+    return None
+
+def best_delta(f, xs, eps):
+    return float('inf')
+`,
+        solution: `def witness_pair(f, xs, eps, delta):
+    for x in xs:
+        for y in xs:
+            if abs(x - y) < delta and not abs(f(x) - f(y)) < eps:
+                return (x, y)
+    return None
+
+def best_delta(f, xs, eps):
+    bad = [abs(x - y) for x in xs for y in xs if x != y and not abs(f(x) - f(y)) < eps]
+    return min(bad) if bad else float('inf')
+`,
+        tests: [
+          { name: "witness", code: `xs = [0, 0.5, 1, 1.5, 2]
+assert witness_pair(lambda x: x * x, xs, 1, 0.6) == (1, 1.5) and witness_pair(lambda x: x, xs, 1, 0.6) is None, '1.5² − 1² = 1.25 is not below 1.'` },
+          { name: "best", code: `xs = [k / 10 for k in range(21)]
+d = best_delta(lambda x: 3 * x, xs, 0.9)
+assert abs(d - 0.3) < 1e-9 and witness_pair(lambda x: 3 * x, xs, 0.9, d) is None and witness_pair(lambda x: 3 * x, xs, 0.9, d + 1e-9) is not None, 'The largest δ is the smallest bad distance.'` },
+          { name: "infinite", code: `assert best_delta(lambda x: 5, [0, 1, 2], 0.1) == float('inf'), 'A constant function never breaks the condition.'` },
+          { name: "steep", code: `xs = [k / 100 for k in range(1, 101)]
+assert best_delta(lambda x: 1 / x, xs, 0.5) < best_delta(lambda x: 1 / x, xs[50:], 0.5), '1/x needs a smaller δ near 0.'` },
         ],
       },
     },

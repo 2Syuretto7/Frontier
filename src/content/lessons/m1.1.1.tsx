@@ -144,6 +144,82 @@ export const lesson: LessonContent = {
       answer: { kind: "numeric", value: 3 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def check(p, q):
+    return (p and not q) or (not p and q)
+rows = [check(p, q) for p in (True, False) for q in (True, False)]
+print(rows, rows == [p != q for p in (True, False) for q in (True, False)])`}</Code>
+          <p>Which connective does check compute? What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[False, True, True, False] True", "[True, False, False, True] True", "[False, True, True, False] False", "[True, True, True, False] False"], correct: [0] },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Every connective can be built from NAND alone. Write <C>nand(p, q)</C>, and then <C>NOT(p)</C>, <C>AND(p, q)</C>, <C>OR(p, q)</C>, <C>IMPLIES(p, q)</C> and <C>XOR(p, q)</C>, each using only calls to <C>nand</C> (no <C>not</C>, <C>and</C>, <C>or</C>, <C>if</C> or comparisons in them).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def nand(p, q):
+    return not (p and q)
+
+def NOT(p):
+    return not p
+
+def AND(p, q):
+    return p and q
+
+def OR(p, q):
+    return p or q
+
+def IMPLIES(p, q):
+    return q
+
+def XOR(p, q):
+    return p != q
+`,
+        solution: `def nand(p, q):
+    return not (p and q)
+
+def NOT(p):
+    return nand(p, p)
+
+def AND(p, q):
+    return nand(nand(p, q), nand(p, q))
+
+def OR(p, q):
+    return nand(nand(p, p), nand(q, q))
+
+def IMPLIES(p, q):
+    return nand(p, nand(q, q))
+
+def XOR(p, q):
+    t = nand(p, q)
+    return nand(nand(p, t), nand(q, t))
+`,
+        tests: [
+          { name: "tables", code: `B = (True, False)
+assert all(NOT(p) == (not p) for p in B)
+assert all(AND(p, q) == (p and q) and OR(p, q) == (p or q) for p in B for q in B), 'Check NOT, AND and OR.'` },
+          { name: "implies and xor", code: `B = (True, False)
+assert all(IMPLIES(p, q) == ((not p) or q) and XOR(p, q) == (p != q) for p in B for q in B), 'p → q is ¬p ∨ q; XOR is true when exactly one holds.'` },
+          { name: "only nand", code: `import inspect, re
+for f in (NOT, AND, OR, IMPLIES, XOR):
+    body = inspect.getsource(f).split(':', 1)[1]
+    assert not re.search(r'\\b(not|and|or|if)\\b|[=!<>]=|[<>]', body), f'{f.__name__} must use only nand.'` },
+        ],
+      },
+    },
+    {
       key: "read",
       rung: "apply",
       prompt: (
@@ -175,6 +251,10 @@ print((p and not q) or (not p and q))`}</Code>
 `,
         tests: [
           { name: "all rows", code: `assert [implies(p, q) for p in (True, False) for q in (True, False)] == [True, False, True, True], 'p → q is false only when p is true and q is false.'` },
+          { name: "only not and or", code: `import inspect
+src = inspect.getsource(implies)
+assert ' if ' not in src and '==' not in src and '<=' not in src, 'Build it from not and or alone.'` },
+          { name: "chain", code: `assert implies(implies(True, False), False) and not implies(True, implies(True, False)), 'Nested implications follow the same table.'` },
         ],
       },
     },

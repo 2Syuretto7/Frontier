@@ -162,6 +162,19 @@ print(math.log2(a * b), math.log2(a) + math.log2(b), math.log2(b / a))`}</Code>
       answer: { kind: "choice", options: ["8.0 8.0 2.0", "8.0 15.0 2.0", "256.0 8.0 4.0", "8.0 8.0 -2.0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+x, y = 8, 32
+print(math.log2(x * y), math.log2(x) + math.log2(y), math.log(y, x), math.log10(1000) * 2)`}</Code>
+          <p>Product rule, change of base, and a power. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["8.0 8.0 1.6666666666666667 6.0", "8.0 8.0 4.0 6.0", "8.0 8.0 1.6666666666666667 2000.0", "256.0 8.0 1.6666666666666667 6.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -192,6 +205,60 @@ def digits(n):
         tests: [
           { name: "change of base", code: `assert abs(log_base(81, 3) - 4) < 1e-9 and abs(log_base(0.5, 4) + 0.5) < 1e-9, 'log_b x = ln x / ln b.'` },
           { name: "digits", code: `assert digits(1) == 1 and digits(999) == 3 and digits(1000) == 4 and digits(2 ** 100) == 31, 'A number with d digits has log₁₀ between d − 1 and d.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Logarithms turn huge products into sums. Write <C>log10_factorial(n)</C>, log₁₀ n! as a sum of logarithms, and <C>leading_digits(n, k)</C>, the first k digits of n! as an integer, found from the fractional part of log₁₀ n! (10 raised to the fraction, times 10ᵏ⁻¹, rounded down). Also write <C>num_digits(n)</C>, the number of digits of n!. Do not compute n! itself: the tests use n up to 10⁵.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def log10_factorial(n):
+    return math.log10(math.factorial(n))
+
+def num_digits(n):
+    return len(str(math.factorial(n)))
+
+def leading_digits(n, k):
+    return int(str(math.factorial(n))[:k])
+`,
+        solution: `import math
+
+def log10_factorial(n):
+    return math.fsum(math.log10(i) for i in range(2, n + 1))
+
+def num_digits(n):
+    return math.floor(log10_factorial(n)) + 1
+
+def leading_digits(n, k):
+    L = log10_factorial(n)
+    return int(10 ** (L - math.floor(L) + k - 1))
+`,
+        tests: [
+          { name: "small", code: `import math
+assert abs(log10_factorial(10) - math.log10(3628800)) < 1e-12 and num_digits(10) == 7 and num_digits(1) == 1 and num_digits(0) == 1, '10! = 3628800 has 7 digits.'` },
+          { name: "leading", code: `assert leading_digits(10, 3) == 362 and leading_digits(20, 4) == 2432 and leading_digits(100, 5) == 93326, '100! starts 93326…'` },
+          { name: "large", code: `assert num_digits(1000) == 2568 and leading_digits(1000, 4) == 4023, '1000! has 2568 digits and starts 4023.'` },
+          { name: "fast", code: `import time, math
+real = math.factorial
+def no(*a):
+    raise AssertionError('Do not compute n! itself.')
+math.factorial = no
+try:
+    t = time.time()
+    d = num_digits(100000)
+    assert d == 456574 and time.time() - t < 5, d
+finally:
+    math.factorial = real` },
         ],
       },
     },

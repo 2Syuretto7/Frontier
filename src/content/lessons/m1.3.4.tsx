@@ -157,6 +157,24 @@ export const lesson: LessonContent = {
       answer: { kind: "choice", options: ["It is never 2", "It is always 0", "It equals n mod 3", "It is always 1"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def sign_case(x, y):
+    if x >= 0 and y >= 0:
+        return 'both'
+    if x < 0 and y < 0:
+        return 'both neg'
+    return 'mixed'
+cases = [sign_case(x, y) for x in (-2, 3) for y in (-1, 4)]
+print(cases, all(abs(x * y) == abs(x) * abs(y) for x in range(-5, 6) for y in range(-5, 6)))`}</Code>
+          <p>A proof of |xy| = |x||y| by cases on the signs. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["['both neg', 'mixed', 'mixed', 'both'] True", "['both', 'mixed', 'mixed', 'both neg'] True", "['both neg', 'mixed', 'mixed', 'both'] False", "['mixed', 'both neg', 'both', 'mixed'] True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -185,6 +203,48 @@ def formula(a, b):
         tests: [
           { name: "cases", code: `assert max_by_cases(3, 7) == 7 and max_by_cases(7, 3) == 7 and max_by_cases(2, 2) == 2, 'Handle a ≥ b and a < b.'` },
           { name: "identity", code: `assert all(formula(a, b) == max_by_cases(a, b) for a in range(-5, 6) for b in range(-5, 6)), 'The formula should agree with your cases everywhere.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>abs_ineq_cases(x, y)</C>, which returns the case used to prove the triangle inequality |x + y| ≤ |x| + |y|: <C>"same sign"</C> when x and y are both ≥ 0 or both ≤ 0 (equality then holds), and <C>"opposite"</C> otherwise. Then write <C>check_by_cases(xs)</C>, which returns a dict counting how many pairs from xs fell in each case, and raises <C>AssertionError</C> if any pair breaks the inequality or if a <C>"same sign"</C> pair fails to give equality. Zero counts as same sign with anything.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def abs_ineq_cases(x, y):
+    return 'same sign'
+
+def check_by_cases(xs):
+    return {}
+`,
+        solution: `def abs_ineq_cases(x, y):
+    if (x >= 0 and y >= 0) or (x <= 0 and y <= 0):
+        return 'same sign'
+    return 'opposite'
+
+def check_by_cases(xs):
+    counts = {'same sign': 0, 'opposite': 0}
+    for x in xs:
+        for y in xs:
+            c = abs_ineq_cases(x, y)
+            counts[c] += 1
+            assert abs(x + y) <= abs(x) + abs(y)
+            if c == 'same sign':
+                assert abs(x + y) == abs(x) + abs(y)
+    return counts
+`,
+        tests: [
+          { name: "cases", code: `assert abs_ineq_cases(2, 3) == 'same sign' and abs_ineq_cases(-2, -3) == 'same sign' and abs_ineq_cases(0, -4) == 'same sign' and abs_ineq_cases(-1, 5) == 'opposite', 'Zero goes with either sign.'` },
+          { name: "counts", code: `assert check_by_cases([-2, -1, 0, 1, 2]) == {'same sign': 17, 'opposite': 8}, 'All 25 ordered pairs are checked.'` },
+          { name: "strict", code: `c = check_by_cases([-3, 5])
+assert c == {'same sign': 2, 'opposite': 2}, 'Pairs of an element with itself count too.'` },
         ],
       },
     },

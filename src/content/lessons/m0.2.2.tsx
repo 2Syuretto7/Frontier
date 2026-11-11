@@ -182,6 +182,19 @@ print(x, a * x + b)`}</Code>
       answer: { kind: "choice", options: ["5.0 20.0", "8.33 25.0", "5.0 15.0", "-5.0 -10.0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`a, b, c, d = 3, -4, 1, 6
+x = (d - b) / (a - c)
+print(x, a * x + b == c * x + d)`}</Code>
+          <p>This solves 3x − 4 = x + 6. What does it print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["5.0 True", "5 True", "1.0 False", "-5.0 True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -204,6 +217,49 @@ print(x, a * x + b)`}</Code>
         tests: [
           { name: "both sides", code: `assert abs(solve_linear(5, 3, 2, 12) - 3) < 1e-9, '5x + 3 = 2x + 12 gives 3x = 9.'` },
           { name: "no single solution", code: `assert solve_linear(2, 1, 2, 7) is None, 'When the x terms cancel there is no single solution.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>solve_bisect(f, lo, hi)</C>, which finds a root of a continuous function f on [lo, hi] with f(lo) and f(hi) of opposite signs, by halving the interval until it is shorter than 1e−10. Return the midpoint of the last interval. Raise <C>ValueError</C> if the signs at the ends agree.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def solve_bisect(f, lo, hi):
+    return (lo + hi) / 2
+`,
+        solution: `def solve_bisect(f, lo, hi):
+    flo = f(lo)
+    if flo * f(hi) > 0:
+        raise ValueError('no sign change')
+    while hi - lo > 1e-10:
+        mid = (lo + hi) / 2
+        fm = f(mid)
+        if fm == 0:
+            return mid
+        if (fm < 0) == (flo < 0):
+            lo, flo = mid, fm
+        else:
+            hi = mid
+    return (lo + hi) / 2
+`,
+        tests: [
+          { name: "linear", code: `assert abs(solve_bisect(lambda x: 3 * x - 4 - (x + 6), -100, 100) - 5) < 1e-8, '3x − 4 = x + 6 at x = 5.'` },
+          { name: "sqrt2", code: `assert abs(solve_bisect(lambda x: x * x - 2, 0, 2) - 2 ** 0.5) < 1e-9, 'Keep the half where the sign changes.'` },
+          { name: "decreasing", code: `assert abs(solve_bisect(lambda x: 10 - x ** 3, 0, 5) - 10 ** (1 / 3)) < 1e-9, 'It must also work when f goes from positive to negative.'` },
+          { name: "no change", code: `try:
+    solve_bisect(lambda x: x * x + 1, -1, 1)
+    ok = False
+except ValueError:
+    ok = True
+assert ok, 'Raise ValueError when f(lo) and f(hi) have the same sign.'` },
         ],
       },
     },

@@ -187,6 +187,19 @@ print(diag, diag in rows)`}</Code>
       answer: { kind: "choice", options: ["1110 False", "0001 False", "1110 True", "0110 True"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`rows = ['0101', '1100', '0011', '1110']
+diag = ''.join('1' if rows[i][i] == '0' else '0' for i in range(4))
+print(diag, diag in rows, [r[i] != diag[i] for i, r in enumerate(rows)])`}</Code>
+          <p>Cantor's diagonal flips the i-th digit of the i-th row. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1001 False [True, True, True, True]", "0101 True [False, True, True, True]", "1001 False [False, False, False, False]", "0110 False [True, True, True, True]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -211,6 +224,55 @@ random.seed(1)
 rows = [''.join(random.choice('01') for _ in range(30)) for _ in range(30)]
 d = diagonal(rows)
 assert all(d[i] != rows[i][i] for i in range(30)) and d not in [r[:30] for r in rows], 'The diagonal string must differ from every row.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Cantor&rsquo;s theorem says no function from a set S onto its power set exists, because the diagonal set D = {"{x ∈ S : x ∉ f(x)}"} is never an output. Write <C>diagonal_set(f, S)</C>, and <C>check_cantor(n)</C>, which goes through all functions from {"{0, …, n − 1}"} to its power set (as tuples of frozensets, n ≤ 3) and returns the number checked after asserting that D is missed by each. Then write <C>halting_style(programs)</C> for a list of functions from int to bool: return a new function g with g(i) ≠ programs[i](i) for every i, so g is not in the list.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def diagonal_set(f, S):
+    return set()
+
+def check_cantor(n):
+    return 0
+
+def halting_style(programs):
+    return programs[0]
+`,
+        solution: `from itertools import combinations, product
+
+def diagonal_set(f, S):
+    return frozenset(x for x in S if x not in f(x))
+
+def check_cantor(n):
+    S = list(range(n))
+    P = [frozenset(c) for r in range(n + 1) for c in combinations(S, r)]
+    count = 0
+    for outs in product(P, repeat=n):
+        f = lambda x, o=outs: o[x]
+        assert diagonal_set(f, S) not in outs
+        count += 1
+    return count
+
+def halting_style(programs):
+    return lambda i: not programs[i](i)
+`,
+        tests: [
+          { name: "diagonal", code: `f = {0: frozenset({0, 1}), 1: frozenset(), 2: frozenset({1})}.get
+assert diagonal_set(f, [0, 1, 2]) == {1, 2}, '0 ∈ f(0), 1 ∉ f(1), 2 ∉ f(2).'` },
+          { name: "all functions", code: `assert check_cantor(1) == 2 and check_cantor(2) == 16 and check_cantor(3) == 512, 'There are (2ⁿ)ⁿ functions to check.'` },
+          { name: "halting", code: `progs = [lambda i: True, lambda i: i % 2 == 0, lambda i: i > 1, lambda i: False]
+g = halting_style(progs)
+assert all(g(i) != progs[i](i) for i in range(4)), 'g disagrees with program i at input i.'` },
         ],
       },
     },

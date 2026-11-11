@@ -195,6 +195,21 @@ print(det, (e * d - b * f) / det, (a * f - e * c) / det)`}</Code>
       answer: { kind: "choice", options: ["-2 6.0 4.0", "2 6.0 4.0", "-2 4.0 6.0", "0 6.0 4.0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+A = np.array([[2, 1], [1, 3]])
+b = np.array([5, 10])
+x = np.linalg.solve(A, b)
+print(np.round(x, 6), np.linalg.det(A).round(6))`}</Code>
+          <p>This solves 2x + y = 5 and x + 3y = 10. What does it print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[1. 3.] 5.0", "[3. 1.] 5.0", "[1. 3.] 7.0", "[1. 3.] -5.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -221,6 +236,39 @@ assert abs(x - 6) < 1e-9 and abs(y - 4) < 1e-9, 'x + y = 10 and x − y = 2 give
           { name: "mixed", code: `x, y = solve2(2, 3, 13, 5, -1, 7)
 assert abs(x - 2) < 1e-9 and abs(y - 3) < 1e-9, 'Check by substituting back.'` },
           { name: "parallel", code: `assert solve2(1, 2, 3, 2, 4, 5) is None, 'Parallel lines never meet.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>classify(a, b, e, c, d, f)</C> for the system ax + by = e, cx + dy = f, returning <C>("one", (x, y))</C> when there is a unique solution, <C>("none", None)</C> when the lines are parallel and distinct, and <C>("many", None)</C> when they are the same line. Use integer cross-multiplication for the tests, so that no rounding is involved. Assume each equation has a or b non-zero (and c or d non-zero).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def classify(a, b, e, c, d, f):
+    det = a * d - b * c
+    return ('one', ((e * d - b * f) / det, (a * f - e * c) / det))
+`,
+        solution: `def classify(a, b, e, c, d, f):
+    det = a * d - b * c
+    if det != 0:
+        return ('one', ((e * d - b * f) / det, (a * f - e * c) / det))
+    if a * f - e * c == 0 and b * f - e * d == 0:
+        return ('many', None)
+    return ('none', None)
+`,
+        tests: [
+          { name: "unique", code: `k, (x, y) = classify(2, 1, 5, 1, 3, 10)
+assert k == 'one' and abs(x - 1) < 1e-12 and abs(y - 3) < 1e-12, 'Cramer: x = (ed − bf)/(ad − bc).'` },
+          { name: "parallel", code: `assert classify(1, 2, 3, 2, 4, 7) == ('none', None) and classify(0, 1, 1, 0, 2, 5) == ('none', None), 'Same slope, different lines.'` },
+          { name: "same", code: `assert classify(1, 2, 3, 2, 4, 6) == ('many', None) and classify(3, 0, 6, -1, 0, -2) == ('many', None), 'One equation is a multiple of the other.'` },
+          { name: "no crash", code: `assert classify(1, 1, 1, 1, 1, 2)[0] == 'none', 'Do not divide by a zero determinant.'` },
         ],
       },
     },

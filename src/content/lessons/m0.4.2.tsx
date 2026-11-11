@@ -165,6 +165,20 @@ export const lesson: LessonContent = {
       answer: { kind: "choice", options: ["[0.25, 0.5, 1, 2, 4, 8]", "[-4, -2, 1, 2, 4, 8]", "[0.25, 0.5, 0, 2, 4, 8]", "[4, 2, 1, 2, 4, 8]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+a, b = 3, 2
+f = lambda x: a * b ** x
+print(f(0), f(3), f(-1), round(f(1) / f(0), 3) == round(f(5) / f(4), 3))`}</Code>
+          <p>An exponential multiplies by the same factor at every step. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["3 24 1.5 True", "3 24 -6 True", "1 24 1.5 True", "3 18 1.5 False"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -187,6 +201,49 @@ export const lesson: LessonContent = {
 assert abs(a - 3) < 1e-9 and abs(b - 2) < 1e-9, 'f(0) = a and f(1) = ab.'` },
           { name: "decay", code: `a, b = fit_exp(100, 80)
 assert abs(b - 0.8) < 1e-9, 'A ratio below 1 is decay.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Exponential data lie on a straight line after taking logarithms. Write <C>fit_exponential(xs, ys)</C>, which fits y = a·bˣ to positive data by least squares on (x, ln y): with X = xs and Y = ln ys, the slope is m = Σ(X − X̄)(Y − Ȳ)/Σ(X − X̄)² and the intercept c = Ȳ − mX̄. Return (a, b) = (eᶜ, eᵐ). Use only <C>math</C>, not numpy.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def fit_exponential(xs, ys):
+    return (ys[0], ys[1] / ys[0])
+`,
+        solution: `import math
+
+def fit_exponential(xs, ys):
+    Y = [math.log(y) for y in ys]
+    n = len(xs)
+    xb, yb = sum(xs) / n, sum(Y) / n
+    m = sum((x - xb) * (y - yb) for x, y in zip(xs, Y)) / sum((x - xb) ** 2 for x in xs)
+    c = yb - m * xb
+    return (math.exp(c), math.exp(m))
+`,
+        tests: [
+          { name: "exact", code: `a, b = fit_exponential([0, 1, 2, 3], [3, 6, 12, 24])
+assert abs(a - 3) < 1e-9 and abs(b - 2) < 1e-9, 'Exact exponential data are fitted exactly.'` },
+          { name: "unspaced", code: `a, b = fit_exponential([1, 4, 5, 9], [5 * 0.8 ** x for x in [1, 4, 5, 9]])
+assert abs(a - 5) < 1e-9 and abs(b - 0.8) < 1e-9, 'x need not start at 0 or be evenly spaced.'` },
+          { name: "noisy", code: `import random
+random.seed(1)
+xs = list(range(20))
+ys = [2 * 1.3 ** x * math.exp(random.gauss(0, 0.05)) for x in xs]
+a, b = fit_exponential(xs, ys)
+assert abs(b - 1.3) < 0.02 and abs(a - 2) < 0.3, 'Least squares on the logs averages out the noise.'` },
+          { name: "least squares", code: `a, b = fit_exponential([0, 1, 2], [1, 3, 4])
+assert abs(b - math.exp(math.log(4) / 2)) < 1e-9, 'Use the least-squares slope, not just the first two points.'` },
         ],
       },
     },

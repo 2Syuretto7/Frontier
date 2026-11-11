@@ -145,6 +145,19 @@ print(len(A), 9 in A, 10 in A)`}</Code>
       answer: { kind: "choice", options: ["7 True False", "6 True False", "7 False True", "6 False False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`A = {x % 5 for x in range(-7, 8)}
+B = {x * x for x in range(-3, 4)}
+print(sorted(A), sorted(B), len([x * x for x in range(-3, 4)]))`}</Code>
+          <p>Set comprehensions remove duplicates; list comprehensions keep them. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0, 1, 2, 3, 4] [0, 1, 4, 9] 7", "[-2, -1, 0, 1, 2] [0, 1, 4, 9] 7", "[0, 1, 2, 3, 4] [0, 1, 4, 9] 4", "[0, 1, 2, 3, 4] [9, 4, 1, 0] 7"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -166,6 +179,58 @@ print(len(A), 9 in A, 10 in A)`}</Code>
           { name: "small", code: `assert build(4) == {0, 1, 4, 9, 16}, 'The squares of 0 to 4.'` },
           { name: "membership", code: `S = build(100)
 assert 49 in S and 50 not in S and len(S) == 101, 'Use a set comprehension over range(n + 1).'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Sets can contain sets if they are frozen. Write <C>von_neumann(n)</C>, the n-th von Neumann natural number as a frozenset: 0 = ∅ and n + 1 = n ∪ {"{n}"}. Then write <C>depth(s)</C>, the nesting depth of a frozenset (0 for the empty set, otherwise 1 + the largest depth of an element), and <C>to_int(s)</C>, which recovers n from <C>von_neumann(n)</C> by counting its elements, raising <C>ValueError</C> if s is not a von Neumann number.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def von_neumann(n):
+    return frozenset(range(n))
+
+def depth(s):
+    return len(s)
+
+def to_int(s):
+    return len(s)
+`,
+        solution: `def von_neumann(n):
+    s = frozenset()
+    for _ in range(n):
+        s = s | frozenset([s])
+    return s
+
+def depth(s):
+    return 0 if not s else 1 + max(depth(t) for t in s)
+
+def to_int(s):
+    n = len(s)
+    if s != von_neumann(n):
+        raise ValueError('not a von Neumann number')
+    return n
+`,
+        tests: [
+          { name: "small", code: `e = frozenset()
+assert von_neumann(0) == e and von_neumann(1) == frozenset([e]) and von_neumann(2) == frozenset([e, frozenset([e])]), '2 = {∅, {∅}}.'` },
+          { name: "members", code: `s = von_neumann(5)
+assert len(s) == 5 and all(von_neumann(k) in s for k in range(5)) and von_neumann(5) not in s, 'n has the elements 0 … n − 1.'` },
+          { name: "depth", code: `assert depth(von_neumann(0)) == 0 and depth(von_neumann(6)) == 6 and depth(frozenset([frozenset([frozenset()])])) == 2, 'Depth counts nesting.'` },
+          { name: "back", code: `assert to_int(von_neumann(7)) == 7 and to_int(frozenset()) == 0
+try:
+    to_int(frozenset([frozenset([frozenset()])]))
+    ok = False
+except ValueError:
+    ok = True
+assert ok, '{{∅}} has one element but is not 1.'` },
         ],
       },
     },

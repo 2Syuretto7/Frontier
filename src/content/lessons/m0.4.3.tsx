@@ -160,6 +160,22 @@ print(math.log2(1024), math.log10(0.001), math.log(math.e ** 3))`}</Code>
       answer: { kind: "choice", options: ["10.0 -3.0 3.0", "10.0 3.0 3.0", "512.0 -3.0 3.0", "10.0 -3.0 20.09"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+n, k = 1000, 0
+while n > 1:
+    n //= 2
+    k += 1
+print(k, math.floor(math.log2(1000)), math.ceil(math.log2(1000)))`}</Code>
+          <p>How many halvings bring 1000 down to 1? What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["9 9 10", "10 9 10", "9 10 10", "10 10 10"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -184,6 +200,54 @@ print(math.log2(1024), math.log10(0.001), math.log(math.e ** 3))`}</Code>
         tests: [
           { name: "exact", code: `assert ilog(2, 1024) == 10 and ilog(10, 1000) == 3, '2¹⁰ = 1024 and 10³ = 1000.'` },
           { name: "between", code: `assert ilog(2, 1000) == 9 and ilog(3, 1) == 0, '2⁹ = 512 ≤ 1000 < 1024.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>log_bits(x)</C>, an approximation of log₂ x for x &gt; 0 to within 1e−9, using only multiplication and division by 2 and squaring. First scale x into [1, 2) by halving or doubling, counting steps for the integer part; then each fraction bit comes from squaring y: if y² ≥ 2 the next bit is 1 and y becomes y²/2. Use 40 bits. Do not import <C>math</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def log_bits(x):
+    k = 0
+    while x >= 2:
+        x /= 2
+        k += 1
+    return k
+`,
+        solution: `def log_bits(x):
+    k = 0
+    while x >= 2:
+        x /= 2
+        k += 1
+    while x < 1:
+        x *= 2
+        k -= 1
+    frac, bit = 0.0, 0.5
+    for _ in range(40):
+        x = x * x
+        if x >= 2:
+            x /= 2
+            frac += bit
+        bit /= 2
+    return k + frac
+`,
+        tests: [
+          { name: "powers", code: `assert log_bits(1) == 0 and log_bits(8) == 3 and log_bits(0.25) == -2, 'Exact powers of 2 have no fraction part.'` },
+          { name: "fractions", code: `import math
+for x in [3, 10, 1000, 1.5, 0.3, 123456.789]:
+    assert abs(log_bits(x) - math.log2(x)) < 1e-9, x` },
+          { name: "small", code: `import math
+assert abs(log_bits(1e-6) - math.log2(1e-6)) < 1e-9, 'Double x into [1, 2) when it is small.'` },
+          { name: "no math", code: `import inspect
+assert 'math' not in inspect.getsource(log_bits) and 'log' not in inspect.getsource(log_bits).replace('log_bits', ''), 'Build the bits by squaring.'` },
         ],
       },
     },

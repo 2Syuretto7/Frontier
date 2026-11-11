@@ -168,6 +168,20 @@ print("checked")`}</Code>
       answer: { kind: "choice", options: ["No: it checks finitely many cases", "Yes: it checks enough cases", "Yes: assert statements are proofs", "No: the assert fails"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def f(n):
+    # claim: n**2 + n is always even
+    return n * (n + 1) // 2 * 2 == n * n + n
+print(all(f(n) for n in range(-100, 100)), (7 ** 2 + 7) // 2)`}</Code>
+          <p>A proof writes n² + n = n(n + 1), a product of consecutive integers. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True 28", "False 28", "True 56", "True 27"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -194,6 +208,41 @@ def product_witness(j, k):
         tests: [
           { name: "sum", code: `assert all(2 * j + 2 * k == 2 * sum_witness(j, k) for j in range(-5, 6) for k in range(-5, 6)), '2j + 2k = 2(j + k).'` },
           { name: "product", code: `assert all((2 * j) * (2 * k) == 2 * product_witness(j, k) for j in range(-5, 6) for k in range(-5, 6)), '(2j)(2k) = 2(2jk).'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Good proofs state their witnesses. Write <C>verify_proof(steps)</C> for a chain of claimed equalities between functions of an integer n, given as a list of (description, function) pairs, which checks that each function equals the next one for every n from −50 to 50. Return <C>None</C> if every step is valid, or the index i of the first step whose function differs from step i + 1 together with the smallest n (in increasing order) where they differ.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def verify_proof(steps):
+    return None
+`,
+        solution: `def verify_proof(steps):
+    for i in range(len(steps) - 1):
+        f, g = steps[i][1], steps[i + 1][1]
+        for n in range(-50, 51):
+            if f(n) != g(n):
+                return (i, n)
+    return None
+`,
+        tests: [
+          { name: "valid", code: `steps = [('(n+1)^2', lambda n: (n + 1) ** 2), ('expand', lambda n: n * n + 2 * n + 1), ('regroup', lambda n: n * (n + 2) + 1)]
+assert verify_proof(steps) is None, 'Every step is an identity.'` },
+          { name: "broken", code: `steps = [('start', lambda n: (n + 1) ** 2), ('wrong', lambda n: n * n + 1), ('more', lambda n: n * n + 1)]
+assert verify_proof(steps) == (0, -50), 'The first step is invalid from n = −50.'` },
+          { name: "late", code: `steps = [('a', lambda n: abs(n)), ('b', lambda n: max(n, -n)), ('c', lambda n: n)]
+assert verify_proof(steps) == (1, -50), 'max(n, −n) is not n for negative n.'` },
+          { name: "edge", code: `steps = [('a', lambda n: n // 1), ('b', lambda n: n if n != 37 else 0)]
+assert verify_proof(steps) == (0, 37), 'Check every n from −50 to 50.'` },
         ],
       },
     },

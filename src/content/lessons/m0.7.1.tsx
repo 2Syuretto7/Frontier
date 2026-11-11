@@ -157,6 +157,21 @@ print(a[-1], g[-1], sum(a))`}</Code>
       answer: { kind: "choice", options: ["17 162 55", "17 486 55", "20 162 55", "17 162 85"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`a = [5]
+for _ in range(4):
+    a.append(a[-1] * -2)
+b = [a[0] + 3 * k for k in range(5)]
+print(a[-1], sum(a), b[-1], sum(b))`}</Code>
+          <p>A geometric sequence with ratio −2 and an arithmetic one with difference 3, both from 5. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["80 55 17 55", "-80 55 17 55", "80 -55 17 55", "80 55 20 70"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -186,6 +201,47 @@ def geom_sum(a, r, n):
           { name: "arithmetic", code: `assert abs(arith_sum(5, 3, 5) - 55) < 1e-9 and abs(arith_sum(1, 1, 100) - 5050) < 1e-9, 'Pair the first and last terms.'` },
           { name: "geometric", code: `assert abs(geom_sum(2, 3, 5) - 242) < 1e-9 and abs(geom_sum(1, 0.5, 10) - 1.998046875) < 1e-12, '2 + 6 + 18 + 54 + 162 = 242.'` },
           { name: "ratio one", code: `assert geom_sum(4, 1, 6) == 24, 'When r = 1 every term is a.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>loan_payment(P, r, n)</C>, the fixed payment per period that pays off a loan of P in n periods at interest rate r per period, from the geometric-series formula P·r/(1 − (1 + r)⁻ⁿ) (and P/n when r = 0). Then write <C>balance_after(P, r, pay, k)</C>, the balance left after k payments, by simulating month by month (interest is added, then the payment taken off).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def loan_payment(P, r, n):
+    return P / n
+
+def balance_after(P, r, pay, k):
+    return P - pay * k
+`,
+        solution: `def loan_payment(P, r, n):
+    if r == 0:
+        return P / n
+    return P * r / (1 - (1 + r) ** -n)
+
+def balance_after(P, r, pay, k):
+    b = P
+    for _ in range(k):
+        b = b * (1 + r) - pay
+    return b
+`,
+        tests: [
+          { name: "zero", code: `assert loan_payment(1200, 0, 12) == 100, 'With no interest, split it evenly.'` },
+          { name: "mortgage", code: `pay = loan_payment(200000, 0.005, 360)
+assert abs(pay - 1199.10) < 0.01, f'A 30-year loan at 0.5% a month costs about 1199.10, got {pay:.2f}.'` },
+          { name: "paid off", code: `for P, r, n in [(5000, 0.01, 24), (1e6, 0.004, 240), (300, 0.2, 3)]:
+    pay = loan_payment(P, r, n)
+    assert abs(balance_after(P, r, pay, n)) < 1e-6 * P, (P, r, n)` },
+          { name: "partway", code: `pay = loan_payment(1000, 0.1, 2)
+assert abs(balance_after(1000, 0.1, pay, 1) - (1100 - pay)) < 1e-9, 'Add interest, then subtract the payment.'` },
         ],
       },
     },

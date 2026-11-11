@@ -175,6 +175,17 @@ export const lesson: LessonContent = {
       answer: { kind: "choice", options: ["1024 2.0 0.5", "20 2.0 -2.0", "1024 2.67 0.5", "1024 2.0 -0.5"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`print(2 ** 3 ** 2, (2 ** 3) ** 2, 8 ** (1 / 3), (-8) ** 2)`}</Code>
+          <p>Exponentiation groups from the right. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["512 64 2.0 64", "64 64 2.0 64", "512 64 2 -64", "64 512 2.0 64"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -198,6 +209,49 @@ export const lesson: LessonContent = {
         tests: [
           { name: "small", code: `assert power(2, 10) == 1024 and power(3, 0) == 1 and power(5, 3) == 125, 'b⁰ = 1, and split the exponent in half.'` },
           { name: "large", code: `assert power(3, 200) == 3 ** 200, 'Repeated squaring handles large exponents exactly.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>isqrt(n)</C>, the largest integer r with r² ≤ n for any integer n ≥ 0, using Newton&rsquo;s method with integer division (start at n and repeat r = (r + n // r) // 2 while it decreases), and <C>is_square(n)</C>. Do not use floats or <C>math.isqrt</C>: the tests use numbers too large for floats.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def isqrt(n):
+    return int(n ** 0.5)
+
+def is_square(n):
+    return isqrt(n) ** 2 == n
+`,
+        solution: `def isqrt(n):
+    if n < 2:
+        return n
+    r = n
+    while True:
+        s = (r + n // r) // 2
+        if s >= r:
+            return r
+        r = s
+
+def is_square(n):
+    return isqrt(n) ** 2 == n
+`,
+        tests: [
+          { name: "small", code: `assert [isqrt(n) for n in range(10)] == [0, 1, 1, 1, 2, 2, 2, 2, 2, 3], 'Round down.'` },
+          { name: "exact", code: `assert all(isqrt(k * k) == k and isqrt(k * k - 1) == k - 1 for k in range(1, 2000)), 'Check both sides of each perfect square.'` },
+          { name: "huge", code: `n = 10 ** 40 + 12345
+r = isqrt(n)
+assert r * r <= n < (r + 1) ** 2, 'Floats only keep about 16 digits.'` },
+          { name: "squares", code: `assert is_square(10 ** 50) and not is_square(10 ** 50 + 1) and is_square(0), 'A square is exactly r².'` },
+          { name: "no math", code: `import inspect
+assert 'math' not in inspect.getsource(isqrt) and '**' not in inspect.getsource(isqrt), 'Use Newton with integer division.'` },
         ],
       },
     },

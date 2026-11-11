@@ -156,6 +156,22 @@ print(abs(math.sin(2 * x) - 2 * math.sin(x) * math.cos(x)) < 1e-12, round(math.s
       answer: { kind: "choice", options: ["True 1.0", "False 1.0", "True 0.7", "False 0.0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+x = 0.7
+a = math.sin(2 * x)
+b = 2 * math.sin(x) * math.cos(x)
+c = math.cos(x) ** 2 - math.sin(x) ** 2 - math.cos(2 * x)
+print(abs(a - b) < 1e-12, abs(c) < 1e-12, round(math.sin(x) ** 2 + math.cos(x) ** 2, 12))`}</Code>
+          <p>Double-angle identities checked at one point. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True True 1.0", "True False 1.0", "False True 1.0", "True True 0.49"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -179,6 +195,57 @@ print(abs(math.sin(2 * x) - 2 * math.sin(x) * math.cos(x)) < 1e-12, round(math.s
 assert holds(lambda x: math.cos(2 * x), lambda x: 1 - 2 * math.sin(x) ** 2), 'cos 2x = 1 − 2 sin² x is an identity.'` },
           { name: "false identity", code: `import math
 assert not holds(lambda x: math.sqrt(x * x), lambda x: x), '√(x²) is |x|, not x: they agree at x = 1 but not for negative x.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>chebyshev(n)</C>, the integer coefficient list (lowest power first) of the polynomial Tₙ with cos(nθ) = Tₙ(cos θ), using the recurrence T₀ = 1, T₁ = x, Tₙ₊₁ = 2x·Tₙ − Tₙ₋₁, which comes from the sum-to-product identity cos((n+1)θ) + cos((n−1)θ) = 2 cos θ cos nθ. Also write <C>check(n, thetas)</C>, which returns the largest |cos(nθ) − Tₙ(cos θ)| over the given angles.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def chebyshev(n):
+    return [0] * n + [1]
+
+def check(n, thetas):
+    return 0.0
+`,
+        solution: `import math
+
+def chebyshev(n):
+    a, b = [1], [0, 1]
+    if n == 0:
+        return a
+    for _ in range(n - 1):
+        c = [0] + [2 * t for t in b]
+        for i, t in enumerate(a):
+            c[i] -= t
+        a, b = b, c
+    return b
+
+def check(n, thetas):
+    T = chebyshev(n)
+    def ev(x):
+        r = 0.0
+        for c in reversed(T):
+            r = r * x + c
+        return r
+    return max(abs(math.cos(n * t) - ev(math.cos(t))) for t in thetas)
+`,
+        tests: [
+          { name: "first", code: `assert chebyshev(0) == [1] and chebyshev(1) == [0, 1] and chebyshev(2) == [-1, 0, 2] and chebyshev(3) == [0, -3, 0, 4], 'cos 2θ = 2cos²θ − 1 and cos 3θ = 4cos³θ − 3cos θ.'` },
+          { name: "fifth", code: `assert chebyshev(5) == [0, 5, 0, -20, 0, 16], 'T₅ = 16x⁵ − 20x³ + 5x.'` },
+          { name: "identity", code: `import math
+ths = [k * 0.1 for k in range(63)]
+assert check(7, ths) < 1e-12 and check(12, ths) < 1e-11, 'The identity holds at every angle.'` },
         ],
       },
     },

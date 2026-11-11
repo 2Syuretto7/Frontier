@@ -191,6 +191,18 @@ print(round(r * theta, 3), round(math.degrees(theta)))`}</Code>
       answer: { kind: "choice", options: ["2.094 60", "120 60", "2.094 1", "1.047 60"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+print(round(math.radians(270) / math.pi, 3), round(math.degrees(1), 2), round(2 * math.pi * 3 * (60 / 360), 4))`}</Code>
+          <p>Converting angles, and the length of a 60° arc of radius 3. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1.5 57.3 3.1416", "1.5 57.3 1.0472", "0.75 57.3 3.1416", "1.5 0.02 3.1416"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -220,6 +232,55 @@ assert abs(s - math.pi) < 1e-9 and abs(A - math.pi) < 1e-9, 'A quarter circle of
           { name: "full", code: `import math
 s, A = sector(1, 360)
 assert abs(s - 2 * math.pi) < 1e-9 and abs(A - math.pi) < 1e-9, 'The full circle has circumference 2πr and area πr².'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>chord(r, theta)</C>, the length of the chord cut off by an angle θ (radians) at the centre of a circle of radius r, and <C>segment_area(r, theta)</C>, the area between that chord and the arc (sector minus triangle). Then write <C>pi_polygon(k)</C>, the half-perimeter of a regular polygon with 6·2ᵏ sides inscribed in a unit circle, found by doubling the number of sides k times from a hexagon (side 1) using the half-angle formula s′ = √(2 − √(4 − s²)). It approaches π.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def chord(r, theta):
+    return r * theta
+
+def segment_area(r, theta):
+    return r * r * theta / 2
+
+def pi_polygon(k):
+    return 3.0
+`,
+        solution: `import math
+
+def chord(r, theta):
+    return 2 * r * math.sin(theta / 2)
+
+def segment_area(r, theta):
+    return r * r * (theta - math.sin(theta)) / 2
+
+def pi_polygon(k):
+    s, n = 1.0, 6
+    for _ in range(k):
+        s = math.sqrt(2 - math.sqrt(4 - s * s))
+        n *= 2
+    return n * s / 2
+`,
+        tests: [
+          { name: "chord", code: `import math
+assert abs(chord(1, math.pi) - 2) < 1e-12 and abs(chord(2, math.pi / 3) - 2) < 1e-12, 'A diameter is the chord of π.'` },
+          { name: "segment", code: `import math
+assert abs(segment_area(1, math.pi) - math.pi / 2) < 1e-12 and abs(segment_area(3, math.pi / 2) - (9 * math.pi / 4 - 4.5)) < 1e-12, 'Sector r²θ/2 minus triangle r² sin θ / 2.'` },
+          { name: "archimedes", code: `assert pi_polygon(0) == 3 and abs(pi_polygon(4) - 3.14103) < 1e-5 and 3.1415 < pi_polygon(8) < 3.14160, '96 sides gives about 3.1410; keep doubling.'` },
+          { name: "increasing", code: `vals = [pi_polygon(k) for k in range(10)]
+assert all(a < b for a, b in zip(vals, vals[1:])), 'Inscribed polygons approach π from below.'` },
         ],
       },
     },

@@ -161,6 +161,19 @@ print(A == B, A <= {1, 2, 3, 4}, A < A)`}</Code>
       answer: { kind: "choice", options: ["True True False", "False True False", "True True True", "True False False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`A = {1, 2, 3}
+B = {1, 2, 3, 4}
+print(A <= B, A < B, B <= A, set() <= A, A < A)`}</Code>
+          <p>Subset and proper subset tests in Python. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True True False True False", "True False False True False", "True True False False False", "True True False True True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -191,6 +204,47 @@ def equal(A, B):
           { name: "subset", code: `assert is_subset({1, 2}, {1, 2, 3}) and not is_subset({1, 4}, {1, 2, 3}), 'Every element of A must be in B.'` },
           { name: "empty", code: `assert is_subset(set(), {1}), 'The empty set is a subset of every set.'` },
           { name: "equal", code: `assert equal({1, 2}, {2, 1}) and not equal({1}, {1, 2}), 'Equal means each is a subset of the other.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>subset_chain(sets)</C>, which takes a list of sets and returns the longest list of them in which each is a proper subset of the next (any one longest chain, in increasing order), using dynamic programming over the sets sorted by size. Then write <C>antichain(sets)</C>, the sets that are not a proper subset of any other set in the list (in their original order).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def subset_chain(sets):
+    return sets[:1]
+
+def antichain(sets):
+    return sets
+`,
+        solution: `def subset_chain(sets):
+    order = sorted(sets, key=len)
+    best = [[s] for s in order]
+    for i, s in enumerate(order):
+        for j in range(i):
+            if order[j] < s and len(best[j]) + 1 > len(best[i]):
+                best[i] = best[j] + [s]
+    return max(best, key=len) if best else []
+
+def antichain(sets):
+    return [s for s in sets if not any(s < t for t in sets)]
+`,
+        tests: [
+          { name: "chain", code: `c = subset_chain([{1, 2}, {3}, {1}, {1, 2, 3}, {2, 3}, set()])
+assert len(c) == 4 and all(a < b for a, b in zip(c, c[1:])), 'For example ∅ ⊂ {1} ⊂ {1, 2} ⊂ {1, 2, 3}.'` },
+          { name: "empty", code: `assert subset_chain([]) == [] and subset_chain([{5}]) == [{5}], 'One set is a chain of length 1.'` },
+          { name: "divisors", code: `sets = [{d for d in range(1, n + 1) if n % d == 0} for n in range(1, 50)]
+c = subset_chain(sets)
+assert len(c) == 6, 'Divisor sets of 1, 2, 4, 8, 16, 32 form a chain of 6.'` },
+          { name: "antichain", code: `assert antichain([{1}, {1, 2}, {3}, {2, 3}, {4}]) == [{1, 2}, {2, 3}, {4}], 'Keep the sets not strictly inside another.'` },
         ],
       },
     },

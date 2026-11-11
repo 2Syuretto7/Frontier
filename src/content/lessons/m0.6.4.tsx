@@ -155,6 +155,19 @@ print(abs(z), z * 1j, z.conjugate())`}</Code>
       answer: { kind: "choice", options: ["5.0 (-4+3j) (3-4j)", "5.0 (4+3j) (3-4j)", "7.0 (-4+3j) (-3+4j)", "5.0 (3+4j) (3-4j)"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`z = complex(1, 1)
+w = z ** 8
+print(w, abs(z) ** 8, z * z.conjugate())`}</Code>
+          <p>Powers and the conjugate of 1 + i. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["(16+0j) 16.000000000000007 (2+0j)", "(16+16j) 16.0 (2+0j)", "(-16+0j) 16.000000000000007 (2+0j)", "(16+0j) 16.000000000000007 2"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -189,6 +202,58 @@ assert abs(w - (-4 + 3j)) < 1e-9, 'A 90 degree turn is multiplication by i.'` },
           { name: "polar", code: `import math
 r, t = to_polar(-1 + 1j)
 assert abs(r - math.sqrt(2)) < 1e-9 and abs(t - 3 * math.pi / 4) < 1e-9, '−1 + i is at distance √2 and angle 3π/4.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>roots_of_unity(n)</C>, the n complex numbers z with zⁿ = 1, in order of angle from 0, and <C>nth_roots(w, n)</C>, all n complex n-th roots of a non-zero w, found from its modulus and argument (use <C>cmath.polar</C> and <C>cmath.rect</C>). Then write <C>mandelbrot_escape(c, limit)</C>, the number of steps of z ↦ z² + c from z = 0 before |z| exceeds 2, or <C>limit</C> if it never does.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import cmath
+
+def roots_of_unity(n):
+    return [1]
+
+def nth_roots(w, n):
+    return [w ** (1 / n)]
+
+def mandelbrot_escape(c, limit):
+    return limit
+`,
+        solution: `import cmath, math
+
+def roots_of_unity(n):
+    return [cmath.rect(1, 2 * math.pi * k / n) for k in range(n)]
+
+def nth_roots(w, n):
+    r, t = cmath.polar(w)
+    return [cmath.rect(r ** (1 / n), (t + 2 * math.pi * k) / n) for k in range(n)]
+
+def mandelbrot_escape(c, limit):
+    z = 0
+    for i in range(limit):
+        if abs(z) > 2:
+            return i
+        z = z * z + c
+    return limit
+`,
+        tests: [
+          { name: "unity", code: `rs = roots_of_unity(6)
+assert len(rs) == 6 and abs(rs[0] - 1) < 1e-12 and abs(rs[3] + 1) < 1e-12 and all(abs(z ** 6 - 1) < 1e-12 for z in rs), 'The sixth roots of 1 are evenly spaced.'` },
+          { name: "sum", code: `assert abs(sum(roots_of_unity(7))) < 1e-12, 'The n-th roots of unity sum to 0 for n > 1.'` },
+          { name: "roots", code: `rs = nth_roots(-8, 3)
+assert len(rs) == 3 and all(abs(z ** 3 + 8) < 1e-12 for z in rs) and any(abs(z + 2) < 1e-12 for z in rs), 'One cube root of −8 is −2.'` },
+          { name: "distinct", code: `rs = nth_roots(complex(3, 4), 4)
+assert all(abs(z ** 4 - complex(3, 4)) < 1e-12 for z in rs) and min(abs(a - b) for i, a in enumerate(rs) for b in rs[i + 1:]) > 0.5, 'All n roots, not one root n times.'` },
+          { name: "mandelbrot", code: `assert mandelbrot_escape(0, 50) == 50 and mandelbrot_escape(-1, 50) == 50 and mandelbrot_escape(1, 50) == 3 and mandelbrot_escape(2 + 2j, 50) == 1, 'For c = 1: z goes 0, 1, 2, 5.'` },
         ],
       },
     },

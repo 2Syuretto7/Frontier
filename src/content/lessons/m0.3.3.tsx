@@ -165,6 +165,20 @@ print(xv, a * xv ** 2 + b * xv + c)`}</Code>
       answer: { kind: "choice", options: ["3.0 -4.0", "-3.0 32.0", "3.0 4.0", "6.0 5.0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def vertex(a, b, c):
+    h = -b / (2 * a)
+    return h, a * h * h + b * h + c
+print(vertex(2, -8, 3), vertex(-1, 4, 0))`}</Code>
+          <p>The vertex of y = ax² + bx + c is at x = −b/2a. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["(2.0, -5.0) (2.0, 4.0)", "(2.0, -5.0) (-2.0, -12.0)", "(-2.0, 27.0) (2.0, 4.0)", "(2.0, 5.0) (2.0, 4.0)"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -201,6 +215,49 @@ assert len(r) == 1 and abs(r[0] + 1) < 1e-9, 'A zero discriminant gives one repe
           { name: "none", code: `assert roots(1, 0, 1) == [], 'x² + 1 has no real roots.'` },
           { name: "negative a", code: `r = roots(-1, 0, 4)
 assert len(r) == 2 and r[0] < r[1], 'Return the roots in increasing order, even when a < 0.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>stable_roots(a, b, c)</C>, the real roots of ax² + bx + c (a ≠ 0) in increasing order, computed without catastrophic cancellation: find the root of larger size as q/a with q = −(b + sign(b)·√disc)/2, and the other as c/q. The textbook formula loses all accuracy when b² is much larger than 4ac, and the tests check this. Return [] when there are no real roots and a single root once when the discriminant is 0.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def stable_roots(a, b, c):
+    d = b * b - 4 * a * c
+    if d < 0:
+        return []
+    r = math.sqrt(d)
+    return sorted({(-b - r) / (2 * a), (-b + r) / (2 * a)})
+`,
+        solution: `import math
+
+def stable_roots(a, b, c):
+    d = b * b - 4 * a * c
+    if d < 0:
+        return []
+    if d == 0:
+        return [-b / (2 * a)]
+    s = 1 if b >= 0 else -1
+    q = -(b + s * math.sqrt(d)) / 2
+    return sorted([q / a, c / q])
+`,
+        tests: [
+          { name: "plain", code: `assert stable_roots(1, -5, 6) == [2.0, 3.0] and stable_roots(1, 0, 1) == [] and stable_roots(1, 2, 1) == [-1.0], 'Easy cases first.'` },
+          { name: "cancellation", code: `r = stable_roots(1, 1e8, 1)
+assert abs(r[1] - (-1e-8)) / 1e-8 < 1e-9 and abs(r[0] + 1e8) / 1e8 < 1e-12, f'The small root should be about −1e−8, got {r[1]!r}.'` },
+          { name: "negative b", code: `r = stable_roots(1, -1e9, 3)
+assert abs(r[0] - 3e-9) / 3e-9 < 1e-9, 'Choose the sign so the two terms in q add rather than cancel.'` },
+          { name: "zero c", code: `assert stable_roots(2, -4, 0) == [0.0, 2.0], 'When c = 0, one root is 0.'` },
         ],
       },
     },

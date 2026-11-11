@@ -149,6 +149,20 @@ print(len(power), len(list(product(A, A))))`}</Code>
       answer: { kind: "numeric", value: 17 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from itertools import product, combinations
+S = 'abc'
+P = [set(c) for r in range(4) for c in combinations(S, r)]
+print(len(P), len(list(product(S, repeat=2))), len(list(product(S, 'xy'))))`}</Code>
+          <p>The power set of {a, b, c} and some Cartesian products. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["8 9 6", "7 9 6", "8 6 6", "8 9 5"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -172,6 +186,51 @@ print(len(power), len(list(product(A, A))))`}</Code>
           { name: "size", code: `assert len(power_set({1, 2, 3, 4})) == 16, 'A 4-element set has 2⁴ = 16 subsets.'` },
           { name: "all distinct", code: `P = power_set({1, 2, 3})
 assert len(set(P)) == 8 and frozenset() in P and frozenset({1, 2, 3}) in P, 'Include the empty set and the whole set, each once.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>gray_code(n)</C>, the list of all 2ⁿ subsets of {"{0, …, n − 1}"} as sets, ordered so that consecutive subsets (and the last and the first) differ by exactly one element, using the reflected construction: the list for n is the list for n − 1, followed by the same list reversed with n − 1 added to each. Then write <C>subsets_of_size(S, k)</C>, the list of k-element subsets of a sorted list S as tuples in lexicographic order, built recursively (no itertools).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def gray_code(n):
+    return [set()]
+
+def subsets_of_size(S, k):
+    return []
+`,
+        solution: `def gray_code(n):
+    if n == 0:
+        return [set()]
+    prev = gray_code(n - 1)
+    return [set(s) for s in prev] + [s | {n - 1} for s in reversed(prev)]
+
+def subsets_of_size(S, k):
+    if k == 0:
+        return [()]
+    if len(S) < k:
+        return []
+    first, rest = S[0], S[1:]
+    return [(first,) + t for t in subsets_of_size(rest, k - 1)] + subsets_of_size(rest, k)
+`,
+        tests: [
+          { name: "small", code: `assert gray_code(0) == [set()] and gray_code(2) == [set(), {0}, {0, 1}, {1}], 'Reflect and add the new element.'` },
+          { name: "all once", code: `g = gray_code(6)
+assert len(g) == 64 and len({frozenset(s) for s in g}) == 64, 'Each subset exactly once.'` },
+          { name: "one step", code: `g = gray_code(7)
+assert all(len(a ^ b) == 1 for a, b in zip(g, g[1:] + g[:1])), 'Neighbours differ by one element, cyclically.'` },
+          { name: "k subsets", code: `from itertools import combinations
+assert subsets_of_size([1, 2, 3, 4], 2) == list(combinations([1, 2, 3, 4], 2)) and subsets_of_size(list(range(10)), 4) == list(combinations(range(10), 4)) and subsets_of_size([1, 2], 3) == [], 'Choose the first element or skip it.'` },
+          { name: "no itertools", code: `import inspect
+assert 'itertools' not in inspect.getsource(subsets_of_size) and 'combinations' not in inspect.getsource(subsets_of_size), 'Build them recursively.'` },
         ],
       },
     },
