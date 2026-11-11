@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { CombViz } from "@/components/viz/CombViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -151,6 +151,44 @@ print(w[0] + w[1])`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 3 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>combine(coeffs, vectors)</C>, which returns the linear combination c₁v₁ + … + cₖvₖ as a NumPy array.
+            Use a loop over the pairs rather than a single matrix product.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def combine(coeffs, vectors):
+    total = np.zeros(len(vectors[0]))
+    # add each coefficient times its vector
+    return total
+`,
+        solution: `import numpy as np
+
+def combine(coeffs, vectors):
+    total = np.zeros(len(vectors[0]))
+    for c, v in zip(coeffs, vectors):
+        total = total + c * np.asarray(v, dtype=float)
+    return total
+`,
+        tests: [
+          { name: "the puzzle", code: `import numpy as np
+assert np.allclose(combine([2, 1], [[2, 1], [1, 2]]), [5, 4]), 'Two of u = (2, 1) and one of v = (1, 2) should reach (5, 4).'` },
+          { name: "negative coefficients", code: `import numpy as np
+assert np.allclose(combine([3, -2], [[1, 2], [2, -1]]), [-1, 8]), 'Check how negative coefficients are handled.'` },
+          { name: "three dimensions", code: `import numpy as np
+assert np.allclose(combine([1, 1, -1], [[1, 0, 1], [0, 1, 1], [1, 1, 2]]), [0, 0, 0]), 'In three dimensions each vector has three entries.'` },
+        ],
+      },
     },
     {
       key: "closed",

@@ -1,7 +1,7 @@
 import { M } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { SolutionsViz } from "@/components/viz/SolutionsViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -140,6 +140,43 @@ print(np.linalg.matrix_rank(A), np.linalg.matrix_rank(Ab))`}</Code>
         </>
       ),
       answer: { kind: "choice", options: ["It has no solution", "It has exactly one solution", "It has infinitely many solutions"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>count_solutions(A, b)</C>, returning the string <C>"none"</C>, <C>"one"</C> or <C>"infinite"</C>. Compare
+            the rank of A, the rank of [A | b] and the number of columns. <C>np.linalg.matrix_rank</C> is allowed.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def count_solutions(A, b):
+    return "one"
+`,
+        solution: `import numpy as np
+
+def count_solutions(A, b):
+    A = np.asarray(A, float)
+    r = np.linalg.matrix_rank(A)
+    rb = np.linalg.matrix_rank(np.column_stack([A, b]))
+    if rb > r:
+        return "none"
+    return "one" if r == A.shape[1] else "infinite"
+`,
+        tests: [
+          { name: "parallel", code: `assert count_solutions([[1, -2], [-2, 4]], [1, 2]) == 'none', 'Parallel distinct lines never meet.'` },
+          { name: "same line", code: `assert count_solutions([[1, 2], [2, 4]], [1, 2]) == 'infinite', 'The same line twice has infinitely many solutions.'` },
+          { name: "crossing", code: `assert count_solutions([[1, 1], [1, -1]], [2, 0]) == 'one', 'Two crossing lines meet once.'` },
+          { name: "wide", code: `assert count_solutions([[1, 2, 2], [2, 4, 6]], [2, 8]) == 'infinite', 'Two equations in three unknowns with a solution have infinitely many.'` },
+          { name: "tall", code: `assert count_solutions([[1, 0], [1, 1], [1, 2]], [6, 0, 0]) == 'none', 'Three equations in two unknowns usually have no exact solution.'` },
+        ],
+      },
     },
     {
       key: "structure",

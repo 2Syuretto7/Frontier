@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { CosineSimViz } from "@/components/viz/CosineSimViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -152,6 +152,43 @@ print(np.argmax(E @ q))`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 0 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            The rows of <C>E</C> are embeddings. Write <C>top_k(E, q, k)</C>, which returns the indices of the k rows with the
+            highest cosine similarity to the query q, most similar first.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def top_k(E, q, k):
+    E, q = np.asarray(E, float), np.asarray(q, float)
+    scores = E @ q
+    return list(np.argsort(-scores)[:k])
+`,
+        solution: `import numpy as np
+
+def top_k(E, q, k):
+    E, q = np.asarray(E, float), np.asarray(q, float)
+    scores = (E @ q) / (np.linalg.norm(E, axis=1) * np.linalg.norm(q))
+    return [int(i) for i in np.argsort(-scores)[:k]]
+`,
+        tests: [
+          { name: "long vectors do not win", code: `E = [[0.9, 0.8, 0.1], [0.1, 0.05, 0.9], [2.5, 2.2, 2.4]]
+assert list(top_k(E, [0.85, 0.75, 0.15], 1)) == [0], 'A long vector should not win just by being long. Divide out the lengths.'` },
+          { name: "order", code: `E = [[1, 0], [1, 1], [0, 1], [-1, 0]]
+assert list(top_k(E, [1, 0.1], 3)) == [0, 1, 2], 'Return the indices from most to least similar.'` },
+          { name: "scale invariant", code: `E = [[10, 0], [0, 1]]
+assert list(top_k(E, [0.1, 1], 1)) == [1], 'Scaling a row should not change its similarity.'` },
+        ],
+      },
     },
     {
       key: "dist",

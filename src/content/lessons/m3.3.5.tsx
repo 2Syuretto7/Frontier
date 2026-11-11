@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { PermViz } from "@/components/viz/PermViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -141,6 +141,41 @@ print((P @ A)[0, 0], (P.T @ P)[1, 1])`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 7 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>perm_matrix(order)</C>, which returns the permutation matrix P such that row i of PA is row
+            <C>order[i]</C> of A.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def perm_matrix(order):
+    return np.eye(len(order))
+`,
+        solution: `import numpy as np
+
+def perm_matrix(order):
+    return np.eye(len(order))[list(order)]
+`,
+        tests: [
+          { name: "reorders rows", code: `import numpy as np
+A = np.arange(9).reshape(3, 3)
+assert np.allclose(perm_matrix([2, 0, 1]) @ A, A[[2, 0, 1]]), 'Row 0 of PA should be row 2 of A.'` },
+          { name: "transpose undoes it", code: `import numpy as np
+P = perm_matrix([3, 1, 0, 2])
+assert np.allclose(P.T @ P, np.eye(4)), 'Pᵀ P should be the identity.'` },
+          { name: "identity", code: `import numpy as np
+assert np.allclose(perm_matrix([0, 1]), np.eye(2)), 'The order 0, 1 gives the identity.'` },
+        ],
+      },
     },
     {
       key: "sym",

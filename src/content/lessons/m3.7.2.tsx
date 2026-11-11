@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { DiagonaliseViz } from "@/components/viz/DiagonaliseViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -144,6 +144,40 @@ print(round(np.trace(A5)))`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 3157 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>power_by_eig(A, k)</C>, which returns Aᵏ computed as XΛᵏX⁻¹ from <C>np.linalg.eig</C>. Return the real part,
+            since the inputs here have real eigenvalues.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def power_by_eig(A, k):
+    return np.asarray(A, float)
+`,
+        solution: `import numpy as np
+
+def power_by_eig(A, k):
+    lam, X = np.linalg.eig(np.asarray(A, float))
+    return np.real(X @ np.diag(lam ** k) @ np.linalg.inv(X))
+`,
+        tests: [
+          { name: "cube", code: `import numpy as np
+assert np.allclose(power_by_eig([[4, 1], [2, 3]], 3), np.linalg.matrix_power(np.array([[4, 1], [2, 3]]), 3)), 'Compare with multiplying A by itself three times.'` },
+          { name: "Fibonacci", code: `F = power_by_eig([[1, 1], [1, 0]], 30)
+assert round(F[0, 1]) == 832040, 'The off-diagonal entry of the 30th power is F₃₀ = 832040.'` },
+          { name: "zero power", code: `import numpy as np
+assert np.allclose(power_by_eig([[2, 1], [1, 2]], 0), np.eye(2)), 'A to the power 0 is the identity.'` },
+        ],
+      },
     },
     {
       key: "powers",

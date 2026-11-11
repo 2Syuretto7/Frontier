@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { LinearMapViz } from "@/components/viz/LinearMapViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -152,6 +152,41 @@ print(np.round(H @ R @ np.array([1.0, 0.0]), 6))`}</Code>
         </>
       ),
       answer: { kind: "choice", options: ["[1. 1.]", "[0. 1.]", "[1. 0.]", "[-1. 1.]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>rotation(theta)</C>, the 2 × 2 matrix that rotates by theta radians anticlockwise, built from where it sends
+            e₁ and e₂.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def rotation(theta):
+    return np.eye(2)
+`,
+        solution: `import numpy as np
+
+def rotation(theta):
+    c, s = np.cos(theta), np.sin(theta)
+    return np.array([[c, -s], [s, c]])
+`,
+        tests: [
+          { name: "quarter turn", code: `import numpy as np
+assert np.allclose(rotation(np.pi / 2) @ [3, 1], [-1, 3]), 'A quarter turn sends (3, 1) to (−1, 3).'` },
+          { name: "composition", code: `import numpy as np
+assert np.allclose(rotation(0.3) @ rotation(0.5), rotation(0.8)), 'Rotating by 0.3 then 0.5 should equal rotating by 0.8.'` },
+          { name: "orthogonal", code: `import numpy as np
+R = rotation(1.1)
+assert np.allclose(R.T @ R, np.eye(2)) and abs(np.linalg.det(R) - 1) < 1e-12, 'A rotation preserves lengths and has determinant 1.'` },
+        ],
+      },
     },
     {
       key: "proof",

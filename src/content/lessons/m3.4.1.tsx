@@ -1,7 +1,7 @@
 import { M } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { SubspaceTestViz } from "@/components/viz/SubspaceTestViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -150,6 +150,37 @@ print(on_line(u), on_line(v), on_line(u + v))`}</Code>
         </>
       ),
       answer: { kind: "choice", options: ["True True False", "True True True", "False False False", "True False True"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>in_span(vectors, b)</C>, which returns <C>True</C> when b is a linear combination of the given vectors. Compare
+            ranks with <C>np.linalg.matrix_rank</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def in_span(vectors, b):
+    return True
+`,
+        solution: `import numpy as np
+
+def in_span(vectors, b):
+    V = np.column_stack([np.asarray(v, float) for v in vectors])
+    return bool(np.linalg.matrix_rank(np.column_stack([V, b])) == np.linalg.matrix_rank(V))
+`,
+        tests: [
+          { name: "in the plane", code: `assert in_span([[1, 0, 1], [0, 1, 1]], [2, 3, 5]), '(2, 3, 5) = 2(1, 0, 1) + 3(0, 1, 1).'` },
+          { name: "off the plane", code: `assert not in_span([[1, 0, 1], [0, 1, 1]], [1, 1, 1]), '(1, 1, 1) is not in the plane: its third entry is not the sum of the first two.'` },
+          { name: "zero", code: `assert in_span([[1, 2]], [0, 0]), 'Every span contains the zero vector.'` },
+        ],
+      },
     },
     {
       key: "intersect",

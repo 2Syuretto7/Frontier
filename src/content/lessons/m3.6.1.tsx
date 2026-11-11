@@ -1,7 +1,7 @@
 import { M } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { DetRowOpsViz } from "@/components/viz/DetRowOpsViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -140,6 +140,52 @@ print(round(np.linalg.det(B)))`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 48 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>det(A)</C>, which computes the determinant by elimination: track row swaps (each flips the sign) and multiply
+            the pivots. Do not call <C>np.linalg.det</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def det(A):
+    U = np.array(A, dtype=float)
+    return float(np.prod(np.diag(U)))
+`,
+        solution: `import numpy as np
+
+def det(A):
+    U = np.array(A, dtype=float)
+    n, sign = len(U), 1.0
+    for c in range(n):
+        p = c + int(np.argmax(np.abs(U[c:, c])))
+        if abs(U[p, c]) < 1e-12:
+            return 0.0
+        if p != c:
+            U[[c, p]] = U[[p, c]]
+            sign = -sign
+        for r in range(c + 1, n):
+            U[r] -= U[r, c] / U[c, c] * U[c]
+    return sign * float(np.prod(np.diag(U)))
+`,
+        tests: [
+          { name: "lesson matrix", code: `assert abs(det([[2, 1, 1], [4, -6, 0], [-2, 7, 2]]) + 16) < 1e-9, 'The lesson’s matrix has determinant −16.'` },
+          { name: "swap", code: `assert abs(det([[0, 1], [1, 0]]) + 1) < 1e-9, 'A single row swap gives determinant −1.'` },
+          { name: "singular", code: `assert abs(det([[1, 2, 3], [4, 5, 6], [7, 8, 9]])) < 1e-9, 'Dependent rows give determinant 0.'` },
+          { name: "random", code: `import numpy as np
+rng = np.random.default_rng(7)
+A = rng.standard_normal((6, 6))
+assert abs(det(A) - np.linalg.det(A)) < 1e-8, 'Your determinant differs from the true one on a random 6 × 6 matrix.'` },
+        ],
+      },
     },
     {
       key: "rules",

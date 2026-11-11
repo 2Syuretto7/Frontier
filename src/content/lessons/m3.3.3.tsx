@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { InverseMapViz } from "@/components/viz/InverseMapViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -144,6 +144,44 @@ print(x[0])`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 3 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>inverse2(M)</C>, which returns the inverse of a 2 × 2 matrix by the ad − bc formula, or <C>None</C> if the
+            matrix is singular (|ad − bc| &lt; 1e-12).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def inverse2(M):
+    (a, b), (c, d) = M
+    return np.array([[d, -b], [-c, a]], float)
+`,
+        solution: `import numpy as np
+
+def inverse2(M):
+    (a, b), (c, d) = M
+    det = a * d - b * c
+    if abs(det) < 1e-12:
+        return None
+    return np.array([[d, -b], [-c, a]], float) / det
+`,
+        tests: [
+          { name: "unit determinant", code: `import numpy as np
+assert np.allclose(inverse2([[2, 1], [1, 1]]), [[1, -1], [-1, 2]]), 'The inverse of [[2, 1], [1, 1]] is [[1, −1], [−1, 2]].'` },
+          { name: "divides", code: `import numpy as np
+M = [[4, 7], [2, 6]]
+assert np.allclose(np.array(M) @ inverse2(M), np.eye(2)), 'M times its inverse should be the identity. Did you divide by ad − bc?'` },
+          { name: "singular", code: `assert inverse2([[2, 4], [1, 2]]) is None, 'A matrix with ad − bc = 0 has no inverse: return None.'` },
+        ],
+      },
     },
     {
       key: "unique",

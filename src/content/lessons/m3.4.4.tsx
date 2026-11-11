@@ -1,7 +1,7 @@
 import { M } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { BasisViz } from "@/components/viz/BasisViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -151,6 +151,41 @@ print(c)`}</Code>
         </>
       ),
       answer: { kind: "choice", options: ["[2. 1.]", "[1. 2.]", "[3. 3.]", "[1. 1.]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>coordinates(basis, v)</C>, which returns the coordinates of v in the given basis of ℝⁿ (a list of n
+            vectors).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def coordinates(basis, v):
+    return np.asarray(v, float)
+`,
+        solution: `import numpy as np
+
+def coordinates(basis, v):
+    B = np.column_stack([np.asarray(b, float) for b in basis])
+    return np.linalg.solve(B, v)
+`,
+        tests: [
+          { name: "skewed basis", code: `import numpy as np
+assert np.allclose(coordinates([[2, 1], [-1, 1]], [3, 3]), [2, 1]), '(3, 3) = 2(2, 1) + 1(−1, 1).'` },
+          { name: "rebuilds v", code: `import numpy as np
+rng = np.random.default_rng(3)
+B = list(rng.standard_normal((4, 4))); v = rng.standard_normal(4)
+c = coordinates(B, v)
+assert np.allclose(sum(ci * bi for ci, bi in zip(c, B)), v), 'Combining the basis vectors with your coordinates should give v back.'` },
+        ],
+      },
     },
     {
       key: "extend",

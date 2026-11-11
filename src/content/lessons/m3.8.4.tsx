@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark, Theorem } from "@/components/lesson/Blocks";
 import { LowRankViz } from "@/components/viz/LowRankViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -135,6 +135,49 @@ print(round(np.linalg.norm(A - A1, 2), 6), round(np.linalg.norm(A - A1) ** 2, 6)
         </>
       ),
       answer: { kind: "numeric", value: 13 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>best_rank(A, k)</C>, which returns the best rank k approximation of A by keeping the first k terms of
+            <C>np.linalg.svd</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def best_rank(A, k):
+    A = np.asarray(A, float)
+    return A[:, :k]
+`,
+        solution: `import numpy as np
+
+def best_rank(A, k):
+    U, s, Vt = np.linalg.svd(np.asarray(A, float), full_matrices=False)
+    return (U[:, :k] * s[:k]) @ Vt[:k]
+`,
+        tests: [
+          { name: "shape and rank", code: `import numpy as np
+rng = np.random.default_rng(10)
+A = rng.standard_normal((8, 6))
+B = best_rank(A, 2)
+assert B.shape == A.shape, 'The approximation has the same shape as A.'
+assert np.linalg.matrix_rank(B) == 2, 'It must have rank k.'` },
+          { name: "Eckart-Young", code: `import numpy as np
+rng = np.random.default_rng(10)
+A = rng.standard_normal((8, 6))
+s = np.linalg.svd(A, compute_uv=False)
+assert abs(np.linalg.norm(A - best_rank(A, 2)) - np.sqrt((s[2:] ** 2).sum())) < 1e-8, 'The Frobenius error should be the root of the sum of the dropped σ².'` },
+          { name: "full rank", code: `import numpy as np
+A = np.diag([5.0, 3.0, 1.0])
+assert np.allclose(best_rank(A, 3), A), 'Keeping every term gives A back.'` },
+        ],
+      },
     },
     {
       key: "fnorm",

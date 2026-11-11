@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { FourSubspacesViz } from "@/components/viz/FourSubspacesViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -139,6 +139,44 @@ print(n - r, m - r)`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 6 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>dims(A)</C>, which returns the dimensions of the four fundamental subspaces as a tuple (column space, null
+            space, row space, left null space).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def dims(A):
+    A = np.asarray(A, float)
+    m, n = A.shape
+    return (m, n, m, n)
+`,
+        solution: `import numpy as np
+
+def dims(A):
+    A = np.asarray(A, float)
+    m, n = A.shape
+    r = int(np.linalg.matrix_rank(A))
+    return (r, n - r, r, m - r)
+`,
+        tests: [
+          { name: "rank one", code: `assert tuple(dims([[1, 2, 3], [2, 4, 6]])) == (1, 2, 1, 1), 'A rank one 2 × 3 matrix has dimensions 1, 2, 1, 1.'` },
+          { name: "tall", code: `assert tuple(dims([[1, 0], [1, 1], [1, 2]])) == (2, 0, 2, 1), 'A 3 × 2 matrix with independent columns.'` },
+          { name: "five by seven", code: `import numpy as np
+rng = np.random.default_rng(0)
+A = rng.standard_normal((5, 3)) @ rng.standard_normal((3, 7))
+assert tuple(dims(A)) == (3, 4, 3, 2), 'Use r, n − r, r and m − r.'` },
+        ],
+      },
     },
     {
       key: "rn",

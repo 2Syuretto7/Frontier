@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { GramSchmidtViz } from "@/components/viz/GramSchmidtViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -147,6 +147,54 @@ print(np.round(Q.T @ Q, 6)[0, 1], np.round(abs(R[0, 0]) ** 2, 6))`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 10 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>gram_schmidt(A)</C>, which returns Q whose columns are the orthonormal vectors produced by Gram-Schmidt on
+            the columns of A (assumed independent). Do not call <C>np.linalg.qr</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def gram_schmidt(A):
+    A = np.asarray(A, float)
+    return A.copy()
+`,
+        solution: `import numpy as np
+
+def gram_schmidt(A):
+    A = np.asarray(A, float)
+    Q = np.zeros_like(A)
+    for j in range(A.shape[1]):
+        v = A[:, j] - Q[:, :j] @ (Q[:, :j].T @ A[:, j])
+        Q[:, j] = v / np.linalg.norm(v)
+    return Q
+`,
+        tests: [
+          { name: "two vectors", code: `import numpy as np
+Q = gram_schmidt([[3, 1], [1, 2]])
+assert np.allclose(Q[:, 0], np.array([3, 1]) / np.sqrt(10)), 'q₁ should be a divided by its length.'
+assert np.allclose(Q[:, 1], np.array([-1, 3]) / np.sqrt(10)), 'q₂ should be (−1, 3)/√10.'` },
+          { name: "orthonormal", code: `import numpy as np
+rng = np.random.default_rng(6)
+A = rng.standard_normal((5, 3))
+Q = gram_schmidt(A)
+assert np.allclose(Q.T @ Q, np.eye(3)), 'The columns of Q must be orthonormal.'` },
+          { name: "same span", code: `import numpy as np
+rng = np.random.default_rng(6)
+A = rng.standard_normal((5, 3))
+Q = gram_schmidt(A)
+R = Q.T @ A
+assert np.allclose(Q @ R, A) and np.allclose(np.tril(R, -1), 0), 'A should equal QR with R upper triangular.'` },
+        ],
+      },
     },
     {
       key: "iso",

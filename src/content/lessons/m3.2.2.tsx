@@ -1,7 +1,7 @@
 import { MD } from "@/components/Math";
 import { Definition, Example, Remark, Theorem } from "@/components/lesson/Blocks";
 import { RrefViz } from "@/components/viz/RrefViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -138,6 +138,56 @@ print(A.shape[1] - np.linalg.matrix_rank(A))`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 2 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>rref(A)</C>, which returns the reduced row echelon form of A as a float array. Treat entries smaller than
+            1e-10 in size as zero.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def rref(A):
+    R = np.array(A, dtype=float)
+    return R
+`,
+        solution: `import numpy as np
+
+def rref(A):
+    R = np.array(A, dtype=float)
+    m, n = R.shape
+    r = 0
+    for c in range(n):
+        if r == m:
+            break
+        p = r + int(np.argmax(np.abs(R[r:, c])))
+        if abs(R[p, c]) < 1e-10:
+            continue
+        R[[r, p]] = R[[p, r]]
+        R[r] /= R[r, c]
+        for q in range(m):
+            if q != r:
+                R[q] -= R[q, c] * R[r]
+        r += 1
+    R[np.abs(R) < 1e-10] = 0
+    return R
+`,
+        tests: [
+          { name: "rank two", code: `import numpy as np
+assert np.allclose(rref([[1, 2, 2, 2], [2, 4, 6, 8], [3, 6, 8, 10]]), [[1, 2, 0, -2], [0, 0, 1, 2], [0, 0, 0, 0]]), 'Clear entries above each pivot as well as below, and scale pivots to 1.'` },
+          { name: "full rank", code: `import numpy as np
+assert np.allclose(rref([[1, 1, 2], [2, 1, 1], [1, 2, 4]]), np.eye(3)), 'An invertible matrix reduces to the identity.'` },
+          { name: "zero first column", code: `import numpy as np
+assert np.allclose(rref([[0, 2, 4], [0, 1, 3]]), [[0, 1, 0], [0, 0, 1]]), 'Skip a column with no non-zero entry: it has no pivot.'` },
+        ],
+      },
     },
     {
       key: "infinite",

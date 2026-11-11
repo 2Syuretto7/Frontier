@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { LinePlaneViz } from "@/components/viz/LinePlaneViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -141,6 +141,38 @@ print((n @ q - c) / np.linalg.norm(n))`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 3 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>distance(n, c, q)</C>, which returns the distance from the point q to the hyperplane n · x = c.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def distance(n, c, q):
+    n, q = np.asarray(n, float), np.asarray(q, float)
+    return n @ q - c
+`,
+        solution: `import numpy as np
+
+def distance(n, c, q):
+    n, q = np.asarray(n, float), np.asarray(q, float)
+    return abs(n @ q - c) / np.linalg.norm(n)
+`,
+        tests: [
+          { name: "origin", code: `assert abs(distance([2, -1, 2], 6, [0, 0, 0]) - 2) < 1e-9, 'The origin is 2 away from 2x − y + 2z = 6. Did you divide by the length of n?'` },
+          { name: "other side", code: `assert abs(distance([1, 2, 2], 1, [3, 1, 4]) - 4) < 1e-9, 'Distance is never negative.'` },
+          { name: "on the plane", code: `assert abs(distance([1, 1, 1], 3, [1, 1, 1])) < 1e-9, 'A point on the plane is at distance 0.'` },
+          { name: "below", code: `assert abs(distance([0, 0, 1], 5, [7, 7, 1]) - 4) < 1e-9, 'Points on the other side are still a positive distance away.'` },
+        ],
+      },
     },
     {
       key: "formula",

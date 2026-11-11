@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark, Theorem } from "@/components/lesson/Blocks";
 import { NullColViz } from "@/components/viz/NullColViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -143,6 +143,46 @@ for x in ([-2, 1, 0], [1, 1, -1], [3, 0, -1], [1, 1, 1]):
         </>
       ),
       answer: { kind: "numeric", value: 3 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>null_basis(A)</C>, which returns a matrix whose columns are a basis of the null space of A (with as many
+            columns as there are free variables). Any correct method is fine, for example the special solutions or the SVD.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def null_basis(A):
+    A = np.asarray(A, float)
+    return np.zeros((A.shape[1], 0))
+`,
+        solution: `import numpy as np
+
+def null_basis(A):
+    A = np.asarray(A, float)
+    _, s, Vt = np.linalg.svd(A)
+    r = int((s > 1e-10).sum())
+    return Vt[r:].T
+`,
+        tests: [
+          { name: "solves Ax = 0", code: `import numpy as np
+A = np.array([[1, 2, 2, 2], [2, 4, 6, 8], [3, 6, 8, 10]], float)
+N = null_basis(A)
+assert N.shape == (4, 2), 'This matrix has 4 columns and rank 2, so its null space has dimension 2.'
+assert np.allclose(A @ N, 0), 'Every column must solve Ax = 0.'` },
+          { name: "independent", code: `import numpy as np
+N = null_basis([[1, 2, 3]])
+assert np.linalg.matrix_rank(N) == 2, 'The basis vectors must be independent.'` },
+          { name: "trivial", code: `assert null_basis([[1, 0], [0, 1]]).shape[1] == 0, 'An invertible matrix has only the zero vector in its null space.'` },
+        ],
+      },
     },
     {
       key: "sub",

@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ElimViz } from "@/components/viz/ElimViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -146,6 +146,54 @@ print(A[1, 1])`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 5 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>solve(A, b)</C>, which solves a square system by Gaussian elimination and back substitution. Swap in a lower
+            row when a pivot is zero. Do not call <C>np.linalg.solve</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def solve(A, b):
+    M = np.column_stack([np.asarray(A, float), np.asarray(b, float)])
+    n = len(M)
+    # eliminate below each pivot, then back substitute
+    return np.zeros(n)
+`,
+        solution: `import numpy as np
+
+def solve(A, b):
+    M = np.column_stack([np.asarray(A, float), np.asarray(b, float)])
+    n = len(M)
+    for c in range(n):
+        p = c + int(np.argmax(np.abs(M[c:, c])))
+        M[[c, p]] = M[[p, c]]
+        for r in range(c + 1, n):
+            M[r] -= M[r, c] / M[c, c] * M[c]
+    x = np.zeros(n)
+    for i in range(n - 1, -1, -1):
+        x[i] = (M[i, n] - M[i, i + 1:n] @ x[i + 1:]) / M[i, i]
+    return x
+`,
+        tests: [
+          { name: "the puzzle", code: `import numpy as np
+assert np.allclose(solve([[2, 1, 1], [4, -6, 0], [-2, 7, 2]], [5, -2, 9]), [1, 1, 2]), 'The puzzle system has solution u = 1, v = 1, w = 2.'` },
+          { name: "needs a swap", code: `import numpy as np
+assert np.allclose(solve([[0, 2, 4], [1, 1, 1], [2, 3, 5]], [2, 3, 5]), np.linalg.solve([[0, 2, 4], [1, 1, 1], [2, 3, 5]], [2, 3, 5])), 'The first pivot here is 0: swap in a row with a non-zero entry.'` },
+          { name: "larger", code: `import numpy as np
+rng = np.random.default_rng(1)
+A = rng.standard_normal((6, 6)); b = rng.standard_normal(6)
+assert np.allclose(solve(A, b), np.linalg.solve(A, b)), 'Your answer differs from the true solution on a random 6 × 6 system.'` },
+        ],
+      },
     },
     {
       key: "same",
