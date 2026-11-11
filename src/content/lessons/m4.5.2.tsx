@@ -155,6 +155,27 @@ for n in (10, 1000, 10 ** 6):
       answer: { kind: "choice", options: ["0.0", "0.0199", "1.0", "0.332"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def f(n):
+    c = 0
+    i = 1
+    while i < n:
+        j = 0
+        while j < i:
+            c += 1
+            j += 1
+        i *= 2
+    return c
+print(f(16), f(17), f(1024))`}</Code>
+          <p>The inner loop runs i times while i doubles. What does this print, and what is the growth rate?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["15 31 1023", "16 32 1024", "15 15 1023", "64 68 10240"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -182,6 +203,67 @@ for n in (10, 1000, 10 ** 6):
     return {'nested': a, 'triangle': b, 'halving': c}
 assert all(count_steps(n) == brute(n) for n in range(1, 60)), 'Compare with running the loops.'` },
           { name: "large", code: `assert count_steps(10 ** 6) == {'nested': 10 ** 12, 'triangle': 499999500000, 'halving': 20}, 'Halving a million takes 20 passes.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            The maximum subarray problem has O(n³), O(n²) and O(n) solutions. Write <C>max_subarray_quadratic(xs)</C>, which tries every start and extends the sum one element at a time, and <C>max_subarray(xs)</C>, Kadane&rsquo;s linear algorithm (extend the current run if its sum is positive, otherwise start afresh). Both take a non-empty list and return (best, i, j) with j &gt; i and sum(xs[i:j]) == best as large as possible. The tests time the linear one on 300000 numbers.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def max_subarray_quadratic(xs):
+    return sum(xs), 0, len(xs)
+
+def max_subarray(xs):
+    return sum(xs), 0, len(xs)
+`,
+        solution: `def max_subarray_quadratic(xs):
+    best = (xs[0], 0, 1)
+    for i in range(len(xs)):
+        s = 0
+        for j in range(i, len(xs)):
+            s += xs[j]
+            if s > best[0]:
+                best = (s, i, j + 1)
+    return best
+
+def max_subarray(xs):
+    best, bi, bj = xs[0], 0, 1
+    cur, ci = 0, 0
+    for j, x in enumerate(xs):
+        if cur <= 0:
+            cur, ci = x, j
+        else:
+            cur += x
+        if cur > best:
+            best, bi, bj = cur, ci, j + 1
+    return best, bi, bj
+`,
+        tests: [
+          { name: "classic", code: `for f in (max_subarray, max_subarray_quadratic):
+    b, i, j = f([-2, 1, -3, 4, -1, 2, 1, -5, 4])
+    assert b == 6 and (i, j) == (3, 7), 'The run 4, −1, 2, 1.'
+    assert f([-3, -1, -2])[0] == -1 and f([5])[0] == 5, 'All negative: the largest single element.'` },
+          { name: "agree", code: `import random
+random.seed(19)
+for _ in range(300):
+    xs = [random.randint(-10, 10) for _ in range(random.randint(1, 40))]
+    want = max(sum(xs[i:j]) for i in range(len(xs)) for j in range(i + 1, len(xs) + 1))
+    for f in (max_subarray, max_subarray_quadratic):
+        b, i, j = f(xs)
+        assert b == want and 0 <= i < j <= len(xs) and sum(xs[i:j]) == b, f'{f.__name__} on {xs}'` },
+          { name: "linear", code: `import random
+random.seed(20)
+xs = [random.randint(-100, 100) for _ in range(300000)]
+b, i, j = max_subarray(xs)
+assert sum(xs[i:j]) == b and b >= max(xs), 'Kadane on 300000 numbers.'` },
         ],
       },
     },

@@ -150,6 +150,22 @@ print([n for n in range(10, 20) if is_prime(n)])`}</Code>
       answer: { kind: "numeric", value: 4 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`D = range(1, 31)
+P = lambda n: n % 2 == 0
+Q = lambda n: n % 3 == 0
+both = {n for n in D if P(n) and Q(n)}
+either = {n for n in D if P(n) or Q(n)}
+print(len(both), len(either), min(both))`}</Code>
+          <p>Truth sets of 'even' and 'multiple of 3' on 1 … 30. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["5 20 6", "5 25 6", "6 20 6", "5 20 2"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -170,6 +186,48 @@ print([n for n in range(10, 20) if is_prime(n)])`}</Code>
         tests: [
           { name: "even", code: `assert truth_set(lambda n: n % 2 == 0, range(10)) == {0, 2, 4, 6, 8}, 'Keep only the elements where P holds.'` },
           { name: "empty", code: `assert truth_set(lambda n: n * n < 0, range(5)) == set(), 'No integer has a negative square.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A predicate&rsquo;s truth set turns logic into set operations. Write <C>truth_set(P, D)</C>, then <C>check_laws(P, Q, D)</C>, which returns <C>True</C> when all of these hold on D: the truth set of P ∧ Q is the intersection of the truth sets, that of P ∨ Q is the union, that of ¬P is the complement in D, and that of P → Q is the complement of T(P) minus T(Q). Finally write <C>same_predicate(P, Q, D)</C>, true when P and Q have the same truth set.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def truth_set(P, D):
+    return set(D)
+
+def check_laws(P, Q, D):
+    return False
+
+def same_predicate(P, Q, D):
+    return True
+`,
+        solution: `def truth_set(P, D):
+    return {x for x in D if P(x)}
+
+def check_laws(P, Q, D):
+    U = set(D)
+    TP, TQ = truth_set(P, D), truth_set(Q, D)
+    return (truth_set(lambda x: P(x) and Q(x), D) == TP & TQ and
+            truth_set(lambda x: P(x) or Q(x), D) == TP | TQ and
+            truth_set(lambda x: not P(x), D) == U - TP and
+            truth_set(lambda x: (not P(x)) or Q(x), D) == U - (TP - TQ))
+
+def same_predicate(P, Q, D):
+    return truth_set(P, D) == truth_set(Q, D)
+`,
+        tests: [
+          { name: "truth set", code: `assert truth_set(lambda n: n * n < 20, range(-10, 10)) == {-4, -3, -2, -1, 0, 1, 2, 3, 4}, 'Keep x where P(x) is true.'` },
+          { name: "laws", code: `assert check_laws(lambda n: n % 2 == 0, lambda n: n % 3 == 0, range(100)) and check_laws(lambda s: 'a' in s, lambda s: len(s) > 2, ['', 'a', 'ab', 'abc', 'xyz', 'zzzz']), 'The laws always hold.'` },
+          { name: "same", code: `assert same_predicate(lambda n: n % 4 == 0, lambda n: n % 2 == 0 and (n // 2) % 2 == 0, range(-50, 50)) and not same_predicate(lambda n: n > 0, lambda n: n >= 0, range(-3, 3)), 'Compare truth sets.'` },
         ],
       },
     },

@@ -152,6 +152,21 @@ print(sorted(words), sorted(words, key=len))`}</Code>
       answer: { kind: "choice", options: ["'a'", "'ab'", "'b'", "'abc'"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`A = [1, 2, 3, 4, 6, 12]
+leq = lambda a, b: b % a == 0
+maximal = [a for a in A if not any(leq(a, b) and a != b for b in A)]
+incomparable = [(a, b) for a in A for b in A if a < b and not leq(a, b)]
+print(maximal, incomparable)`}</Code>
+          <p>Divisibility on the divisors of 12 is a partial order. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[12] [(2, 3), (3, 4), (4, 6)]", "[12] [(2, 3), (4, 6)]", "[6, 12] [(2, 3), (3, 4), (4, 6)]", "[12] [(3, 4), (4, 6)]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -173,6 +188,68 @@ print(sorted(words), sorted(words, key=len))`}</Code>
           { name: "divisibility", code: `assert maximal(range(1, 11), lambda a, b: b % a == 0) == {6, 7, 8, 9, 10}, 'Under divisibility, 6, 7, 8, 9 and 10 divide nothing else in 1 to 10.'` },
           { name: "subsets", code: `A = [frozenset(), frozenset({1}), frozenset({2}), frozenset({1, 2})]
 assert maximal(A, lambda a, b: a <= b) == {frozenset({1, 2})}, 'Under inclusion, {1, 2} is the only maximal set.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>linear_extension(A, leq)</C>, a list of the elements of a finite partial order arranged so that whenever leq(a, b) with a ≠ b, a comes before b (repeatedly remove a minimal element; among several, take the smallest by Python&rsquo;s ordering). Write <C>hasse(A, leq)</C>, the set of covering pairs (a, b): a &lt; b with nothing strictly between. And write <C>is_lattice(A, leq)</C>, true when every pair has a least upper bound and a greatest lower bound in A.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def linear_extension(A, leq):
+    return list(A)
+
+def hasse(A, leq):
+    return set()
+
+def is_lattice(A, leq):
+    return True
+`,
+        solution: `def linear_extension(A, leq):
+    rest = list(A)
+    out = []
+    while rest:
+        mins = [a for a in rest if not any(leq(b, a) and b != a for b in rest)]
+        m = min(mins)
+        out.append(m)
+        rest.remove(m)
+    return out
+
+def hasse(A, leq):
+    lt = lambda a, b: a != b and leq(a, b)
+    return {(a, b) for a in A for b in A if lt(a, b) and not any(lt(a, c) and lt(c, b) for c in A)}
+
+def is_lattice(A, leq):
+    def best(cands, better):
+        tops = [c for c in cands if all(better(c, d) for d in cands)]
+        return len(tops) == 1
+    for a in A:
+        for b in A:
+            ub = [c for c in A if leq(a, c) and leq(b, c)]
+            lb = [c for c in A if leq(c, a) and leq(c, b)]
+            if not best(ub, lambda c, d: leq(c, d)) or not best(lb, lambda c, d: leq(d, c)):
+                return False
+    return True
+`,
+        tests: [
+          { name: "extension", code: `A = [12, 1, 6, 2, 3, 4]
+leq = lambda a, b: b % a == 0
+L = linear_extension(A, leq)
+assert L == [1, 2, 3, 4, 6, 12] and all(L.index(a) < L.index(b) for a in A for b in A if a != b and leq(a, b)), 'Minimal elements first.'` },
+          { name: "subsets", code: `from itertools import combinations
+A = [frozenset(c) for r in range(3) for c in combinations('ab', r)]
+L = linear_extension(A, lambda x, y: x <= y)
+assert L[0] == frozenset() and L[-1] == frozenset('ab'), 'Order subsets by inclusion.'` },
+          { name: "hasse", code: `A = [1, 2, 3, 4, 6, 12]
+assert hasse(A, lambda a, b: b % a == 0) == {(1, 2), (1, 3), (2, 4), (2, 6), (3, 6), (4, 12), (6, 12)}, 'Only the covering pairs.'` },
+          { name: "lattice", code: `assert is_lattice([1, 2, 3, 4, 6, 12], lambda a, b: b % a == 0) and not is_lattice([1, 2, 3], lambda a, b: b % a == 0) and is_lattice(range(5), lambda a, b: a <= b), '2 and 3 have no upper bound in {1, 2, 3}.'` },
         ],
       },
     },

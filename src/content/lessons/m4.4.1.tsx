@@ -156,6 +156,17 @@ print(f)`}</Code>
       answer: { kind: "choice", options: ["[2, 2, 2, 3, 3, 5]", "[2, 3, 5]", "[2, 2, 3, 3, 5]", "[8, 9, 5]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`print(-7 // 2, -7 % 2, divmod(-7, -2), int(-7 / 2))`}</Code>
+          <p>Python&rsquo;s floor division and remainder with negative numbers, and truncation. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["-4 1 (3, -1) -3", "-3 -1 (3, -1) -3", "-4 1 (4, 1) -4", "-4 -1 (3, -1) -3"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -196,6 +207,70 @@ def is_prime(n):
           { name: "negative", code: `assert divmod_floor(-17, 5) == (-4, 3) and divmod_floor(17, 5) == (3, 2), 'The remainder must lie in [0, d), even for negative n.'` },
           { name: "agree", code: `assert all(divmod_floor(n, d) == divmod(n, d) for n in range(-40, 41) for d in range(1, 9)), 'Match Python’s divmod for positive d.'` },
           { name: "primes", code: `assert [n for n in range(50) if is_prime(n)] == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47] and not is_prime(391), 'Try divisors up to √n.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>factorise(n)</C> for n ≥ 1, a dict mapping each prime factor to its exponent, by trial division up to √n (1 gives the empty dict). From the factorisation, write <C>num_divisors(n)</C> = Π (eᵢ + 1), <C>sigma(n)</C>, the sum of the divisors, Π (pᵢ^(eᵢ+1) − 1)/(pᵢ − 1), and <C>divisors(n)</C>, the sorted list of all divisors built by combining prime powers (do not test every number up to n).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def factorise(n):
+    return {n: 1}
+
+def num_divisors(n):
+    return 2
+
+def sigma(n):
+    return n + 1
+
+def divisors(n):
+    return [1, n]
+`,
+        solution: `def factorise(n):
+    f = {}
+    q = 2
+    while q * q <= n:
+        while n % q == 0:
+            f[q] = f.get(q, 0) + 1
+            n //= q
+        q += 1 if q == 2 else 2
+    if n > 1:
+        f[n] = f.get(n, 0) + 1
+    return f
+
+def num_divisors(n):
+    r = 1
+    for e in factorise(n).values():
+        r *= e + 1
+    return r
+
+def sigma(n):
+    r = 1
+    for q, e in factorise(n).items():
+        r *= (q ** (e + 1) - 1) // (q - 1)
+    return r
+
+def divisors(n):
+    ds = [1]
+    for q, e in factorise(n).items():
+        ds = [d * q ** i for d in ds for i in range(e + 1)]
+    return sorted(ds)
+`,
+        tests: [
+          { name: "factorise", code: `assert factorise(360) == {2: 3, 3: 2, 5: 1} and factorise(1) == {} and factorise(999983) == {999983: 1} and factorise(2 ** 40 * 3) == {2: 40, 3: 1} and factorise(999983 * 1000003) == {999983: 1, 1000003: 1}, '360 = 2³ · 3² · 5.'` },
+          { name: "counts", code: `assert num_divisors(360) == 24 and sigma(360) == 1170 and divisors(36) == [1, 2, 3, 4, 6, 9, 12, 18, 36], '360 has (3 + 1)(2 + 1)(1 + 1) = 24 divisors.'` },
+          { name: "brute", code: `for n in range(1, 500):
+    ds = [d for d in range(1, n + 1) if n % d == 0]
+    assert divisors(n) == ds and num_divisors(n) == len(ds) and sigma(n) == sum(ds), f'n = {n}'` },
+          { name: "perfect", code: `assert all(sigma(n) == 2 * n for n in (6, 28, 496, 8128, 33550336)) and sigma(12) != 24, 'Perfect numbers have σ(n) = 2n.'` },
         ],
       },
     },

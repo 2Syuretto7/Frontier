@@ -152,6 +152,21 @@ print(on_line(u), on_line(v), on_line(u + v))`}</Code>
       answer: { kind: "choice", options: ["True True False", "True True True", "False False False", "True False True"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+rng = np.random.default_rng(0)
+in_plane = lambda v: abs(v[0] + v[1] - 2 * v[2]) < 1e-9
+u, v = np.array([1.0, 1.0, 1.0]), np.array([2.0, 0.0, 1.0])
+print(in_plane(u), in_plane(v), in_plane(3 * u - 5 * v), in_plane(u + np.array([0, 0, 1])))`}</Code>
+          <p>Is the plane x + y = 2z closed under combinations? What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True True True False", "True True False False", "True False True False", "True True True True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -179,6 +194,65 @@ def in_span(vectors, b):
           { name: "in the plane", code: `assert in_span([[1, 0, 1], [0, 1, 1]], [2, 3, 5]), '(2, 3, 5) = 2(1, 0, 1) + 3(0, 1, 1).'` },
           { name: "off the plane", code: `assert not in_span([[1, 0, 1], [0, 1, 1]], [1, 1, 1]), '(1, 1, 1) is not in the plane: its third entry is not the sum of the first two.'` },
           { name: "zero", code: `assert in_span([[1, 2]], [0, 0]), 'Every span contains the zero vector.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>is_subspace(member, sample, trials, seed)</C>, a randomised test of the subspace conditions for a set described by a predicate <C>member</C>: seed NumPy&rsquo;s generator, draw pairs of members by calling <C>sample(rng)</C> (which returns a member), and check that 0 is a member and that a·u + b·v is a member for random reals a, b. Return <C>False</C> as soon as a check fails. The tests try planes through the origin, shifted planes, the union of two lines and the set of symmetric matrices.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def is_subspace(member, sample, trials, seed):
+    return True
+`,
+        solution: `import numpy as np
+
+def is_subspace(member, sample, trials, seed):
+    rng = np.random.default_rng(seed)
+    first = sample(rng)
+    if not member(np.zeros_like(np.asarray(first, float))):
+        return False
+    for _ in range(trials):
+        u, v = np.asarray(sample(rng), float), np.asarray(sample(rng), float)
+        a, b = rng.normal(), rng.normal()
+        if not member(a * u + b * v):
+            return False
+    return True
+`,
+        tests: [
+          { name: "plane", code: `import numpy as np
+member = lambda v: abs(v[0] + v[1] - 2 * v[2]) < 1e-9
+def sample(rng):
+    x, y = rng.normal(size=2)
+    return np.array([x, y, (x + y) / 2])
+assert is_subspace(member, sample, 100, 0), 'A plane through 0 is a subspace.'` },
+          { name: "shifted", code: `import numpy as np
+member = lambda v: abs(v[0] + v[1] - 2 * v[2] - 1) < 1e-9
+def sample(rng):
+    x, y = rng.normal(size=2)
+    return np.array([x, y, (x + y - 1) / 2])
+assert not is_subspace(member, sample, 100, 0), 'It misses the origin.'` },
+          { name: "two lines", code: `import numpy as np
+member = lambda v: abs(v[1]) < 1e-9 or abs(v[0]) < 1e-9
+def sample(rng):
+    t = rng.normal()
+    return np.array([t, 0.0]) if rng.random() < 0.5 else np.array([0.0, t])
+assert not is_subspace(member, sample, 200, 1), 'The union of the axes is not closed under addition.'` },
+          { name: "symmetric", code: `import numpy as np
+member = lambda M: np.allclose(M, M.T)
+def sample(rng):
+    A = rng.normal(size=(3, 3))
+    return A + A.T
+assert is_subspace(member, sample, 50, 2), 'Symmetric matrices form a subspace.'` },
         ],
       },
     },

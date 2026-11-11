@@ -191,6 +191,20 @@ print(all(abs((3 * x + 1) - 7) < eps for x in xs))`}</Code>
       answer: { kind: "choice", options: ["True", "False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`eps = 0.01
+delta = min(1, eps / 7)
+xs = [3 + delta * k / 100 for k in range(-99, 100)]
+print(round(delta, 6), all(abs(x * x - 9) < eps for x in xs), abs((3 + 2 * delta) ** 2 - 9) < eps)`}</Code>
+          <p>δ = min(1, ε/7) for x² → 9 at 3. Does it work inside the δ-window, and outside it?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.001429 True False", "0.001429 True True", "0.001429 False False", "0.01 True True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -219,6 +233,45 @@ def check(eps):
         tests: [
           { name: "delta", code: `assert abs(delta_for(0.7) - 0.1) < 1e-12 and delta_for(70) == 1, 'δ = min(1, ε/7).'` },
           { name: "works", code: `assert all(check(e) for e in (5, 1, 0.1, 1e-4)), 'Every tested x should satisfy |x² − 9| < ε.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>find_delta(f, a, L, eps)</C>, an automatic search for a δ that works in the ε–δ definition: start at δ = 1 and halve it until every sample x = a ± δ·k/200 for k = 1 … 200 satisfies |f(x) − L| &lt; ε, giving up and returning <C>None</C> after 60 halvings. Then write <C>check_limit(f, a, L)</C>, which returns <C>True</C> when <C>find_delta</C> succeeds for ε = 10⁻¹, 10⁻², …, 10⁻⁶.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def find_delta(f, a, L, eps):
+    return 1.0
+
+def check_limit(f, a, L):
+    return True
+`,
+        solution: `def find_delta(f, a, L, eps):
+    d = 1.0
+    for _ in range(61):
+        if all(abs(f(a + s * d * k / 200) - L) < eps for k in range(1, 201) for s in (1, -1)):
+            return d
+        d /= 2
+    return None
+
+def check_limit(f, a, L):
+    return all(find_delta(f, a, L, 10.0 ** -j) is not None for j in range(1, 7))
+`,
+        tests: [
+          { name: "square", code: `d = find_delta(lambda x: x * x, 3, 9, 0.01)
+assert d is not None and d <= 0.01 / 6 and all(abs((3 + t) ** 2 - 9) < 0.01 for t in [d * k / 200 for k in range(-200, 201)]), 'Halve until the window works.'` },
+          { name: "good", code: `import math
+assert check_limit(lambda x: x * x, 3, 9) and check_limit(lambda x: math.sin(x) / x, 0, 1), 'These limits are correct.'` },
+          { name: "wrong limit", code: `assert not check_limit(lambda x: x * x, 3, 9.001), 'A wrong L fails once ε is small.'` },
+          { name: "jump", code: `assert find_delta(lambda x: 1 if x > 0 else 0, 0, 1, 0.5) is None, 'A jump has no limit.'` },
         ],
       },
     },

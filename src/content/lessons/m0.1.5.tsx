@@ -203,6 +203,19 @@ print(sorted(xs)[1], max(xs) - min(xs))`}</Code>
       answer: { kind: "choice", options: ["-0.5 5.5", "-2 5.5", "0 3.5", "-0.5 1.5"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+xs = [3.7, -3.7, 3.0, -0.5]
+print([math.floor(x) for x in xs], [math.ceil(x) for x in xs])`}</Code>
+          <p>floor moves left on the number line, ceil moves right. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[3, -4, 3, -1] [4, -3, 3, 0]", "[3, -3, 3, 0] [4, -4, 3, -1]", "[3, -4, 3, 0] [4, -3, 3, -1]", "[4, -3, 3, 0] [3, -4, 3, -1]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -225,6 +238,38 @@ print(sorted(xs)[1], max(xs) - min(xs))`}</Code>
         tests: [
           { name: "open", code: `assert in_interval(1, 0, 2, False) and not in_interval(0, 0, 2, False), 'An open interval leaves out its ends.'` },
           { name: "closed", code: `assert in_interval(0, 0, 2, True) and in_interval(2, 0, 2, True) and not in_interval(2.1, 0, 2, True), 'A closed interval includes its ends.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>merge(intervals)</C>, which takes a list of closed intervals (a, b) with a ≤ b on the real line, in any order, and returns their union as a sorted list of disjoint closed intervals. Intervals that touch, like (1, 2) and (2, 3), merge into one.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def merge(intervals):
+    return sorted(intervals)
+`,
+        solution: `def merge(intervals):
+    out = []
+    for a, b in sorted(intervals):
+        if out and a <= out[-1][1]:
+            out[-1] = (out[-1][0], max(out[-1][1], b))
+        else:
+            out.append((a, b))
+    return out
+`,
+        tests: [
+          { name: "disjoint", code: `assert merge([(5, 6), (1, 2)]) == [(1, 2), (5, 6)] and merge([]) == [], 'Sort by left end first.'` },
+          { name: "overlap", code: `assert merge([(1, 4), (2, 3), (3, 8)]) == [(1, 8)], 'An interval inside another adds nothing.'` },
+          { name: "touching", code: `assert merge([(2, 3), (1, 2), (-1, 0.5)]) == [(-1, 0.5), (1, 3)], 'Closed intervals sharing an endpoint join.'` },
+          { name: "contained", code: `assert merge([(0, 10), (1, 2), (3, 4), (11, 12)]) == [(0, 10), (11, 12)], 'Keep the larger right end.'` },
         ],
       },
     },

@@ -145,6 +145,20 @@ print(Z[:, 2].tolist())`}</Code>
       answer: { kind: "choice", options: ["[1.0, 1.0, 4.0, 14.0]", "[1.0, 4.0, 14.0, 20.0]", "[0.0, 1.0, 5.0, 6.0]", "[1.0, 1.0, 5.0, 15.0]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+from scipy.cluster.hierarchy import linkage
+Z = linkage(np.array([[0.0], [1.0], [5.0], [6.5]]), "single")
+print(Z[:, 2].tolist(), Z[:, 3].astype(int).tolist())`}</Code>
+          <p>SciPy&rsquo;s linkage matrix: the merge heights and the size of each new cluster. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[1.0, 1.5, 4.0] [2, 2, 4]", "[1.0, 1.5, 6.5] [2, 2, 4]", "[1.0, 4.0, 1.5] [2, 3, 4]", "[1.0, 1.5, 4.0] [2, 4, 4]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -176,6 +190,77 @@ print(Z[:, 2].tolist())`}</Code>
         tests: [
           { name: "three", code: `assert single_linkage([0, 1, 5, 6, 20], 3) == [[0, 1], [5, 6], [20]], 'Merge the closest clusters first.'` },
           { name: "chain", code: `assert single_linkage([0, 2, 4, 6, 30], 2) == [[0, 2, 4, 6], [30]], 'Single linkage chains evenly spaced points together.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>merge_heights(points, method)</C>, agglomerative clustering from scratch for method <C>"single"</C>, <C>"complete"</C> or <C>"average"</C>: start with every point in its own cluster, repeatedly merge the two clusters at the smallest linkage distance (minimum, maximum or mean of the pairwise Euclidean distances between their members), and return the list of the n − 1 merge distances in order. Then write <C>cut(points, method, k)</C>, which stops when k clusters remain and returns labels numbered 0, 1, … in order of first appearance.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def merge_heights(points, method):
+    return []
+
+def cut(points, method, k):
+    return [0] * len(points)
+`,
+        solution: `import numpy as np
+
+def _run(points, method, k):
+    P = np.asarray(points, float)
+    D = np.sqrt(((P[:, None] - P[None]) ** 2).sum(-1))
+    agg = {'single': np.min, 'complete': np.max, 'average': np.mean}[method]
+    clusters = [[i] for i in range(len(P))]
+    heights = []
+    while len(clusters) > k:
+        best = None
+        for a in range(len(clusters)):
+            for b in range(a + 1, len(clusters)):
+                d = agg(D[np.ix_(clusters[a], clusters[b])])
+                if best is None or d < best[0]:
+                    best = (d, a, b)
+        d, a, b = best
+        heights.append(float(d))
+        clusters[a] = clusters[a] + clusters[b]
+        del clusters[b]
+    return heights, clusters
+
+def merge_heights(points, method):
+    return _run(points, method, 1)[0]
+
+def cut(points, method, k):
+    _, clusters = _run(points, method, k)
+    lab = {}
+    for c, members in enumerate(clusters):
+        for i in members:
+            lab[i] = c
+    raw = [lab[i] for i in range(len(points))]
+    order = {}
+    return [order.setdefault(r, len(order)) for r in raw]
+`,
+        tests: [
+          { name: "small", code: `import numpy as np
+assert np.allclose(merge_heights([[0.0], [1.0], [5.0], [6.5]], 'single'), [1, 1.5, 4]) and np.allclose(merge_heights([[0.0], [1.0], [5.0], [6.5]], 'complete'), [1, 1.5, 6.5])` },
+          { name: "scipy", code: `import numpy as np
+from scipy.cluster.hierarchy import linkage
+rng = np.random.default_rng(0)
+P = rng.normal(size=(25, 2))
+for m in ('single', 'complete', 'average'):
+    assert np.allclose(sorted(merge_heights(P, m)), sorted(linkage(P, m)[:, 2])), f'{m} linkage agrees with scipy.'` },
+          { name: "cut", code: `P = [[0, 0], [10, 10], [0, 1], [10, 11], [20, 0]]
+assert cut(P, 'single', 3) == [0, 1, 0, 1, 2] and cut(P, 'average', 1) == [0] * 5 and cut(P, 'complete', 5) == [0, 1, 2, 3, 4], 'Labels in order of first appearance.'` },
+          { name: "chaining", code: `P = [[float(i), 0.0] for i in range(10)] + [[4.5, 3.0]]
+lab_s = cut(P, 'single', 2); lab_c = cut(P, 'complete', 2)
+assert lab_s == [0] * 10 + [1] and lab_c != lab_s, 'Single linkage chains along the line; complete linkage splits it.'` },
         ],
       },
     },

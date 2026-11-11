@@ -127,6 +127,20 @@ print((a + b).shape, (a * b).sum())`}</Code>
       answer: { kind: "choice", options: ["(3, 4) 18.0", "(3, 1) 6.0", "(4, 3) 18.0", "An error"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+a = np.arange(3).reshape(3, 1)
+b = np.arange(2)
+print((a * 10 + b).tolist(), np.broadcast_shapes((5, 1, 4), (3, 1)))`}</Code>
+          <p>Broadcasting a column against a row, and the broadcast shape rule. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[[0, 1], [10, 11], [20, 21]] (5, 3, 4)", "[[0, 10, 20], [1, 11, 21]] (5, 3, 4)", "[[0, 1], [10, 11], [20, 21]] (5, 3, 1)", "[0, 11, 22] (5, 3, 4)"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -159,6 +173,72 @@ assert np.allclose(Z.mean(axis=0), 0) and np.allclose(Z.std(axis=0), 1), 'Use ax
           { name: "constant", code: `import numpy as np
 Z = standardise(np.array([[1.0, 7.0], [2.0, 7.0]]))
 assert not np.isnan(Z).any() and np.allclose(Z[:, 1], 0), 'A constant column has standard deviation 0.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>broadcast_shape(*shapes)</C>, the result shape of broadcasting, from the rules alone: align shapes on the right, and in each position the sizes must be equal or 1 (the result takes the larger); raise <C>ValueError</C> otherwise. Then write <C>pairwise(f, X, Y)</C>, which applies an elementwise function to every pair of rows of X (n × d) and Y (m × d) by broadcasting, returning the n × m × d array, and <C>nearest_centre(X, C)</C>, the index of the closest row of C for each row of X, using it.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def broadcast_shape(*shapes):
+    return max(shapes, key=len)
+
+def pairwise(f, X, Y):
+    return f(X, Y)
+
+def nearest_centre(X, C):
+    return np.zeros(len(X), dtype=int)
+`,
+        solution: `import numpy as np
+
+def broadcast_shape(*shapes):
+    n = max((len(s) for s in shapes), default=0)
+    out = []
+    for i in range(1, n + 1):
+        dims = {s[-i] for s in shapes if len(s) >= i} - {1}
+        if len(dims) > 1:
+            raise ValueError('shapes do not broadcast')
+        out.append(dims.pop() if dims else 1)
+    return tuple(reversed(out))
+
+def pairwise(f, X, Y):
+    return f(X[:, None, :], Y[None, :, :])
+
+def nearest_centre(X, C):
+    return (pairwise(np.subtract, X, C) ** 2).sum(-1).argmin(1)
+`,
+        tests: [
+          { name: "rules", code: `assert broadcast_shape((5, 1, 4), (3, 1)) == (5, 3, 4) and broadcast_shape((3,), ()) == (3,) and broadcast_shape() == () and broadcast_shape((1,), (1, 1)) == (1, 1) and broadcast_shape((0,), (1,)) == (0,)` },
+          { name: "numpy", code: `import numpy as np
+import itertools, random
+random.seed(5)
+for _ in range(500):
+    shapes = [tuple(random.choice([1, 2, 3]) for _ in range(random.randint(0, 3))) for _ in range(random.randint(1, 3))]
+    try:
+        want = np.broadcast_shapes(*shapes)
+    except ValueError:
+        want = None
+    try:
+        got = broadcast_shape(*shapes)
+    except ValueError:
+        got = None
+    assert got == want, f'{shapes}'` },
+          { name: "pairwise", code: `import numpy as np
+X = np.arange(6.0).reshape(3, 2); Y = np.ones((4, 2))
+P = pairwise(np.subtract, X, Y)
+assert P.shape == (3, 4, 2) and np.allclose(P[2, 1], X[2] - Y[1])
+C = np.array([[0.0, 0.0], [10.0, 10.0]])
+assert nearest_centre(np.array([[1.0, 2.0], [9.0, 7.0], [5.0, 6.0]]), C).tolist() == [0, 1, 1]` },
         ],
       },
     },

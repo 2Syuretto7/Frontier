@@ -150,6 +150,20 @@ print(len(sols), 2 ** len(nums))`}</Code>
       answer: { kind: "choice", options: ["4 128", "3 128", "4 64", "4 49"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from itertools import combinations
+nums = [3, 34, 4, 12, 5, 2]
+hits = [c for r in range(len(nums) + 1) for c in combinations(nums, r) if sum(c) == 9]
+print(len(hits), 2 ** len(nums), min(hits, key=len))`}</Code>
+          <p>Subset sum by trying every subset. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2 64 (4, 5)", "3 64 (4, 5)", "2 36 (4, 5)", "2 64 (3, 4, 2)"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -189,6 +203,85 @@ assert verify(nums, 15, [0, 2]) and not verify(nums, 15, [0, 0]) and not verify(
           { name: "dp small", code: `assert subset_sum_dp([8, 6, 7, 5, 3, 10, 9], 15) and not subset_sum_dp([2, 4, 6], 7), 'Track which sums are reachable.'` },
           { name: "dp large", code: `nums = [3 * i + 1 for i in range(60)]
 assert subset_sum_dp(nums, 2000) and not subset_sum_dp([2 * i for i in range(1, 61)], 2001), 'Sixty numbers: 2⁶⁰ subsets, but only 60 × 2000 table cells.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Two NP problems, solved exactly. Write <C>subset_sum(nums, target)</C> for non-negative integers by dynamic programming over reachable sums (record how each sum was first reached so you can walk back), returning a sorted list of indices whose values sum to the target, or <C>None</C>. Its running time is about n · target, which is pseudo-polynomial. Then write <C>sat_solve(n_vars, clauses)</C>, where variables are 1 … n and each clause is a list of non-zero integers (−3 means not x₃): return a list of n booleans satisfying every clause, or <C>None</C>, by trying all 2ⁿ assignments.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def subset_sum(nums, target):
+    return None
+
+def sat_solve(n_vars, clauses):
+    return [True] * n_vars
+`,
+        solution: `from itertools import product
+
+def subset_sum(nums, target):
+    how = {0: None}
+    for i, x in enumerate(nums):
+        for s in list(how):
+            t = s + x
+            if t <= target and t not in how:
+                how[t] = (s, i)
+    if target not in how:
+        return None
+    out, s = [], target
+    while how[s] is not None:
+        s, i = how[s]
+        out.append(i)
+    return sorted(out)
+
+def sat_solve(n_vars, clauses):
+    for bits in product((False, True), repeat=n_vars):
+        if all(any(bits[abs(l) - 1] == (l > 0) for l in c) for c in clauses):
+            return list(bits)
+    return None
+`,
+        tests: [
+          { name: "subset", code: `nums = [3, 34, 4, 12, 5, 2]
+s = subset_sum(nums, 9)
+assert s is not None and sum(nums[i] for i in s) == 9 and len(set(s)) == len(s) and s == sorted(s), 'Indices of distinct items.'
+assert subset_sum(nums, 30) is None and subset_sum(nums, 0) == [] and subset_sum([], 1) is None, '30 cannot be made.'` },
+          { name: "brute subset", code: `from itertools import combinations
+import random
+random.seed(23)
+for _ in range(100):
+    nums = [random.randint(0, 20) for _ in range(random.randint(0, 9))]
+    t = random.randint(0, 60)
+    can = any(sum(c) == t for r in range(len(nums) + 1) for c in combinations(nums, r))
+    s = subset_sum(nums, t)
+    assert (s is not None) == can and (s is None or (sum(nums[i] for i in s) == t and len(set(s)) == len(s))), f'{nums}, {t}'` },
+          { name: "big subset", code: `import random
+random.seed(24)
+nums = [random.randint(1, 1000) for _ in range(100)]
+s = subset_sum(nums, 20000)
+assert s is not None and sum(nums[i] for i in s) == 20000, 'n · target is about 2 million steps.'` },
+          { name: "sat", code: `assert sat_solve(1, [[1], [-1]]) is None and sat_solve(2, [[1, 2], [-1, 2], [1, -2]]) == [True, True] and sat_solve(0, []) == [], 'x ∧ ¬x is unsatisfiable.'
+v = lambda p, h: 2 * p + h + 1
+php = [[v(p, 0), v(p, 1)] for p in range(3)] + [[-v(p, h), -v(q, h)] for h in range(2) for p in range(3) for q in range(p + 1, 3)]
+assert sat_solve(6, php) is None, 'Three pigeons do not fit in two holes.'` },
+          { name: "planted", code: `import random
+random.seed(25)
+for _ in range(10):
+    n = 12
+    secret = [random.random() < 0.5 for _ in range(n)]
+    cl = []
+    while len(cl) < 50:
+        c = [random.choice([1, -1]) * random.randint(1, n) for _ in range(3)]
+        if any(secret[abs(l) - 1] == (l > 0) for l in c):
+            cl.append(c)
+    a = sat_solve(n, cl)
+    assert a is not None and all(any(a[abs(l) - 1] == (l > 0) for l in c) for c in cl), 'The returned assignment must satisfy every clause.'` },
         ],
       },
     },

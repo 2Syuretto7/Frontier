@@ -118,6 +118,22 @@ print(a)`}</Code>
       answer: { kind: "choice", options: ["[  0 100   2   3   4   5]", "[  0 100 200   3   4   5]", "[0 1 2 3 4 5]", "[  0   1 200   3   4   5]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+a = np.arange(10)
+b = a[::2]
+c = a[a % 3 == 0]
+b[:] = -1
+print(a.tolist(), c.tolist(), np.shares_memory(a, b), np.shares_memory(a, c))`}</Code>
+          <p>A slice is a view; a Boolean mask makes a copy. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[-1, 1, -1, 3, -1, 5, -1, 7, -1, 9] [0, 3, 6, 9] True False", "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9] [0, 3, 6, 9] False False", "[-1, 1, -1, 3, -1, 5, -1, 7, -1, 9] [-1, 3, -1, 9] True True", "[-1, 1, -1, 3, -1, 5, -1, 7, -1, 9] [0, 3, 6, 9] True True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -153,6 +169,66 @@ assert y[-1] == x.mean() and np.allclose(y[:4], [1, 2, 3, 2]), 'Replace only the
 x = np.array([1.0, 2.0, 3.0, 2.0, 100.0])
 clip_outliers(x, 1.5)
 assert x[-1] == 100.0, 'Work on a copy; the caller’s array must not change.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>topk_rows(X, k)</C>, the column indices of the k largest values in each row, largest first, using <C>np.argpartition</C> and <C>np.take_along_axis</C> rather than sorting whole rows; <C>scatter_add(n, idx, vals)</C>, an array of length n where vals are added at positions idx, repeated indices accumulating (use <C>np.add.at</C>); and <C>masked_fill(X, mask, value)</C>, a new array equal to X except value where the Boolean mask is true, leaving X unchanged.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def topk_rows(X, k):
+    return np.argsort(-X, axis=1)[:, :k]
+
+def scatter_add(n, idx, vals):
+    out = np.zeros(n)
+    out[idx] += vals
+    return out
+
+def masked_fill(X, mask, value):
+    X[mask] = value
+    return X
+`,
+        solution: `import numpy as np
+
+def topk_rows(X, k):
+    part = np.argpartition(-X, k - 1, axis=1)[:, :k]
+    vals = np.take_along_axis(X, part, axis=1)
+    order = np.argsort(-vals, axis=1, kind='stable')
+    return np.take_along_axis(part, order, axis=1)
+
+def scatter_add(n, idx, vals):
+    out = np.zeros(n)
+    np.add.at(out, idx, vals)
+    return out
+
+def masked_fill(X, mask, value):
+    out = X.copy()
+    out[mask] = value
+    return out
+`,
+        tests: [
+          { name: "topk", code: `import numpy as np
+rng = np.random.default_rng(0)
+X = rng.normal(size=(50, 30))
+T = topk_rows(X, 5)
+assert T.shape == (50, 5) and np.array_equal(T, np.argsort(-X, axis=1)[:, :5]), 'The same as a full sort, largest first.'` },
+          { name: "scatter", code: `import numpy as np
+out = scatter_add(5, np.array([0, 2, 2, 4, 2]), np.array([1.0, 2.0, 3.0, 4.0, 5.0]))
+assert out.tolist() == [1.0, 0.0, 10.0, 0.0, 4.0], 'Repeated indices accumulate: 2 + 3 + 5 at position 2.'` },
+          { name: "fill", code: `import numpy as np
+X = np.arange(6.0).reshape(2, 3)
+Y = masked_fill(X, X > 2, -1.0)
+assert Y.tolist() == [[0, 1, 2], [-1, -1, -1]] and X.tolist() == [[0, 1, 2], [3, 4, 5]] and not np.shares_memory(X, Y), 'Return a new array.'` },
         ],
       },
     },

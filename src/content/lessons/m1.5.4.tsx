@@ -148,6 +148,25 @@ print([a(n) for n in range(5)])`}</Code>
       answer: { kind: "choice", options: ["2ⁿ⁺¹ − 1", "2ⁿ", "n² + 1", "2n + 1"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`calls = 0
+def C(n, k):
+    global calls
+    calls += 1
+    if k == 0 or k == n:
+        return 1
+    return C(n - 1, k - 1) + C(n - 1, k)
+v = C(10, 5)
+print(v, calls)`}</Code>
+          <p>Pascal's recursion without memoisation. How many calls does C(10, 5) make?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["252 503", "252 252", "252 1023", "126 503"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -180,6 +199,74 @@ def fib(n):
     return _orig(n)
 v = fib(200)
 assert v == 280571172992510140037611932413038677189525, 'fib(200) is 280571172992510140037611932413038677189525.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>ackermann(m, n)</C>, the recursively defined function A(0, n) = n + 1, A(m, 0) = A(m − 1, 1), A(m, n) = A(m − 1, A(m, n − 1)), with memoisation in a dict and an explicit stack instead of Python recursion (so that A(2, 1000) and A(3, 8) work without hitting the recursion limit). Then write <C>catalan(n)</C> by the recursion C₀ = 1, Cₙ₊₁ = Σ CᵢCₙ₋ᵢ, memoised, fast enough for n = 300.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def ackermann(m, n):
+    if m == 0:
+        return n + 1
+    if n == 0:
+        return ackermann(m - 1, 1)
+    return ackermann(m - 1, ackermann(m, n - 1))
+
+def catalan(n):
+    if n == 0:
+        return 1
+    return sum(catalan(i) * catalan(n - 1 - i) for i in range(n)) if n < 12 else 0
+`,
+        solution: `def ackermann(m, n):
+    memo = {}
+    stack = [(m, n)]
+    while stack:
+        a, b = stack[-1]
+        if (a, b) in memo:
+            stack.pop()
+            continue
+        if a == 0:
+            memo[(a, b)] = b + 1
+            stack.pop()
+        elif b == 0:
+            if (a - 1, 1) in memo:
+                memo[(a, b)] = memo[(a - 1, 1)]
+                stack.pop()
+            else:
+                stack.append((a - 1, 1))
+        else:
+            if (a, b - 1) not in memo:
+                stack.append((a, b - 1))
+            else:
+                inner = memo[(a, b - 1)]
+                if (a - 1, inner) in memo:
+                    memo[(a, b)] = memo[(a - 1, inner)]
+                    stack.pop()
+                else:
+                    stack.append((a - 1, inner))
+    return memo[(m, n)]
+
+def catalan(n):
+    c = [1]
+    for k in range(n):
+        c.append(sum(c[i] * c[k - i] for i in range(k + 1)))
+    return c[n]
+`,
+        tests: [
+          { name: "small", code: `assert [ackermann(1, n) for n in range(5)] == [2, 3, 4, 5, 6] and [ackermann(2, n) for n in range(4)] == [3, 5, 7, 9] and ackermann(3, 3) == 61, 'A(2, n) = 2n + 3 and A(3, n) = 2ⁿ⁺³ − 3.'` },
+          { name: "deep", code: `assert ackermann(2, 1000) == 2003 and ackermann(3, 8) == 2045, 'Use your own stack instead of recursion.'` },
+          { name: "catalan", code: `assert [catalan(n) for n in range(8)] == [1, 1, 2, 5, 14, 42, 132, 429], 'Catalan numbers.'` },
+          { name: "big", code: `from math import comb
+assert catalan(300) == comb(600, 300) // 301, 'Cₙ = C(2n, n)/(n + 1).'` },
         ],
       },
     },

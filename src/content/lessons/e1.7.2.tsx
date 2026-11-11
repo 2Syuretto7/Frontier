@@ -147,6 +147,20 @@ print(x.isna().sum(), x.dropna().drop_duplicates().sum())`}</Code>
       answer: { kind: "choice", options: ["2 19.0", "1 26.0", "2 26.0", "An error"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import pandas as pd, io
+csv = "date,temp\\n2026-01-01,21.5\\n2026-01-02,\\n2026-01-03,23.5\\n"
+df = pd.read_csv(io.StringIO(csv), parse_dates=["date"])
+print(df["temp"].isna().sum(), df["temp"].interpolate().tolist(), df["date"].dt.day.tolist())`}</Code>
+          <p>Reading a CSV with a missing value and dates, then filling the gap. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1 [21.5, 22.5, 23.5] [1, 2, 3]", "0 [21.5, 22.5, 23.5] [1, 2, 3]", "1 [21.5, nan, 23.5] [1, 2, 3]", "1 [21.5, 21.5, 23.5] [1, 2, 3]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -177,6 +191,68 @@ def clean(df):
 raw = pd.DataFrame({'name': [' asha', 'Ravi ', 'ASHA', 'zoya'], 'age': ['31', 'unknown', '31', '27']})
 out = clean(raw)
 assert list(out['name']) == ['Asha', 'Zoya'] and list(out['age']) == [31, 27] and list(out.index) == [0, 1], 'Normalise names before dropping duplicates, and reset the index.'` },
+          { name: "types", code: `import pandas as pd
+raw = pd.DataFrame({'name': ['a ', ' b'], 'age': ['1', '2.5']})
+out = clean(raw)
+assert out['age'].dtype.kind == 'f' and list(out['age']) == [1.0, 2.5] and list(raw['name']) == ['a ', ' b'], 'Ages become numbers, and the input DataFrame is left unchanged.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>parse_amounts(s)</C> for a Series of messy money strings: strip spaces, remove <C>₹</C>, <C>Rs</C> and thousands commas, treat <C>(200)</C> as −200, and turn anything that is still not a number (such as <C>"n/a"</C>) into NaN, returning floats. Then write <C>fill_by_group(df, col, by)</C>, a copy where missing values in col are filled with the median of their group, and <C>iqr_outliers(s)</C>, a Boolean Series marking values below Q1 − 1.5·IQR or above Q3 + 1.5·IQR.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import pandas as pd
+
+def parse_amounts(s):
+    return pd.to_numeric(s, errors='coerce')
+
+def fill_by_group(df, col, by):
+    return df
+
+def iqr_outliers(s):
+    return s != s
+`,
+        solution: `import pandas as pd
+
+def parse_amounts(s):
+    t = s.astype(str).str.strip().str.replace('₹', '', regex=False).str.replace('Rs', '', regex=False).str.replace(',', '', regex=False).str.strip()
+    neg = t.str.startswith('(') & t.str.endswith(')')
+    t = t.where(~neg, '-' + t.str[1:-1])
+    return pd.to_numeric(t, errors='coerce').astype(float)
+
+def fill_by_group(df, col, by):
+    out = df.copy()
+    out[col] = out[col].fillna(out.groupby(by)[col].transform('median'))
+    return out
+
+def iqr_outliers(s):
+    q1, q3 = s.quantile(0.25), s.quantile(0.75)
+    k = 1.5 * (q3 - q1)
+    return (s < q1 - k) | (s > q3 + k)
+`,
+        tests: [
+          { name: "amounts", code: `import numpy as np
+import pandas as pd, numpy as np
+s = pd.Series(['1,234', '₹500', ' Rs 75.5 ', '(200)', 'n/a', '12', None])
+r = parse_amounts(s)
+assert r.iloc[:4].tolist() == [1234.0, 500.0, 75.5, -200.0] and r.iloc[4:6].isna().tolist() == [True, False] and np.isnan(r.iloc[6]) and r.dtype == float` },
+          { name: "fill", code: `import numpy as np
+import pandas as pd, numpy as np
+df = pd.DataFrame({'city': ['A', 'A', 'A', 'B', 'B'], 'rent': [10.0, np.nan, 30.0, 7.0, np.nan]})
+out = fill_by_group(df, 'rent', 'city')
+assert out['rent'].tolist() == [10.0, 20.0, 30.0, 7.0, 7.0] and df['rent'].isna().sum() == 2, 'Fill with the group median; leave the input alone.'` },
+          { name: "outliers", code: `import pandas as pd
+s = pd.Series([10, 12, 11, 13, 12, 95, -40, 11])
+assert iqr_outliers(s).tolist() == [False, False, False, False, False, True, True, False]` },
         ],
       },
     },

@@ -175,6 +175,20 @@ print(round((1 - math.cos(x)) / x ** 2, 4))`}</Code>
       answer: { kind: "numeric", value: 0.5, tolerance: 0.0001 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+f = lambda x: (math.exp(x) - 1 - x) / x ** 2
+for x in (1e-1, 1e-3, 1e-7):
+    print(round(f(x), 4))`}</Code>
+          <p>L'Hôpital twice gives the limit ½ at 0, but floating point disagrees for tiny x. What is the last value printed?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.4943", "0.5", "0.5002", "0.5171"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -197,6 +211,64 @@ print(round((1 - math.cos(x)) / x ** 2, 4))`}</Code>
 assert abs(lhopital(math.cos, lambda x: 1.0, 0) - 1) < 1e-12, 'sin x / x at 0: cos 0 / 1 = 1.'` },
           { name: "exp", code: `import math
 assert abs(lhopital(math.exp, lambda x: 2.0, 0) - 0.5) < 1e-12, '(eˣ − 1)/(2x) at 0: e⁰/2 = 1/2.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>lhopital_limit(fs, gs, a)</C>, where <C>fs</C> = [f, f′, f″, …] and <C>gs</C> = [g, g′, g″, …] are lists of the same length: apply L&rsquo;Hôpital&rsquo;s rule repeatedly, moving to the next derivatives while both values at a are 0 (to within 1e−12), and return fₖ(a)/gₖ(a) at the first k where gₖ(a) ≠ 0. Return <C>None</C> if fₖ(a) ≠ 0 = gₖ(a) (an infinite limit) or the lists run out. Then write <C>expm1_over(x)</C>, an accurate value of (eˣ − 1 − x)/x² for any x, switching to its Taylor series Σ xᵏ/(k + 2)! for |x| &lt; 1.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def lhopital_limit(fs, gs, a):
+    return fs[0](a) / gs[0](a)
+
+def expm1_over(x):
+    return (math.exp(x) - 1 - x) / x ** 2
+`,
+        solution: `import math
+
+def lhopital_limit(fs, gs, a):
+    for f, g in zip(fs, gs):
+        fa, ga = f(a), g(a)
+        if abs(ga) > 1e-12:
+            return fa / ga
+        if abs(fa) > 1e-12:
+            return None
+    return None
+
+def expm1_over(x):
+    if abs(x) < 1:
+        term, s, k = 0.5, 0.0, 0
+        while abs(term) > 1e-18:
+            s += term
+            k += 1
+            term *= x / (k + 2)
+        return s
+    return (math.expm1(x) - x) / x ** 2
+`,
+        tests: [
+          { name: "once", code: `import math
+assert abs(lhopital_limit([math.sin, math.cos], [lambda x: x, lambda x: 1], 0) - 1) < 1e-15, 'sin x / x → 1.'` },
+          { name: "twice", code: `import math
+fs = [lambda x: math.exp(x) - 1 - x, lambda x: math.exp(x) - 1, math.exp]
+gs = [lambda x: x * x, lambda x: 2 * x, lambda x: 2]
+assert abs(lhopital_limit(fs, gs, 0) - 0.5) < 1e-15, 'Differentiate until the denominator is non-zero.'` },
+          { name: "infinite", code: `import math
+assert lhopital_limit([math.cos, lambda x: -math.sin(x)], [lambda x: x, lambda x: 1], 0) is None, 'cos x / x has no finite limit.'` },
+          { name: "accurate", code: `from fractions import Fraction
+import math
+for x in [1e-9, -1e-6, 1e-4, 0.01, 0.5, -2, 10]:
+    exact = sum(Fraction(x) ** k / math.factorial(k + 2) for k in range(60))
+    assert abs(expm1_over(x) - float(exact)) < 1e-14 * abs(float(exact)), x` },
         ],
       },
     },

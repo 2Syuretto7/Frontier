@@ -163,6 +163,20 @@ print(sum(imp(p, q) != imp(not q, not p) for p, q in product([True, False], repe
       answer: { kind: "numeric", value: 0 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`n = 15
+p = n % 6 == 0
+q = n % 3 == 0
+print(not p or q, not q or p, p or not q)`}</Code>
+          <p>With p = '6 divides n' and q = '3 divides n', the code prints p → q, its converse q → p, and its inverse ¬p → ¬q. What does it print for n = 15?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True False False", "True True True", "False False True", "True False True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -184,6 +198,42 @@ print(sum(imp(p, q) != imp(not q, not p) for p, q in product([True, False], repe
         tests: [
           { name: "true false", code: `assert related(True, False) == {'converse': True, 'inverse': True, 'contrapositive': False}, 'With p true and q false, only the contrapositive (like p → q itself) is false.'` },
           { name: "false true", code: `assert related(False, True) == {'converse': False, 'inverse': False, 'contrapositive': True}, 'With p false and q true, the converse and inverse fail.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>audit(P, Q, D)</C> for predicates P and Q on a finite domain D. It returns a dict with four keys, <C>"implication"</C> (∀x P(x) → Q(x)), <C>"converse"</C>, <C>"inverse"</C> and <C>"contrapositive"</C>, each mapping to <C>None</C> if that statement holds on all of D, or else to the first counterexample in D.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def audit(P, Q, D):
+    return {'implication': None, 'converse': None, 'inverse': None, 'contrapositive': None}
+`,
+        solution: `def first_fail(A, B, D):
+    for x in D:
+        if A(x) and not B(x):
+            return x
+    return None
+
+def audit(P, Q, D):
+    nP = lambda x: not P(x)
+    nQ = lambda x: not Q(x)
+    return {'implication': first_fail(P, Q, D), 'converse': first_fail(Q, P, D), 'inverse': first_fail(nP, nQ, D), 'contrapositive': first_fail(nQ, nP, D)}
+`,
+        tests: [
+          { name: "divisibility", code: `a = audit(lambda n: n % 6 == 0, lambda n: n % 3 == 0, range(1, 50))
+assert a == {'implication': None, 'converse': 3, 'inverse': 3, 'contrapositive': None}, 'The converse fails at 3.'` },
+          { name: "pairs", code: `a = audit(lambda n: n > 10, lambda n: n > 5, range(0, 20))
+assert a['implication'] is None and a['contrapositive'] is None and a['converse'] == 6 and a['inverse'] == 6, 'An implication and its contrapositive stand or fall together.'` },
+          { name: "both fail", code: `a = audit(lambda n: n % 2 == 0, lambda n: n % 4 == 0, range(1, 30))
+assert a['implication'] == 2 and a['contrapositive'] == 2 and a['converse'] is None and a['inverse'] is None, 'Here only the converse holds.'` },
         ],
       },
     },

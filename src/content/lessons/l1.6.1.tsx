@@ -167,6 +167,22 @@ print(labels, np.array([X[labels == k].mean(0) for k in range(2)]).tolist())`}</
       answer: { kind: "choice", options: ["[[0.0, 0.5], [10.0, 10.5]]", "[[0.0, 0.0], [10.0, 10.0]]", "[[5.0, 5.5], [5.0, 5.5]]", "[[0.0, 1.0], [10.0, 11.0]]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+X = np.array([[0.0], [1.0], [9.0], [10.0]])
+for C in ([[0.0], [10.0]], [[0.0], [0.5]]):
+    C = np.array(C)
+    labels = np.abs(X - C.T).argmin(1)
+    print(labels.tolist(), float(((X[:, 0] - C[labels, 0]) ** 2).sum()))`}</Code>
+          <p>Assignment and inertia for a good and a bad pair of centres. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0, 0, 1, 1] 2.0\n[0, 1, 1, 1] 162.75", "[0, 0, 1, 1] 2.0\n[0, 0, 1, 1] 162.75", "[0, 0, 1, 1] 1.0\n[0, 1, 1, 1] 162.75", "[0, 0, 1, 1] 2.0\n[0, 1, 1, 1] 145.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -202,6 +218,84 @@ from sklearn.datasets import make_blobs
 X, y = make_blobs(300, centers=[[0, 0], [8, 0], [0, 8]], cluster_std=0.5, random_state=0)
 C, labels, inertia = kmeans(X, 3, 20, 0)
 assert sorted(np.round(C).astype(int).tolist()) == [[0, 0], [0, 8], [8, 0]] and inertia < 200, 'Each centre should settle in one blob.'` },
+          { name: "start", code: `import numpy as np
+X = np.array([[0.0, 0.0], [1.0, 0.0], [10.0, 0.0], [11.0, 0.0]])
+C, labels, inertia = kmeans(X, 2, 0, 0)
+start = X[np.random.default_rng(0).choice(4, 2, replace=False)]
+assert np.allclose(C, start), 'With 0 steps the centres are the chosen rows.'
+C, labels, inertia = kmeans(X, 2, 10, 0)
+assert abs(inertia - 1.0) < 1e-12 and len(set(labels.tolist())) == 2, 'Two pairs, each 0.5 from its centre: inertia 4 × 0.25.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>kmeans_pp(X, k, seed)</C>, the k-means++ starting centres: with one <C>np.random.default_rng(seed)</C>, choose the first centre as row <C>rng.integers(n)</C>, then each next one as row <C>rng.choice(n, p=D²/ΣD²)</C> where D is each row&rsquo;s distance to its nearest chosen centre. Then write <C>lloyd(X, C, steps)</C>, plain k-means from centres C returning (centres, labels, inertia), and <C>best_of(X, k, restarts, seed)</C>, which runs <C>lloyd</C> for 50 steps from <C>kmeans_pp(X, k, seed + r)</C> for r = 0 … restarts − 1 and returns the result with the lowest inertia.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def kmeans_pp(X, k, seed):
+    return X[:k].astype(float)
+
+def lloyd(X, C, steps):
+    return C, np.zeros(len(X), dtype=int), 0.0
+
+def best_of(X, k, restarts, seed):
+    return lloyd(X, kmeans_pp(X, k, seed), 50)
+`,
+        solution: `import numpy as np
+
+def kmeans_pp(X, k, seed):
+    rng = np.random.default_rng(seed)
+    n = len(X)
+    C = [X[rng.integers(n)]]
+    for _ in range(k - 1):
+        D2 = ((X[:, None, :] - np.array(C)[None]) ** 2).sum(-1).min(1)
+        C.append(X[rng.choice(n, p=D2 / D2.sum())])
+    return np.array(C, dtype=float)
+
+def lloyd(X, C, steps):
+    C = np.array(C, float)
+    for _ in range(steps):
+        labels = ((X[:, None, :] - C[None]) ** 2).sum(-1).argmin(1)
+        C = np.array([X[labels == j].mean(0) if (labels == j).any() else C[j] for j in range(len(C))])
+    d = ((X[:, None, :] - C[None]) ** 2).sum(-1)
+    labels = d.argmin(1)
+    return C, labels, float(d[np.arange(len(X)), labels].sum())
+
+def best_of(X, k, restarts, seed):
+    runs = [lloyd(X, kmeans_pp(X, k, seed + r), 50) for r in range(restarts)]
+    return min(runs, key=lambda t: t[2])
+`,
+        tests: [
+          { name: "seeding", code: `import numpy as np
+rng = np.random.default_rng(0)
+X = rng.normal(size=(50, 2))
+C = kmeans_pp(X, 4, 3)
+r = np.random.default_rng(3)
+assert np.allclose(C[0], X[r.integers(50)]) and C.shape == (4, 2) and len({tuple(c) for c in C}) == 4, 'The first centre is a uniform row; later ones are distinct rows.'` },
+          { name: "far", code: `import numpy as np
+X = np.array([[0.0, 0]] * 50 + [[100.0, 0]])
+hits = sum(np.any(np.all(kmeans_pp(X, 2, s) == [100, 0], axis=1)) for s in range(30))
+assert hits == 30, 'D² sampling all but guarantees the far point becomes a centre.'` },
+          { name: "lloyd", code: `import numpy as np
+X = np.array([[0.0], [1.0], [9.0], [10.0]])
+C, labels, inertia = lloyd(X, [[0.0], [0.5]], 10)
+assert np.allclose(sorted(C[:, 0]), [0.5, 9.5]) and inertia == 1.0` },
+          { name: "restarts", code: `from sklearn.datasets import make_blobs
+X, _ = make_blobs(400, centers=6, cluster_std=0.6, random_state=2)
+one = best_of(X, 6, 1, 0)[2]; many = best_of(X, 6, 8, 0)[2]
+from sklearn.cluster import KMeans
+ref = KMeans(6, n_init=20, random_state=0).fit(X).inertia_
+assert many <= one and many < ref * 1.01, 'Restarts never hurt and should match scikit-learn.'` },
         ],
       },
     },

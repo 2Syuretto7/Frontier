@@ -146,6 +146,21 @@ print(f(g(2)), g(f(2)))`}</Code>
       answer: { kind: "numeric", value: -36 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = {1: 'b', 2: 'c', 3: 'a'}
+g = {'a': 10, 'b': 20, 'c': 30}
+gf = {x: g[f[x]] for x in f}
+finv = {v: k for k, v in f.items()}
+print(gf, finv['a'], {x: finv[f[x]] for x in f} == {1: 1, 2: 2, 3: 3})`}</Code>
+          <p>Composition g ∘ f and the inverse of f, as dicts. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["{1: 20, 2: 30, 3: 10} 3 True", "{1: 10, 2: 20, 3: 30} 3 True", "{1: 20, 2: 30, 3: 10} 1 True", "{1: 20, 2: 30, 3: 10} 3 False"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -174,6 +189,88 @@ def inverse(f, A):
           { name: "inverse", code: `f = {a: (5 * a) % 6 for a in range(6)}
 g = inverse(f, range(6))
 assert all(g[f[a]] == a for a in range(6)), 'The inverse undoes f.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A permutation of {"{0, …, n − 1}"} is a list p with p[i] the image of i. Write <C>compose(p, q)</C> (p ∘ q, so i ↦ p[q[i]]), <C>inverse(p)</C>, <C>cycles(p)</C> (its cycles as tuples, each starting at its smallest element, sorted by that element, including fixed points), <C>order(p)</C> (the least k ≥ 1 with pᵏ the identity, the lcm of the cycle lengths) and <C>power(p, k)</C> by repeated squaring.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def compose(p, q):
+    return p
+
+def inverse(p):
+    return p
+
+def cycles(p):
+    return []
+
+def order(p):
+    return 1
+
+def power(p, k):
+    return p
+`,
+        solution: `from math import lcm
+
+def compose(p, q):
+    return [p[q[i]] for i in range(len(p))]
+
+def inverse(p):
+    inv = [0] * len(p)
+    for i, x in enumerate(p):
+        inv[x] = i
+    return inv
+
+def cycles(p):
+    seen, out = set(), []
+    for i in range(len(p)):
+        if i not in seen:
+            c, j = [], i
+            while j not in seen:
+                seen.add(j)
+                c.append(j)
+                j = p[j]
+            out.append(tuple(c))
+    return out
+
+def order(p):
+    r = 1
+    for c in cycles(p):
+        r = lcm(r, len(c))
+    return r
+
+def power(p, k):
+    result = list(range(len(p)))
+    base = list(p)
+    while k:
+        if k & 1:
+            result = compose(base, result)
+        base = compose(base, base)
+        k >>= 1
+    return result
+`,
+        tests: [
+          { name: "compose", code: `p, q = [1, 2, 0], [0, 2, 1]
+assert compose(p, q) == [1, 0, 2] and compose(q, p) == [2, 1, 0], 'Composition is not commutative.'` },
+          { name: "inverse", code: `import random
+random.seed(2)
+p = list(range(50))
+random.shuffle(p)
+assert compose(p, inverse(p)) == list(range(50)) == compose(inverse(p), p), 'p ∘ p⁻¹ is the identity.'` },
+          { name: "cycles", code: `assert cycles([1, 2, 0, 4, 3, 5]) == [(0, 1, 2), (3, 4), (5,)] and order([1, 2, 0, 4, 3, 5]) == 6, 'A 3-cycle and a 2-cycle have order 6.'` },
+          { name: "power", code: `p = [1, 2, 3, 4, 0, 6, 5]
+assert power(p, 10) == list(range(7)) and power(p, 3) == compose(p, compose(p, p)) and power(p, 0) == list(range(7)), 'p¹⁰ is the identity: order 10.'` },
+          { name: "huge", code: `p = [1, 2, 0, 4, 5, 6, 3]
+assert order(p) == 12 and power(p, 12 * 10 ** 17 + 1) == p and power(p, 10 ** 18) == power(p, 4), 'Repeated squaring handles huge k.'` },
         ],
       },
     },

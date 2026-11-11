@@ -131,6 +131,20 @@ print(sum(1 for l in difflib.unified_diff(old, new, lineterm="") if l[:1] in "+-
       answer: { kind: "numeric", value: 2 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import difflib
+a = "the cat sat".split()
+b = "the dog sat down".split()
+print([x for x in difflib.ndiff(a, b) if x[0] in "+-"])`}</Code>
+          <p>A word-level diff with difflib. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["['- cat', '+ dog', '+ down']", "['+ dog', '- cat', '+ down']", "['- cat', '+ dog']", "['- the cat sat', '+ the dog sat down']"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -153,6 +167,84 @@ print(sum(1 for l in difflib.unified_diff(old, new, lineterm="") if l[:1] in "+-
         tests: [
           { name: "counts", code: `d = ['--- a/x.py', '+++ b/x.py', '@@ -1,2 +1,3 @@', ' a', '-b', '+B', '+c']
 assert review(d) == (2, 1), 'Skip the +++ and --- headers.'` },
+          { name: "edges", code: `assert review([]) == (0, 0) and review([' +x', ' -y', '@@ -1 +1 @@']) == (0, 0) and review(['++x', '--y', '+', '-']) == (2, 2), 'Only the first character decides; context lines start with a space.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write your own diff from the longest common subsequence. <C>lcs_table(a, b)</C> returns the (len(a) + 1) × (len(b) + 1) table where entry [i][j] is the LCS length of a[i:] and b[j:]. <C>diff(a, b)</C> walks the table from the start and returns lines prefixed <C>"  "</C> (kept), <C>"- "</C> (removed) or <C>"+ "</C> (added): keep a line when a[i] == b[j]; otherwise remove a[i] if that keeps the LCS (table[i + 1][j] ≥ table[i][j + 1]), else add b[j]. <C>patch(a, d)</C> applies such a diff to a and returns b, raising <C>ValueError</C> if a kept or removed line does not match.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def lcs_table(a, b):
+    return [[0] * (len(b) + 1) for _ in range(len(a) + 1)]
+
+def diff(a, b):
+    return ['- ' + x for x in a] + ['+ ' + x for x in b]
+
+def patch(a, d):
+    return [l[2:] for l in d if l[0] == '+']
+`,
+        solution: `def lcs_table(a, b):
+    T = [[0] * (len(b) + 1) for _ in range(len(a) + 1)]
+    for i in range(len(a) - 1, -1, -1):
+        for j in range(len(b) - 1, -1, -1):
+            T[i][j] = T[i + 1][j + 1] + 1 if a[i] == b[j] else max(T[i + 1][j], T[i][j + 1])
+    return T
+
+def diff(a, b):
+    T = lcs_table(a, b)
+    i = j = 0
+    out = []
+    while i < len(a) and j < len(b):
+        if a[i] == b[j]:
+            out.append('  ' + a[i]); i += 1; j += 1
+        elif T[i + 1][j] >= T[i][j + 1]:
+            out.append('- ' + a[i]); i += 1
+        else:
+            out.append('+ ' + b[j]); j += 1
+    out += ['- ' + x for x in a[i:]] + ['+ ' + x for x in b[j:]]
+    return out
+
+def patch(a, d):
+    out, i = [], 0
+    for line in d:
+        tag, text = line[:2], line[2:]
+        if tag == '+ ':
+            out.append(text)
+            continue
+        if i >= len(a) or a[i] != text:
+            raise ValueError('patch does not apply')
+        if tag == '  ':
+            out.append(text)
+        i += 1
+    if i != len(a):
+        raise ValueError('patch does not apply')
+    return out
+`,
+        tests: [
+          { name: "example", code: `assert diff(['the', 'cat', 'sat'], ['the', 'dog', 'sat', 'down']) == ['  the', '- cat', '+ dog', '  sat', '+ down'] and lcs_table(['a', 'b'], ['b'])[0][0] == 1` },
+          { name: "minimal", code: `import random
+random.seed(4)
+for _ in range(200):
+    a = [random.choice('abc') for _ in range(random.randint(0, 10))]
+    b = [random.choice('abc') for _ in range(random.randint(0, 10))]
+    d = diff(a, b)
+    kept = sum(l.startswith('  ') for l in d)
+    assert patch(a, d) == b and kept == lcs_table(a, b)[0][0], f'{a} → {b}'` },
+          { name: "conflict", code: `try:
+    patch(['x', 'y'], ['  x', '- z'])
+    assert False, 'A removed line that does not match must raise ValueError.'
+except ValueError:
+    pass
+assert patch([], ['+ new']) == ['new']` },
         ],
       },
     },

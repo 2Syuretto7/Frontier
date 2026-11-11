@@ -175,6 +175,21 @@ print(round(v, 2))`}</Code>
       answer: { kind: "numeric", value: 1331.0, tolerance: 0.01 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`balance, years = 1000, 0
+while balance < 2000:
+    balance *= 1.07
+    years += 1
+print(years, round(balance, 2), round(72 / 7, 1))`}</Code>
+          <p>Money grows by 7% a year. When does it first reach 2000, and what does the rule of 72 predict?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["11 2104.85 10.3", "10 1967.15 10.3", "11 2104.85 10.0", "10 2104.85 10.3"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -200,6 +215,51 @@ print(round(v, 2))`}</Code>
           { name: "ten percent", code: `assert doubling_time(0.10) == 8, '1.1⁷ ≈ 1.95 and 1.1⁸ ≈ 2.14.'` },
           { name: "one percent", code: `assert doubling_time(0.01) == 70, '1.01⁶⁹ ≈ 1.987 and 1.01⁷⁰ ≈ 2.007.'` },
           { name: "large", code: `assert doubling_time(1.0) == 1, 'Growing by 100% doubles in one period.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A drug has a half-life of h hours. Write <C>remaining(dose, h, t)</C>, the amount left after t hours, and <C>schedule(dose, h, every, n)</C>, the amount in the body just after each of n doses taken every <C>every</C> hours (each dose adds to whatever is left), returned as a list. Then write <C>steady_state(dose, h, every)</C>, the limit of that list, using the sum of a geometric series.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def remaining(dose, h, t):
+    return dose / 2
+
+def schedule(dose, h, every, n):
+    return [dose] * n
+
+def steady_state(dose, h, every):
+    return dose
+`,
+        solution: `def remaining(dose, h, t):
+    return dose * 0.5 ** (t / h)
+
+def schedule(dose, h, every, n):
+    out, amt = [], 0.0
+    for _ in range(n):
+        amt = remaining(amt, h, every) + dose
+        out.append(amt)
+    return out
+
+def steady_state(dose, h, every):
+    r = 0.5 ** (every / h)
+    return dose / (1 - r)
+`,
+        tests: [
+          { name: "decay", code: `assert abs(remaining(100, 6, 6) - 50) < 1e-9 and abs(remaining(100, 6, 18) - 12.5) < 1e-9 and abs(remaining(80, 4, 0) - 80) < 1e-12, 'Each half-life halves the amount.'` },
+          { name: "schedule", code: `s = schedule(100, 6, 6, 4)
+assert all(abs(a - b) < 1e-9 for a, b in zip(s, [100, 150, 175, 187.5])) and len(s) == 4, 'Halve what is left, then add a dose.'` },
+          { name: "limit", code: `assert abs(steady_state(100, 6, 6) - 200) < 1e-9 and abs(schedule(100, 6, 6, 60)[-1] - 200) < 1e-6, 'dose / (1 − r) with r = ½^(every/h).'` },
+          { name: "uneven", code: `ss = steady_state(50, 8, 12)
+assert abs(schedule(50, 8, 12, 200)[-1] - ss) < 1e-9 and abs(ss - 50 / (1 - 0.5 ** 1.5)) < 1e-9, 'The ratio is ½ raised to every/h.'` },
         ],
       },
     },

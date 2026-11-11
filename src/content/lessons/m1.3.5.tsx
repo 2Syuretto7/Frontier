@@ -171,6 +171,20 @@ print(sols)`}</Code>
       answer: { kind: "numeric", value: 1 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`D = range(-10, 11)
+sols = [x for x in D if 3 * x + 7 == 1]
+sq = [x for x in D if x * x == 9]
+print(sols, len(sq) == 1, sq)`}</Code>
+          <p>Existence and uniqueness: 3x + 7 = 1 has exactly one solution; x² = 9 has a solution but not a unique one. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[-2] False [-3, 3]", "[-2] True [3]", "[2] False [-3, 3]", "[-2] False [3, -3]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -196,6 +210,60 @@ print(sols)`}</Code>
           { name: "one", code: `assert unique_witness(lambda x: 3 * x + 7 == 1, range(-10, 11)) == -2, 'Exactly one x works.'` },
           { name: "two", code: `assert unique_witness(lambda x: x * x == 4, range(-10, 11)) is None, 'x² = 4 has two solutions, so uniqueness fails.'` },
           { name: "none", code: `assert unique_witness(lambda x: x * x == 2, range(-10, 11)) is None, 'No integer squares to 2.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>unique_inverse(op, e, x, G)</C> for a finite set G with an operation <C>op</C> and identity e: it returns the unique y in G with op(x, y) == e and op(y, x) == e, raising <C>ValueError("none")</C> if there is no such y and <C>ValueError("many")</C> if there are several. Then write <C>unit_group(n)</C>, the sorted list of residues x mod n with an inverse under multiplication mod n, using <C>unique_inverse</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def unique_inverse(op, e, x, G):
+    return x
+
+def unit_group(n):
+    return list(range(n))
+`,
+        solution: `def unique_inverse(op, e, x, G):
+    ys = [y for y in G if op(x, y) == e and op(y, x) == e]
+    if not ys:
+        raise ValueError('none')
+    if len(ys) > 1:
+        raise ValueError('many')
+    return ys[0]
+
+def unit_group(n):
+    out = []
+    for x in range(n):
+        try:
+            unique_inverse(lambda a, b: a * b % n, 1 % n, x, range(n))
+            out.append(x)
+        except ValueError:
+            pass
+    return out
+`,
+        tests: [
+          { name: "mod 7", code: `assert unique_inverse(lambda a, b: a * b % 7, 1, 3, range(7)) == 5 and unique_inverse(lambda a, b: (a + b) % 7, 0, 3, range(7)) == 4, '3·5 = 15 ≡ 1 mod 7.'` },
+          { name: "none", code: `try:
+    unique_inverse(lambda a, b: a * b % 8, 1, 4, range(8))
+    msg = None
+except ValueError as e:
+    msg = str(e)
+assert msg == 'none', '4 has no inverse mod 8.'` },
+          { name: "many", code: `try:
+    unique_inverse(lambda a, b: 0, 0, 1, range(3))
+    msg = None
+except ValueError as e:
+    msg = str(e)
+assert msg == 'many', 'Report several inverses.'` },
+          { name: "units", code: `assert unit_group(12) == [1, 5, 7, 11] and unit_group(7) == [1, 2, 3, 4, 5, 6] and len(unit_group(100)) == 40, 'The units mod n are the residues coprime to n.'` },
         ],
       },
     },

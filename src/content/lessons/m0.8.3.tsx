@@ -187,6 +187,22 @@ print(abs(sum(flips) / len(flips) - 0.5) < 0.01)`}</Code>
       answer: { kind: "choice", options: ["True", "False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import random
+random.seed(0)
+a = [random.randint(1, 6) for _ in range(3)]
+random.seed(0)
+b = [random.randint(1, 6) for _ in range(3)]
+print(a == b, len(set(random.sample(range(10), 10))))`}</Code>
+          <p>Seeding a random generator twice. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True 10", "False 10", "True 9", "False 6"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -216,6 +232,59 @@ f = frequency(lambda: random.randint(1, 6) + random.randint(1, 6) == 7, 60000)
 assert abs(f - 1 / 6) < 0.01, 'A total of 7 has probability 6/36.'` },
           { name: "seeded", code: `import random
 assert frequency(lambda: random.random() < 0.3, 1000) == frequency(lambda: random.random() < 0.3, 1000), 'Seed with 0 so the answer is repeatable.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>LCG</C>, a linear congruential generator with <C>LCG(seed)</C>, state xₙ₊₁ = (1103515245·xₙ + 12345) mod 2³¹, and methods <C>next()</C> (the new state) and <C>random()</C> (the new state divided by 2³¹, in [0, 1)). Then write <C>estimate_pi(rng, n)</C>, which draws n points (x, y) with x then y from <C>rng.random()</C> and returns 4 times the fraction with x² + y² &lt; 1.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `class LCG:
+    def __init__(self, seed):
+        self.x = seed
+    def next(self):
+        return self.x
+    def random(self):
+        return 0.5
+
+def estimate_pi(rng, n):
+    return 3.0
+`,
+        solution: `class LCG:
+    M = 2 ** 31
+    def __init__(self, seed):
+        self.x = seed % self.M
+    def next(self):
+        self.x = (1103515245 * self.x + 12345) % self.M
+        return self.x
+    def random(self):
+        return self.next() / self.M
+
+def estimate_pi(rng, n):
+    hits = 0
+    for _ in range(n):
+        x, y = rng.random(), rng.random()
+        if x * x + y * y < 1:
+            hits += 1
+    return 4 * hits / n
+`,
+        tests: [
+          { name: "sequence", code: `g = LCG(42)
+assert [g.next() for _ in range(3)] == [1250496027, 1116302264, 1000676753], 'xₙ₊₁ = (1103515245·xₙ + 12345) mod 2³¹.'` },
+          { name: "repeatable", code: `a, b = LCG(7), LCG(7)
+assert [a.random() for _ in range(5)] == [b.random() for _ in range(5)] and all(0 <= LCG(s).random() < 1 for s in range(100)), 'The same seed gives the same stream.'` },
+          { name: "pi", code: `v = estimate_pi(LCG(1), 200000)
+assert abs(v - 3.14159) < 0.02, f'Expected about 3.14, got {v}.'` },
+          { name: "uses rng", code: `v1, v2 = estimate_pi(LCG(1), 1000), estimate_pi(LCG(2), 1000)
+assert v1 != v2 and estimate_pi(LCG(1), 1000) == v1, 'Draw the points from the generator you are given.'` },
         ],
       },
     },

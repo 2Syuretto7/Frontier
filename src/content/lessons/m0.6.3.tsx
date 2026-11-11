@@ -157,6 +157,21 @@ print(np.linalg.norm(u), u @ v, u + v)`}</Code>
       answer: { kind: "choice", options: ["5.0 0 [-1  7]", "7.0 0 [-1  7]", "5.0 24 [-1  7]", "5.0 0 [7 -1]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+u = np.array([3, 4])
+v = np.array([4, -3])
+w = u + 2 * v
+print(u @ v, np.linalg.norm(w), w)`}</Code>
+          <p>Dot product, length and a linear combination. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0 11.180339887498949 [11 -2]", "0 125.0 [11 -2]", "24 11.180339887498949 [11 -2]", "0 11.180339887498949 [7 1]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -183,6 +198,66 @@ def angle(u, v):
         tests: [
           { name: "right angle", code: `assert abs(angle((3, 4), (-4, 3)) - 90) < 1e-9, 'A zero dot product means a right angle.'` },
           { name: "others", code: `assert abs(angle((1, 0), (1, 1)) - 45) < 1e-9 and abs(angle((1, 0), (-3, 0)) - 180) < 1e-9, 'Opposite directions make 180 degrees.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>project(u, v)</C>, the projection of vector u onto non-zero v, and <C>reflect(u, n)</C>, the reflection of u in the line through the origin perpendicular to the non-zero normal n, both for vectors of any length given as tuples. Then write <C>gram_schmidt(vs)</C>, which turns a list of linearly independent vectors into an orthonormal list spanning the same space, by subtracting projections onto the vectors already found and normalising.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def project(u, v):
+    return u
+
+def reflect(u, n):
+    return tuple(-x for x in u)
+
+def gram_schmidt(vs):
+    return vs
+`,
+        solution: `import math
+
+def dot(a, b):
+    return sum(x * y for x, y in zip(a, b))
+
+def project(u, v):
+    k = dot(u, v) / dot(v, v)
+    return tuple(k * x for x in v)
+
+def reflect(u, n):
+    p = project(u, n)
+    return tuple(a - 2 * b for a, b in zip(u, p))
+
+def gram_schmidt(vs):
+    out = []
+    for v in vs:
+        w = list(v)
+        for e in out:
+            d = dot(w, e)
+            w = [a - d * b for a, b in zip(w, e)]
+        norm = math.sqrt(dot(w, w))
+        out.append(tuple(a / norm for a in w))
+    return out
+`,
+        tests: [
+          { name: "project", code: `assert project((3, 4), (1, 0)) == (3.0, 0.0) and project((1, 1, 1), (0, 2, 0)) == (0.0, 1.0, 0.0), 'Projection keeps the part along v.'` },
+          { name: "reflect", code: `assert reflect((1, 2), (0, 1)) == (1.0, -2.0) and all(abs(a - b) < 1e-12 for a, b in zip(reflect((3, 1), (1, -1)), (1, 3))), 'Reflecting in y = x swaps coordinates.'` },
+          { name: "orthonormal", code: `vs = gram_schmidt([(1, 1, 0), (1, 0, 1), (0, 1, 1)])
+for i in range(3):
+    for j in range(3):
+        d = sum(a * b for a, b in zip(vs[i], vs[j]))
+        assert abs(d - (1 if i == j else 0)) < 1e-12, (i, j)` },
+          { name: "span", code: `vs = gram_schmidt([(2, 0), (3, 5)])
+assert all(abs(a - b) < 1e-12 for a, b in zip(vs[0], (1, 0))) and all(abs(a - b) < 1e-12 for a, b in zip(vs[1], (0, 1))), 'The first vector keeps its direction.'` },
         ],
       },
     },

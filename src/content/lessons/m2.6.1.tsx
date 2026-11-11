@@ -162,6 +162,22 @@ print(sum((k * dx) ** 2 * dx for k in range(1, n + 1)))`}</Code>
       answer: { kind: "numeric", value: 0.46875 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = lambda x: x * x
+n = 4
+h = 1 / n
+left = sum(f(i * h) for i in range(n)) * h
+right = sum(f((i + 1) * h) for i in range(n)) * h
+print(left, right, (left + right) / 2)`}</Code>
+          <p>Left and right Riemann sums for x² on [0, 1] with 4 strips. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.21875 0.46875 0.34375", "0.25 0.5 0.375", "0.21875 0.46875 0.3333333333333333", "0.140625 0.390625 0.265625"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -185,6 +201,59 @@ print(sum((k * dx) ** 2 * dx for k in range(1, n + 1)))`}</Code>
           { name: "right", code: `assert abs(riemann(lambda x: x * x, 0, 1, 4, 'right') - 0.46875) < 1e-12, 'Right endpoints for x² on [0, 1] with 4 strips give 0.46875.'` },
           { name: "left", code: `assert abs(riemann(lambda x: x * x, 0, 1, 4, 'left') - 0.21875) < 1e-12, 'Left endpoints give 0.21875.'` },
           { name: "mid", code: `assert abs(riemann(lambda x: x * x, 0, 1, 1000, 'mid') - 1 / 3) < 1e-6, 'Midpoints with many strips approach 1/3.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>riemann_error(f, a, b, exact, rule, ns)</C>, the list of absolute errors of the left, right or midpoint Riemann sums for each n in ns, and <C>convergence_rate(ns, errors)</C>, the slope p in error ≈ C·n⁻ᵖ fitted by least squares on (log n, log error). Left and right sums converge at rate 1 and the midpoint rule at rate 2 for smooth f; the tests check this, and that for a non-smooth f like √x the midpoint rate drops.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def riemann_error(f, a, b, exact, rule, ns):
+    return [1.0 / n for n in ns]
+
+def convergence_rate(ns, errors):
+    return 1.0
+`,
+        solution: `import math
+
+def riemann(f, a, b, n, rule):
+    h = (b - a) / n
+    off = {'left': 0.0, 'right': 1.0, 'mid': 0.5}[rule]
+    return h * sum(f(a + (i + off) * h) for i in range(n))
+
+def riemann_error(f, a, b, exact, rule, ns):
+    return [abs(riemann(f, a, b, n, rule) - exact) for n in ns]
+
+def convergence_rate(ns, errors):
+    X = [math.log(n) for n in ns]
+    Y = [math.log(e) for e in errors]
+    xb, yb = sum(X) / len(X), sum(Y) / len(Y)
+    slope = sum((x - xb) * (y - yb) for x, y in zip(X, Y)) / sum((x - xb) ** 2 for x in X)
+    return -slope
+`,
+        tests: [
+          { name: "left", code: `import math
+ns = [10, 20, 40, 80, 160]
+p = convergence_rate(ns, riemann_error(math.exp, 0, 1, math.e - 1, 'left', ns))
+assert abs(p - 1) < 0.05, f'Left sums have rate 1, got {p:.3f}.'` },
+          { name: "mid", code: `import math
+ns = [10, 20, 40, 80, 160]
+p = convergence_rate(ns, riemann_error(math.exp, 0, 1, math.e - 1, 'mid', ns))
+assert abs(p - 2) < 0.05, f'The midpoint rule has rate 2, got {p:.3f}.'` },
+          { name: "rough", code: `import math
+ns = [10, 40, 160, 640]
+p = convergence_rate(ns, riemann_error(math.sqrt, 0, 1, 2 / 3, 'mid', ns))
+assert 1.3 < p < 1.7, f'√x has an infinite slope at 0, so the midpoint rate drops to 1.5; got {p:.3f}.'` },
+          { name: "values", code: `errs = riemann_error(lambda x: x * x, 0, 1, 1 / 3, 'right', [4])
+assert abs(errs[0] - (0.46875 - 1 / 3)) < 1e-15, 'Right sum with 4 strips is 0.46875.'` },
         ],
       },
     },

@@ -151,6 +151,21 @@ print(round((b - a) / a * 100, 1), round((b - 100) / (a - 100), 1))`}</Code>
       answer: { kind: "choice", options: ["2.0 2.0", "2.0 1.0", "1.9 2.0", "2.0 4.0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+v = np.array([10, 20, 40])
+area_ratio = v[-1] / v[0]
+radius_ratio = np.sqrt(v[-1] / v[0])
+print(area_ratio, radius_ratio, radius_ratio ** 2 / area_ratio)`}</Code>
+          <p>Circles sized honestly by area: a value four times larger needs twice the radius. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["4.0 2.0 1.0", "4.0 4.0 4.0", "4.0 2.0 0.5", "30.0 5.48 1.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -173,6 +188,58 @@ print(round((b - a) / a * 100, 1), round((b - 100) / (a - 100), 1))`}</Code>
         tests: [
           { name: "honest", code: `assert abs(lie_factor(50, 75, 0) - 1) < 1e-9, 'Starting at zero is honest.'` },
           { name: "truncated", code: `assert abs(lie_factor(102, 104, 100) - 51) < 1e-9, 'A 2% change drawn as a doubling exaggerates 51 times.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Honest axes start from round numbers. Write <C>nice_number(x, round_it)</C> (Heckbert&rsquo;s rule): with e = floor(log₁₀ x) and f = x/10ᵉ, choose n = 1, 2, 5 or 10, rounding (f &lt; 1.5 → 1, &lt; 3 → 2, &lt; 7 → 5, else 10) when round_it is true and taking the ceiling (f ≤ 1 → 1, ≤ 2 → 2, ≤ 5 → 5, else 10) otherwise, and return n·10ᵉ. Then write <C>nice_ticks(lo, hi, n)</C>: the range is nice_number(hi − lo, False), the step nice_number(range/(n − 1), True), and the ticks run from floor(lo/step)·step to ceil(hi/step)·step in steps, each rounded to 10 decimals.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def nice_number(x, round_it):
+    return x
+
+def nice_ticks(lo, hi, n):
+    step = (hi - lo) / (n - 1)
+    return [lo + i * step for i in range(n)]
+`,
+        solution: `import math
+
+def nice_number(x, round_it):
+    e = math.floor(math.log10(x))
+    f = x / 10 ** e
+    if round_it:
+        n = 1 if f < 1.5 else 2 if f < 3 else 5 if f < 7 else 10
+    else:
+        n = 1 if f <= 1 else 2 if f <= 2 else 5 if f <= 5 else 10
+    return n * 10 ** e
+
+def nice_ticks(lo, hi, n):
+    rng = nice_number(hi - lo, False)
+    step = nice_number(rng / (n - 1), True)
+    a = math.floor(lo / step) * step
+    b = math.ceil(hi / step) * step
+    count = int(round((b - a) / step))
+    return [round(a + i * step, 10) for i in range(count + 1)]
+`,
+        tests: [
+          { name: "nice", code: `assert [nice_number(x, True) for x in (1.2, 2.9, 4, 8, 0.034, 1700)] == [1, 2, 5, 10, 0.05, 2000] and [nice_number(x, False) for x in (1, 1.2, 4.9, 6, 97)] == [1, 2, 5, 10, 100]` },
+          { name: "ticks", code: `assert nice_ticks(0, 97, 5) == [0, 20, 40, 60, 80, 100] and nice_ticks(-3.2, 7.9, 6) == [-5, 0, 5, 10] and nice_ticks(0.012, 0.087, 4) == [0.0, 0.05, 0.1]` },
+          { name: "cover", code: `import random
+random.seed(6)
+for _ in range(300):
+    lo = random.uniform(-1000, 1000); hi = lo + 10 ** random.uniform(-2, 4)
+    t = nice_ticks(lo, hi, 5)
+    step = t[1] - t[0]
+    assert t[0] <= lo + 1e-9 and t[-1] >= hi - 1e-9 and 3 <= len(t) <= 12, 'Ticks cover the data with a sensible count.'
+    assert nice_number(abs(step), True) == round(abs(step), 10) or abs(nice_number(step, True) - step) < 1e-9 * step, 'Steps are 1, 2 or 5 times a power of ten.'` },
         ],
       },
     },

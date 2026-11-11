@@ -152,6 +152,20 @@ print(round(sum(x ** n / math.factorial(n) for n in range(12)), 6), round(math.e
       answer: { kind: "numeric", value: 1.648721, tolerance: 1e-06 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+x = 0.5
+s = sum(x ** k / k for k in range(1, 30))
+print(round(s, 6), round(-math.log(1 - x), 6))`}</Code>
+          <p>The power series Σ xᵏ/k at x = ½ against −log(1 − x). What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.693147 0.693147", "0.693147 0.405465", "1.0 0.693147", "0.5 0.693147"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -179,6 +193,58 @@ def radius():
           { name: "inside", code: `assert abs(geometric_partial(0.5, 60) - 2) < 1e-12, 'At x = 1/2 the series sums to 2.'` },
           { name: "outside", code: `assert geometric_partial(2, 20) == 2 ** 20 - 1, 'At x = 2 the partial sums blow up: compute the actual partial sum.'` },
           { name: "radius", code: `assert radius() == 1, 'Σ xⁿ converges for |x| < 1.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>radius_ratio(c, n)</C>, an estimate of the radius of convergence of Σ cₖxᵏ from |c(n)/c(n + 1)| for a coefficient function c, and <C>series_product(a, b, n)</C>, the first n coefficients of the Cauchy product of two coefficient lists. Then write <C>series_inverse(a, n)</C>, the first n coefficients of 1/A(x) for a power series with a₀ ≠ 0, from the recurrence b₀ = 1/a₀, bₖ = −(Σⱼ₌₁ᵏ aⱼbₖ₋ⱼ)/a₀, using <C>Fraction</C> when the inputs are integers or Fractions.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def radius_ratio(c, n):
+    return 1.0
+
+def series_product(a, b, n):
+    return [x * y for x, y in zip(a, b)][:n]
+
+def series_inverse(a, n):
+    return [1 / a[0]] + [0] * (n - 1)
+`,
+        solution: `from fractions import Fraction
+
+def radius_ratio(c, n):
+    return abs(c(n) / c(n + 1))
+
+def series_product(a, b, n):
+    get = lambda s, k: s[k] if k < len(s) else 0
+    return [sum(get(a, j) * get(b, k - j) for j in range(k + 1)) for k in range(n)]
+
+def series_inverse(a, n):
+    get = lambda k: a[k] if k < len(a) else 0
+    a0 = Fraction(a[0]) if not isinstance(a[0], float) else a[0]
+    b = [1 / a0]
+    for k in range(1, n):
+        b.append(-sum(get(j) * b[k - j] for j in range(1, k + 1)) / a0)
+    return b
+`,
+        tests: [
+          { name: "radius", code: `import math
+assert abs(radius_ratio(lambda k: 3.0 ** -k, 50) - 3) < 1e-12 and abs(radius_ratio(lambda k: 1 / math.factorial(k), 100) - 101) < 1e-9, 'Σ xᵏ/3ᵏ has radius 3; eˣ has infinite radius.'` },
+          { name: "product", code: `assert series_product([1, 1], [1, 1], 4) == [1, 2, 1, 0] and series_product([1] * 10, [1] * 10, 5) == [1, 2, 3, 4, 5], '(1 − x)⁻² = Σ (k + 1)xᵏ.'` },
+          { name: "inverse", code: `from fractions import Fraction
+assert series_inverse([1, -1], 5) == [1, 1, 1, 1, 1] and series_inverse([1, -1, -1], 10) == [1, 1, 2, 3, 5, 8, 13, 21, 34, 55], '1/(1 − x − x²) generates Fibonacci numbers.'` },
+          { name: "exp", code: `from fractions import Fraction
+import math
+e = [Fraction(1, math.factorial(k)) for k in range(12)]
+inv = series_inverse(e, 12)
+assert inv == [Fraction((-1) ** k, math.factorial(k)) for k in range(12)] and series_product(e, inv, 12) == [1] + [0] * 11, '1/eˣ = e⁻ˣ.'` },
         ],
       },
     },

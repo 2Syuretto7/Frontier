@@ -148,6 +148,21 @@ print(pd.get_dummies(df, columns=["city"], dtype=int).values.tolist())`}</Code>
       answer: { kind: "choice", options: ["[[0, 1], [1, 0], [0, 1]]", "[[1, 0], [0, 1], [1, 0]]", "[[1], [0], [1]]", "[[0, 1, 0], [1, 0, 0], [0, 1, 0]]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+x = np.array([1.0, 2.0, 3.0, 100.0])
+z = (x - x.mean()) / x.std()
+r = (x - np.median(x)) / (np.percentile(x, 75) - np.percentile(x, 25))
+print(np.round(z, 2), np.round(r, 2))`}</Code>
+          <p>Standard scaling against robust scaling (median and interquartile range) with one outlier. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[-0.6  -0.58 -0.55  1.73] [-0.06 -0.02  0.02  3.82]", "[-0.6  -0.58 -0.55  1.73] [-1.  -0.5  0.5 97.5]", "[-1.  -0.5  0.5  1. ] [-0.06 -0.02  0.02  3.82]", "[0.   0.01 0.02 1.  ] [-0.06 -0.02  0.02  3.82]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -188,6 +203,66 @@ from sklearn.preprocessing import StandardScaler
 rng = np.random.default_rng(0)
 X = rng.normal(3, 2, size=(50, 3))
 assert np.allclose(Scaler().fit(X).transform(X), StandardScaler().fit_transform(X)), 'Match StandardScaler.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write a class <C>OneHot</C> with <C>fit(self, column)</C>, which records the sorted distinct categories, and <C>transform(self, column)</C>, which returns a 0/1 NumPy matrix with one column per category (an unseen category becomes a row of zeros); <C>fit</C> returns self. Then write <C>quantile_bins(x, k)</C>, which returns (edges, bins): edges are <C>np.quantile(x, np.linspace(0, 1, k + 1))</C> and each value&rsquo;s bin is <C>np.searchsorted(edges[1:-1], value, side="right")</C>, so bins run 0 … k − 1 with roughly equal counts.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+class OneHot:
+    def fit(self, column):
+        return self
+    def transform(self, column):
+        return np.zeros((len(column), 0))
+
+def quantile_bins(x, k):
+    return np.zeros(k + 1), np.zeros(len(x), dtype=int)
+`,
+        solution: `import numpy as np
+
+class OneHot:
+    def fit(self, column):
+        self.cats = sorted(set(column))
+        return self
+    def transform(self, column):
+        idx = {c: i for i, c in enumerate(self.cats)}
+        M = np.zeros((len(column), len(self.cats)))
+        for r, c in enumerate(column):
+            if c in idx:
+                M[r, idx[c]] = 1
+        return M
+
+def quantile_bins(x, k):
+    edges = np.quantile(x, np.linspace(0, 1, k + 1))
+    return edges, np.searchsorted(edges[1:-1], x, side='right')
+`,
+        tests: [
+          { name: "onehot", code: `e = OneHot().fit(['b', 'a', 'c', 'a'])
+assert e.cats == ['a', 'b', 'c'] and e.transform(['c', 'z', 'a']).tolist() == [[0, 0, 1], [0, 0, 0], [1, 0, 0]], 'Sorted categories; unseen values become zeros.'` },
+          { name: "sklearn", code: `import numpy as np
+from sklearn.preprocessing import OneHotEncoder
+col = ['red', 'green', 'blue', 'green', 'red']
+ref = OneHotEncoder(handle_unknown='ignore').fit(np.array(col)[:, None])
+test = ['green', 'purple', 'red']
+assert np.array_equal(OneHot().fit(col).transform(test), ref.transform(np.array(test)[:, None]).toarray())` },
+          { name: "bins", code: `import numpy as np
+rng = np.random.default_rng(0)
+x = rng.exponential(size=1000)
+edges, b = quantile_bins(x, 4)
+assert b.min() == 0 and b.max() == 3 and all(240 <= c <= 260 for c in np.bincount(b)), 'Quantile bins hold about equal counts, even for skewed data.'
+edges, b = quantile_bins(np.array([1.0, 2, 3, 4, 5]), 2)
+assert edges.tolist() == [1, 3, 5] and b.tolist() == [0, 0, 1, 1, 1], 'A value equal to an inner edge goes right.'` },
         ],
       },
     },

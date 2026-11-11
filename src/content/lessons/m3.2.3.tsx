@@ -142,6 +142,21 @@ print(np.linalg.matrix_rank(A), np.linalg.matrix_rank(Ab))`}</Code>
       answer: { kind: "choice", options: ["It has no solution", "It has exactly one solution", "It has infinitely many solutions"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+A = np.array([[1, 2], [2, 4], [3, 6]])
+for b in ([1, 2, 3], [1, 2, 4]):
+    Ab = np.column_stack([A, b])
+    print(np.linalg.matrix_rank(A), np.linalg.matrix_rank(Ab))`}</Code>
+          <p>Rank of A and of the augmented matrix for two right sides. What does this print, line by line?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1 1 / 1 2", "1 1 / 1 1", "2 2 / 2 3", "1 2 / 1 2"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -175,6 +190,65 @@ def count_solutions(A, b):
           { name: "crossing", code: `assert count_solutions([[1, 1], [1, -1]], [2, 0]) == 'one', 'Two crossing lines meet once.'` },
           { name: "wide", code: `assert count_solutions([[1, 2, 2], [2, 4, 6]], [2, 8]) == 'infinite', 'Two equations in three unknowns with a solution have infinitely many.'` },
           { name: "tall", code: `assert count_solutions([[1, 0], [1, 1], [1, 2]], [6, 0, 0]) == 'none', 'Three equations in two unknowns usually have no exact solution.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>classify_system(A, b, tol=1e-10)</C>, which uses the singular values of A and of [A | b] to return <C>("none", r)</C>, <C>("one", r)</C> or <C>("infinite", r)</C> where r is the rank of A (the number of singular values above tol times the largest). Then write <C>nearest_consistent(A, b)</C>, the vector b′ in the column space of A closest to b (via <C>np.linalg.lstsq</C>), and <C>sensitivity(A)</C>, the 2-norm condition number σ_max/σ_min of a square matrix (infinity if singular).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def classify_system(A, b, tol=1e-10):
+    return ('one', np.asarray(A).shape[1])
+
+def nearest_consistent(A, b):
+    return np.asarray(b, float)
+
+def sensitivity(A):
+    return 1.0
+`,
+        solution: `import numpy as np
+
+def rank(M, tol):
+    s = np.linalg.svd(np.asarray(M, float), compute_uv=False)
+    return int(np.sum(s > tol * s[0])) if s.size and s[0] > 0 else 0
+
+def classify_system(A, b, tol=1e-10):
+    A = np.asarray(A, float)
+    r = rank(A, tol)
+    rb = rank(np.column_stack([A, b]), tol)
+    if rb > r:
+        return ('none', r)
+    return ('one', r) if r == A.shape[1] else ('infinite', r)
+
+def nearest_consistent(A, b):
+    A = np.asarray(A, float)
+    x = np.linalg.lstsq(A, np.asarray(b, float), rcond=None)[0]
+    return A @ x
+
+def sensitivity(A):
+    s = np.linalg.svd(np.asarray(A, float), compute_uv=False)
+    return float('inf') if s[-1] <= 1e-15 * s[0] else float(s[0] / s[-1])
+`,
+        tests: [
+          { name: "cases", code: `A = [[1, 2], [2, 4], [3, 6]]
+assert classify_system(A, [1, 2, 3]) == ('infinite', 1) and classify_system(A, [1, 2, 4]) == ('none', 1) and classify_system([[1, 0], [0, 1], [1, 1]], [1, 2, 3]) == ('one', 2), 'Compare ranks.'` },
+          { name: "nearest", code: `import numpy as np
+b2 = nearest_consistent([[1, 2], [2, 4], [3, 6]], [1, 2, 4])
+assert classify_system([[1, 2], [2, 4], [3, 6]], b2)[0] == 'infinite' and np.allclose(b2, np.array([1, 2, 3]) * 17 / 14), 'Project b onto the line through (1, 2, 3).'` },
+          { name: "condition", code: `assert abs(sensitivity([[2, 0], [0, 0.5]]) - 4) < 1e-12 and sensitivity([[1, 2], [2, 4]]) == float('inf'), 'σ_max/σ_min.'` },
+          { name: "hilbert", code: `import numpy as np
+H = 1 / (np.arange(8)[:, None] + np.arange(8) + 1)
+assert 1e9 < sensitivity(H) < 1e11, 'The 8 × 8 Hilbert matrix has condition number about 1.5 × 10¹⁰.'` },
         ],
       },
     },

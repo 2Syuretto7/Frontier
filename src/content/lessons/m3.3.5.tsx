@@ -143,6 +143,20 @@ print((P @ A)[0, 0], (P.T @ P)[1, 1])`}</Code>
       answer: { kind: "numeric", value: 7 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+P = np.eye(3)[[2, 0, 1]]
+A = np.arange(9).reshape(3, 3)
+print((P @ A)[0], np.allclose(P.T @ P, np.eye(3)), (A.T @ A)[0, 1] == (A.T @ A)[1, 0])`}</Code>
+          <p>A permutation matrix, its transpose as inverse, and the symmetry of AᵀA. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[6. 7. 8.] True True", "[3. 4. 5.] True True", "[6. 7. 8.] False True", "[0. 1. 2.] True True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -174,6 +188,85 @@ P = perm_matrix([3, 1, 0, 2])
 assert np.allclose(P.T @ P, np.eye(4)), 'Pᵀ P should be the identity.'` },
           { name: "identity", code: `import numpy as np
 assert np.allclose(perm_matrix([0, 1]), np.eye(2)), 'The order 0, 1 gives the identity.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>transpose_inplace(A)</C>, which transposes a square NumPy matrix in place by swapping entries above and below the diagonal (loops, no <C>.T</C>), and returns <C>None</C>. Then write <C>perm_sign(order)</C>, the sign of a permutation given as a list (±1, from the parity of the number of transpositions in its cycle decomposition), and <C>perm_from_matrix(P)</C>, which recovers the order list from a permutation matrix and raises <C>ValueError</C> if P is not one.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def transpose_inplace(A):
+    return A.T
+
+def perm_sign(order):
+    return 1
+
+def perm_from_matrix(P):
+    return list(range(len(P)))
+`,
+        solution: `import numpy as np
+
+def transpose_inplace(A):
+    n = len(A)
+    for i in range(n):
+        for j in range(i + 1, n):
+            A[i, j], A[j, i] = A[j, i], A[i, j]
+    return None
+
+def perm_sign(order):
+    seen, sign = set(), 1
+    for i in range(len(order)):
+        if i not in seen:
+            j, length = i, 0
+            while j not in seen:
+                seen.add(j)
+                j = order[j]
+                length += 1
+            if length % 2 == 0:
+                sign = -sign
+    return sign
+
+def perm_from_matrix(P):
+    P = np.asarray(P)
+    n = len(P)
+    if P.shape != (n, n) or not np.all((P == 0) | (P == 1)) or not np.all(P.sum(0) == 1) or not np.all(P.sum(1) == 1):
+        raise ValueError('not a permutation matrix')
+    return [int(np.argmax(row)) for row in P]
+`,
+        tests: [
+          { name: "transpose", code: `import numpy as np
+A = np.arange(16.0).reshape(4, 4)
+B = A.copy()
+assert transpose_inplace(A) is None and np.array_equal(A, B.T), 'Swap across the diagonal.'` },
+          { name: "no .T", code: `import inspect
+src = inspect.getsource(transpose_inplace)
+assert '.T' not in src and 'transpose(' not in src.replace('transpose_inplace(', ''), 'Swap entries yourself.'` },
+          { name: "sign", code: `assert perm_sign([0, 1, 2]) == 1 and perm_sign([1, 0, 2]) == -1 and perm_sign([1, 2, 0]) == 1 and perm_sign([3, 2, 1, 0]) == 1, 'A 3-cycle is even; a swap is odd.'` },
+          { name: "det", code: `import numpy as np
+import random
+random.seed(2)
+for _ in range(20):
+    o = list(range(6))
+    random.shuffle(o)
+    assert perm_sign(o) == round(np.linalg.det(np.eye(6)[o])), o` },
+          { name: "from matrix", code: `import numpy as np
+assert perm_from_matrix(np.eye(3)[[2, 0, 1]]) == [2, 0, 1]
+try:
+    perm_from_matrix([[1, 1], [0, 0]])
+    ok = False
+except ValueError:
+    ok = True
+assert ok, 'Each row and column must have exactly one 1.'` },
         ],
       },
     },

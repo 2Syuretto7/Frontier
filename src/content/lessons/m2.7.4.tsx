@@ -139,6 +139,18 @@ print(round(np.trapezoid(np.exp(-x ** 2), x) ** 2, 4))`}</Code>
       answer: { kind: "numeric", value: 3.1416, tolerance: 0.0002 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+print(round(math.erf(1 / math.sqrt(2)), 4), round(math.erf(2 / math.sqrt(2)), 4), round(math.erf(3 / math.sqrt(2)), 4))`}</Code>
+          <p>The 68–95–99.7 rule from the error function. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.6827 0.9545 0.9973", "0.8427 0.9953 1.0", "0.6827 0.9545 0.9999", "0.3413 0.4772 0.4987"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -167,6 +179,63 @@ def normal_mass(k):
           { name: "one", code: `assert abs(normal_mass(1) - 0.682689) < 1e-5, 'About 68.3% lies within one standard deviation.'` },
           { name: "two", code: `assert abs(normal_mass(2) - 0.954500) < 1e-5, 'About 95.4% lies within two.'` },
           { name: "far", code: `assert abs(normal_mass(8) - 1) < 1e-9, 'Almost everything lies within 8.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>norm_cdf(x)</C>, the standard normal distribution function Φ(x), to within 1e−12 for |x| ≤ 8 without <C>math.erf</C>: for |x| ≤ 3 sum the Taylor series of the integral of e^(−t²/2) from 0 to x (term ratio −x²(2k + 1)/((2k + 3)·2(k + 1))), and for |x| &gt; 3 use Φ(x) = 1 − φ(x)·R(x) with the continued fraction R(x) = 1/(x + 1/(x + 2/(x + 3/(x + …)))) evaluated from 60 levels deep. Then write <C>norm_ppf(p)</C>, the inverse, by bisection on [−9, 9].
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def norm_cdf(x):
+    return 0.5 * (1 + math.erf(x / math.sqrt(2)))
+
+def norm_ppf(p):
+    return 0.0
+`,
+        solution: `import math
+
+def norm_cdf(x):
+    if abs(x) <= 3:
+        term, s, k = x, x, 0
+        while abs(term) > 1e-17:
+            term *= -x * x * (2 * k + 1) / ((2 * k + 3) * 2 * (k + 1))
+            s += term
+            k += 1
+        return 0.5 + s / math.sqrt(2 * math.pi)
+    ax = abs(x)
+    r = 0.0
+    for k in range(60, 0, -1):
+        r = k / (ax + r)
+    R = 1 / (ax + r)
+    tail = math.exp(-ax * ax / 2) / math.sqrt(2 * math.pi) * R
+    return 1 - tail if x > 0 else tail
+
+def norm_ppf(p):
+    lo, hi = -9.0, 9.0
+    for _ in range(100):
+        mid = (lo + hi) / 2
+        if norm_cdf(mid) < p:
+            lo = mid
+        else:
+            hi = mid
+    return (lo + hi) / 2
+`,
+        tests: [
+          { name: "centre", code: `assert abs(norm_cdf(0) - 0.5) < 1e-15 and abs(norm_cdf(1) - 0.8413447460685429) < 1e-12 and abs(norm_cdf(-2) - 0.022750131948179195) < 1e-12, 'Known values of Φ.'` },
+          { name: "tails", code: `assert abs(norm_cdf(-5) - 2.866515718791939e-07) < 1e-18 and abs(norm_cdf(6) - (1 - 9.865876450376946e-10)) < 1e-12, 'The continued fraction is accurate far out.'` },
+          { name: "no erf", code: `import inspect
+assert 'erf' not in inspect.getsource(norm_cdf), 'Build it yourself.'` },
+          { name: "ppf", code: `assert abs(norm_ppf(0.975) - 1.959963984540054) < 1e-9 and abs(norm_ppf(0.5)) < 1e-12 and abs(norm_cdf(norm_ppf(1e-6)) - 1e-6) < 1e-12, 'The 97.5% point is 1.96.'` },
         ],
       },
     },

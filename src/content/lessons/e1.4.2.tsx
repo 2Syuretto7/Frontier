@@ -129,6 +129,20 @@ print(sys.prefix == sys.base_prefix)`}</Code>
       answer: { kind: "choice", options: ["True", "False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import os
+path = os.pathsep.join(["/venv/bin", "/usr/local/bin", "/usr/bin"])
+dirs = path.split(os.pathsep)
+print(len(dirs), dirs[0], os.pathsep)`}</Code>
+          <p>The PATH variable on Linux after activating an environment. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["3 /venv/bin :", "3 /usr/bin :", "1 /venv/bin:/usr/local/bin:/usr/bin ;", "3 /venv/bin ;"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -156,6 +170,53 @@ print(sys.prefix == sys.base_prefix)`}</Code>
           { name: "first wins", code: `inst = {'/usr/bin': {'python', 'ls'}, '.venv/bin': {'python', 'pip'}}
 assert which('python', ['.venv/bin', '/usr/bin'], inst) == '.venv/bin' and which('ls', ['.venv/bin', '/usr/bin'], inst) == '/usr/bin', 'The earliest directory on PATH wins.'` },
           { name: "missing", code: `assert which('uv', ['/usr/bin'], {'/usr/bin': {'ls'}}) is None, 'Return None when no directory has the command.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Model what <C>source .venv/bin/activate</C> does to the environment variables. Write <C>activate(env, venv)</C>, which returns a new dict where PATH starts with <C>venv + "/bin"</C> (joined to the old PATH with <C>":"</C>, or alone if PATH was empty or missing), VIRTUAL_ENV is venv, and the original PATH is saved under <C>_OLD_PATH</C>; activating while another environment is active must first deactivate it. Then write <C>deactivate(env)</C>, which returns a new dict with PATH restored and VIRTUAL_ENV and _OLD_PATH removed (unchanged if nothing is active). Never change the input dict.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def activate(env, venv):
+    env['PATH'] = venv + '/bin:' + env.get('PATH', '')
+    return env
+
+def deactivate(env):
+    return env
+`,
+        solution: `def activate(env, venv):
+    e = deactivate(env)
+    old = e.get('PATH', '')
+    e['_OLD_PATH'] = old
+    e['PATH'] = venv + '/bin' + (':' + old if old else '')
+    e['VIRTUAL_ENV'] = venv
+    return e
+
+def deactivate(env):
+    e = dict(env)
+    if 'VIRTUAL_ENV' not in e:
+        return e
+    e['PATH'] = e.pop('_OLD_PATH', e.get('PATH', ''))
+    del e['VIRTUAL_ENV']
+    return e
+`,
+        tests: [
+          { name: "activate", code: `env = {'PATH': '/usr/bin:/bin', 'HOME': '/home/a'}
+a = activate(env, '/p/.venv')
+assert a['PATH'] == '/p/.venv/bin:/usr/bin:/bin' and a['VIRTUAL_ENV'] == '/p/.venv' and a['HOME'] == '/home/a' and env == {'PATH': '/usr/bin:/bin', 'HOME': '/home/a'}, 'Prepend the bin directory; leave the input alone.'` },
+          { name: "round trip", code: `env = {'PATH': '/usr/bin'}
+assert deactivate(activate(env, '/v')) == env and deactivate(env) == env and activate({}, '/v')['PATH'] == '/v/bin'` },
+          { name: "switch", code: `env = {'PATH': '/usr/bin'}
+b = activate(activate(env, '/one'), '/two')
+assert b['PATH'] == '/two/bin:/usr/bin' and b['VIRTUAL_ENV'] == '/two' and deactivate(b) == env, 'Switching environments must not stack PATH entries.'` },
         ],
       },
     },

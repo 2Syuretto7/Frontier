@@ -142,6 +142,21 @@ print(m.score(X[:100], y[:100]) == 1.0, m.score(X[100:], y[100:]) < 0.9)`}</Code
       answer: { kind: "choice", options: ["True True", "True False", "False True", "False False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+x = np.array([0.0, 1, 2, 3, 4, 5])
+y = x ** 2
+c = np.polyfit(x[:4], y[:4], 1)
+print(np.round(c, 2), np.round(np.polyval(c, x[4:]), 2))`}</Code>
+          <p>A line fitted to the first four points of y = x², then used on the last two. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[ 3. -1.] [11. 14.]", "[ 3. -1.] [16. 25.]", "[3. 1.] [13. 16.]", "[ 2.  0.] [ 8. 10.]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -171,6 +186,50 @@ rng = np.random.default_rng(0)
 X = rng.uniform(0, 1, (200, 1)); y = np.sin(6 * X[:, 0]) + rng.normal(0, 0.3, 200)
 tr, te = errors(DecisionTreeRegressor(random_state=0), X, y, 100)
 assert tr < 1e-12 and te > 0.05, 'Train on the first part only; the test error must use rows the model never saw.'` },
+          { name: "mean model", code: `import numpy as np
+from sklearn.dummy import DummyRegressor
+tr, te = errors(DummyRegressor(), np.zeros((4, 1)), np.array([0.0, 0.0, 2.0, 2.0]), 2)
+assert tr == 0 and te == 4, 'The mean of the first two targets is 0, which is off by 2 on the rest.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            For least squares with p features and n training rows, the expected training error is σ²(1 − p/n) and the expected test error is about σ²(1 + p/n). Check it by simulation. Write <C>simulate_ols_errors(n, p, sigma, trials, seed)</C>: with one <C>np.random.default_rng(seed)</C>, in each trial draw X (n × p) and a test set X′ (1000 × p) from the standard normal, set y = X·1 + noise and y′ = X′·1 + noise (noise with standard deviation σ), fit by <C>np.linalg.lstsq</C> without an intercept, and record both mean squared errors. Return (mean train MSE, mean test MSE).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def simulate_ols_errors(n, p, sigma, trials, seed):
+    return sigma ** 2, sigma ** 2
+`,
+        solution: `import numpy as np
+
+def simulate_ols_errors(n, p, sigma, trials, seed):
+    rng = np.random.default_rng(seed)
+    tr, te = [], []
+    beta = np.ones(p)
+    for _ in range(trials):
+        X = rng.normal(size=(n, p)); y = X @ beta + rng.normal(0, sigma, n)
+        Xt = rng.normal(size=(1000, p)); yt = Xt @ beta + rng.normal(0, sigma, 1000)
+        w = np.linalg.lstsq(X, y, rcond=None)[0]
+        tr.append(np.mean((X @ w - y) ** 2)); te.append(np.mean((Xt @ w - yt) ** 2))
+    return float(np.mean(tr)), float(np.mean(te))
+`,
+        tests: [
+          { name: "theory", code: `tr, te = simulate_ols_errors(50, 10, 1.0, 400, 0)
+assert abs(tr - 0.8) < 0.03, f'Training error {tr:.3f} should be close to 1 − 10/50 = 0.8.'
+assert 1.15 < te < 1.35, f'Test error {te:.3f} should be close to 1.2 or a little above.'` },
+          { name: "interpolate", code: `tr, te = simulate_ols_errors(20, 20, 1.0, 50, 1)
+assert tr < 1e-20 and te > 5, 'With p = n the model fits the noise exactly and fails on new data.'` },
+          { name: "seeded", code: `assert simulate_ols_errors(30, 3, 2.0, 20, 5) == simulate_ols_errors(30, 3, 2.0, 20, 5)` },
         ],
       },
     },

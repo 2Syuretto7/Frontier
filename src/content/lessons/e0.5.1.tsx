@@ -170,6 +170,23 @@ with open("notes.txt") as f:
       answer: { kind: "numeric", value: 3 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`with open("notes.txt", "w") as f:
+    f.write("one\\ntwo\\n")
+with open("notes.txt", "a") as f:
+    print("three", file=f)
+with open("notes.txt") as f:
+    lines = f.readlines()
+print(len(lines), lines[-1].strip(), repr(lines[0]))`}</Code>
+          <p>Writing, appending and reading back a file. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["3 three 'one\\n'", "2 two 'one'", "3 three 'one'", "1 three 'one\\ntwo\\nthree\\n'"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -201,6 +218,59 @@ assert file_total('more.txt') == 10, 'Use the path you are given.'` },
         setup: `with open('marks.txt', 'w') as f:
     f.write('12\\n30\\n\\n8\\n')
 `,
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>wc(path)</C>, returning (lines, words, characters) for a text file, like the Unix tool (lines counts newline characters; words are separated by any whitespace). Write <C>copy_upper(src, dst)</C>, which writes an upper-case copy of src to dst and returns the number of characters written, and <C>tail(path, n)</C>, the last n lines as a list of strings without their newlines. Use <C>with open(...)</C> every time.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def wc(path):
+    return (0, 0, 0)
+
+def copy_upper(src, dst):
+    return 0
+
+def tail(path, n):
+    return []
+`,
+        solution: `def wc(path):
+    with open(path) as f:
+        text = f.read()
+    return (text.count('\\n'), len(text.split()), len(text))
+
+def copy_upper(src, dst):
+    with open(src) as f:
+        text = f.read().upper()
+    with open(dst, 'w') as f:
+        f.write(text)
+    return len(text)
+
+def tail(path, n):
+    with open(path) as f:
+        lines = f.read().splitlines()
+    return lines[-n:] if n > 0 else []
+`,
+        tests: [
+          { name: "wc", code: `with open('poem.txt', 'w') as f:
+    f.write('roses are red\\n  violets are blue\\n\\nsugar is sweet')
+assert wc('poem.txt') == (3, 9, 48), 'Three newlines, nine words, 48 characters.'` },
+          { name: "upper", code: `with open('a.txt', 'w') as f:
+    f.write('Mixed Case 123\\nline two\\n')
+assert copy_upper('a.txt', 'b.txt') == 24
+with open('b.txt') as f:
+    assert f.read() == 'MIXED CASE 123\\nLINE TWO\\n'` },
+          { name: "tail", code: `with open('log.txt', 'w') as f:
+    f.write(''.join(f'line {i}\\n' for i in range(1, 101)))
+assert tail('log.txt', 3) == ['line 98', 'line 99', 'line 100'] and tail('log.txt', 0) == [] and len(tail('log.txt', 500)) == 100` },
+        ],
       },
     },
     {

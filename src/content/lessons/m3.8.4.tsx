@@ -137,6 +137,21 @@ print(round(np.linalg.norm(A - A1, 2), 6), round(np.linalg.norm(A - A1) ** 2, 6)
       answer: { kind: "numeric", value: 13 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+rng = np.random.default_rng(0)
+A = rng.normal(size=(6, 2)) @ rng.normal(size=(2, 5)) + 1e-3 * rng.normal(size=(6, 5))
+s = np.linalg.svd(A, compute_uv=False)
+print(int(np.sum(s > 0.01 * s[0])), s[2] < 0.01)`}</Code>
+          <p>A rank-2 matrix plus a little noise: how many singular values stand out? What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2 True", "5 False", "2 False", "3 True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -176,6 +191,76 @@ assert abs(np.linalg.norm(A - best_rank(A, 2)) - np.sqrt((s[2:] ** 2).sum())) < 
           { name: "full rank", code: `import numpy as np
 A = np.diag([5.0, 3.0, 1.0])
 assert np.allclose(best_rank(A, 3), A), 'Keeping every term gives A back.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>truncated_svd(A, k)</C>, the best rank-k approximation, and <C>energy_rank(A, frac)</C>, the smallest k whose first k singular values carry at least the fraction frac of Σσᵢ². Then write <C>randomized_svd(A, k, oversample, seed)</C>, the randomised range finder: draw a Gaussian test matrix Ω of k + oversample columns with a seeded <C>default_rng</C>, orthonormalise AΩ with QR to get Q, take the SVD of the small matrix QᵀA, and return (U, s, Vt) truncated to k. Check that its error is close to the optimal Eckart–Young error σₖ₊₁.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def truncated_svd(A, k):
+    return np.asarray(A, float)
+
+def energy_rank(A, frac):
+    return min(np.asarray(A).shape)
+
+def randomized_svd(A, k, oversample, seed):
+    U, s, Vt = np.linalg.svd(A, full_matrices=False)
+    return U, s, Vt
+`,
+        solution: `import numpy as np
+
+def truncated_svd(A, k):
+    U, s, Vt = np.linalg.svd(np.asarray(A, float), full_matrices=False)
+    return (U[:, :k] * s[:k]) @ Vt[:k]
+
+def energy_rank(A, frac):
+    s = np.linalg.svd(np.asarray(A, float), compute_uv=False)
+    c = np.cumsum(s ** 2) / np.sum(s ** 2)
+    return int(np.searchsorted(c, frac - 1e-12) + 1)
+
+def randomized_svd(A, k, oversample, seed):
+    A = np.asarray(A, float)
+    rng = np.random.default_rng(seed)
+    Om = rng.standard_normal((A.shape[1], k + oversample))
+    Q, _ = np.linalg.qr(A @ Om)
+    Ub, s, Vt = np.linalg.svd(Q.T @ A, full_matrices=False)
+    U = Q @ Ub
+    return (U[:, :k], s[:k], Vt[:k])
+`,
+        tests: [
+          { name: "eckart young", code: `import numpy as np
+rng = np.random.default_rng(27)
+A = rng.normal(size=(30, 20))
+s = np.linalg.svd(A, compute_uv=False)
+assert abs(np.linalg.norm(A - truncated_svd(A, 5), 2) - s[5]) < 1e-10 and np.linalg.matrix_rank(truncated_svd(A, 5)) == 5, 'The error in the 2-norm is σₖ₊₁.'` },
+          { name: "energy", code: `import numpy as np
+A = np.diag([3.0, 2.0, 1.0, 0.5])
+assert energy_rank(A, 0.6) == 1 and energy_rank(A, 0.9) == 2 and energy_rank(A, 1.0) == 4, '9/14.25 ≈ 0.63, then 13/14.25 ≈ 0.91.'` },
+          { name: "randomized", code: `import numpy as np
+rng = np.random.default_rng(28)
+U0, _ = np.linalg.qr(rng.normal(size=(200, 200)))
+V0, _ = np.linalg.qr(rng.normal(size=(100, 100)))
+s0 = 0.7 ** np.arange(100)
+A = (U0[:, :100] * s0) @ V0.T
+U, s, Vt = randomized_svd(A, 10, 10, 0)
+err = np.linalg.norm(A - (U * s) @ Vt, 2)
+assert err < 3 * s0[10] and np.allclose(s[:5], s0[:5], rtol=1e-3), f'Error {err:.2e} against the optimum {s0[10]:.2e}.'` },
+          { name: "seeded", code: `import numpy as np
+rng = np.random.default_rng(29)
+A = rng.normal(size=(40, 30))
+a, b = randomized_svd(A, 3, 5, 1), randomized_svd(A, 3, 5, 1)
+assert np.allclose(a[1], b[1]) and a[0].shape == (40, 3) and a[2].shape == (3, 30), 'Seeded and truncated to k.'` },
         ],
       },
     },

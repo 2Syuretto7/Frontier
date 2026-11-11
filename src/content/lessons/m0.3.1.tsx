@@ -195,6 +195,20 @@ print(len(f), len(set(f.values())))`}</Code>
       answer: { kind: "choice", options: ["3 2", "3 3", "2 3", "2 2"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = {1: 'a', 2: 'b', 3: 'a'}
+image = set(f.values())
+pre = [x for x in f if f[x] == 'a']
+print(len(image), pre, len(set(f)) == len(image))`}</Code>
+          <p>A dict is a function from its keys to its values. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2 [1, 3] False", "3 [1, 3] True", "2 [1] False", "2 [1, 3] True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -220,6 +234,51 @@ print(len(f), len(set(f.values())))`}</Code>
         tests: [
           { name: "function", code: `assert is_function([(1, 2), (2, 4), (3, 6), (1, 2)]), 'Repeating the same pair is fine.'` },
           { name: "not a function", code: `assert not is_function([(1, 1), (1, -1)]), 'The input 1 cannot have two outputs, as in y² = x.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A function f from a finite set A to a set B is given as a dict. Write <C>kind(f, B)</C>, which returns a set containing <C>"injective"</C> if no two inputs share an output, and <C>"surjective"</C> if every element of B is an output (so a bijection gives both). Also write <C>inverse(f)</C>, the inverse dict of an injective f, raising <C>ValueError</C> if f is not injective.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def kind(f, B):
+    return {'injective', 'surjective'}
+
+def inverse(f):
+    return {v: k for k, v in f.items()}
+`,
+        solution: `def kind(f, B):
+    out = set()
+    if len(set(f.values())) == len(f):
+        out.add('injective')
+    if set(f.values()) >= set(B):
+        out.add('surjective')
+    return out
+
+def inverse(f):
+    if len(set(f.values())) != len(f):
+        raise ValueError('not injective')
+    return {v: k for k, v in f.items()}
+`,
+        tests: [
+          { name: "bijection", code: `assert kind({1: 'a', 2: 'b'}, {'a', 'b'}) == {'injective', 'surjective'}, 'Both properties hold.'` },
+          { name: "neither", code: `assert kind({1: 'a', 2: 'a'}, {'a', 'b'}) == set(), '1 and 2 share an output and b is missed.'` },
+          { name: "one each", code: `assert kind({1: 'a', 2: 'b'}, {'a', 'b', 'c'}) == {'injective'} and kind({1: 'a', 2: 'a', 3: 'b'}, {'a', 'b'}) == {'surjective'}, 'Check each property separately.'` },
+          { name: "inverse", code: `assert inverse({1: 'x', 2: 'y'}) == {'x': 1, 'y': 2}, 'Swap inputs and outputs.'` },
+          { name: "not injective", code: `try:
+    inverse({1: 'x', 2: 'x'})
+    ok = False
+except ValueError:
+    ok = True
+assert ok, 'Only an injective function has an inverse.'` },
         ],
       },
     },

@@ -158,6 +158,20 @@ print(len(list(permutations(range(6), 3))) == perm(6, 3), len(list(combinations(
       answer: { kind: "choice", options: ["True 20 120", "True 120 20", "False 20 120", "True 20 20"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from itertools import permutations, combinations
+from math import comb, perm
+w = "LEVEL"
+print(len(set(permutations(w))), perm(5, 2), comb(5, 2), len(list(combinations(range(5), 2))))`}</Code>
+          <p>Arrangements of LEVEL, then ordered and unordered pairs from five. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["30 20 10 10", "120 20 10 10", "60 20 10 10", "30 10 20 10"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -195,6 +209,66 @@ def stars_and_bars(n, k):
 assert arrangements('AABBC') == len(set(permutations('AABBC'))), 'Compare with listing every distinct arrangement.'` },
           { name: "stars", code: `from itertools import product
 assert stars_and_bars(5, 3) == sum(1 for t in product(range(6), repeat=3) if sum(t) == 5) and stars_and_bars(10, 3) == 66, 'Place k − 1 bars among n + k − 1 positions.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Number the permutations of 0 … n − 1 in lexicographic order from 0. Write <C>rank_permutation(p)</C>, the position of p in that order, and <C>unrank_permutation(n, r)</C>, the permutation at position r, raising <C>ValueError</C> unless 0 ≤ r &lt; n!. Each digit contributes (its index among the unused values) · (number of remaining positions)!. Do not list the permutations: the tests use n = 20 and n = 30.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def rank_permutation(p):
+    return 0
+
+def unrank_permutation(n, r):
+    return list(range(n))
+`,
+        solution: `from math import factorial
+
+def rank_permutation(p):
+    n = len(p)
+    items = sorted(p)
+    r = 0
+    for i, x in enumerate(p):
+        j = items.index(x)
+        r += j * factorial(n - 1 - i)
+        items.pop(j)
+    return r
+
+def unrank_permutation(n, r):
+    if not 0 <= r < factorial(n):
+        raise ValueError('rank out of range')
+    items = list(range(n))
+    out = []
+    for i in range(n, 0, -1):
+        j, r = divmod(r, factorial(i - 1))
+        out.append(items.pop(j))
+    return out
+`,
+        tests: [
+          { name: "order", code: `from itertools import permutations
+assert all(rank_permutation(list(q)) == i for i, q in enumerate(permutations(range(5)))), 'Ranks follow itertools order.'` },
+          { name: "unrank", code: `from itertools import permutations
+assert all(unrank_permutation(4, i) == list(q) for i, q in enumerate(permutations(range(4)))), 'Unranking inverts ranking.'` },
+          { name: "large", code: `from math import factorial
+assert unrank_permutation(20, factorial(20) - 1) == list(range(19, -1, -1)) and rank_permutation(list(range(19, -1, -1))) == factorial(20) - 1, 'The last permutation is the reversal.'` },
+          { name: "roundtrip", code: `import random
+random.seed(2)
+for _ in range(20):
+    q = list(range(30)); random.shuffle(q)
+    assert unrank_permutation(30, rank_permutation(q)) == q` },
+          { name: "range", code: `try:
+    unrank_permutation(3, 6)
+    assert False, 'r = 3! is out of range.'
+except ValueError:
+    pass` },
         ],
       },
     },

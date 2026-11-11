@@ -147,6 +147,22 @@ print(cross_val_score(LogisticRegression(), X[:, top], y, cv=5).mean() > 0.7)`}<
       answer: { kind: "choice", options: ["True", "False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+X = np.array([1.0, 2.0, 3.0, 100.0])
+train, test = X[:3], X[3:]
+leaky = (test - X.mean()) / X.std()
+honest = (test - train.mean()) / train.std()
+print(np.round(leaky, 3), np.round(honest, 3))`}</Code>
+          <p>Scaling the test point with statistics from all the data, against training data only. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[1.732] [120.025]", "[1.732] [1.732]", "[120.025] [1.732]", "[0.5] [120.025]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -188,6 +204,72 @@ assert honest_score(X, y) < 0.65, 'On pure noise an honest estimate should be ne
 rng = np.random.default_rng(1)
 X = rng.normal(size=(200, 500)); y = (X[:, 0] + X[:, 1] > 0).astype(int)
 assert honest_score(X, y) > 0.8, 'With a real signal, selection inside the folds still finds it.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>group_split(groups, test_frac, seed)</C>, which keeps every group wholly on one side: shuffle the distinct groups (sorted first) with <C>np.random.default_rng(seed).permutation</C>, then move groups to the test side in that order until it holds at least test_frac of the rows. Return (train indices, test indices), sorted. Then write <C>time_split(times, cutoff)</C> (train strictly before the cutoff, test from it on) and <C>leaked_rows(train_X, test_X)</C>, the number of test rows identical to some training row.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def group_split(groups, test_frac, seed):
+    n = len(groups)
+    k = int(n * (1 - test_frac))
+    return np.arange(k), np.arange(k, n)
+
+def time_split(times, cutoff):
+    n = len(times)
+    return np.arange(n // 2), np.arange(n // 2, n)
+
+def leaked_rows(train_X, test_X):
+    return 0
+`,
+        solution: `import numpy as np
+
+def group_split(groups, test_frac, seed):
+    groups = np.asarray(groups)
+    order = np.random.default_rng(seed).permutation(np.unique(groups))
+    test, count = set(), 0
+    for g in order:
+        if count >= test_frac * len(groups):
+            break
+        test.add(g); count += int((groups == g).sum())
+    mask = np.isin(groups, list(test))
+    return np.nonzero(~mask)[0], np.nonzero(mask)[0]
+
+def time_split(times, cutoff):
+    t = np.asarray(times)
+    return np.nonzero(t < cutoff)[0], np.nonzero(t >= cutoff)[0]
+
+def leaked_rows(train_X, test_X):
+    seen = {tuple(r) for r in np.asarray(train_X).tolist()}
+    return sum(tuple(r) in seen for r in np.asarray(test_X).tolist())
+`,
+        tests: [
+          { name: "groups", code: `import numpy as np
+g = np.array(['p1'] * 5 + ['p2'] * 3 + ['p3'] * 4 + ['p4'] * 8)
+tr, te = group_split(g, 0.25, 0)
+assert set(g[tr]).isdisjoint(set(g[te])) and len(te) >= 5 and sorted(np.r_[tr, te].tolist()) == list(range(20)), 'No patient on both sides.'
+order = np.random.default_rng(0).permutation(np.unique(g))
+assert order[0] in set(g[te]) and all((x == y).all() for x, y in zip((tr, te), group_split(g, 0.25, 0))), 'Take groups in permutation order.'` },
+          { name: "sklearn", code: `import numpy as np
+rng = np.random.default_rng(1)
+g = rng.integers(0, 30, 300)
+tr, te = group_split(g, 0.3, 5)
+assert len(set(g[tr]) & set(g[te])) == 0 and 0.3 <= len(te) / 300 < 0.45` },
+          { name: "time", code: `tr, te = time_split([5, 1, 9, 3, 7], 5)
+assert tr.tolist() == [1, 3] and te.tolist() == [0, 2, 4], 'Train strictly before the cutoff.'` },
+          { name: "dupes", code: `import numpy as np
+assert leaked_rows(np.array([[1, 2], [3, 4]]), np.array([[3, 4], [5, 6], [1, 2], [1, 2]])) == 3 and leaked_rows(np.zeros((0, 2)), np.ones((2, 2))) == 0` },
         ],
       },
     },

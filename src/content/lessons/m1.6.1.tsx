@@ -140,6 +140,19 @@ print(all((a, a) in R for a in A), any((a, b) in R and (b, a) in R and a != b fo
       answer: { kind: "choice", options: ["True False", "True True", "False False", "False True"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`A = range(1, 5)
+R = {(a, b) for a in A for b in A if a % b == 0}
+print(len(R), all((a, a) in R for a in A), any((a, b) in R and (b, a) in R and a != b for a in A for b in A))`}</Code>
+          <p>The relation 'b divides a' on {'{1, 2, 3, 4}'}. How many pairs, is it reflexive, and is it ever symmetric between different elements?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["8 True False", "8 True True", "7 True False", "10 False False"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -172,6 +185,56 @@ assert properties(R, A) == {'reflexive': True, 'symmetric': True, 'antisymmetric
           { name: "less than", code: `A = range(4)
 R = {(a, b) for a in A for b in A if a < b}
 assert properties(R, A)['reflexive'] is False and properties(R, A)['transitive'] is True, '< is not reflexive but is transitive.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>closure(R, A)</C>, which returns a dict with the reflexive, symmetric and transitive closures of a relation R (a set of pairs) on the finite set A, under the keys <C>"reflexive"</C>, <C>"symmetric"</C> and <C>"transitive"</C>, the last by Warshall&rsquo;s algorithm (for each k, add (i, j) whenever (i, k) and (k, j) are present). Then write <C>equivalence_closure(R, A)</C>, the smallest equivalence relation containing R.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def closure(R, A):
+    return {'reflexive': set(R), 'symmetric': set(R), 'transitive': set(R)}
+
+def equivalence_closure(R, A):
+    return set(R)
+`,
+        solution: `def transitive(R, A):
+    T = set(R)
+    for k in A:
+        for i in A:
+            if (i, k) in T:
+                for j in A:
+                    if (k, j) in T:
+                        T.add((i, j))
+    return T
+
+def closure(R, A):
+    return {'reflexive': set(R) | {(a, a) for a in A},
+            'symmetric': set(R) | {(b, a) for a, b in R},
+            'transitive': transitive(R, A)}
+
+def equivalence_closure(R, A):
+    S = set(R) | {(b, a) for a, b in R} | {(a, a) for a in A}
+    return transitive(S, A)
+`,
+        tests: [
+          { name: "simple", code: `c = closure({(1, 2), (2, 3)}, [1, 2, 3])
+assert c['reflexive'] == {(1, 2), (2, 3), (1, 1), (2, 2), (3, 3)} and c['symmetric'] == {(1, 2), (2, 1), (2, 3), (3, 2)} and c['transitive'] == {(1, 2), (2, 3), (1, 3)}, 'Add only what is needed.'` },
+          { name: "chain", code: `A = range(10)
+c = closure({(i, i + 1) for i in range(9)}, A)
+assert c['transitive'] == {(i, j) for i in A for j in A if i < j}, 'A chain closes to <.'` },
+          { name: "cycle", code: `c = closure({(0, 1), (1, 2), (2, 0)}, [0, 1, 2])
+assert c['transitive'] == {(i, j) for i in range(3) for j in range(3)}, 'A cycle closes to everything, including (i, i).'` },
+          { name: "equivalence", code: `E = equivalence_closure({(1, 2), (3, 4), (2, 5)}, [1, 2, 3, 4, 5, 6])
+assert {b for a, b in E if a == 1} == {1, 2, 5} and {b for a, b in E if a == 4} == {3, 4} and {b for a, b in E if a == 6} == {6}, 'The classes are {1, 2, 5}, {3, 4}, {6}.'` },
         ],
       },
     },

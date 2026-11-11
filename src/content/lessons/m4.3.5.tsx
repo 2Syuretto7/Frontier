@@ -143,6 +143,22 @@ print(max(colour.values()) + 1)`}</Code>
       answer: { kind: "numeric", value: 3 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`adj = {0: [1, 2], 1: [0, 2], 2: [0, 1, 3], 3: [2]}
+colour = {}
+for v in [3, 0, 1, 2]:
+    used = {colour[u] for u in adj[v] if u in colour}
+    colour[v] = min(c for c in range(4) if c not in used)
+print([colour[v] for v in range(4)], max(colour.values()) + 1)`}</Code>
+          <p>Greedy colouring of a triangle with a tail, in the order 3, 0, 1, 2. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0, 1, 2, 0] 3", "[0, 1, 2, 1] 3", "[1, 2, 0, 0] 3", "[0, 1, 2, 3] 4"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -199,6 +215,92 @@ assert all(c[u] != c[v] for u in adj for v in adj[u]), 'Colour in exactly the or
           { name: "bipartite", code: `even = {i: [(i - 1) % 6, (i + 1) % 6] for i in range(6)}
 odd = {i: [(i - 1) % 5, (i + 1) % 5] for i in range(5)}
 assert is_bipartite(even) and not is_bipartite(odd), 'Even cycles are bipartite; odd cycles are not.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>two_colouring(n, edges)</C>, which returns a list of colours 0/1 with the ends of every edge different, or <C>None</C> if the graph is not bipartite (it has an odd cycle), by breadth-first search from every uncoloured vertex. Then write <C>chromatic_number(n, edges)</C>, the exact chromatic number of a small graph (n ≤ 10) by backtracking: for k = 1, 2, … try to colour the vertices one at a time (highest degree first) with colours below k, and return the first k that works. Use 0 for the empty graph.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def two_colouring(n, edges):
+    return [0] * n
+
+def chromatic_number(n, edges):
+    return 2
+`,
+        solution: `from collections import deque
+
+def two_colouring(n, edges):
+    adj = [[] for _ in range(n)]
+    for u, v in edges:
+        adj[u].append(v)
+        adj[v].append(u)
+    col = [-1] * n
+    for s in range(n):
+        if col[s] != -1:
+            continue
+        col[s] = 0
+        q = deque([s])
+        while q:
+            u = q.popleft()
+            for v in adj[u]:
+                if col[v] == -1:
+                    col[v] = 1 - col[u]
+                    q.append(v)
+                elif col[v] == col[u]:
+                    return None
+    return col
+
+def chromatic_number(n, edges):
+    if n == 0:
+        return 0
+    adj = [set() for _ in range(n)]
+    for u, v in edges:
+        adj[u].add(v)
+        adj[v].add(u)
+    order = sorted(range(n), key=lambda v: -len(adj[v]))
+    def ok(k):
+        col = {}
+        def bt(i):
+            if i == n:
+                return True
+            v = order[i]
+            used = {col[u] for u in adj[v] if u in col}
+            for c in range(min(k, max(col.values(), default=-1) + 2)):
+                if c not in used:
+                    col[v] = c
+                    if bt(i + 1):
+                        return True
+                    del col[v]
+            return False
+        return bt(0)
+    k = 1
+    while not ok(k):
+        k += 1
+    return k
+`,
+        tests: [
+          { name: "bipartite", code: `C6 = [(i, (i + 1) % 6) for i in range(6)]
+c = two_colouring(6, C6)
+assert c is not None and all(c[u] != c[v] for u, v in C6), 'An even cycle is bipartite.'
+assert two_colouring(5, [(i, (i + 1) % 5) for i in range(5)]) is None, 'An odd cycle is not.'
+E = [(0, 1), (2, 3), (3, 4), (4, 2)]
+assert two_colouring(5, E) is None and two_colouring(4, [(0, 1), (2, 3)]) is not None, 'Check every component.'` },
+          { name: "small", code: `from itertools import combinations
+assert chromatic_number(5, list(combinations(range(5), 2))) == 5 and chromatic_number(4, []) == 1 and chromatic_number(0, []) == 0, 'K₅ needs 5; no edges needs 1.'
+assert chromatic_number(7, [(i, (i + 1) % 7) for i in range(7)]) == 3 and chromatic_number(6, [(i, j) for i in range(3) for j in range(3, 6)]) == 2` },
+          { name: "petersen", code: `P = [(i, (i + 1) % 5) for i in range(5)] + [(i, i + 5) for i in range(5)] + [(i + 5, (i + 2) % 5 + 5) for i in range(5)]
+assert chromatic_number(10, P) == 3, 'The Petersen graph has chromatic number 3.'` },
+          { name: "wheel", code: `W = [(i, (i + 1) % 5) for i in range(5)] + [(i, 5) for i in range(5)]
+assert chromatic_number(6, W) == 4, 'An odd wheel needs 4 colours.'` },
         ],
       },
     },

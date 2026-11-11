@@ -148,6 +148,19 @@ print([y for y, want in cases.items() if is_leap(y) != want])`}</Code>
       answer: { kind: "choice", options: ["[2000]", "[1900]", "[]", "[2024, 2000]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def is_leap(y):
+    return y % 4 == 0 and y % 100 != 0 or y % 400 == 0
+print([y for y in (1900, 2000, 2023, 2024) if is_leap(y)])`}</Code>
+          <p>Hand-chosen test years for the leap-year rule. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[2000, 2024]", "[1900, 2000, 2024]", "[2024]", "[2000]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -168,6 +181,55 @@ print([y for y, want in cases.items() if is_leap(y) != want])`}</Code>
         tests: [
           { name: "ordinary", code: `assert is_leap(2024) and not is_leap(2023), 'Most years: divisible by 4.'` },
           { name: "centuries", code: `assert not is_leap(1900) and is_leap(2000), 'Century years must be divisible by 400.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write a tiny test runner <C>check(f, cases)</C>: cases is a list of (args, expected) pairs, args a tuple; return the list of (args, expected, got) for the cases where <C>f(*args)</C> differs from expected, or where it raised an exception (then got is the exception&rsquo;s class name as a string). Then write <C>days_in_month(year, month)</C> with the leap-year rule, raising <C>ValueError</C> for a month outside 1 … 12, and make sure <C>check(days_in_month, CASES)</C> returns <C>[]</C> for the test table.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def check(f, cases):
+    return []
+
+def days_in_month(year, month):
+    return 30
+`,
+        solution: `def check(f, cases):
+    bad = []
+    for args, want in cases:
+        try:
+            got = f(*args)
+        except Exception as e:
+            got = type(e).__name__
+        if got != want:
+            bad.append((args, want, got))
+    return bad
+
+def days_in_month(year, month):
+    if not 1 <= month <= 12:
+        raise ValueError('month must be 1 to 12')
+    if month == 2:
+        leap = year % 4 == 0 and year % 100 != 0 or year % 400 == 0
+        return 29 if leap else 28
+    return 30 if month in (4, 6, 9, 11) else 31
+`,
+        tests: [
+          { name: "runner", code: `def half(x):
+    return x // 2
+r = check(half, [((4,), 2), ((5,), 3), (('a',), 0)])
+assert r == [((5,), 3, 2), (('a',), 0, 'TypeError')], 'Report wrong answers and exceptions.'` },
+          { name: "months", code: `CASES = [((2023, 1), 31), ((2023, 2), 28), ((2024, 2), 29), ((1900, 2), 28), ((2000, 2), 29), ((2023, 4), 30), ((2023, 12), 31), ((2023, 11), 30)]
+assert check(days_in_month, CASES) == [] and sum(days_in_month(2024, m) for m in range(1, 13)) == 366` },
+          { name: "bad month", code: `r = check(days_in_month, [((2023, 13), None), ((2023, 0), None)])
+assert [g for _, _, g in r] == ['ValueError', 'ValueError']` },
         ],
       },
     },

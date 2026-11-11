@@ -155,6 +155,18 @@ print(len(list(permutations('abcd', 2))), len(list(combinations('abcd', 2))))`}<
       answer: { kind: "choice", options: ["12 6", "6 12", "16 6", "12 4"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from itertools import permutations, combinations, product
+print(len(list(permutations('ABCD', 2))), len(list(combinations('ABCD', 2))), len(list(product('AB', repeat=3))))`}</Code>
+          <p>Ordered pairs, unordered pairs, and length-3 strings over two letters. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["12 6 8", "6 12 8", "12 6 6", "16 6 8"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -192,6 +204,68 @@ def comb(n, k):
           { name: "small", code: `assert perm(4, 2) == 12 and comb(4, 2) == 6 and comb(5, 0) == 1, 'n choices, then n − 1, …; divide by k! when order does not matter.'` },
           { name: "lottery", code: `assert comb(49, 6) == 13983816 and perm(10, 10) == 3628800, 'There are 13 983 816 ways to pick 6 of 49.'` },
           { name: "too many", code: `assert perm(3, 5) == 0 and comb(3, 5) == 0, 'You cannot choose more than you have.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>multinomial(counts)</C>, the number of distinct arrangements of a word whose letters occur with the given counts (n!/(k₁!k₂!…)), computed as a product of binomial coefficients so it stays exact; <C>arrangements(word)</C>, which uses it; and <C>rank(word)</C>, the 0-based position of the word in the alphabetical list of its distinct arrangements, without listing them. For example the arrangements of "ABA" are AAB, ABA, BAA, so <C>rank("ABA") == 1</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `from math import comb, factorial
+
+def multinomial(counts):
+    return factorial(sum(counts))
+
+def arrangements(word):
+    return multinomial([1] * len(word))
+
+def rank(word):
+    return 0
+`,
+        solution: `from math import comb
+from collections import Counter
+
+def multinomial(counts):
+    total, r = 0, 1
+    for k in counts:
+        total += k
+        r *= comb(total, k)
+    return r
+
+def arrangements(word):
+    return multinomial(list(Counter(word).values()))
+
+def rank(word):
+    c = Counter(word)
+    r = 0
+    for ch in word:
+        for smaller in sorted(c):
+            if smaller >= ch:
+                break
+            if c[smaller] > 0:
+                c[smaller] -= 1
+                r += multinomial([v for v in c.values() if v])
+                c[smaller] += 1
+        c[ch] -= 1
+    return r
+`,
+        tests: [
+          { name: "multinomial", code: `assert multinomial([2, 1]) == 3 and multinomial([1, 1, 1, 1]) == 24 and multinomial([4, 4, 2, 1]) == 34650, 'MISSISSIPPI has 34650 arrangements.'` },
+          { name: "words", code: `assert arrangements('MISSISSIPPI') == 34650 and arrangements('AAAA') == 1 and arrangements('BANANA') == 60, 'Divide out repeated letters.'` },
+          { name: "rank small", code: `assert rank('AAB') == 0 and rank('ABA') == 1 and rank('BAA') == 2, 'Count arrangements that come before.'` },
+          { name: "rank brute", code: `from itertools import permutations
+for w in ['BANANA', 'CABBAGE', 'DCBA']:
+    lst = sorted(set(''.join(p) for p in permutations(w)))
+    assert all(rank(x) == i for i, x in enumerate(lst)), w` },
+          { name: "big", code: `assert rank('ZYXWVUTSRQPONMLKJIHGFEDCBA') == 403291461126605635583999999, 'The last arrangement of 26 distinct letters has rank 26! − 1.'` },
         ],
       },
     },

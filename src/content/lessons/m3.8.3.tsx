@@ -145,6 +145,20 @@ print(round(s[0] * s[1], 6), round(s[0] ** 2 + s[1] ** 2, 6))`}</Code>
       answer: { kind: "numeric", value: 65 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+A = np.array([[3.0, 0.0], [4.0, 5.0]])
+U, s, Vt = np.linalg.svd(A)
+print(np.round(s ** 2, 6), np.round(np.linalg.eigvalsh(A.T @ A)[::-1], 6), round(float(np.prod(s)), 6))`}</Code>
+          <p>Singular values of [[3, 0], [4, 5]] against the eigenvalues of AᵀA. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[45.  5.] [45.  5.] 15.0", "[25.  9.] [45.  5.] 15.0", "[45.  5.] [5. 45.] 15.0", "[45.  5.] [45.  5.] 50.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -177,6 +191,68 @@ assert np.allclose(singular_values([[1, 100], [0, 1]]), np.linalg.svd([[1, 100],
           { name: "rectangular", code: `import numpy as np
 A = np.arange(12.0).reshape(4, 3)
 assert np.allclose(singular_values(A), np.linalg.svd(A, compute_uv=False), atol=1e-6), 'It should work for a 4 × 3 matrix too.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>svd_via_eigh(A)</C>, a thin SVD built from the eigen-decomposition of AᵀA (for an m × n matrix with m ≥ n and full column rank): V and σ² from <C>np.linalg.eigh</C> sorted decreasingly, and U = AVΣ⁻¹. Return (U, s, Vt). Then write <C>pseudo_inverse(A, tol=1e-10)</C> from <C>np.linalg.svd</C>, inverting only singular values above tol times the largest, and <C>min_norm_solution(A, b)</C>, the least-squares solution of smallest norm, A⁺b.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def svd_via_eigh(A):
+    return np.linalg.svd(A, full_matrices=False)
+
+def pseudo_inverse(A, tol=1e-10):
+    return np.linalg.inv(A)
+
+def min_norm_solution(A, b):
+    return np.linalg.lstsq(A, b, rcond=None)[0] * 0
+`,
+        solution: `import numpy as np
+
+def svd_via_eigh(A):
+    A = np.asarray(A, float)
+    w, V = np.linalg.eigh(A.T @ A)
+    order = np.argsort(w)[::-1]
+    w, V = w[order], V[:, order]
+    s = np.sqrt(np.maximum(w, 0))
+    U = A @ V / s
+    return (U, s, V.T)
+
+def pseudo_inverse(A, tol=1e-10):
+    U, s, Vt = np.linalg.svd(np.asarray(A, float), full_matrices=False)
+    inv = np.array([1 / x if x > tol * s[0] else 0.0 for x in s])
+    return Vt.T @ np.diag(inv) @ U.T
+
+def min_norm_solution(A, b):
+    return pseudo_inverse(A) @ np.asarray(b, float)
+`,
+        tests: [
+          { name: "svd", code: `import numpy as np
+rng = np.random.default_rng(25)
+A = rng.normal(size=(6, 3))
+U, s, Vt = svd_via_eigh(A)
+assert np.allclose(U * s @ Vt, A) and np.allclose(U.T @ U, np.eye(3)) and np.allclose(s, np.linalg.svd(A, compute_uv=False)), 'A = UΣVᵀ.'` },
+          { name: "own svd", code: `import inspect
+assert 'svd' not in inspect.getsource(svd_via_eigh).replace('svd_via_eigh', ''), 'Build it from eigh.'` },
+          { name: "pinv", code: `import numpy as np
+rng = np.random.default_rng(26)
+A = rng.normal(size=(5, 2)) @ rng.normal(size=(2, 4))
+P = pseudo_inverse(A)
+assert np.allclose(P, np.linalg.pinv(A)) and np.allclose(A @ P @ A, A), 'Rank deficient: invert only the non-zero σ.'` },
+          { name: "min norm", code: `import numpy as np
+A = np.array([[1.0, 1.0]])
+x = min_norm_solution(A, [2.0])
+assert np.allclose(x, [1, 1]), 'Among x + y = 2 the shortest is (1, 1).'` },
         ],
       },
     },

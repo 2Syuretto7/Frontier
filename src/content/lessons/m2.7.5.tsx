@@ -143,6 +143,23 @@ print(round(simpson(math.sin, 0, math.pi, 4), 4))`}</Code>
       answer: { kind: "numeric", value: 2.0046, tolerance: 0.0002 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+def trap(f, a, b, n):
+    h = (b - a) / n
+    return h * (f(a) / 2 + sum(f(a + i * h) for i in range(1, n)) + f(b) / 2)
+e1 = abs(trap(math.exp, 0, 1, 10) - (math.e - 1))
+e2 = abs(trap(math.exp, 0, 1, 20) - (math.e - 1))
+print(round(e1 / e2, 2))`}</Code>
+          <p>Doubling the number of trapezoids: by what factor does the error shrink?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 4.0, tolerance: 0.01 },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -176,6 +193,62 @@ assert abs(trapezoid(math.exp, 0, 1, 1000) - (math.e - 1)) < 2e-7, 'The trapezoi
           { name: "rates", code: `import math
 e1 = abs(simpson(math.exp, 0, 1, 8) - (math.e - 1)); e2 = abs(simpson(math.exp, 0, 1, 16) - (math.e - 1))
 assert 13 < e1 / e2 < 19, 'Doubling n should cut Simpson’s error by about 16.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>romberg(f, a, b, levels)</C>: compute trapezoid estimates T₀ with 1, 2, 4, …, 2^(levels−1) strips, reusing earlier function values (each new level adds only the new midpoints), then apply Richardson extrapolation R[i][k] = R[i][k−1] + (R[i][k−1] − R[i−1][k−1])/(4ᵏ − 1). Return the last diagonal entry and the number of evaluations of f. Then write <C>gauss_legendre(f, a, b, n)</C>, n-point Gauss–Legendre quadrature using nodes and weights from <C>numpy.polynomial.legendre.leggauss</C> mapped to [a, b].
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def romberg(f, a, b, levels):
+    return ((b - a) * (f(a) + f(b)) / 2, 2)
+
+def gauss_legendre(f, a, b, n):
+    return (b - a) * f((a + b) / 2)
+`,
+        solution: `import numpy as np
+
+def romberg(f, a, b, levels):
+    count = [0]
+    def F(x):
+        count[0] += 1
+        return f(x)
+    h = b - a
+    R = [[h * (F(a) + F(b)) / 2]]
+    for i in range(1, levels):
+        h /= 2
+        new = sum(F(a + (2 * k - 1) * h) for k in range(1, 2 ** (i - 1) + 1))
+        row = [R[i - 1][0] / 2 + h * new]
+        for k in range(1, i + 1):
+            row.append(row[k - 1] + (row[k - 1] - R[i - 1][k - 1]) / (4 ** k - 1))
+        R.append(row)
+    return (R[-1][-1], count[0])
+
+def gauss_legendre(f, a, b, n):
+    x, w = np.polynomial.legendre.leggauss(n)
+    t = (b - a) / 2 * x + (a + b) / 2
+    return float((b - a) / 2 * sum(wi * f(ti) for wi, ti in zip(w, t)))
+`,
+        tests: [
+          { name: "romberg", code: `import math
+v, n = romberg(math.exp, 0, 1, 6)
+assert abs(v - (math.e - 1)) < 1e-13 and n == 33, 'Six levels use 33 points and are exact to rounding.'` },
+          { name: "polynomial", code: `v, n = romberg(lambda x: x ** 5 - 2 * x, 0, 2, 4)
+assert abs(v - (64 / 6 - 4)) < 1e-12, 'Romberg integrates low-degree polynomials exactly.'` },
+          { name: "gauss", code: `import math
+assert abs(gauss_legendre(lambda x: x ** 9 + 3 * x ** 2, -1, 2, 5) - (2 ** 10 / 10 - 1 / 10 + 8 + 1)) < 1e-10, 'n points integrate degree 2n − 1 exactly.'` },
+          { name: "gauss smooth", code: `import math
+assert abs(gauss_legendre(math.cos, 0, math.pi / 2, 10) - 1) < 1e-14, 'Ten Gauss points give full precision for cos.'` },
         ],
       },
     },

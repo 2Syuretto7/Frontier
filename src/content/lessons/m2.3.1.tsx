@@ -164,6 +164,20 @@ print(max(abs(f(10 ** -k)) for k in range(3, 8)) < 1e-3)`}</Code>
       answer: { kind: "choice", options: ["True", "False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+def g(x):
+    return x * math.sin(1 / x) if x != 0 else 0
+print([round(g(10 ** -k), 6) for k in (1, 3, 5)], g(0))`}</Code>
+          <p>x·sin(1/x) is continuous at 0 because |g(x)| ≤ |x|. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[-0.054402, 0.000827, 0.0] 0", "[0.054402, 0.000827, 0.0] 0", "[-0.054402, 0.000827, 4e-06] 0", "[-0.544021, 0.826880, 0.035749] 0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -186,6 +200,55 @@ print(max(abs(f(10 ** -k)) for k in range(3, 8)) < 1e-3)`}</Code>
           { name: "continuous", code: `assert jump(lambda x: x * x, 3) < 1e-6, 'x² is continuous at 3.'` },
           { name: "floor", code: `import math
 assert abs(jump(math.floor, 2) - 1) < 1e-12, 'The floor function jumps by 1 at every integer.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>modulus(f, a, b, delta, n)</C>, the modulus of continuity ω(δ) = sup |f(x) − f(y)| over |x − y| ≤ δ in [a, b], estimated on a grid of n + 1 points (compare each grid point with those within δ of it, using two pointers or slicing for speed). Then write <C>holder_exponent(f, a, b)</C>, an estimate of α in ω(δ) ≈ Cδ^α from ω at δ = 10⁻² and 10⁻³ with n = 10000: α = log(ω(10⁻²)/ω(10⁻³))/log 10.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def modulus(f, a, b, delta, n):
+    return abs(f(b) - f(a))
+
+def holder_exponent(f, a, b):
+    return 1.0
+`,
+        solution: `import math
+
+def modulus(f, a, b, delta, n):
+    xs = [a + (b - a) * i / n for i in range(n + 1)]
+    ys = [f(x) for x in xs]
+    h = (b - a) / n
+    w = int(delta / h + 1e-9)
+    best = 0.0
+    for i in range(n + 1):
+        seg = ys[i:i + w + 1]
+        best = max(best, max(seg) - ys[i], ys[i] - min(seg))
+    return best
+
+def holder_exponent(f, a, b):
+    w1 = modulus(f, a, b, 1e-2, 10000)
+    w2 = modulus(f, a, b, 1e-3, 10000)
+    return math.log(w1 / w2) / math.log(10)
+`,
+        tests: [
+          { name: "linear", code: `w = modulus(lambda x: 3 * x, 0, 1, 0.1, 1000)
+assert abs(w - 0.3) < 1e-9, 'For 3x the modulus is 3δ.'` },
+          { name: "square", code: `w = modulus(lambda x: x * x, 0, 2, 0.01, 2000)
+assert abs(w - (4 - 1.99 ** 2)) < 1e-9, 'x² changes fastest at the right end.'` },
+          { name: "sqrt", code: `a = holder_exponent(lambda x: math.sqrt(x), 0, 1)
+assert abs(a - 0.5) < 0.02, f'√x is Hölder with exponent ½, got {a:.3f}.'` },
+          { name: "lipschitz", code: `import math
+a = holder_exponent(math.sin, 0, 2)
+assert abs(a - 1) < 0.02, 'sin is Lipschitz: exponent 1.'` },
         ],
       },
     },

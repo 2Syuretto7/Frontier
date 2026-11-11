@@ -175,6 +175,20 @@ print(sum(Fraction(k, 6) for k in range(1, 7)))`}</Code>
       answer: { kind: "choice", options: ["7/2", "21", "3", "6"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`dist = {0: 0.5, 10: 0.3, 100: 0.2}
+m = sum(x * p for x, p in dist.items())
+v = sum((x - m) ** 2 * p for x, p in dist.items())
+print(m, round(v ** 0.5, 2))`}</Code>
+          <p>Expected value and standard deviation of a prize. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["23.0 38.74", "23.0 1500.0", "36.67 38.74", "23 38.74"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -202,6 +216,66 @@ def fair_price(win, p):
           { name: "die", code: `assert abs(expected({k: 1 / 6 for k in range(1, 7)}) - 3.5) < 1e-9, 'Weight each value by its probability.'` },
           { name: "uneven", code: `assert abs(expected({0: 0.5, 10: 0.3, 100: 0.2}) - 23) < 1e-9, 'Values far apart with uneven weights: 0 + 3 + 20.'` },
           { name: "price", code: `assert abs(fair_price(100, 0.05) - 5) < 1e-9, 'A fair stake equals the expected payout.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>dice_sum_dist(n)</C>, the exact distribution of the total of n fair six-sided dice as a dict from total to <C>Fraction</C>, by convolving one die at a time (no listing of the 6ⁿ outcomes). Then write <C>expected(dist)</C> and <C>variance(dist)</C> for such a dict, and check in the tests that the mean is 3.5n and the variance 35n/12.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `from fractions import Fraction
+
+def dice_sum_dist(n):
+    return {k: Fraction(1, 6) for k in range(1, 7)}
+
+def expected(dist):
+    return sum(dist) / len(dist)
+
+def variance(dist):
+    return 0
+`,
+        solution: `from fractions import Fraction
+
+def dice_sum_dist(n):
+    dist = {0: Fraction(1)}
+    for _ in range(n):
+        new = {}
+        for s, p in dist.items():
+            for f in range(1, 7):
+                new[s + f] = new.get(s + f, 0) + p / 6
+        dist = new
+    return dist
+
+def expected(dist):
+    return sum(x * p for x, p in dist.items())
+
+def variance(dist):
+    m = expected(dist)
+    return sum((x - m) ** 2 * p for x, p in dist.items())
+`,
+        tests: [
+          { name: "two dice", code: `from fractions import Fraction
+d = dice_sum_dist(2)
+assert d[7] == Fraction(1, 6) and d[2] == Fraction(1, 36) and len(d) == 11 and sum(d.values()) == 1, 'Seven is most likely with two dice.'` },
+          { name: "three dice", code: `from fractions import Fraction
+d = dice_sum_dist(3)
+assert d[10] == d[11] == Fraction(27, 216) and d[9] == Fraction(25, 216), 'The gambler: 10 beats 9 with three dice.'` },
+          { name: "moments", code: `from fractions import Fraction
+for n in [1, 2, 5, 10]:
+    d = dice_sum_dist(n)
+    assert expected(d) == Fraction(7, 2) * n and variance(d) == Fraction(35, 12) * n, n` },
+          { name: "fast", code: `import time
+t = time.time()
+d = dice_sum_dist(40)
+assert time.time() - t < 5 and len(d) == 201, 'Convolve; never list 6⁴⁰ outcomes.'` },
         ],
       },
     },

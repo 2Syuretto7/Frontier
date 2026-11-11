@@ -145,6 +145,22 @@ print(math.sin(x) - x, -x ** 3 / 6)`}</Code>
       answer: { kind: "choice", options: ["−0.000166", "0.1", "−0.1", "0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+x = 1e-8
+a = math.sqrt(1 + x) - 1
+b = x / (math.sqrt(1 + x) + 1)
+c = x / 2 - x * x / 8
+print(a, b, c)`}</Code>
+          <p>√(1 + x) − 1 for tiny x, computed three ways. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["4.999999969612645e-09 4.99999998750000e-09 4.9999999875e-09", "5e-09 5e-09 5e-09", "0.0 4.9999999875e-09 4.9999999875e-09", "4.999999969612645e-09 4.9999999875e-09 4.9999999875e-09"], correct: [3] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -172,6 +188,66 @@ def one_minus_cos(x):
           { name: "tiny", code: `assert abs(one_minus_cos(1e-9) / 5e-19 - 1) < 1e-9, 'For x = 10⁻⁹ the answer is about 5 × 10⁻¹⁹, but the direct formula gives 0.'` },
           { name: "ordinary", code: `import math
 assert abs(one_minus_cos(0.5) - (1 - math.cos(0.5))) < 1e-15, 'For ordinary x use the direct formula.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write accurate versions of three formulas that lose digits to cancellation: <C>log1p_series(x)</C>, log(1 + x) for |x| &lt; 0.5, using the series in u = x/(2 + x): log(1 + x) = 2(u + u³/3 + u⁵/5 + …); <C>sqrt1pm1(x)</C>, √(1 + x) − 1 written as x/(√(1 + x) + 1); and <C>cosm1(x)</C>, cos x − 1 written as −2 sin²(x/2). Each must agree with an exact reference to within a few ulps for x = 10⁻¹² as well as x = 0.4.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def log1p_series(x):
+    return math.log(1 + x)
+
+def sqrt1pm1(x):
+    return math.sqrt(1 + x) - 1
+
+def cosm1(x):
+    return math.cos(x) - 1
+`,
+        solution: `import math
+
+def log1p_series(x):
+    u = x / (2 + x)
+    term, s, k = u, 0.0, 1
+    while abs(term) > 1e-18 * max(abs(s), 1e-300):
+        s += term / k
+        term *= u * u
+        k += 2
+        if k > 400:
+            break
+    return 2 * s
+
+def sqrt1pm1(x):
+    return x / (math.sqrt(1 + x) + 1)
+
+def cosm1(x):
+    return -2 * math.sin(x / 2) ** 2
+`,
+        tests: [
+          { name: "log1p", code: `import math
+for x in [1e-12, -3e-9, 1e-4, 0.4, -0.4]:
+    assert abs(log1p_series(x) - math.log1p(x)) <= 1e-15 * abs(math.log1p(x)), x` },
+          { name: "sqrt", code: `from decimal import Decimal, getcontext
+getcontext().prec = 50
+for x in [1e-12, 2.5e-7, 0.4]:
+    ref = float((1 + Decimal(x)).sqrt() - 1)
+    assert abs(sqrt1pm1(x) - ref) <= 4e-16 * abs(ref), x` },
+          { name: "cos", code: `from decimal import Decimal, getcontext
+getcontext().prec = 50
+for x in [1e-6, 1e-3, 0.4]:
+    X = Decimal(x)
+    ref = float(sum((-1) ** k * X ** (2 * k) / __import__('math').factorial(2 * k) for k in range(1, 20)))
+    assert abs(cosm1(x) - ref) <= 4e-16 * abs(ref), x` },
         ],
       },
     },

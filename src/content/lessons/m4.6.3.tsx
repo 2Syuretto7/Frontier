@@ -155,6 +155,21 @@ print(round(total / trials, 1))`}</Code>
       answer: { kind: "numeric", value: 1.0, tolerance: 0.051 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from fractions import Fraction
+vals = range(1, 7)
+E = Fraction(sum(vals), 6)
+E2 = Fraction(sum(v * v for v in vals), 6)
+print(E, E2 - E ** 2, 2 * E)`}</Code>
+          <p>Mean and variance of one die, and the mean of the total of two. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["7/2 35/12 7", "7/2 91/6 7", "7/2 35/12 7/2", "3 35/12 6"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -195,6 +210,53 @@ def coupon_simulate(n, trials, seed):
           { name: "exact", code: `from fractions import Fraction
 assert coupon_expected(6) == Fraction(147, 10) and coupon_expected(1) == 1, 'For a die, 14.7 rolls on average.'` },
           { name: "simulate", code: `assert abs(coupon_simulate(6, 20000, 1) - 14.7) < 0.2, 'The simulated average should be close to the exact expectation.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>expected_max(k, sides)</C>, the exact expected maximum of k fair dice with the given number of sides, using P(max ≤ m) = (m/sides)ᵏ so that P(max = m) is a difference of two such terms. Then write <C>expected_records(n)</C>, the expected number of left-to-right maxima (records) in a uniformly random permutation of n items: by linearity, position i is a record with probability 1/i. Return <C>Fraction</C>s.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `from fractions import Fraction
+
+def expected_max(k, sides):
+    return Fraction(sides + 1, 2)
+
+def expected_records(n):
+    return Fraction(1)
+`,
+        solution: `from fractions import Fraction
+
+def expected_max(k, sides):
+    return sum(m * Fraction(m ** k - (m - 1) ** k, sides ** k) for m in range(1, sides + 1))
+
+def expected_records(n):
+    return sum((Fraction(1, i) for i in range(1, n + 1)), Fraction(0))
+`,
+        tests: [
+          { name: "dice", code: `from fractions import Fraction
+assert expected_max(1, 6) == Fraction(7, 2) and expected_max(2, 6) == Fraction(161, 36) and isinstance(expected_max(3, 6), Fraction), 'Two dice: 161/36.'` },
+          { name: "brute max", code: `from itertools import product
+from fractions import Fraction
+for k in range(1, 5):
+    for s in (2, 3, 4):
+        rolls = list(product(range(1, s + 1), repeat=k))
+        assert expected_max(k, s) == Fraction(sum(max(r) for r in rolls), len(rolls)), f'k={k}, sides={s}'` },
+          { name: "records", code: `from itertools import permutations
+from fractions import Fraction
+for n in range(1, 7):
+    ps = list(permutations(range(n)))
+    want = Fraction(sum(sum(1 for i in range(n) if q[i] == max(q[:i + 1])) for q in ps), len(ps))
+    assert expected_records(n) == want, f'n = {n}'
+assert expected_records(3) == Fraction(11, 6) and expected_records(0) == 0` },
         ],
       },
     },

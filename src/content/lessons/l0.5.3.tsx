@@ -150,6 +150,20 @@ print(round(max(scores) - min(scores), 3) > 0.01)`}</Code>
       answer: { kind: "choice", options: ["True", "False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+n, acc = 500, 0.8
+se = math.sqrt(acc * (1 - acc) / n)
+print(round(se, 4), round(1.96 * se, 4))`}</Code>
+          <p>The standard error of an accuracy measured on 500 questions, and the half-width of a 95 per cent interval. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.0179 0.0351", "0.0179 0.0179", "0.0008 0.0016", "0.4 0.784"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -186,6 +200,65 @@ def significant(a, b):
 assert abs(m - 2.5) < 1e-9 and abs(h - 1.96 * (5 / 3) ** 0.5 / 2) < 1e-9, 'Use the n − 1 standard deviation divided by √n.'` },
           { name: "noise", code: `assert not significant([0.70, 0.72, 0.69], [0.71, 0.73, 0.70]), 'A one-point gain within seed noise is not significant.'` },
           { name: "real", code: `assert significant([0.70, 0.71, 0.70], [0.80, 0.81, 0.80]), 'A ten-point gain with small spread is.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Two models answer the same benchmark questions; a and b are lists of 0/1 correctness per question. Write <C>mcnemar_p(a, b)</C>, the exact two-sided p-value of McNemar&rsquo;s test: with n₀₁ questions only b gets right and n₁₀ only a gets right, it is min(1, 2·P(X ≤ min(n₀₁, n₁₀))) for X ~ Binomial(n₀₁ + n₁₀, ½) (1.0 if there are no disagreements). Then write <C>paired_bootstrap(a, b, trials, seed)</C>, the fraction of resamples of question indices (with replacement, <C>random.Random(seed)</C>) in which b&rsquo;s accuracy is strictly higher than a&rsquo;s.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def mcnemar_p(a, b):
+    return 0.0
+
+def paired_bootstrap(a, b, trials, seed):
+    return 1.0
+`,
+        solution: `import random
+from math import comb
+
+def mcnemar_p(a, b):
+    n01 = sum(1 for x, y in zip(a, b) if x == 0 and y == 1)
+    n10 = sum(1 for x, y in zip(a, b) if x == 1 and y == 0)
+    n = n01 + n10
+    if n == 0:
+        return 1.0
+    k = min(n01, n10)
+    return min(1.0, 2 * sum(comb(n, i) for i in range(k + 1)) / 2 ** n)
+
+def paired_bootstrap(a, b, trials, seed):
+    rng = random.Random(seed)
+    n = len(a)
+    wins = 0
+    for _ in range(trials):
+        idx = [rng.randrange(n) for _ in range(n)]
+        if sum(b[i] for i in idx) > sum(a[i] for i in idx):
+            wins += 1
+    return wins / trials
+`,
+        tests: [
+          { name: "mcnemar", code: `assert mcnemar_p([1, 0, 1], [1, 0, 1]) == 1.0 and abs(mcnemar_p([0] * 10, [1] * 10) - 2 / 1024) < 1e-15 and mcnemar_p([1, 0], [0, 1]) == 1.0, 'Ten disagreements all one way: p = 2/2¹⁰.'` },
+          { name: "scipy", code: `from scipy.stats import binomtest
+import random
+random.seed(8)
+for _ in range(30):
+    a = [random.randint(0, 1) for _ in range(80)]; b = [random.randint(0, 1) for _ in range(80)]
+    n01 = sum(x == 0 and y == 1 for x, y in zip(a, b)); n10 = sum(x == 1 and y == 0 for x, y in zip(a, b))
+    assert abs(mcnemar_p(a, b) - binomtest(n01, n01 + n10, 0.5).pvalue) < 1e-9, 'Agree with the exact binomial test.'` },
+          { name: "bootstrap", code: `import random
+random.seed(9)
+a = [int(random.random() < 0.70) for _ in range(400)]
+b = [x if random.random() < 0.8 else int(random.random() < 0.9) for x in a]
+p = paired_bootstrap(a, b, 2000, 1)
+assert p == paired_bootstrap(a, b, 2000, 1) and 0 <= p <= 1, 'Seeded.'
+assert paired_bootstrap([0, 1] * 50, [1, 1] * 50, 500, 0) == 1.0 and paired_bootstrap([1] * 20, [1] * 20, 100, 0) == 0.0, 'Strictly higher only.'` },
         ],
       },
     },

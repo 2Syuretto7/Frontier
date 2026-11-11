@@ -145,6 +145,20 @@ print(round(math.factorial(n) / stirling, 4))`}</Code>
       answer: { kind: "numeric", value: 1.0042, tolerance: 0.0002 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+for n in (1, 10, 100):
+    s = math.sqrt(2 * math.pi * n) * (n / math.e) ** n
+    print(n, round(math.factorial(n) / s, 5))`}</Code>
+          <p>The ratio of n! to Stirling's approximation. What is the last value printed?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 1.00083, tolerance: 1e-05 },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -169,6 +183,60 @@ def log_factorial(n):
         tests: [
           { name: "twenty", code: `assert abs(log_factorial(20) - math.lgamma(21)) < 0.005, 'At n = 20 Stirling is within 0.005 of ln 20!.'` },
           { name: "huge", code: `assert abs(log_factorial(10 ** 6) - math.lgamma(10 ** 6 + 1)) < 1e-6, 'At n = 10⁶ it is extremely accurate.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>log_gamma_stirling(x)</C>, log Γ(x) for real x &gt; 0 to within 1e−13, using Stirling&rsquo;s series (x − ½)log x − x + ½ log 2π + 1/(12x) − 1/(360x³) + 1/(1260x⁵) − 1/(1680x⁷) after shifting x up to at least 15 with log Γ(x) = log Γ(x + 1) − log x. Then write <C>log_binom(n, k)</C>, the logarithm of C(n, k) for real n, k from it, and <C>binom_prob(n, k, p)</C>, the binomial probability C(n, k)pᵏ(1 − p)ⁿ⁻ᵏ computed in logs so that n = 10⁶ works.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def log_gamma_stirling(x):
+    return x * math.log(x) - x
+
+def log_binom(n, k):
+    return math.log(math.comb(n, k))
+
+def binom_prob(n, k, p):
+    return math.comb(n, k) * p ** k * (1 - p) ** (n - k)
+`,
+        solution: `import math
+
+def log_gamma_stirling(x):
+    shift = 0.0
+    while x < 15:
+        shift -= math.log(x)
+        x += 1
+    s = (x - 0.5) * math.log(x) - x + 0.5 * math.log(2 * math.pi)
+    s += 1 / (12 * x) - 1 / (360 * x ** 3) + 1 / (1260 * x ** 5) - 1 / (1680 * x ** 7)
+    return s + shift
+
+def log_binom(n, k):
+    return log_gamma_stirling(n + 1) - log_gamma_stirling(k + 1) - log_gamma_stirling(n - k + 1)
+
+def binom_prob(n, k, p):
+    return math.exp(log_binom(n, k) + k * math.log(p) + (n - k) * math.log(1 - p))
+`,
+        tests: [
+          { name: "gamma", code: `import math
+for x in [0.5, 1, 2.5, 7, 30, 1000.5]:
+    assert abs(log_gamma_stirling(x) - math.lgamma(x)) < 1e-13 * max(1, abs(math.lgamma(x))), x` },
+          { name: "no lgamma", code: `import inspect
+assert 'lgamma' not in inspect.getsource(log_gamma_stirling) and 'factorial' not in inspect.getsource(log_gamma_stirling), 'Use Stirling.'` },
+          { name: "binom", code: `import math
+assert abs(log_binom(50, 20) - math.log(math.comb(50, 20))) < 1e-10, 'log C(50, 20).'` },
+          { name: "huge", code: `import math
+v = binom_prob(10 ** 6, 500000, 0.5)
+assert abs(v - 1 / math.sqrt(math.pi * 5e5)) < 1e-9, 'The central probability is about 1/√(πn/2).'` },
         ],
       },
     },

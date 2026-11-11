@@ -198,6 +198,21 @@ print(m, y1 - m * x1)`}</Code>
       answer: { kind: "choice", options: ["2.0 0.0", "0.5 1.5", "2.0 2.0", "6.0 -4.0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def line(p, q):
+    (x1, y1), (x2, y2) = p, q
+    m = (y2 - y1) / (x2 - x1)
+    return m, y1 - m * x1
+print(line((1, 2), (3, 8)), line((-2, 5), (2, -3)))`}</Code>
+          <p>Slope and intercept of the line through two points. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["(3.0, -1.0) (-2.0, 1.0)", "(3.0, -1.0) (2.0, 1.0)", "(0.33, 1.67) (-2.0, 1.0)", "(3.0, 1.0) (-2.0, -1.0)"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -226,6 +241,50 @@ def perpendicular(m1, m2):
         tests: [
           { name: "distance", code: `assert abs(distance((1, 2), (4, 6)) - 5) < 1e-9, 'Pythagoras on the differences: 3, 4, 5.'` },
           { name: "perpendicular", code: `assert perpendicular(2, -0.5) and not perpendicular(1, -1.5), 'Slopes of perpendicular lines multiply to −1.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>intersect(p1, p2, p3, p4)</C>, the intersection point of the line segments p1p2 and p3p4 (points as tuples), or <C>None</C> if they do not meet. Use the parametric form p1 + t(p2 − p1) = p3 + u(p4 − p3) and require 0 ≤ t, u ≤ 1. For parallel segments return <C>None</C> (even if they overlap). Also write <C>point_line_distance(p, a, b)</C>, the distance from p to the infinite line through a and b.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def intersect(p1, p2, p3, p4):
+    return None
+
+def point_line_distance(p, a, b):
+    return 0.0
+`,
+        solution: `import math
+
+def intersect(p1, p2, p3, p4):
+    (x1, y1), (x2, y2), (x3, y3), (x4, y4) = p1, p2, p3, p4
+    d = (x2 - x1) * (y4 - y3) - (y2 - y1) * (x4 - x3)
+    if d == 0:
+        return None
+    t = ((x3 - x1) * (y4 - y3) - (y3 - y1) * (x4 - x3)) / d
+    u = ((x3 - x1) * (y2 - y1) - (y3 - y1) * (x2 - x1)) / d
+    if 0 <= t <= 1 and 0 <= u <= 1:
+        return (x1 + t * (x2 - x1), y1 + t * (y2 - y1))
+    return None
+
+def point_line_distance(p, a, b):
+    (x, y), (x1, y1), (x2, y2) = p, a, b
+    return abs((x2 - x1) * (y1 - y) - (x1 - x) * (y2 - y1)) / math.hypot(x2 - x1, y2 - y1)
+`,
+        tests: [
+          { name: "cross", code: `assert intersect((0, 0), (4, 4), (0, 4), (4, 0)) == (2.0, 2.0), 'The diagonals of a square meet at the centre.'` },
+          { name: "miss", code: `assert intersect((0, 0), (1, 1), (3, 0), (2, 1)) is None, 'The lines meet at (1.5, 1.5), outside both segments.'` },
+          { name: "endpoint", code: `assert intersect((0, 0), (2, 0), (2, -1), (2, 5)) == (2.0, 0.0), 'Touching at an endpoint counts.'` },
+          { name: "parallel", code: `assert intersect((0, 0), (1, 1), (0, 1), (1, 2)) is None and intersect((0, 0), (2, 2), (1, 1), (3, 3)) is None, 'Parallel segments give None.'` },
+          { name: "distance", code: `assert abs(point_line_distance((0, 5), (-1, 0), (1, 0)) - 5) < 1e-12 and abs(point_line_distance((1, 1), (0, 0), (3, 4)) - 0.2) < 1e-12, 'Distance to y = 4x/3 from (1, 1) is 1/5.'` },
         ],
       },
     },

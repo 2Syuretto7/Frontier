@@ -149,6 +149,17 @@ seconds = t % 60            # 5
       answer: { kind: "choice", options: ["3 2 50", "3.4 2 400", "3 2 400", "3 3 50"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`print(7 // 2, 7 % 2, -7 // 2, 2 ** 3 ** 2, 1 + 2 * 3 - 4 / 2)`}</Code>
+          <p>Floor division of a negative number, a right-associative power, and mixed precedence. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["3 1 -4 512 5.0", "3 1 -3 64 5.0", "3.5 1 -4 512 5", "3 1 -4 64 1.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -172,6 +183,74 @@ secs = seconds % 60
 `,
         tests: [
           { name: "split", code: `assert (hours, minutes, secs) == (2, 3, 4), '7384 seconds is 2 hours, 3 minutes and 4 seconds.'` },
+          { name: "invariant", code: `assert seconds == 7384 and 3600 * hours + 60 * minutes + secs == seconds and 0 <= minutes < 60 and 0 <= secs < 60, 'The parts must add back up to the total.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Work with digits using only arithmetic, never <C>str</C>. Write <C>digit_sum(n)</C> for n ≥ 0 by repeatedly taking n % 10 and n // 10; <C>reverse_digits(n)</C>, the number with its digits reversed (so 1200 gives 21); and <C>is_armstrong(n)</C>, true when n equals the sum of its digits each raised to the power of the number of digits (153 = 1³ + 5³ + 3³).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def digit_sum(n):
+    return n
+
+def reverse_digits(n):
+    return n
+
+def is_armstrong(n):
+    return False
+`,
+        solution: `def digit_sum(n):
+    s = 0
+    while n > 0:
+        s += n % 10
+        n //= 10
+    return s
+
+def reverse_digits(n):
+    r = 0
+    while n > 0:
+        r = r * 10 + n % 10
+        n //= 10
+    return r
+
+def _digits(n):
+    k = 1
+    while n >= 10:
+        n //= 10
+        k += 1
+    return k
+
+def is_armstrong(n):
+    k = _digits(n)
+    s, m = 0, n
+    while m > 0:
+        s += (m % 10) ** k
+        m //= 10
+    return s == n
+`,
+        tests: [
+          { name: "sum", code: `assert digit_sum(0) == 0 and digit_sum(7) == 7 and digit_sum(9875) == 29 and digit_sum(10 ** 30) == 1` },
+          { name: "reverse", code: `assert reverse_digits(1234) == 4321 and reverse_digits(1200) == 21 and reverse_digits(0) == 0 and reverse_digits(5) == 5` },
+          { name: "armstrong", code: `assert [n for n in range(1000) if is_armstrong(n)] == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 153, 370, 371, 407] and is_armstrong(9474), 'Every one-digit number is an Armstrong number.'` },
+          { name: "no str", code: `import builtins
+real = builtins.str
+def banned(*a, **k):
+    raise AssertionError('Use arithmetic, not str.')
+builtins.str = banned
+try:
+    r = (digit_sum(4321), reverse_digits(4321), is_armstrong(371))
+finally:
+    builtins.str = real
+assert r == (10, 1234, True)` },
         ],
       },
     },

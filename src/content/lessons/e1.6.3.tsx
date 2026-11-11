@@ -156,6 +156,29 @@ print(events)`}</Code>
       answer: { kind: "choice", options: ["[2, 4, 6]", "[1, 2, 3]", "[6]", "[]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`class Model:
+    def __init__(self):
+        self.subs = []
+        self.v = 0
+    def set(self, v):
+        old, self.v = self.v, v
+        for f in self.subs:
+            f(old, v)
+m = Model()
+seen = []
+m.subs.append(lambda a, b: seen.append(b - a))
+m.set(5); m.set(3); m.set(3)
+print(seen, m.v)`}</Code>
+          <p>An observer notified on every set, even when nothing changes. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[5, -2, 0] 3", "[5, -2] 3", "[5, 3, 3] 3", "[0, 5, -2] 3"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -200,6 +223,48 @@ s = Slider(5)
 s.on_change(seen.append)
 s.set(5)
 assert seen == [], 'Setting the same value should not redraw.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Interactive charts must not redraw on every mouse movement. Events are (time, value) pairs in time order. Write <C>debounce(events, wait)</C>, which emits an event only when no other event follows within <C>wait</C> (strictly less than wait later), at time t + wait, returning the list of (fire time, value); and <C>throttle(events, interval)</C>, which emits an event at its own time if at least <C>interval</C> has passed since the last emitted event (the first always emits), dropping the rest.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def debounce(events, wait):
+    return list(events)
+
+def throttle(events, interval):
+    return list(events)
+`,
+        solution: `def debounce(events, wait):
+    out = []
+    for i, (t, v) in enumerate(events):
+        if i + 1 == len(events) or events[i + 1][0] - t >= wait:
+            out.append((t + wait, v))
+    return out
+
+def throttle(events, interval):
+    out, last = [], None
+    for t, v in events:
+        if last is None or t - last >= interval:
+            out.append((t, v))
+            last = t
+    return out
+`,
+        tests: [
+          { name: "debounce", code: `ev = [(0, 'a'), (50, 'b'), (120, 'c'), (400, 'd'), (450, 'e')]
+assert debounce(ev, 100) == [(220, 'c'), (550, 'e')] and debounce([], 10) == [] and debounce([(5, 'x')], 10) == [(15, 'x')], 'Only the last of a burst fires, after the quiet period.'` },
+          { name: "edge", code: `assert debounce([(0, 'a'), (100, 'b')], 100) == [(100, 'a'), (200, 'b')], 'An event exactly wait later does not cancel.'` },
+          { name: "throttle", code: `ev = [(0, 1), (30, 2), (100, 3), (130, 4), (199, 5), (230, 6)]
+assert throttle(ev, 100) == [(0, 1), (100, 3), (230, 6)] and throttle(ev, 0) == ev, 'At most one event per interval.'` },
         ],
       },
     },

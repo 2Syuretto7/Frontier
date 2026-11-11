@@ -134,6 +134,22 @@ print(precision, round(recall, 3), round(2 * precision * recall / (precision + r
       answer: { kind: "choice", options: ["0.8 0.667 0.727", "0.667 0.8 0.727", "0.8 0.667 0.733", "0.8 0.333 0.471"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+y = np.array([1, 0, 1, 0, 1])
+s = np.array([0.9, 0.8, 0.7, 0.3, 0.2])
+order = np.argsort(-s)
+tp = np.cumsum(y[order]); fp = np.cumsum(1 - y[order])
+print(tp.tolist(), fp.tolist(), (tp / np.arange(1, 6)).round(2).tolist())`}</Code>
+          <p>Walking down the ranking: true positives, false positives and precision at each cut. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[1, 1, 2, 2, 3] [0, 1, 1, 2, 2] [1.0, 0.5, 0.67, 0.5, 0.6]", "[1, 1, 2, 2, 3] [0, 1, 1, 2, 2] [1.0, 1.0, 0.67, 0.5, 0.6]", "[1, 2, 3, 3, 3] [0, 0, 0, 1, 2] [1.0, 1.0, 1.0, 0.75, 0.6]", "[1, 1, 2, 2, 3] [1, 1, 2, 2, 2] [1.0, 0.5, 0.67, 0.5, 0.6]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -162,6 +178,64 @@ random.seed(0)
 y = [random.randint(0, 1) for _ in range(60)]
 s = [round(random.random() + 0.3 * t, 1) for t in y]
 assert abs(roc_auc(y, s) - roc_auc_score(y, s)) < 1e-9, 'Ties count one half.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>pr_points(y, scores)</C>, the (precision, recall) pairs obtained by predicting positive for scores ≥ t at each distinct score t from highest to lowest, so that tied scores enter together. Then write <C>average_precision(y, scores)</C> = Σ (Rₖ − Rₖ₋₁)·Pₖ over those points with R₀ = 0, which is scikit-learn&rsquo;s <C>average_precision_score</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def pr_points(y, scores):
+    return []
+
+def average_precision(y, scores):
+    return float(np.mean(y))
+`,
+        solution: `import numpy as np
+
+def pr_points(y, scores):
+    y, s = np.asarray(y), np.asarray(scores)
+    P = y.sum()
+    out = []
+    for t in sorted(set(s.tolist()), reverse=True):
+        pred = s >= t
+        tp = int((y[pred] == 1).sum())
+        out.append((tp / pred.sum(), tp / P))
+    return out
+
+def average_precision(y, scores):
+    ap, prev = 0.0, 0.0
+    for prec, rec in pr_points(y, scores):
+        ap += (rec - prev) * prec
+        prev = rec
+    return ap
+`,
+        tests: [
+          { name: "points", code: `import numpy as np
+pts = pr_points([1, 0, 1, 0, 1], [0.9, 0.8, 0.7, 0.3, 0.2])
+assert np.allclose(pts, [(1, 1 / 3), (0.5, 1 / 3), (2 / 3, 2 / 3), (0.5, 2 / 3), (0.6, 1)])` },
+          { name: "ties", code: `import numpy as np
+pts = pr_points([1, 0, 1], [0.5, 0.5, 0.1])
+assert np.allclose(pts, [(0.5, 0.5), (2 / 3, 1)]), 'Tied scores enter together.'` },
+          { name: "sklearn", code: `import numpy as np
+from sklearn.metrics import average_precision_score
+rng = np.random.default_rng(0)
+for _ in range(30):
+    y = rng.integers(0, 2, 60)
+    if y.sum() == 0:
+        continue
+    s = np.round(rng.uniform(size=60) + 0.5 * y, 1)
+    assert abs(average_precision(y, s) - average_precision_score(y, s)) < 1e-12, 'Agree with scikit-learn, ties included.'` },
         ],
       },
     },

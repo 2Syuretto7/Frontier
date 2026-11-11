@@ -153,6 +153,21 @@ print(np.allclose(P @ P, P), P[1, 1])`}</Code>
       answer: { kind: "numeric", value: 0.8 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+a = np.array([1.0, 2.0, 2.0])
+b = np.array([1.0, 1.0, 1.0])
+P = np.outer(a, a) / (a @ a)
+print(np.round(P @ b, 4), np.allclose(P @ P, P), np.linalg.matrix_rank(P))`}</Code>
+          <p>Projecting onto the line through a = (1, 2, 2). What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0.5556 1.1111 1.1111] True 1", "[0.5556 1.1111 1.1111] False 1", "[1. 1. 1.] True 1", "[0.5556 1.1111 1.1111] True 3"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -186,6 +201,62 @@ assert np.allclose(project([[1, 0], [1, 1], [1, 2]], [6, 0, 0]), [5, 2, -1]), 'T
 rng = np.random.default_rng(5)
 A = rng.standard_normal((6, 3)); b = rng.standard_normal(6)
 assert np.allclose(A.T @ (b - project(A, b)), 0), 'The error b − p must be perpendicular to every column.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>projection_matrix(A)</C>, the matrix projecting onto the column space of A, computed stably from a QR factorisation as QQᵀ (using only the first r columns of Q, where r is the rank found from the diagonal of R with a 1e−10 relative tolerance, after column pivoting is not needed if you use the SVD instead: either is accepted). Then write <C>is_projection(P, tol=1e-10)</C>, true when P is symmetric and P² = P, and <C>reflection(A)</C>, the reflection 2P − I across the column space.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def projection_matrix(A):
+    A = np.asarray(A, float)
+    return A @ np.linalg.inv(A.T @ A) @ A.T
+
+def is_projection(P, tol=1e-10):
+    return True
+
+def reflection(A):
+    return np.eye(np.asarray(A).shape[0])
+`,
+        solution: `import numpy as np
+
+def projection_matrix(A):
+    A = np.asarray(A, float)
+    U, s, _ = np.linalg.svd(A, full_matrices=False)
+    r = int(np.sum(s > 1e-10 * s[0])) if s.size and s[0] > 0 else 0
+    Q = U[:, :r]
+    return Q @ Q.T
+
+def is_projection(P, tol=1e-10):
+    P = np.asarray(P, float)
+    return bool(np.allclose(P, P.T, atol=tol) and np.allclose(P @ P, P, atol=tol))
+
+def reflection(A):
+    P = projection_matrix(A)
+    return 2 * P - np.eye(len(P))
+`,
+        tests: [
+          { name: "line", code: `import numpy as np
+P = projection_matrix([[1], [2], [2]])
+assert np.allclose(P, np.outer([1, 2, 2], [1, 2, 2]) / 9) and is_projection(P), 'aaᵀ/aᵀa.'` },
+          { name: "dependent", code: `import numpy as np
+P = projection_matrix([[1, 2], [2, 4], [2, 4]])
+assert np.allclose(P, np.outer([1, 2, 2], [1, 2, 2]) / 9), 'Dependent columns: AᵀA is singular, but the projection exists.'` },
+          { name: "check", code: `import numpy as np
+assert is_projection(np.diag([1.0, 0.0, 1.0])) and not is_projection([[1, 1], [0, 0]]) and not is_projection(2 * np.eye(2)), 'Symmetric and idempotent.'` },
+          { name: "reflection", code: `import numpy as np
+Rf = reflection([[1], [1]])
+assert np.allclose(Rf, [[0, 1], [1, 0]]) and np.allclose(Rf @ Rf, np.eye(2)), 'Reflecting in y = x swaps coordinates; doing it twice is the identity.'` },
         ],
       },
     },

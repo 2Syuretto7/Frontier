@@ -146,6 +146,20 @@ print(x[0])`}</Code>
       answer: { kind: "numeric", value: 3 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+A = np.array([[2.0, 1.0], [5.0, 3.0]])
+Ainv = np.linalg.inv(A)
+print(Ainv, np.linalg.det(A).round(6))`}</Code>
+          <p>The inverse of a 2 × 2 matrix with determinant 1. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[[ 3. -1.]\n [-5.  2.]] 1.0", "[[ 2. -1.]\n [-5.  3.]] 1.0", "[[ 3. -5.]\n [-1.  2.]] 1.0", "[[ 3. -1.]\n [-5.  2.]] -1.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -180,6 +194,73 @@ assert np.allclose(inverse2([[2, 1], [1, 1]]), [[1, -1], [-1, 2]]), 'The inverse
 M = [[4, 7], [2, 6]]
 assert np.allclose(np.array(M) @ inverse2(M), np.eye(2)), 'M times its inverse should be the identity. Did you divide by ad − bc?'` },
           { name: "singular", code: `assert inverse2([[2, 4], [1, 2]]) is None, 'A matrix with ad − bc = 0 has no inverse: return None.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>gauss_jordan_inverse(A)</C>, which inverts a square matrix by row-reducing [A | I] with partial pivoting (swap in the row with the largest absolute entry in the pivot column), raising <C>np.linalg.LinAlgError</C> if a pivot is below 1e−12 times the largest entry of A. Then write <C>sherman_morrison(Ainv, u, v)</C>, the inverse of A + uvᵀ from A⁻¹ in O(n²) time: A⁻¹ − (A⁻¹u)(vᵀA⁻¹)/(1 + vᵀA⁻¹u).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def gauss_jordan_inverse(A):
+    return np.linalg.inv(A)
+
+def sherman_morrison(Ainv, u, v):
+    return Ainv
+`,
+        solution: `import numpy as np
+
+def gauss_jordan_inverse(A):
+    A = np.asarray(A, float)
+    n = len(A)
+    M = np.hstack([A, np.eye(n)])
+    scale = np.abs(A).max() if A.size else 1.0
+    for c in range(n):
+        k = c + int(np.argmax(np.abs(M[c:, c])))
+        if abs(M[k, c]) < 1e-12 * scale:
+            raise np.linalg.LinAlgError('singular')
+        M[[c, k]] = M[[k, c]]
+        M[c] /= M[c, c]
+        for i in range(n):
+            if i != c:
+                M[i] -= M[i, c] * M[c]
+    return M[:, n:]
+
+def sherman_morrison(Ainv, u, v):
+    Ainv, u, v = np.asarray(Ainv, float), np.asarray(u, float), np.asarray(v, float)
+    Au = Ainv @ u
+    vA = v @ Ainv
+    return Ainv - np.outer(Au, vA) / (1 + v @ Au)
+`,
+        tests: [
+          { name: "small", code: `import numpy as np
+assert np.allclose(gauss_jordan_inverse([[2, 1], [5, 3]]), [[3, -1], [-5, 2]]), 'The inverse of [[2, 1], [5, 3]].'` },
+          { name: "pivoting", code: `import numpy as np
+A = np.array([[0.0, 1.0], [1.0, 0.0]])
+assert np.allclose(gauss_jordan_inverse(A), A) and np.allclose(gauss_jordan_inverse([[1e-20, 1], [1, 1]]) @ np.array([[1e-20, 1], [1, 1]]), np.eye(2)), 'A zero or tiny pivot needs a row swap.'` },
+          { name: "singular", code: `import numpy as np
+try:
+    gauss_jordan_inverse([[1, 2], [2, 4]])
+    ok = False
+except np.linalg.LinAlgError:
+    ok = True
+assert ok, 'Singular matrices have no inverse.'` },
+          { name: "no numpy inverse", code: `import inspect
+assert 'linalg.inv' not in inspect.getsource(gauss_jordan_inverse) and 'solve' not in inspect.getsource(gauss_jordan_inverse), 'Row-reduce [A | I] yourself.'` },
+          { name: "rank one", code: `import numpy as np
+rng = np.random.default_rng(7)
+A = rng.normal(size=(6, 6)) + 6 * np.eye(6)
+u, v = rng.normal(size=6), rng.normal(size=6)
+assert np.allclose(sherman_morrison(np.linalg.inv(A), u, v), np.linalg.inv(A + np.outer(u, v))), 'Update the inverse cheaply.'` },
         ],
       },
     },

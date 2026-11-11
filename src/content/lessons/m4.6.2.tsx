@@ -153,6 +153,20 @@ print(round(sens * p_ill / p_pos, 3))`}</Code>
       answer: { kind: "numeric", value: 0.047, tolerance: 0.0005 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from fractions import Fraction
+prior, sens, spec = Fraction(1, 100), Fraction(9, 10), Fraction(9, 10)
+p_pos = prior * sens + (1 - prior) * (1 - spec)
+print(p_pos, prior * sens / p_pos)`}</Code>
+          <p>A test that is 90 per cent accurate for a condition with 1 per cent prevalence. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["27/250 1/12", "27/250 9/10", "1/10 1/11", "27/250 1/11"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -180,6 +194,69 @@ post = posterior(posterior({'ill': 0.001, 'well': 0.999}, lik), lik)
 assert abs(post['ill'] - 0.7104) < 1e-4, 'Yesterday’s posterior is today’s prior.'` },
           { name: "urns", code: `post = posterior({1: 0.5, 2: 0.5}, {1: 0.75, 2: 0.25})
 assert abs(post[1] - 0.75) < 1e-12, 'A red ball favours the urn with more red balls.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>conditional(space, A, B)</C>, P(A | B) as a <C>Fraction</C> for a finite list of equally likely outcomes and predicates A and B, raising <C>ValueError</C> if no outcome satisfies B. Then generalise Monty Hall: there are n doors, you pick one, the host (who knows where the car is) opens k empty doors other than yours, and you switch to one of the other unopened doors uniformly at random. Write <C>monty_exact(n, k)</C>, the exact winning probability (n − 1)/(n(n − k − 1)), and <C>monty_sim(n, k, trials, seed)</C>, a simulation of the game with <C>random.Random(seed)</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `from fractions import Fraction
+
+def conditional(space, A, B):
+    return Fraction(sum(1 for w in space if A(w)), len(space))
+
+def monty_exact(n, k):
+    return Fraction(1, n)
+
+def monty_sim(n, k, trials, seed):
+    return 1 / n
+`,
+        solution: `from fractions import Fraction
+import random
+
+def conditional(space, A, B):
+    b = [w for w in space if B(w)]
+    if not b:
+        raise ValueError('P(B) = 0')
+    return Fraction(sum(1 for w in b if A(w)), len(b))
+
+def monty_exact(n, k):
+    return Fraction(n - 1, n * (n - k - 1))
+
+def monty_sim(n, k, trials, seed):
+    rng = random.Random(seed)
+    wins = 0
+    for _ in range(trials):
+        car, pick = rng.randrange(n), rng.randrange(n)
+        opened = set(rng.sample([d for d in range(n) if d != pick and d != car], k))
+        new = rng.choice([d for d in range(n) if d != pick and d not in opened])
+        wins += new == car
+    return wins / trials
+`,
+        tests: [
+          { name: "conditional", code: `from itertools import product
+from fractions import Fraction
+dice = list(product(range(1, 7), repeat=2))
+assert conditional(dice, lambda w: sum(w) == 8, lambda w: w[0] == w[1]) == Fraction(1, 6) and conditional(dice, lambda w: w[0] == 6, lambda w: sum(w) >= 11) == Fraction(2, 3), 'Given doubles, only (4, 4) totals 8.'
+try:
+    conditional(dice, lambda w: True, lambda w: sum(w) > 12)
+    assert False, 'P(B) = 0 must raise.'
+except ValueError:
+    pass` },
+          { name: "exact", code: `from fractions import Fraction
+assert monty_exact(3, 1) == Fraction(2, 3) and monty_exact(100, 98) == Fraction(99, 100) and monty_exact(4, 1) == Fraction(3, 8) and monty_exact(4, 2) == Fraction(3, 4), 'Switching after one of three: 2/3.'` },
+          { name: "simulate", code: `for n, k in ((3, 1), (4, 1), (10, 5)):
+    s = monty_sim(n, k, 20000, 3)
+    assert abs(s - (n - 1) / (n * (n - k - 1))) < 0.02, f'Simulation for n={n}, k={k} gave {s}'` },
         ],
       },
     },

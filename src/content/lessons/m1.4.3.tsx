@@ -150,6 +150,19 @@ print(sorted(A - B), sorted(A ^ B))`}</Code>
       answer: { kind: "numeric", value: 3 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`A = set('mathematics')
+B = set('statistics')
+print(len(A), len(B), sorted(A & B), sorted(A ^ B))`}</Code>
+          <p>Distinct letters, intersection and symmetric difference. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["8 5 ['a', 'c', 'i', 's', 't'] ['e', 'h', 'm']", "11 10 ['a', 'c', 'i', 's', 't'] ['e', 'h', 'm']", "8 5 ['a', 'i', 's', 't'] ['c', 'e', 'h', 'm']", "8 5 ['a', 'c', 'i', 's', 't'] ['e', 'h', 'm', 'a']"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -184,6 +197,45 @@ def difference(A, B):
 assert union(A, B) == {1, 2, 3, 4, 5} and intersection(A, B) == {3, 4} and difference(A, B) == {1, 2}, 'Check each operation on A = {1, 2, 3, 4}, B = {3, 4, 5}.'` },
           { name: "De Morgan", code: `U = set(range(10)); A, B = {1, 2, 3}, {3, 4}
 assert difference(U, union(A, B)) == intersection(difference(U, A), difference(U, B)), 'The complement of a union is the intersection of the complements.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>venn_counts(A, B, C)</C>, which returns a dict from each of the 7 regions of a three-set Venn diagram to its size, keyed by the string of the sets it lies in (<C>"A"</C>, <C>"B"</C>, <C>"C"</C>, <C>"AB"</C>, <C>"AC"</C>, <C>"BC"</C>, <C>"ABC"</C>), computed with set operations. Then write <C>union_size(A, B, C)</C> by inclusion-exclusion from the sizes of the sets and their intersections only (no <C>|</C> or <C>union</C>).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def venn_counts(A, B, C):
+    return {}
+
+def union_size(A, B, C):
+    return len(A) + len(B) + len(C)
+`,
+        solution: `def venn_counts(A, B, C):
+    return {'A': len(A - B - C), 'B': len(B - A - C), 'C': len(C - A - B),
+            'AB': len((A & B) - C), 'AC': len((A & C) - B), 'BC': len((B & C) - A), 'ABC': len(A & B & C)}
+
+def union_size(A, B, C):
+    return len(A) + len(B) + len(C) - len(A & B) - len(A & C) - len(B & C) + len(A & B & C)
+`,
+        tests: [
+          { name: "regions", code: `A, B, C = set(range(0, 10)), set(range(5, 15)), set(range(8, 20))
+assert venn_counts(A, B, C) == {'A': 5, 'B': 0, 'C': 5, 'AB': 3, 'AC': 0, 'BC': 5, 'ABC': 2}, 'Each element lies in exactly one region.'` },
+          { name: "total", code: `import random
+random.seed(4)
+for _ in range(50):
+    A, B, C = ({random.randint(0, 30) for _ in range(15)} for _ in range(3))
+    assert sum(venn_counts(A, B, C).values()) == len(A | B | C) == union_size(A, B, C)` },
+          { name: "no union", code: `import inspect
+src = inspect.getsource(union_size)
+assert '|' not in src and 'union' not in src.replace('union_size', ''), 'Use inclusion-exclusion.'` },
         ],
       },
     },

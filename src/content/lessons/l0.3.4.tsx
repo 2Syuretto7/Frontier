@@ -151,6 +151,21 @@ print(z, 1 if z > 0 else 0)`}</Code>
       answer: { kind: "choice", options: ["0.5 1", "1.0 1", "-0.5 0", "0.5 0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+w, b = [2.0, -1.0], -0.5
+for x in ([1, 1], [0, 1], [1, 0]):
+    z = sum(wi * xi for wi, xi in zip(w, x)) + b
+    print(z, round(1 / (1 + math.exp(-z)), 3))`}</Code>
+          <p>A neuron with a sigmoid on three inputs. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.5 0.622\n-1.5 0.182\n1.5 0.818", "0.5 0.622\n-1.5 0.818\n1.5 0.182", "1.0 0.731\n-1.0 0.269\n2.0 0.881", "0.5 0.5\n-1.5 0.0\n1.5 1.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -178,6 +193,53 @@ OR_W, OR_B = [1, 1], -0.5
           { name: "neuron", code: `assert neuron([2, -1], -0.5, [1, 1]) == 1 and neuron([2, -1], -0.5, [0, 1]) == 0, 'Fire when the weighted sum plus bias is positive.'` },
           { name: "gates", code: `ins = [(0, 0), (0, 1), (1, 0), (1, 1)]
 assert [neuron(AND_W, AND_B, x) for x in ins] == [0, 0, 0, 1] and [neuron(OR_W, OR_B, x) for x in ins] == [0, 1, 1, 1], 'AND needs both inputs: try a bias between −2 and −1.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Train the neuron. Write <C>predict_proba(w, b, x)</C>, σ(w·x + b), and <C>train_neuron(data, lr, epochs)</C>, which starts from zero weights and bias and, for each epoch, goes through the (x, y) pairs in order (y is 0 or 1), updating w ← w − lr·(p − y)·x and b ← b − lr·(p − y), the gradient of the cross-entropy loss. Return (w, b) with w a list.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def predict_proba(w, b, x):
+    return 0.5
+
+def train_neuron(data, lr, epochs):
+    return [0.0] * len(data[0][0]), 0.0
+`,
+        solution: `import math
+
+def predict_proba(w, b, x):
+    z = sum(wi * xi for wi, xi in zip(w, x)) + b
+    return 1 / (1 + math.exp(-z))
+
+def train_neuron(data, lr, epochs):
+    w = [0.0] * len(data[0][0])
+    b = 0.0
+    for _ in range(epochs):
+        for x, y in data:
+            g = predict_proba(w, b, x) - y
+            w = [wi - lr * g * xi for wi, xi in zip(w, x)]
+            b -= lr * g
+    return w, b
+`,
+        tests: [
+          { name: "proba", code: `assert predict_proba([0, 0], 0, [5, 5]) == 0.5 and abs(predict_proba([2, -1], -0.5, [1, 1]) - 0.6224593312) < 1e-9` },
+          { name: "one step", code: `w, b = train_neuron([([1.0, 2.0], 1)], 0.1, 1)
+assert w == [0.05, 0.1] and b == 0.05, 'From zero, p = 0.5, so the step is 0.1 · 0.5 · x.'` },
+          { name: "and", code: `data = [([0, 0], 0), ([0, 1], 0), ([1, 0], 0), ([1, 1], 1)]
+w, b = train_neuron(data, 0.5, 2000)
+assert all((predict_proba(w, b, x) > 0.5) == bool(y) for x, y in data) and predict_proba(w, b, [1, 1]) > 0.9, 'One neuron learns AND.'` },
+          { name: "xor", code: `data = [([0, 0], 0), ([0, 1], 1), ([1, 0], 1), ([1, 1], 0)]
+w, b = train_neuron(data, 0.5, 2000)
+assert sum((predict_proba(w, b, x) > 0.5) == bool(y) for x, y in data) < 4, 'But not XOR.'` },
         ],
       },
     },

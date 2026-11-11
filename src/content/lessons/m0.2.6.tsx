@@ -179,6 +179,21 @@ print(np.polymul([1, 2], [1, -3]))`}</Code>
       answer: { kind: "choice", options: ["[ 1 -1 -6]", "[ 1  5 -6]", "[ 1 -1  6]", "[ 1 -6]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+p = np.poly1d([1, -5, 6])
+q = np.poly1d([1, -2])
+quot, rem = np.polydiv(p.coeffs, q.coeffs)
+print(quot, rem)`}</Code>
+          <p>Dividing x² − 5x + 6 by x − 2. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[ 1. -3.] [0.]", "[ 1. 3.] [0.]", "[ 1. -3.] [6.]", "[-3. 1.] [0.]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -203,6 +218,67 @@ print(np.polymul([1, 2], [1, -3]))`}</Code>
         tests: [
           { name: "binomials", code: `assert multiply([2, 1], [-3, 1]) == [-6, -1, 1], '(2 + x)(−3 + x) = −6 − x + x².'` },
           { name: "square", code: `assert multiply([1, 1], [1, 1]) == [1, 2, 1] and multiply([1, 0, 1], [1, 0, -1]) == [1, 0, 0, 0, -1], '(1 + x)² = 1 + 2x + x².'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>divide(p, d)</C>, polynomial long division with coefficient lists highest power first (as in <C>[1, -5, 6]</C> for x² − 5x + 6), returning (quotient, remainder) with the remainder shorter than d. Use <C>fractions.Fraction</C> so the results are exact. Then write <C>rational_roots(p)</C> for a polynomial with integer coefficients and non-zero constant term, the sorted list of its rational roots, testing every ±(divisor of constant)/(divisor of leading).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `from fractions import Fraction
+
+def divide(p, d):
+    return ([Fraction(p[0], d[0])], [])
+
+def rational_roots(p):
+    return []
+`,
+        solution: `from fractions import Fraction
+
+def divide(p, d):
+    p = [Fraction(c) for c in p]
+    q = []
+    while len(p) >= len(d):
+        c = p[0] / d[0]
+        q.append(c)
+        for i in range(len(d)):
+            p[i] -= c * d[i]
+        p.pop(0)
+    return (q, p)
+
+def divisors(n):
+    n = abs(n)
+    return [k for k in range(1, n + 1) if n % k == 0]
+
+def rational_roots(p):
+    def val(x):
+        r = Fraction(0)
+        for c in p:
+            r = r * x + c
+        return r
+    cands = {Fraction(s * a, b) for a in divisors(p[-1]) for b in divisors(p[0]) for s in (1, -1)}
+    return sorted(x for x in cands if val(x) == 0)
+`,
+        tests: [
+          { name: "exact", code: `q, r = divide([1, -5, 6], [1, -2])
+assert q == [1, -3] and all(c == 0 for c in r), 'x² − 5x + 6 = (x − 2)(x − 3).'` },
+          { name: "remainder", code: `q, r = divide([2, 0, 3, -1], [1, 1])
+assert q == [2, -2, 5] and r == [-6], 'Divide by x + 1: the remainder is p(−1) = −6.'` },
+          { name: "fractions", code: `from fractions import Fraction
+q, r = divide([1, 0, 1], [2, 1])
+assert q == [Fraction(1, 2), Fraction(-1, 4)] and r == [Fraction(5, 4)], 'Keep exact fractions.'` },
+          { name: "roots", code: `from fractions import Fraction
+assert rational_roots([1, -5, 6]) == [2, 3] and rational_roots([2, -1, -1]) == [Fraction(-1, 2), 1] and rational_roots([1, 0, 1]) == [], 'Test every candidate p/q.'` },
+          { name: "cubic", code: `from fractions import Fraction
+assert rational_roots([6, -11, -3, 2]) == [Fraction(-1, 2), Fraction(1, 3), 2], '6x³ − 11x² − 3x + 2 has three rational roots.'` },
         ],
       },
     },

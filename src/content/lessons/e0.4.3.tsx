@@ -142,6 +142,18 @@ print(s[0], s[-1], s[2:5], s[::-1][:3])`}</Code>
       answer: { kind: "choice", options: ["F r ont rei", "F r on rei", "F r ont Fro", "r F ont rei"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`s = "Hello, World"
+print(s[::-1][:5], s.find("o"), s.count("l"), s.replace("l", "L", 2), s.split(", "))`}</Code>
+          <p>Slicing backwards, searching, counting and replacing in a string. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["dlroW 4 3 HeLLo, World ['Hello', 'World']", "dlroW 4 3 HeLLo, WorLd ['Hello', 'World']", "olleH 4 3 HeLLo, World ['Hello', 'World']", "dlroW 7 3 HeLLo, World ['Hello,', 'World']"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -163,6 +175,71 @@ print(s[0], s[-1], s[2:5], s[::-1][:3])`}</Code>
         tests: [
           { name: "plain", code: `assert is_palindrome('level') and not is_palindrome('python'), 'Compare the string with its reverse.'` },
           { name: "messy", code: `assert is_palindrome('Never odd or even.'), 'Drop spaces and punctuation and ignore case.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>caesar(text, shift)</C>, which shifts each letter a–z and A–Z by shift places around the alphabet (keeping its case) and leaves other characters alone; a negative shift undoes a positive one. Then write <C>rle_encode(s)</C>, run-length encoding such as <C>"aaabcc"</C> → <C>"a3b1c2"</C>, and <C>rle_decode(code)</C>, which inverts it (counts may have several digits; the text has no digits).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def caesar(text, shift):
+    return text
+
+def rle_encode(s):
+    return s
+
+def rle_decode(code):
+    return code
+`,
+        solution: `def caesar(text, shift):
+    out = []
+    for ch in text:
+        if 'a' <= ch <= 'z':
+            out.append(chr((ord(ch) - 97 + shift) % 26 + 97))
+        elif 'A' <= ch <= 'Z':
+            out.append(chr((ord(ch) - 65 + shift) % 26 + 65))
+        else:
+            out.append(ch)
+    return ''.join(out)
+
+def rle_encode(s):
+    out, i = [], 0
+    while i < len(s):
+        j = i
+        while j < len(s) and s[j] == s[i]:
+            j += 1
+        out.append(s[i] + str(j - i))
+        i = j
+    return ''.join(out)
+
+def rle_decode(code):
+    out, i = [], 0
+    while i < len(code):
+        ch = code[i]
+        j = i + 1
+        while j < len(code) and code[j].isdigit():
+            j += 1
+        out.append(ch * int(code[i + 1:j]))
+        i = j
+    return ''.join(out)
+`,
+        tests: [
+          { name: "caesar", code: `assert caesar('Hello, World!', 3) == 'Khoor, Zruog!' and caesar('xyz XYZ', 2) == 'zab ZAB' and caesar(caesar('Round trip 123', 11), -11) == 'Round trip 123' and caesar('abc', 52) == 'abc'` },
+          { name: "encode", code: `assert rle_encode('aaabcc') == 'a3b1c2' and rle_encode('') == '' and rle_encode('z' * 12) == 'z12' and rle_encode('abab') == 'a1b1a1b1'` },
+          { name: "decode", code: `import random
+random.seed(2)
+for _ in range(100):
+    s = ''.join(random.choice('ab ') * random.randint(1, 15) for _ in range(random.randint(0, 6)))
+    assert rle_decode(rle_encode(s)) == s, f'Round trip failed for {s!r}'
+assert rle_decode('x10y1') == 'x' * 10 + 'y'` },
         ],
       },
     },

@@ -194,6 +194,19 @@ export const lesson: LessonContent = {
       answer: { kind: "choice", options: ["[-5, -4, -3]", "[3, 4, 5]", "[-5, -4, -3, -2]", "[]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`xs = range(-5, 6)
+sol = [x for x in xs if abs(2 * x - 1) <= 5]
+print(len(sol), sol[0], sol[-1])`}</Code>
+          <p>Which integers from −5 to 5 satisfy |2x − 1| ≤ 5? The code prints how many, then the smallest and largest.</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["6 -2 3", "5 -2 3", "6 -3 3", "7 -2 4"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -217,6 +230,41 @@ export const lesson: LessonContent = {
 assert d == '>' and abs(t - 2) < 1e-9, '3x + 1 > 7 gives x > 2.'` },
           { name: "negative", code: `d, t = solve_ineq(-2, 1, 5)
 assert d == '<' and abs(t + 2) < 1e-9, 'Dividing by −2 flips the inequality: x < −2.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>solve_abs(a, b, c)</C> for the inequality |ax + b| ≤ c with a ≠ 0, returning the solution set as a closed interval (lo, hi), or <C>None</C> if it is empty. Remember that dividing by a negative a reverses the inequalities.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def solve_abs(a, b, c):
+    return ((-c - b) / a, (c - b) / a)
+`,
+        solution: `def solve_abs(a, b, c):
+    if c < 0:
+        return None
+    lo, hi = (-c - b) / a, (c - b) / a
+    return (min(lo, hi), max(lo, hi))
+`,
+        tests: [
+          { name: "positive a", code: `assert solve_abs(2, -1, 5) == (-2.0, 3.0), '−5 ≤ 2x − 1 ≤ 5 gives −2 ≤ x ≤ 3.'` },
+          { name: "negative a", code: `assert solve_abs(-1, 4, 2) == (2.0, 6.0), 'Dividing by −1 swaps the ends.'` },
+          { name: "empty", code: `assert solve_abs(3, 1, -1) is None, 'An absolute value is never negative.'` },
+          { name: "point", code: `assert solve_abs(4, -8, 0) == (2.0, 2.0), '|4x − 8| ≤ 0 only at x = 2.'` },
+          { name: "brute", code: `import itertools
+for a, b, c in [(3, 2, 7), (-2, 5, 4), (5, -5, 1)]:
+    lo, hi = solve_abs(a, b, c)
+    for k in range(-400, 401):
+        x = k / 40
+        assert (abs(a * x + b) <= c + 1e-12) == (lo - 1e-12 <= x <= hi + 1e-12), (a, b, c, x)` },
         ],
       },
     },

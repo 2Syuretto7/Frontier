@@ -127,6 +127,20 @@ print(confusion_matrix(y, p).ravel())`}</Code>
       answer: { kind: "choice", options: ["[4 1 1 2]", "[2 1 1 4]", "[4 1 2 1]", "[1 1 4 2]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from sklearn.metrics import confusion_matrix
+y = [0, 1, 2, 2, 1, 0, 2]
+p = [0, 2, 2, 2, 1, 1, 0]
+print(confusion_matrix(y, p).tolist())`}</Code>
+          <p>scikit-learn&rsquo;s confusion matrix for three classes (rows are true labels). What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[[1, 1, 0], [0, 1, 1], [1, 0, 2]]", "[[1, 0, 1], [1, 1, 0], [0, 1, 2]]", "[[1, 1, 0], [1, 1, 0], [0, 1, 2]]", "[[2, 0, 0], [0, 2, 0], [0, 0, 3]]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -157,6 +171,55 @@ def accuracy_from(c):
           { name: "counts", code: `c = confusion([1, 1, 1, 0, 0, 0, 0, 0], [1, 0, 1, 1, 0, 0, 0, 0])
 assert c == {'tp': 2, 'fp': 1, 'fn': 1, 'tn': 4}, 'A false positive predicts 1 when the truth is 0.'` },
           { name: "accuracy", code: `assert accuracy_from({'tp': 2, 'fp': 1, 'fn': 1, 'tn': 4}) == 0.75, '6 of 8 are right.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Mistakes have different costs. Write <C>expected_cost(y, probs, t, cost_fp, cost_fn)</C>, the total cost of predicting 1 when the probability is at least t. Then write <C>best_threshold(y, probs, cost_fp, cost_fn)</C>, the cost-minimising threshold among the distinct probabilities and 1.0 + 1e−9 (which predicts nothing positive), choosing the smallest on ties, and <C>bayes_threshold(cost_fp, cost_fn)</C> = c_fp/(c_fp + c_fn), the optimal threshold when the probabilities are calibrated.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def expected_cost(y, probs, t, cost_fp, cost_fn):
+    return 0.0
+
+def best_threshold(y, probs, cost_fp, cost_fn):
+    return 0.5
+
+def bayes_threshold(cost_fp, cost_fn):
+    return 0.5
+`,
+        solution: `import numpy as np
+
+def expected_cost(y, probs, t, cost_fp, cost_fn):
+    y, pred = np.asarray(y), np.asarray(probs) >= t
+    return float(cost_fp * np.sum(pred & (y == 0)) + cost_fn * np.sum(~pred & (y == 1)))
+
+def best_threshold(y, probs, cost_fp, cost_fn):
+    cands = sorted(set(np.asarray(probs).tolist()) | {1.0 + 1e-9})
+    return min(cands, key=lambda t: (expected_cost(y, probs, t, cost_fp, cost_fn), t))
+
+def bayes_threshold(cost_fp, cost_fn):
+    return cost_fp / (cost_fp + cost_fn)
+`,
+        tests: [
+          { name: "cost", code: `y = [0, 0, 1, 1, 0]; p = [0.1, 0.6, 0.4, 0.9, 0.3]
+assert expected_cost(y, p, 0.5, 1, 5) == 1 + 5 and expected_cost(y, p, 0.35, 1, 5) == 1 + 0 and expected_cost(y, p, 2, 1, 5) == 10` },
+          { name: "best", code: `y = [0, 0, 1, 1, 0]; p = [0.1, 0.6, 0.4, 0.9, 0.3]
+assert best_threshold(y, p, 1, 5) == 0.4 and best_threshold(y, p, 10, 1) == 0.9 and best_threshold([0, 0], [0.2, 0.8], 1, 1) == 1.0 + 1e-9, 'Expensive misses push the threshold down.'` },
+          { name: "bayes", code: `import numpy as np
+rng = np.random.default_rng(0)
+p = rng.uniform(0, 1, 20000); y = (rng.uniform(0, 1, 20000) < p).astype(int)
+t = best_threshold(y, p, 1, 4)
+assert bayes_threshold(1, 4) == 0.2 and abs(t - 0.2) < 0.03, 'With calibrated probabilities the best threshold is near c_fp/(c_fp + c_fn).'` },
         ],
       },
     },

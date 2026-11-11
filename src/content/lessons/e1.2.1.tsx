@@ -142,6 +142,22 @@ print(blob_id("hello\\n")[:7], blob_id("hello\\n") == blob_id("hello\\n"))`}</Co
       answer: { kind: "choice", options: ["ce01362 True", "ce01362 False", "aaf4c61 True", "a different hash each run"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import hashlib
+def h(s):
+    return hashlib.sha1(s.encode()).hexdigest()[:7]
+a = h("tree t1\\n\\nfirst")
+b = h("tree t1\\nparent " + a + "\\n\\nsecond")
+print(len(a), a == h("tree t1\\n\\nfirst"), b == h("tree t1\\nparent " + a + "\\n\\nsecond!"))`}</Code>
+          <p>Commit ids are hashes of content, and changing one character changes the hash. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["7 True False", "40 True False", "7 True True", "7 False False"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -169,6 +185,80 @@ def commit_id(tree, parent, message):
 assert commit_id('t1', None, 'init') == hashlib.sha1(b'tree t1\\n\\ninit').hexdigest(), 'A first commit has no parent line.'` },
           { name: "chain", code: `import hashlib
 assert commit_id('t2', 'abc', 'fix') == hashlib.sha1(b'tree t2\\nparent abc\\n\\nfix').hexdigest(), 'Include the parent, so changing history changes every later id.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Build a tiny content-addressed repository. Write a class <C>Repo</C> with <C>add(path, text)</C>, which stages a file; <C>commit(message)</C>, which stores the staged snapshot and returns the commit id; <C>log()</C>, the messages from newest to oldest; and <C>checkout(commit_id)</C>, a dict of path to text at that commit. Ids are SHA-1 hex digests: a blob id hashes <C>"blob " + text</C>, a tree id hashes the sorted lines <C>{`f"{path} {blob_id}"`}</C> joined by newlines, and a commit id hashes <C>{`f"tree {tree}\\nparent {parent}\\n\\n{message}"`}</C> (parent is <C>"none"</C> for the first). Staged files carry over to the next commit.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `class Repo:
+    def add(self, path, text):
+        pass
+    def commit(self, message):
+        return ''
+    def log(self):
+        return []
+    def checkout(self, commit_id):
+        return {}
+`,
+        solution: `import hashlib
+
+def _h(s):
+    return hashlib.sha1(s.encode()).hexdigest()
+
+class Repo:
+    def __init__(self):
+        self.objects = {}
+        self.index = {}
+        self.head = None
+    def add(self, path, text):
+        bid = _h('blob ' + text)
+        self.objects[bid] = text
+        self.index[path] = bid
+    def commit(self, message):
+        lines = '\\n'.join(f'{p} {b}' for p, b in sorted(self.index.items()))
+        tree = _h(lines)
+        self.objects[tree] = dict(self.index)
+        parent = self.head or 'none'
+        cid = _h(f'tree {tree}\\nparent {parent}\\n\\n{message}')
+        self.objects[cid] = (tree, self.head, message)
+        self.head = cid
+        return cid
+    def log(self):
+        out, c = [], self.head
+        while c is not None:
+            tree, parent, msg = self.objects[c]
+            out.append(msg)
+            c = parent
+        return out
+    def checkout(self, commit_id):
+        tree = self.objects[commit_id][0]
+        return {p: self.objects[b] for p, b in self.objects[tree].items()}
+`,
+        tests: [
+          { name: "history", code: `r = Repo()
+r.add('a.txt', 'one'); c1 = r.commit('first')
+r.add('b.txt', 'two'); r.add('a.txt', 'ONE'); c2 = r.commit('second')
+assert r.log() == ['second', 'first'] and r.checkout(c1) == {'a.txt': 'one'} and r.checkout(c2) == {'a.txt': 'ONE', 'b.txt': 'two'}, 'Each commit is a full snapshot.'` },
+          { name: "ids", code: `import hashlib
+h = lambda s: hashlib.sha1(s.encode()).hexdigest()
+r = Repo(); r.add('x', 'hi'); c = r.commit('m')
+tree = h('x ' + h('blob hi'))
+assert c == h(f'tree {tree}\\nparent none\\n\\nm'), 'Follow the hashing recipe exactly.'
+r2 = Repo(); r2.add('x', 'hi'); assert r2.commit('m') == c, 'Same content, same id.'` },
+          { name: "parent", code: `a, b = Repo(), Repo()
+a.add('f', '1'); a.commit('base'); a.add('f', '2'); ca = a.commit('same')
+b.add('f', '2'); cb = b.commit('same')
+assert ca != cb, 'Same tree and message but a different parent gives a different id.'` },
         ],
       },
     },

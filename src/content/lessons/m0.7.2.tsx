@@ -140,6 +140,20 @@ export const lesson: LessonContent = {
       answer: { kind: "choice", options: ["385 49", "385 64", "55 49", "100 49"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`s1 = sum(k * k for k in range(1, 11))
+s2 = sum(range(1, 11)) ** 2
+s3 = sum(1 / (k * (k + 1)) for k in range(1, 100))
+print(s1, s2, round(s3, 2))`}</Code>
+          <p>Three sums: of squares, the square of a sum, and a telescoping sum. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["385 3025 0.99", "385 385 0.99", "3025 385 0.99", "385 3025 1.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -160,6 +174,42 @@ export const lesson: LessonContent = {
         tests: [
           { name: "inclusive", code: `assert sigma(lambda k: k, 1, 100) == 5050 and sigma(lambda k: k * k, 1, 10) == 385, 'Both limits are included.'` },
           { name: "empty", code: `assert sigma(lambda k: k, 5, 4) == 0, 'An empty sum is 0.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>power_sum(p, n)</C>, the exact value of 1ᵖ + 2ᵖ + … + nᵖ for p ≥ 0 and n up to 10¹², without looping to n. Use the recurrence from the binomial theorem: (n+1)^(p+1) − 1 = Σⱼ₌₀ᵖ C(p+1, j)·S_j(n), so S_p(n) = ((n+1)^(p+1) − 1 − Σⱼ&lt;ₚ C(p+1, j)·S_j(n)) / (p + 1). Work in integers (the division is exact).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def power_sum(p, n):
+    return n ** (p + 1) // (p + 1)
+`,
+        solution: `from math import comb
+
+def power_sum(p, n):
+    S = []
+    for q in range(p + 1):
+        t = (n + 1) ** (q + 1) - 1 - sum(comb(q + 1, j) * S[j] for j in range(q))
+        S.append(t // (q + 1))
+    return S[p]
+`,
+        tests: [
+          { name: "known", code: `assert power_sum(0, 10) == 10 and power_sum(1, 10) == 55 and power_sum(2, 10) == 385 and power_sum(3, 10) == 3025, 'Sums of 1, k, k², k³ up to 10.'` },
+          { name: "brute", code: `assert all(power_sum(p, n) == sum(k ** p for k in range(1, n + 1)) for p in range(8) for n in range(0, 30)), 'Check against direct sums.'` },
+          { name: "huge", code: `n = 10 ** 12
+assert power_sum(1, n) == n * (n + 1) // 2 and power_sum(3, n) == (n * (n + 1) // 2) ** 2, 'The sum of cubes is the square of the sum.'` },
+          { name: "fast", code: `import time
+t = time.time()
+power_sum(10, 10 ** 15)
+assert time.time() - t < 1, 'Do not loop to n.'` },
         ],
       },
     },

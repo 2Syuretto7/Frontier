@@ -138,6 +138,24 @@ print(area(2))`}</Code>
       answer: { kind: "numeric", value: 12 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import sys, types
+m = types.ModuleType("cfg")
+m.x = 1
+sys.modules["cfg"] = m
+import cfg
+cfg.x += 1
+import cfg as again
+print(again.x, again is m, "cfg" in sys.modules)`}</Code>
+          <p>Importing a module that is already in sys.modules. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2 True True", "1 False True", "1 True True", "2 False False"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -163,12 +181,89 @@ for m in [k for k in sys.modules if k == 'stats' or k.startswith('stats.')]:
 importlib.invalidate_caches()
 import stats
 assert hasattr(stats, 'mean') and stats.mean([1, 2, 3]) == 2, 'Use a relative import: from .basic import mean.'` },
+          { name: "from import", code: `import sys, importlib
+sys.path.insert(0, '.')
+with open('stats/__init__.py', 'w') as f:
+    f.write(INIT)
+for m in [k for k in sys.modules if k == 'stats' or k.startswith('stats.')]:
+    del sys.modules[m]
+importlib.invalidate_caches()
+from stats import mean as m
+assert isinstance(INIT, str) and m([2, 4]) == 3 and 'stats.basic' in sys.modules, 'from stats import mean must work.'` },
         ],
         setup: `import os
 os.makedirs('stats', exist_ok=True)
 with open('stats/basic.py', 'w') as f:
     f.write('def mean(xs):\\n    return sum(xs) / len(xs)\\n')
 `,
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>resolve(name, package, level)</C>, the absolute module name for a relative import such as <C>from ..utils import x</C> (name <C>"utils"</C>, level 2) inside package <C>"pkg.sub"</C>: level 1 means the package itself, each further level goes up one, and going above the top raises <C>ImportError</C>; an empty name means the package reached. Then write <C>import_order(deps)</C> for a dict from module to the modules it imports: an order where every module comes after its imports, choosing the alphabetically smallest ready module each time, and raising <C>ImportError</C> on a circular import.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def resolve(name, package, level):
+    return package + '.' + name
+
+def import_order(deps):
+    return sorted(deps)
+`,
+        solution: `import heapq
+
+def resolve(name, package, level):
+    parts = package.split('.')
+    if level - 1 >= len(parts):
+        raise ImportError('beyond top-level package')
+    base = parts[:len(parts) - (level - 1)]
+    return '.'.join(base + ([name] if name else []))
+
+def import_order(deps):
+    mods = set(deps) | {d for ds in deps.values() for d in ds}
+    need = {m: set(deps.get(m, [])) for m in mods}
+    users = {m: [] for m in mods}
+    for m, ds in need.items():
+        for d in ds:
+            users[d].append(m)
+    ready = [m for m in mods if not need[m]]
+    heapq.heapify(ready)
+    out = []
+    while ready:
+        m = heapq.heappop(ready)
+        out.append(m)
+        for u in users[m]:
+            need[u].discard(m)
+            if not need[u]:
+                heapq.heappush(ready, u)
+    if len(out) < len(mods):
+        raise ImportError('circular import')
+    return out
+`,
+        tests: [
+          { name: "resolve", code: `assert resolve('utils', 'pkg.sub', 1) == 'pkg.sub.utils' and resolve('utils', 'pkg.sub', 2) == 'pkg.utils' and resolve('', 'pkg.sub', 2) == 'pkg'` },
+          { name: "importlib", code: `import importlib.util
+for name, pkg, level in [('a', 'x.y.z', 1), ('a.b', 'x.y.z', 3), ('', 'x.y', 1), ('m', 'top', 1)]:
+    assert resolve(name, pkg, level) == importlib.util.resolve_name('.' * level + name, pkg), f'{name}, {pkg}, {level}'
+try:
+    resolve('a', 'top', 2)
+    assert False, 'Going above the top-level package must raise ImportError.'
+except ImportError:
+    pass` },
+          { name: "order", code: `deps = {'app': ['models', 'utils'], 'models': ['utils', 'db'], 'db': [], 'utils': []}
+assert import_order(deps) == ['db', 'utils', 'models', 'app'] and import_order({'x': ['numpy']}) == ['numpy', 'x']` },
+          { name: "cycle", code: `try:
+    import_order({'a': ['b'], 'b': ['c'], 'c': ['a'], 'd': []})
+    assert False, 'A circular import must raise ImportError.'
+except ImportError:
+    pass` },
+        ],
       },
     },
     {

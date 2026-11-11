@@ -163,6 +163,21 @@ print(a)`}</Code>
       answer: { kind: "numeric", value: 18 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`a, b, steps = 1071, 462, 0
+while b:
+    a, b = b, a % b
+    steps += 1
+print(a, steps)`}</Code>
+          <p>Euclid&rsquo;s algorithm on 1071 and 462, counting division steps. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["21 3", "21 4", "7 3", "42 3"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -192,6 +207,75 @@ for _ in range(300):
     a, b = random.randint(0, 10 ** 6), random.randint(1, 10 ** 6)
     g, x, y = ext_gcd(a, b)
     assert g == math.gcd(a, b) and a * x + b * y == g, 'Unwind the recursion: from (b, a mod b) back to (a, b).'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>mod_inverse(a, n)</C>, the x in [0, n) with ax ≡ 1 (mod n), from the extended Euclidean algorithm (written iteratively), raising <C>ValueError</C> if gcd(a, n) ≠ 1. Then write <C>crt(residues, moduli)</C>, the Chinese remainder theorem for moduli that need not be coprime: merge the congruences one at a time, and return (x, M) with 0 ≤ x &lt; M = lcm of the moduli, or <C>None</C> if they are inconsistent (two congruences x ≡ r₁ (mod m₁), x ≡ r₂ (mod m₂) agree exactly when gcd(m₁, m₂) divides r₂ − r₁). With no congruences, return (0, 1).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def mod_inverse(a, n):
+    return 1
+
+def crt(residues, moduli):
+    return (0, 1)
+`,
+        solution: `def _ext(a, b):
+    x0, x1, y0, y1 = 1, 0, 0, 1
+    while b:
+        q = a // b
+        a, b = b, a - q * b
+        x0, x1 = x1, x0 - q * x1
+        y0, y1 = y1, y0 - q * y1
+    return a, x0, y0
+
+def mod_inverse(a, n):
+    g, x, _ = _ext(a % n, n)
+    if g != 1:
+        raise ValueError('not invertible')
+    return x % n
+
+def crt(residues, moduli):
+    x, M = 0, 1
+    for r, m in zip(residues, moduli):
+        g, p, _ = _ext(M, m)
+        if (r - x) % g:
+            return None
+        L = M // g * m
+        x = (x + (r - x) // g * p % (m // g) * M) % L
+        M = L
+    return x, M
+`,
+        tests: [
+          { name: "inverse", code: `assert mod_inverse(3, 7) == 5 and mod_inverse(-3, 7) == 2 and mod_inverse(17, 3120) == 2753, 'The RSA textbook example: 17 · 2753 ≡ 1 (mod 3120).'
+try:
+    mod_inverse(6, 9)
+    assert False, 'gcd(6, 9) = 3, so no inverse.'
+except ValueError:
+    pass` },
+          { name: "random inverse", code: `import random, math
+random.seed(13)
+for _ in range(300):
+    n = random.randint(2, 10 ** 30); a = random.randint(1, n - 1)
+    if math.gcd(a, n) == 1:
+        assert mod_inverse(a, n) == pow(a, -1, n)` },
+          { name: "coprime", code: `assert crt([2, 3, 2], [3, 5, 7]) == (23, 105) and crt([], []) == (0, 1), 'Sunzi: 23 mod 105.'` },
+          { name: "general", code: `assert crt([1, 3], [4, 6]) == (9, 12) and crt([1, 2], [4, 6]) is None and crt([5, 5], [10, 15]) == (5, 30), 'Non-coprime moduli: consistent or not.'
+import random
+random.seed(14)
+for _ in range(200):
+    ms = [random.randint(1, 60) for _ in range(4)]
+    x = random.randrange(10 ** 6)
+    got = crt([x % m for m in ms], ms)
+    assert got is not None and all(got[0] % m == x % m for m in ms) and 0 <= got[0] < got[1] and all(got[1] % m == 0 for m in ms), 'A solution modulo the lcm.'` },
         ],
       },
     },

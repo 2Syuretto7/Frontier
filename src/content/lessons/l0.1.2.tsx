@@ -149,6 +149,19 @@ print(sum((y - p) ** 2 for y, p in zip(ys, preds)) / len(ys))`}</Code>
       answer: { kind: "numeric", value: 1.4166666666666667, tolerance: 0.001 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`ys = [1, 2, 3, 10]
+for c in (3, 4):
+    print(c, sum(abs(y - c) for y in ys), sum((y - c) ** 2 for y in ys))`}</Code>
+          <p>Two constant predictions scored by absolute and squared error. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["3 10 54\n4 12 50", "3 10 54\n4 12 54", "3 12 54\n4 10 50", "3 10 50\n4 12 54"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -184,6 +197,64 @@ def best_constant(ys, loss):
           { name: "losses", code: `assert abs(mse([3, 5, 4], [2.5, 5, 6]) - 4.25 / 3) < 1e-9 and abs(mae([3, 5, 4], [2.5, 5, 6]) - 2.5 / 3) < 1e-9, 'Average the squared or absolute errors.'` },
           { name: "mean and median", code: `ys = [1, 2, 3, 10]
 assert abs(best_constant(ys, mse) - 4) < 0.01 and 2 <= best_constant(ys, mae) <= 3, 'Squared error is minimised by the mean, absolute error by a median.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            The best constant prediction depends on the loss. Write <C>best_constant(ys, loss)</C>, returning the mean for <C>"mse"</C> and the median (<C>statistics.median</C>) for <C>"mae"</C>, and raising <C>ValueError</C> otherwise. Then write <C>huber(ys, c, delta)</C>, the total Huber loss of predicting c: ½r² when |r| ≤ δ and δ(|r| − ½δ) otherwise, for r = y − c, and <C>grid_minimiser(ys, loss_fn, grid)</C>, the grid value c with the smallest <C>loss_fn(ys, c)</C> (the first one on ties).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def best_constant(ys, loss):
+    return 0.0
+
+def huber(ys, c, delta):
+    return 0.0
+
+def grid_minimiser(ys, loss_fn, grid):
+    return grid[0]
+`,
+        solution: `import statistics
+
+def best_constant(ys, loss):
+    if loss == 'mse':
+        return sum(ys) / len(ys)
+    if loss == 'mae':
+        return statistics.median(ys)
+    raise ValueError(loss)
+
+def huber(ys, c, delta):
+    total = 0.0
+    for y in ys:
+        r = abs(y - c)
+        total += 0.5 * r * r if r <= delta else delta * (r - 0.5 * delta)
+    return total
+
+def grid_minimiser(ys, loss_fn, grid):
+    return min(grid, key=lambda c: loss_fn(ys, c))
+`,
+        tests: [
+          { name: "constants", code: `assert best_constant([1, 2, 3, 10], 'mse') == 4 and best_constant([1, 2, 3, 10], 'mae') == 2.5 and best_constant([5, 1, 9], 'mae') == 5, 'The mean is pulled by the outlier; the median is not.'
+try:
+    best_constant([1], 'hinge')
+    assert False, 'Unknown losses raise ValueError.'
+except ValueError:
+    pass` },
+          { name: "huber", code: `assert huber([0], 0.5, 1) == 0.125 and huber([0], 3, 1) == 2.5 and huber([1, 2, 3, 10], 3, 1) == 1.5 + 0.5 + 0 + 6.5, 'Quadratic near, linear far.'` },
+          { name: "grid", code: `grid = [i / 10 for i in range(0, 101)]
+ys = [1, 2, 3, 10]
+mse = lambda ys, c: sum((y - c) ** 2 for y in ys)
+mae = lambda ys, c: sum(abs(y - c) for y in ys)
+assert grid_minimiser(ys, mse, grid) == 4.0 and grid_minimiser(ys, mae, grid) == 2.0, 'The search agrees with the formulas (for MAE every c in [2, 3] ties; take the first).'
+h = grid_minimiser(ys, lambda ys, c: huber(ys, c, 1), grid)
+assert 2.4 <= h <= 3.1, 'Huber lands between the median and the mean.'` },
         ],
       },
     },

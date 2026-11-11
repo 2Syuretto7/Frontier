@@ -153,6 +153,20 @@ print(KNeighborsClassifier(1).fit(X, y).predict([[6.5]]), KNeighborsClassifier(5
       answer: { kind: "choice", options: ["[1] [0]", "[0] [1]", "[1] [1]", "[0] [0]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+X = np.array([[0.0, 0.0], [3.0, 4.0], [1.0, 1.0]])
+D = np.sqrt(((X[:, None] - X[None]) ** 2).sum(-1))
+print(D.round(3).tolist(), D.argsort(1)[:, 1].tolist())`}</Code>
+          <p>All pairwise distances by broadcasting, and each point&rsquo;s nearest other point. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[[0.0, 5.0, 1.414], [5.0, 0.0, 3.606], [1.414, 3.606, 0.0]] [2, 2, 0]", "[[0.0, 5.0, 1.414], [5.0, 0.0, 3.606], [1.414, 3.606, 0.0]] [0, 1, 2]", "[[0.0, 25.0, 2.0], [25.0, 0.0, 13.0], [2.0, 13.0, 0.0]] [2, 2, 0]", "[[0.0, 5.0, 1.414], [5.0, 0.0, 3.606], [1.414, 3.606, 0.0]] [2, 0, 0]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -183,6 +197,74 @@ X, y = make_blobs(200, centers=3, random_state=0)
 ours = knn_predict(X[:150], y[:150], X[150:], 5)
 ref = KNeighborsClassifier(5).fit(X[:150], y[:150]).predict(X[150:])
 assert (ours == ref).mean() > 0.97, 'Match scikit-learn’s k-nearest neighbours.'` },
+          { name: "tie", code: `import numpy as np
+assert knn_predict(np.array([[0.0], [2.0]]), np.array([1, 0]), np.array([[1.0]]), 2).tolist() == [0], 'A 1–1 vote goes to the smaller label.'` },
+          { name: "k1", code: `import numpy as np
+rng = np.random.default_rng(3)
+X = rng.normal(size=(40, 3)); y = rng.integers(0, 4, 40)
+assert (knn_predict(X, y, X, 1) == y).all(), 'With k = 1 each training point is its own nearest neighbour.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>knn_regress_weighted(X_train, y_train, X_test, k)</C> with NumPy: for each test point take the k nearest training points and average their targets with weights 1/distance; if some of them are at distance 0, average just those equally (this matches scikit-learn&rsquo;s <C>weights="distance"</C>). Then write <C>knn_cosine(X_train, y_train, X_test, k)</C>, a k-nearest-neighbour classifier with cosine distance 1 − cos θ and majority vote (labels are small non-negative integers; the smaller label wins ties).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def knn_regress_weighted(X_train, y_train, X_test, k):
+    return np.full(len(X_test), y_train.mean())
+
+def knn_cosine(X_train, y_train, X_test, k):
+    return np.zeros(len(X_test), dtype=int)
+`,
+        solution: `import numpy as np
+
+def knn_regress_weighted(X_train, y_train, X_test, k):
+    D = np.sqrt(((X_test[:, None, :] - X_train[None, :, :]) ** 2).sum(-1))
+    idx = np.argsort(D, axis=1, kind='stable')[:, :k]
+    out = []
+    for i, row in enumerate(idx):
+        d = D[i, row]
+        if (d == 0).any():
+            out.append(y_train[row][d == 0].mean())
+        else:
+            w = 1 / d
+            out.append((w * y_train[row]).sum() / w.sum())
+    return np.array(out)
+
+def knn_cosine(X_train, y_train, X_test, k):
+    A = X_train / np.linalg.norm(X_train, axis=1, keepdims=True)
+    B = X_test / np.linalg.norm(X_test, axis=1, keepdims=True)
+    D = 1 - B @ A.T
+    idx = np.argsort(D, axis=1, kind='stable')[:, :k]
+    return np.array([np.bincount(y_train[r]).argmax() for r in idx])
+`,
+        tests: [
+          { name: "sklearn weighted", code: `import numpy as np
+from sklearn.neighbors import KNeighborsRegressor
+rng = np.random.default_rng(0)
+X = rng.normal(size=(80, 2)); y = X[:, 0] ** 2 + rng.normal(0, 0.1, 80); Xt = rng.normal(size=(30, 2))
+ref = KNeighborsRegressor(5, weights='distance').fit(X, y).predict(Xt)
+assert np.allclose(knn_regress_weighted(X, y, Xt, 5), ref), 'Inverse-distance weights.'` },
+          { name: "exact hit", code: `import numpy as np
+X = np.array([[0.0], [1.0], [2.0]]); y = np.array([10.0, 20.0, 30.0])
+assert np.allclose(knn_regress_weighted(X, y, np.array([[1.0], [0.5]]), 3), [20.0, (2 * 10 + 2 * 20 + 30 / 1.5) / (2 + 2 + 1 / 1.5)]), 'A test point on a training point takes its target.'` },
+          { name: "cosine", code: `import numpy as np
+from sklearn.neighbors import KNeighborsClassifier
+rng = np.random.default_rng(1)
+X = rng.normal(size=(100, 5)); y = (X[:, 0] > 0).astype(int); Xt = rng.normal(size=(40, 5))
+ref = KNeighborsClassifier(3, metric='cosine', algorithm='brute').fit(X, y).predict(Xt)
+assert (knn_cosine(X, y, Xt, 3) == ref).all(), 'Agree with scikit-learn using cosine distance.'
+assert (knn_cosine(X, y, Xt * 100, 3) == knn_cosine(X, y, Xt, 3)).all(), 'Cosine distance ignores length.'` },
         ],
       },
     },

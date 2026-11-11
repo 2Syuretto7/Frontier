@@ -134,6 +134,22 @@ print(len(train), len(val), len(test), set(train) & set(test) == set())`}</Code>
       answer: { kind: "choice", options: ["700 150 150 True", "700 150 150 False", "700 15 15 True", "700 150 149 True"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+rng = np.random.default_rng(0)
+y = rng.integers(0, 2, 100)
+best = max(np.mean(rng.integers(0, 2, 100) == y) for _ in range(200))
+fresh = np.mean(rng.integers(0, 2, 100) == y)
+print(best > 0.6, fresh < 0.6)`}</Code>
+          <p>Two hundred random guessers scored on the same 100 test labels: the best of them, and one fresh one. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True True", "False True", "True False", "False False"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -165,6 +181,71 @@ X = rng.normal(size=(500, 2)); y = (X[:, 0] + 0.5 * rng.normal(size=500) > 0).as
 models = [DecisionTreeClassifier(max_depth=d, random_state=0) for d in (1, 2, None)]
 i, s = select_and_report(models, X, y)
 assert i != 2 and 0.7 < s < 1.0, 'Choose on validation data; the unlimited tree only wins on training data.'` },
+          { name: "split", code: `import numpy as np
+class M:
+    def __init__(self, v):
+        self.v = v
+    def fit(self, X, y):
+        self.n = len(X)
+        return self
+    def score(self, X, y):
+        return self.v if X[0] == 60 else 1000 + X[0]
+ms = [M(0.2), M(0.9), M(0.5)]
+i, s = select_and_report(ms, np.arange(100), np.arange(100))
+assert i == 1 and s == 1080 and all(m.n == 60 for m in ms), 'Train on rows 0 … 59, validate on 60 … 79, test on 80 … 99.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>stratified_split(y, fracs, seed)</C>, which splits indices into train, validation and test so each class keeps its share: with one <C>np.random.default_rng(seed)</C>, go through the classes in sorted order, shuffle that class&rsquo;s indices with <C>rng.permutation</C>, and give the first floor(f₀·m) to train, the next floor(f₁·m) to validation and the rest to test, where m is the class size and fracs = (f₀, f₁). Return the three index arrays, each sorted.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def stratified_split(y, fracs, seed):
+    n = len(y)
+    a, b = int(fracs[0] * n), int((fracs[0] + fracs[1]) * n)
+    idx = np.arange(n)
+    return idx[:a], idx[a:b], idx[b:]
+`,
+        solution: `import numpy as np
+
+def stratified_split(y, fracs, seed):
+    rng = np.random.default_rng(seed)
+    y = np.asarray(y)
+    tr, va, te = [], [], []
+    for c in np.unique(y):
+        idx = rng.permutation(np.nonzero(y == c)[0])
+        m = len(idx)
+        a = int(np.floor(fracs[0] * m)); b = a + int(np.floor(fracs[1] * m))
+        tr += idx[:a].tolist(); va += idx[a:b].tolist(); te += idx[b:].tolist()
+    return np.array(sorted(tr), dtype=int), np.array(sorted(va), dtype=int), np.array(sorted(te), dtype=int)
+`,
+        tests: [
+          { name: "cover", code: `import numpy as np
+y = np.array([0] * 50 + [1] * 30 + [2] * 20)
+a, b, c = stratified_split(y, (0.6, 0.2), 0)
+assert sorted(np.concatenate([a, b, c]).tolist()) == list(range(100)), 'Every index exactly once.'
+assert [int((y[a] == k).sum()) for k in range(3)] == [30, 18, 12] and [int((y[b] == k).sum()) for k in range(3)] == [10, 6, 4], 'Each class split 60/20/20.'` },
+          { name: "rare", code: `import numpy as np
+y = np.array([0] * 97 + [1] * 3)
+a, b, c = stratified_split(y, (0.5, 0.25), 3)
+assert (y[a] == 1).sum() == 1 and (y[b] == 1).sum() == 0 and (y[c] == 1).sum() == 2, 'floor(1.5) = 1, floor(0.75) = 0, the rest to test.'` },
+          { name: "seeded", code: `import numpy as np
+y = np.array([1, 0] * 20)
+a1, b1, c1 = stratified_split(y, (0.5, 0.25), 9)
+rng = np.random.default_rng(9)
+p0 = rng.permutation(np.nonzero(y == 0)[0])
+assert sorted(p0[:10].tolist()) == [i for i in a1.tolist() if y[i] == 0], 'Shuffle class 0 first with the seeded generator.'
+assert all((x == z).all() for x, z in zip((a1, b1, c1), stratified_split(y, (0.5, 0.25), 9)))` },
         ],
       },
     },

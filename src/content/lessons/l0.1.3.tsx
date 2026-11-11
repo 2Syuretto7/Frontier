@@ -155,6 +155,22 @@ print([memoriser(x) for x in [1, 2, 4]])`}</Code>
       answer: { kind: "choice", options: ["['a', 'b', '?']", "['a', 'b', 'a']", "['a', 'b', 'b']", "['?', '?', '?']"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`train = {1: "a", 2: "b", 3: "a"}
+def memorise(x):
+    return train.get(x, "?")
+def nearest(x):
+    return train[min(train, key=lambda k: (abs(k - x), k))]
+print([memorise(x) for x in (2, 4)], [nearest(x) for x in (2, 4, 2.5)])`}</Code>
+          <p>A lookup table against a nearest-neighbour rule on unseen inputs. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["['b', '?'] ['b', 'a', 'b']", "['b', '?'] ['b', 'a', 'a']", "['b', 'a'] ['b', 'a', 'b']", "['b', '?'] ['b', '?', 'b']"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -187,6 +203,63 @@ a, b, c, d = split(xs, ys, 0.5, 1)
 assert all(y == x * x for x, y in zip(a + c, b + d)), 'Keep each x with its own y.'` },
           { name: "shuffled", code: `a, _, _, _ = split(list(range(100)), list(range(100)), 0.5, 3)
 assert a != list(range(50)), 'Shuffle first: data files are often sorted.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Estimate generalisation with cross-validation. Write <C>k_fold_indices(n, k)</C>, which splits the indices 0 … n − 1 into k contiguous folds whose sizes differ by at most one (the first n mod k folds get the extra index) and returns a list of k pairs (train indices, test indices). Then write <C>cv_accuracy(fit, predict, xs, ys, k)</C>: for each fold, call <C>model = fit(train_xs, train_ys)</C>, score <C>predict(model, x)</C> on the test fold, and return the mean of the k fold accuracies.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def k_fold_indices(n, k):
+    return [(list(range(n)), list(range(n)))]
+
+def cv_accuracy(fit, predict, xs, ys, k):
+    return 1.0
+`,
+        solution: `def k_fold_indices(n, k):
+    out, start = [], 0
+    for f in range(k):
+        size = n // k + (1 if f < n % k else 0)
+        test = list(range(start, start + size))
+        train = list(range(0, start)) + list(range(start + size, n))
+        out.append((train, test))
+        start += size
+    return out
+
+def cv_accuracy(fit, predict, xs, ys, k):
+    accs = []
+    for train, test in k_fold_indices(len(xs), k):
+        model = fit([xs[i] for i in train], [ys[i] for i in train])
+        accs.append(sum(predict(model, xs[i]) == ys[i] for i in test) / len(test))
+    return sum(accs) / len(accs)
+`,
+        tests: [
+          { name: "folds", code: `f = k_fold_indices(10, 3)
+assert [t for _, t in f] == [[0, 1, 2, 3], [4, 5, 6], [7, 8, 9]] and f[1][0] == [0, 1, 2, 3, 7, 8, 9], 'Sizes 4, 3, 3; train is everything else.'` },
+          { name: "partition", code: `for n in range(1, 30):
+    for k in range(1, n + 1):
+        f = k_fold_indices(n, k)
+        tests = [i for _, t in f for i in t]
+        assert len(f) == k and sorted(tests) == list(range(n)) and all(sorted(tr + te) == list(range(n)) for tr, te in f), f'n={n}, k={k}'
+        sizes = [len(t) for _, t in f]
+        assert max(sizes) - min(sizes) <= 1` },
+          { name: "memoriser", code: `fit = lambda X, Y: dict(zip(X, Y))
+predict = lambda m, x: m.get(x, 0)
+xs = list(range(20)); ys = [1] * 20
+assert cv_accuracy(fit, predict, xs, ys, 4) == 0.0, 'A lookup table never generalises to unseen inputs.'` },
+          { name: "threshold", code: `def fit(X, Y):
+    return min(X[i] for i in range(len(X)) if Y[i] == 1)
+predict = lambda t, x: int(x >= t)
+xs = list(range(12)); ys = [int(x >= 6) for x in xs]
+assert abs(cv_accuracy(fit, predict, xs, ys, 3) - 2.5 / 3) < 1e-12, 'The middle fold learns t = 8 from its training data and misses 6 and 7.'` },
         ],
       },
     },

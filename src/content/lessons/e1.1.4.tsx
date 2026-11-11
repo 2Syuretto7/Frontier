@@ -139,6 +139,29 @@ print(f"ssh -p {cfg['Port']} {cfg['User']}@{cfg['HostName']}")`}</Code>
       answer: { kind: "choice", options: ["ssh -p 2222 arnav@10.0.0.7", "ssh -p 22 arnav@gpu", "ssh arnav@10.0.0.7:2222", "ssh -p 2222 gpu@10.0.0.7"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`text = """Host a
+  HostName 1.2.3.4
+Host b
+  HostName 5.6.7.8
+  User root"""
+hosts, cur = {}, None
+for line in text.splitlines():
+    k, v = line.split()
+    if k == "Host":
+        cur = hosts.setdefault(v, {})
+    else:
+        cur[k] = v
+print(len(hosts), hosts["b"], hosts["a"].get("User", "me"))`}</Code>
+          <p>Parsing an SSH config with two hosts. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2 {'HostName': '5.6.7.8', 'User': 'root'} me", "2 {'HostName': '5.6.7.8'} root", "5 {'HostName': '5.6.7.8', 'User': 'root'} me", "2 {'HostName': '1.2.3.4', 'User': 'root'} me"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -165,6 +188,53 @@ print(f"ssh -p {cfg['Port']} {cfg['User']}@{cfg['HostName']}")`}</Code>
         tests: [
           { name: "full", code: `assert parse_target('arnav@box:/data/x.csv') == {'user': 'arnav', 'host': 'box', 'path': '/data/x.csv'}, 'Split at @ and then at the first colon.'` },
           { name: "host only", code: `assert parse_target('box') == {'user': None, 'host': 'box', 'path': ''}, 'User and path are optional.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Plan a sync to a remote machine the way rsync does. Local and remote files are dicts from path to (size, mtime). Write <C>sync_plan(local, remote)</C>, returning (upload, delete): the sorted paths to upload (missing remotely, a different size, or a newer local mtime) and the sorted remote paths to delete (absent locally). Then write <C>bytes_to_send(local, plan)</C>, the total size of the uploads, and <C>check_host_key(known, host, key)</C>, which returns <C>"ok"</C> if known[host] equals key, <C>"new"</C> if the host is unknown, and <C>"MISMATCH"</C> otherwise.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def sync_plan(local, remote):
+    return sorted(local), []
+
+def bytes_to_send(local, plan):
+    return 0
+
+def check_host_key(known, host, key):
+    return 'ok'
+`,
+        solution: `def sync_plan(local, remote):
+    up = [p for p, (s, t) in local.items() if p not in remote or remote[p][0] != s or t > remote[p][1]]
+    rm = [p for p in remote if p not in local]
+    return sorted(up), sorted(rm)
+
+def bytes_to_send(local, plan):
+    return sum(local[p][0] for p in plan[0])
+
+def check_host_key(known, host, key):
+    if host not in known:
+        return 'new'
+    return 'ok' if known[host] == key else 'MISMATCH'
+`,
+        tests: [
+          { name: "plan", code: `local = {'a.py': (100, 5), 'b.py': (200, 9), 'c.py': (50, 1), 'd.py': (70, 3)}
+remote = {'a.py': (100, 5), 'b.py': (200, 7), 'c.py': (60, 8), 'old.py': (10, 1)}
+up, rm = sync_plan(local, remote)
+assert up == ['b.py', 'c.py', 'd.py'] and rm == ['old.py'], 'Newer, different size, or missing; delete what is gone locally.'
+assert bytes_to_send(local, (up, rm)) == 320` },
+          { name: "noop", code: `files = {'x': (1, 1), 'y': (2, 2)}
+assert sync_plan(files, dict(files)) == ([], []) and sync_plan({'x': (1, 1)}, {'x': (1, 5)}) == ([], []), 'An older local copy of the same size is not sent.'` },
+          { name: "keys", code: `known = {'gpu': 'SHA256:abc'}
+assert [check_host_key(known, 'gpu', 'SHA256:abc'), check_host_key(known, 'cpu', 'x'), check_host_key(known, 'gpu', 'SHA256:evil')] == ['ok', 'new', 'MISMATCH']` },
         ],
       },
     },

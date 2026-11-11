@@ -127,6 +127,20 @@ print(PolynomialFeatures(degree=2).fit_transform(np.array([[2.0, 3.0]])))`}</Cod
       answer: { kind: "choice", options: ["[[1. 2. 3. 4. 6. 9.]]", "[[2. 3. 4. 9.]]", "[[1. 2. 3. 4. 9.]]", "[[1. 2. 3. 6.]]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+from sklearn.preprocessing import PolynomialFeatures
+P = PolynomialFeatures(2).fit(np.zeros((1, 2)))
+print(P.get_feature_names_out(["a", "b"]).tolist(), P.n_output_features_)`}</Code>
+          <p>Degree-2 polynomial features of two inputs. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["['1', 'a', 'b', 'a^2', 'a b', 'b^2'] 6", "['a', 'b', 'a^2', 'a b', 'b^2'] 5", "['1', 'a', 'b', 'a^2', 'b^2'] 5", "['1', 'a', 'b', 'a b', 'a^2', 'b^2'] 6"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -161,6 +175,71 @@ assert F.shape == (2, 4) and np.allclose(F[1], [1, 3, 9, 27]), 'Columns are x to
           { name: "fit", code: `import numpy as np
 x = np.linspace(-2, 2, 30); y = 1 - 2 * x + 0.5 * x ** 2
 assert np.allclose(fit_poly(x, y, 2), [1, -2, 0.5]), 'Recover the quadratic exactly.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>poly_features_multi(X, degree)</C> for a matrix with d columns: all monomials of total degree 0 … degree, in scikit-learn&rsquo;s order (by degree, and within a degree in the order of <C>itertools.combinations_with_replacement(range(d), k)</C>), each the product of the named columns. Then write <C>n_poly_features(d, degree)</C>, the count C(d + degree, degree), and <C>fit_poly_ridge(X, y, degree, lam)</C>, ridge on those features without penalising the constant column, returning the weights.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def poly_features_multi(X, degree):
+    return np.column_stack([np.ones(len(X)), X])
+
+def n_poly_features(d, degree):
+    return d + 1
+
+def fit_poly_ridge(X, y, degree, lam):
+    return np.zeros(n_poly_features(X.shape[1], degree))
+`,
+        solution: `import numpy as np
+
+from itertools import combinations_with_replacement
+from math import comb
+
+def poly_features_multi(X, degree):
+    X = np.asarray(X, float)
+    cols = []
+    for k in range(degree + 1):
+        for c in combinations_with_replacement(range(X.shape[1]), k):
+            cols.append(np.prod(X[:, list(c)], axis=1) if c else np.ones(len(X)))
+    return np.column_stack(cols)
+
+def n_poly_features(d, degree):
+    return comb(d + degree, degree)
+
+def fit_poly_ridge(X, y, degree, lam):
+    F = poly_features_multi(X, degree)
+    P = lam * np.eye(F.shape[1])
+    P[0, 0] = 0
+    return np.linalg.solve(F.T @ F + P, F.T @ y)
+`,
+        tests: [
+          { name: "sklearn", code: `import numpy as np
+from sklearn.preprocessing import PolynomialFeatures
+rng = np.random.default_rng(0)
+X = rng.normal(size=(10, 3))
+for deg in (1, 2, 3):
+    assert np.allclose(poly_features_multi(X, deg), PolynomialFeatures(deg).fit_transform(X)), f'Degree {deg} in scikit-learn order.'` },
+          { name: "count", code: `assert [n_poly_features(2, 2), n_poly_features(3, 3), n_poly_features(10, 2), n_poly_features(5, 0)] == [6, 20, 66, 1]` },
+          { name: "ridge", code: `import numpy as np
+from sklearn.linear_model import Ridge
+from sklearn.preprocessing import PolynomialFeatures
+rng = np.random.default_rng(1)
+X = rng.normal(size=(50, 2)); y = 1 + X[:, 0] * X[:, 1] + rng.normal(0, 0.1, 50)
+w = fit_poly_ridge(X, y, 2, 0.5)
+F = PolynomialFeatures(2).fit_transform(X)[:, 1:]
+m = Ridge(alpha=0.5).fit(F, y)
+assert np.allclose(w, np.r_[m.intercept_, m.coef_]) and abs(w[4] - 1) < 0.1, 'The constant is not penalised; the a·b term is found.'` },
         ],
       },
     },

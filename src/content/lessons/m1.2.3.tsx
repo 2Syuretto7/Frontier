@@ -149,6 +149,21 @@ print(not all(P(x) for x in D) == any(not P(x) for x in D))`}</Code>
       answer: { kind: "choice", options: ["False", "True"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`D = range(1, 20)
+claim = all(n * n + n + 41 > 0 for n in D)
+neg = any(not (n % 2 == 0 or n % 3 == 0) for n in D)
+wit = next(n for n in D if not (n % 2 == 0 or n % 3 == 0))
+print(claim, neg, wit)`}</Code>
+          <p>The negation of ∀n (2 | n ∨ 3 | n) is ∃n (2 ∤ n ∧ 3 ∤ n). What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True True 1", "True True 5", "True False 1", "False True 1"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -172,6 +187,48 @@ print(not all(P(x) for x in D) == any(not P(x) for x in D))`}</Code>
         tests: [
           { name: "Euler", code: `assert counterexample(lambda n: all((n * n + n + 41) % d for d in range(2, n * n + n + 41)), range(50)) == 40, 'n² + n + 41 is prime for n = 0, …, 39 but not 40.'` },
           { name: "none", code: `assert counterexample(lambda n: n * n >= 0, range(-5, 5)) is None, 'Return None when there is no counterexample.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>negate(formula)</C>, which pushes a negation all the way in. A formula is a nested tuple: <C>("forall", var, body)</C>, <C>("exists", var, body)</C>, <C>("and", a, b)</C>, <C>("or", a, b)</C>, <C>("not", a)</C> or an atom (a string). <C>negate(f)</C> returns a formula equivalent to ¬f in which <C>"not"</C> is applied only to atoms, by the rules ¬∀ = ∃¬, ¬∃ = ∀¬, De Morgan, and ¬¬a = a.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def negate(f):
+    return ('not', f)
+`,
+        solution: `def negate(f):
+    if isinstance(f, str):
+        return ('not', f)
+    op = f[0]
+    if op == 'not':
+        return f[1]
+    if op == 'forall':
+        return ('exists', f[1], negate(f[2]))
+    if op == 'exists':
+        return ('forall', f[1], negate(f[2]))
+    if op == 'and':
+        return ('or', negate(f[1]), negate(f[2]))
+    if op == 'or':
+        return ('and', negate(f[1]), negate(f[2]))
+    raise ValueError(op)
+`,
+        tests: [
+          { name: "atoms", code: `assert negate('P') == ('not', 'P') and negate(('not', 'P')) == 'P', 'Double negation cancels.'` },
+          { name: "quantifiers", code: `assert negate(('forall', 'x', ('exists', 'y', 'L'))) == ('exists', 'x', ('forall', 'y', ('not', 'L'))), 'Swap each quantifier.'` },
+          { name: "de morgan", code: `assert negate(('and', 'A', ('or', 'B', ('not', 'C')))) == ('or', ('not', 'A'), ('and', ('not', 'B'), 'C')), 'De Morgan all the way down.'` },
+          { name: "deep", code: `f = ('forall', 'e', ('exists', 'd', ('forall', 'x', ('or', ('not', 'small'), 'close'))))
+assert negate(f) == ('exists', 'e', ('forall', 'd', ('exists', 'x', ('and', 'small', ('not', 'close'))))), 'The negation of the limit definition.'` },
+          { name: "involution", code: `fs = [('forall', 'x', ('and', 'P', ('exists', 'y', ('or', 'Q', ('not', 'R'))))), ('or', ('not', 'A'), 'B')]
+assert all(negate(negate(f)) == f for f in fs), 'Negating twice gives the formula back.'` },
         ],
       },
     },

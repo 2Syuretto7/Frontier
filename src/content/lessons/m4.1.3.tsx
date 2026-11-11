@@ -157,6 +157,19 @@ print(sum(comb(8, k) for k in range(9)), sum((-1) ** k * comb(8, k) for k in ran
       answer: { kind: "choice", options: ["256 0 True", "256 1 True", "255 0 True", "256 0 False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from math import comb
+n = 6
+print(sum(comb(n, k) for k in range(n + 1)), sum((-1) ** k * comb(n, k) for k in range(n + 1)), sum(comb(n, k) ** 2 for k in range(n + 1)), comb(2 * n, n))`}</Code>
+          <p>Three binomial identities checked for n = 6. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["64 0 924 924", "64 1 924 924", "64 0 462 924", "36 0 924 924"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -185,6 +198,61 @@ rows = pascal(20)
 assert all(rows[n][k] == math.comb(n, k) for n in range(21) for k in range(n + 1)), 'Row n should hold C(n, k).'` },
           { name: "vandermonde", code: `rows = pascal(12)
 assert sum(x * x for x in rows[6]) == rows[12][6], 'Sum of squares of row 6 equals C(12, 6).'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>binom_mod_p(n, k, p)</C>, the binomial coefficient C(n, k) modulo a prime p by Lucas&rsquo;s theorem: write n and k in base p and multiply C(nᵢ, kᵢ) mod p over the digits (a digit of k larger than the digit of n gives 0). It must handle n = 10¹⁸ instantly. Then write <C>odd_entries(n)</C>, the number of odd numbers in row n of Pascal&rsquo;s triangle, which by Lucas with p = 2 is 2 to the number of 1 bits of n.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def binom_mod_p(n, k, p):
+    return 0
+
+def odd_entries(n):
+    return n + 1
+`,
+        solution: `from math import comb
+
+def binom_mod_p(n, k, p):
+    if k < 0 or k > n:
+        return 0
+    r = 1
+    while n or k:
+        a, b = n % p, k % p
+        if b > a:
+            return 0
+        r = r * comb(a, b) % p
+        n //= p
+        k //= p
+    return r
+
+def odd_entries(n):
+    return 2 ** bin(n).count('1')
+`,
+        tests: [
+          { name: "small", code: `from math import comb
+for p in (2, 3, 5, 7, 13):
+    for n in range(60):
+        for k in range(-1, n + 2):
+            want = comb(n, k) % p if 0 <= k <= n else 0
+            assert binom_mod_p(n, k, p) == want, f'C({n}, {k}) mod {p}'` },
+          { name: "kummer", code: `import random
+random.seed(3)
+for _ in range(200):
+    n = random.randrange(10 ** 18); k = random.randrange(n + 1)
+    assert binom_mod_p(n, k, 2) == (1 if k & n == k else 0), 'C(n, k) is odd exactly when the bits of k sit inside those of n.'` },
+          { name: "big prime", code: `p = 1000003
+assert binom_mod_p(2 * p + 1, p + 1, p) == 2 and binom_mod_p(p, 5, p) == 0 and binom_mod_p(p * p, p, p) == 0, 'Digits (2, 1) over (1, 1) give C(2, 1)·C(1, 1) = 2.'` },
+          { name: "odd", code: `from math import comb
+assert all(odd_entries(n) == sum(comb(n, k) % 2 for k in range(n + 1)) for n in range(200)) and odd_entries(10 ** 18 - 1) == 2 ** bin(10 ** 18 - 1).count('1'), 'Row 2ᵐ − 1 is all odd.'` },
         ],
       },
     },

@@ -163,6 +163,18 @@ print(" Done")`}</Code>
       answer: { kind: "choice", options: ["Asha scored 10! Done", "Asha scored 9.5! Done", "Asha scored 10 Done", "Asha scored 9! Done"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`name, score = "Asha", 7.256
+print(f"{name:>6}|{score:.1f}|{score:6.2f}|{42:03d}")`}</Code>
+          <p>Format specifications in an f-string: width, alignment and decimals. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["  Asha|7.3|  7.26|042", "Asha  |7.3|7.26  |042", "  Asha|7.2|  7.25|42", "  Asha|7.3|7.26|042"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -184,6 +196,40 @@ print(f"{item}: Rs {price:.2f}")
 `,
         tests: [
           { name: "format", code: `assert printed.strip() == 'Tea: Rs 12.50', 'Use {price:.2f} for two decimal places.'` },
+          { name: "one line", code: `assert item == 'Tea' and price == 12.5 and printed.count('\\n') == 1, 'Print exactly one line, and keep the variables as given.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>receipt(items)</C> for a list of (name, quantity, unit price) tuples. Return one string made of lines joined by <C>"\n"</C>: one line per item formatted as <C>{`f"{name:<10}{qty:>3}{qty * price:>8.2f}"`}</C>, then a final line <C>{`f"{'TOTAL':<13}{total:>8.2f}"`}</C>. Names longer than 10 characters are cut to 10.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def receipt(items):
+    return ''
+`,
+        solution: `def receipt(items):
+    lines, total = [], 0
+    for name, qty, price in items:
+        lines.append(f'{name[:10]:<10}{qty:>3}{qty * price:>8.2f}')
+        total += qty * price
+    lines.append(f"{'TOTAL':<13}{total:>8.2f}")
+    return '\\n'.join(lines)
+`,
+        tests: [
+          { name: "basic", code: `r = receipt([('Tea', 2, 12.5), ('Samosa', 3, 15)])
+assert r == 'Tea         2   25.00\\nSamosa      3   45.00\\nTOTAL           70.00', 'Columns of width 10, 3 and 8.'` },
+          { name: "widths", code: `r = receipt([('Masala dosa extra', 1, 120)])
+lines = r.split('\\n')
+assert lines[0] == 'Masala dos  1  120.00' and all(len(l) == 21 for l in lines), 'Every line is 21 characters wide.'` },
+          { name: "empty", code: `assert receipt([]) == 'TOTAL            0.00'` },
         ],
       },
     },

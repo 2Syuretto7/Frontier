@@ -148,6 +148,25 @@ print([j.name for j in sorted(jobs)])`}</Code>
       answer: { kind: "choice", options: ["['fetch', 'clean', 'train']", "['train', 'clean', 'fetch']", "['clean', 'fetch', 'train']", "An error"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from dataclasses import dataclass, field, asdict
+@dataclass
+class Run:
+    name: str
+    tags: list = field(default_factory=list)
+    lr: float = 0.1
+a, b = Run("x"), Run("y", lr=0.01)
+a.tags.append("fast")
+print(b.tags, asdict(a), a == Run("x", ["fast"]))`}</Code>
+          <p>A dataclass with a mutable default made safely. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[] {'name': 'x', 'tags': ['fast'], 'lr': 0.1} True", "['fast'] {'name': 'x', 'tags': ['fast'], 'lr': 0.1} True", "[] {'name': 'x', 'tags': ['fast'], 'lr': 0.1} False", "[] Run(name='x', tags=['fast'], lr=0.1) True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -186,6 +205,70 @@ except dataclasses.FrozenInstanceError:
 assert ok, 'Make it frozen=True so fields cannot be changed.'` },
           { name: "scaled", code: `c = Config(0.1, 32).scaled(4)
 assert c.batch_size == 128 and abs(c.lr - 0.4) < 1e-12, 'Return a new Config with both values scaled.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Type hints are not checked at run time, so check them yourself. Write <C>type_errors(obj)</C> for a dataclass instance: using <C>dataclasses.fields</C> and <C>typing.get_type_hints</C>, return the sorted names of fields whose values do not match their hints. Support <C>int</C> (but not bool), <C>float</C> (ints allowed, bools not), <C>str</C>, <C>bool</C>, <C>list[X]</C> (a list whose items all match X) and <C>Optional[X]</C> (None or X), using <C>typing.get_origin</C> and <C>typing.get_args</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def type_errors(obj):
+    return []
+`,
+        solution: `import dataclasses, typing
+
+def _ok(value, hint):
+    origin, args = typing.get_origin(hint), typing.get_args(hint)
+    if origin is typing.Union:
+        return any(_ok(value, a) for a in args)
+    if hint is type(None):
+        return value is None
+    if origin is list:
+        return isinstance(value, list) and all(_ok(v, args[0]) for v in value)
+    if hint is bool:
+        return isinstance(value, bool)
+    if hint is int:
+        return isinstance(value, int) and not isinstance(value, bool)
+    if hint is float:
+        return isinstance(value, (int, float)) and not isinstance(value, bool)
+    return isinstance(value, hint)
+
+def type_errors(obj):
+    hints = typing.get_type_hints(type(obj))
+    return sorted(f.name for f in dataclasses.fields(obj) if not _ok(getattr(obj, f.name), hints[f.name]))
+`,
+        tests: [
+          { name: "ok", code: `from dataclasses import dataclass
+from typing import Optional
+@dataclass
+class Cfg:
+    name: str
+    epochs: int
+    lr: float
+    layers: list[int]
+    seed: Optional[int] = None
+    debug: bool = False
+assert type_errors(Cfg('a', 3, 1, [64, 32])) == [] and type_errors(Cfg('a', 3, 0.1, [], 7, True)) == [], 'An int is a fine float; an empty list is fine.'` },
+          { name: "errors", code: `from dataclasses import dataclass
+from typing import Optional
+@dataclass
+class Cfg:
+    name: str
+    epochs: int
+    lr: float
+    layers: list[int]
+    seed: Optional[int] = None
+    debug: bool = False
+assert type_errors(Cfg(5, True, '0.1', [64, '32'], 1.5, 1)) == ['debug', 'epochs', 'layers', 'lr', 'name', 'seed'], 'bool is not int, and 1 is not a bool.'
+assert type_errors(Cfg('x', 2, False, (1,))) == ['layers', 'lr']` },
         ],
       },
     },

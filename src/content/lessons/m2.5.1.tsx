@@ -198,6 +198,21 @@ print(slope, c)`}</Code>
       answer: { kind: "numeric", value: 1.7321, tolerance: 0.0002 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = lambda x: x ** 3
+a, b = 0.0, 3.0
+slope = (f(b) - f(a)) / (b - a)
+c = (slope / 3) ** 0.5
+print(slope, c, 3 * c * c == slope)`}</Code>
+          <p>The mean value theorem for x³ on [0, 3]: where is the tangent parallel to the chord? What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["9.0 1.7320508075688772 True", "9.0 1.7320508075688772 False", "9.0 1.5 False", "27.0 3.0 True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -229,6 +244,46 @@ print(slope, c)`}</Code>
           { name: "log", code: `import math
 c = mvt_point(math.log, lambda x: 1 / x, 1, math.e)
 assert abs(c - (math.e - 1)) < 1e-9, 'For ln on [1, e] the point is e − 1.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            The mean value theorem bounds how far a function can move: |f(b) − f(a)| ≤ M|b − a| when |f′| ≤ M. Write <C>lipschitz_bound(df, a, b, n)</C>, an estimate of M = max |f′| on [a, b] from n + 1 samples, and <C>certified_range(f, df, a, b, n)</C>, an interval guaranteed (up to the sampling of f′) to contain every value of f on [a, b]: around each of the n + 1 grid points, f can move at most M·h/2 to the middle of a step. Return (lowest sample − Mh/2, highest sample + Mh/2).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def lipschitz_bound(df, a, b, n):
+    return abs(df(a))
+
+def certified_range(f, df, a, b, n):
+    return (f(a), f(b))
+`,
+        solution: `def lipschitz_bound(df, a, b, n):
+    return max(abs(df(a + (b - a) * i / n)) for i in range(n + 1))
+
+def certified_range(f, df, a, b, n):
+    h = (b - a) / n
+    M = lipschitz_bound(df, a, b, n)
+    ys = [f(a + i * h) for i in range(n + 1)]
+    return (min(ys) - M * h / 2, max(ys) + M * h / 2)
+`,
+        tests: [
+          { name: "bound", code: `import math
+assert abs(lipschitz_bound(math.cos, 0, math.pi, 100) - 1) < 1e-12 and abs(lipschitz_bound(lambda x: 2 * x, -3, 1, 4) - 6) < 1e-12, 'The largest |f′|.'` },
+          { name: "contains", code: `import math
+f, df = lambda x: math.sin(3 * x) + x / 2, lambda x: 3 * math.cos(3 * x) + 0.5
+lo, hi = certified_range(f, df, 0, 4, 40)
+vals = [f(4 * k / 100000) for k in range(100001)]
+assert lo <= min(vals) and max(vals) <= hi, 'Every value must lie inside.'` },
+          { name: "tight", code: `lo, hi = certified_range(lambda x: x * x, lambda x: 2 * x, 0, 1, 1000)
+assert -0.002 < lo <= 0 and 1 <= hi < 1.002, 'With many samples the range is nearly exact.'` },
         ],
       },
     },

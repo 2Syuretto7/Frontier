@@ -159,6 +159,17 @@ export const lesson: LessonContent = {
       answer: { kind: "choice", options: ["49 4 True", "49 4 False", "1 4 True", "49 3 True"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`print(pow(3, 100, 7), pow(3, 6, 7), pow(3, -1, 7), (3 * 5) % 7)`}</Code>
+          <p>Fermat&rsquo;s little theorem and a modular inverse. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["4 1 5 1", "3 1 5 1", "4 1 2 1", "4 6 5 1"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -196,6 +207,68 @@ def crt(a, m, b, n):
           { name: "huge", code: `assert power_mod(2, 10 ** 18, 1000000007) == pow(2, 10 ** 18, 1000000007), 'An exponent of 10¹⁸ needs about 60 squarings, not 10¹⁸ multiplications.'` },
           { name: "crt", code: `x = crt(2, 3, 3, 5)
 assert x == 8 and crt(crt(2, 3, 3, 5), 15, 2, 7) == 23, 'x ≡ 2 (mod 3) and x ≡ 3 (mod 5) gives 8.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            The Fermat test pow(2, n − 1, n) == 1 is fooled by Carmichael numbers such as 561. Write <C>is_prime(n)</C> by Miller–Rabin: dispose of n &lt; 2 and of multiples of the first twelve primes 2 … 37, write n − 1 = 2ˢd with d odd, and for each of those twelve bases a check that aᵈ ≡ 1 or a^(2ʳd) ≡ −1 (mod n) for some r &lt; s. With these bases the test is exact for every n below 3.3 × 10²⁴. Then write <C>next_prime(n)</C>, the smallest prime greater than n.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def is_prime(n):
+    return n == 2 or (n > 2 and pow(2, n - 1, n) == 1)
+
+def next_prime(n):
+    return n + 1
+`,
+        solution: `SMALL = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]
+
+def is_prime(n):
+    if n < 2:
+        return False
+    for q in SMALL:
+        if n % q == 0:
+            return n == q
+    d, s = n - 1, 0
+    while d % 2 == 0:
+        d //= 2
+        s += 1
+    for a in SMALL:
+        x = pow(a, d, n)
+        if x in (1, n - 1):
+            continue
+        for _ in range(s - 1):
+            x = x * x % n
+            if x == n - 1:
+                break
+        else:
+            return False
+    return True
+
+def next_prime(n):
+    m = max(n + 1, 2)
+    while not is_prime(m):
+        m += 1
+    return m
+`,
+        tests: [
+          { name: "sieve", code: `N = 20000
+s = [True] * N; s[0] = s[1] = False
+for i in range(2, N):
+    if s[i]:
+        for j in range(i * i, N, i):
+            s[j] = False
+assert all(is_prime(n) == s[n] for n in range(N)), 'Agree with a sieve below 20000.'` },
+          { name: "carmichael", code: `assert not any(is_prime(n) for n in (561, 1105, 1729, 2465, 41041, 825265, 3215031751)), 'Carmichael numbers and a strong pseudoprime to bases 2, 3, 5, 7.'` },
+          { name: "mersenne", code: `assert is_prime(2 ** 61 - 1) and is_prime(2 ** 89 - 1) and not is_prime(2 ** 67 - 1) and not is_prime((2 ** 31 - 1) * (2 ** 61 - 1)), '2⁶⁷ − 1 = 193707721 × 761838257287.'` },
+          { name: "next", code: `assert next_prime(10 ** 12) == 1000000000039 and next_prime(1) == 2 and next_prime(2) == 3 and next_prime(-5) == 2 and next_prime(89) == 97` },
         ],
       },
     },

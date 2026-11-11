@@ -160,6 +160,21 @@ print(t.get_depth(), t.tree_.threshold[0])`}</Code>
       answer: { kind: "choice", options: ["1 5.0", "1 3.0", "2 5.0", "1 7.0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+y = np.array([0, 0, 1, 1, 1, 1])
+p = y.mean()
+H = -(p * np.log2(p) + (1 - p) * np.log2(1 - p))
+print(round(p, 4), round(H, 4), round(1 - p ** 2 - (1 - p) ** 2, 4))`}</Code>
+          <p>The class share, entropy and Gini impurity of one node. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.6667 0.9183 0.4444", "0.6667 0.6365 0.4444", "0.6667 0.9183 0.2222", "0.3333 0.9183 0.4444"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -216,6 +231,66 @@ assert t['f'] == 0 and t['t'] == 5.0 and t['l'] == {'leaf': 0} and t['r'] == {'l
 X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]] * 5, dtype=float); y = np.array([0, 1, 1, 0] * 5)
 t = build_tree(X, y, 2)
 assert all(predict_one(t, x) == v for x, v in zip(X, y)), 'Two levels of splits solve XOR.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>regression_stump(x, y)</C>, the best single split of one numeric feature for regression: sort by x, use prefix sums of y and y² so that every split is evaluated in O(1) after sorting (O(n log n) in total), consider thresholds at midpoints between consecutive distinct x values, and minimise the total squared error of predicting each side by its mean. Return (threshold, left mean, right mean, sse), or <C>None</C> if x has a single distinct value.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def regression_stump(x, y):
+    return None
+`,
+        solution: `import numpy as np
+
+def regression_stump(x, y):
+    o = np.argsort(x, kind='stable')
+    x, y = np.asarray(x, float)[o], np.asarray(y, float)[o]
+    n = len(x)
+    c1, c2 = np.cumsum(y), np.cumsum(y * y)
+    best = None
+    for i in range(1, n):
+        if x[i] == x[i - 1]:
+            continue
+        sl, ql = c1[i - 1], c2[i - 1]
+        sr, qr = c1[-1] - sl, c2[-1] - ql
+        sse = (ql - sl * sl / i) + (qr - sr * sr / (n - i))
+        if best is None or sse < best[3] - 1e-12:
+            best = ((x[i - 1] + x[i]) / 2, sl / i, sr / (n - i), float(sse))
+    return best
+`,
+        tests: [
+          { name: "simple", code: `t, l, r, sse = regression_stump([1, 2, 3, 10, 11], [1.0, 1.0, 1.0, 5.0, 7.0])
+assert t == 6.5 and l == 1 and r == 6 and abs(sse - 2) < 1e-9 and regression_stump([3, 3], [1, 2]) is None` },
+          { name: "brute", code: `import numpy as np
+rng = np.random.default_rng(0)
+for _ in range(50):
+    x = rng.integers(0, 15, 30).astype(float); y = rng.normal(size=30) + (x > 7)
+    vals = np.unique(x)
+    best = min(np.sum((y[x <= t] - y[x <= t].mean()) ** 2) + np.sum((y[x > t] - y[x > t].mean()) ** 2) for t in (vals[:-1] + vals[1:]) / 2)
+    assert abs(regression_stump(x, y)[3] - best) < 1e-8, 'The smallest squared error over all splits.'` },
+          { name: "sklearn", code: `import numpy as np
+from sklearn.tree import DecisionTreeRegressor
+rng = np.random.default_rng(1)
+x = rng.uniform(0, 10, 200); y = np.sin(x) + rng.normal(0, 0.2, 200)
+m = DecisionTreeRegressor(max_depth=1).fit(x[:, None], y)
+t, l, r, sse = regression_stump(x, y)
+assert abs(m.tree_.threshold[0] - t) < 1e-6 and np.allclose(sorted(m.tree_.value[1:, 0, 0]), sorted([l, r])), 'The same split as a depth-1 scikit-learn tree.'` },
+          { name: "fast", code: `import numpy as np
+rng = np.random.default_rng(2)
+x = rng.uniform(size=200000); y = (x > 0.3) + rng.normal(0, 0.1, 200000)
+t = regression_stump(x, y)[0]
+assert abs(t - 0.3) < 0.01, 'O(n log n) on 200000 rows.'` },
         ],
       },
     },

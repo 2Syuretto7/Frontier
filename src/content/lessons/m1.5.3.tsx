@@ -156,6 +156,20 @@ print(min(S))`}</Code>
       answer: { kind: "numeric", value: 24 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+pairs = [(a, b) for b in range(1, 50) for a in range(1, 100) if a * a == 2 * b * b]
+least = min((n for n in range(1, 1000) if n % 6 == 0 and n % 15 == 0))
+print(pairs, least, math.lcm(6, 15))`}</Code>
+          <p>Well-ordering finds least elements; it also shows there is no least pair with a² = 2b². What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[] 30 30", "[] 90 30", "[(0, 0)] 30 30", "[] 30 90"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -179,6 +193,50 @@ print(min(S))`}</Code>
         tests: [
           { name: "remainders", code: `assert least(lambda n: n % 7 == 3 and n % 5 == 4) == 24, '24 leaves 3 on division by 7 and 4 on division by 5.'` },
           { name: "square over", code: `assert least(lambda n: n * n > 1000) == 32, '32² = 1024 is the first square above 1000.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            By well-ordering, every non-empty set of positive integers has a least element. Write <C>least_combination(a, b)</C>, the least positive value of ax + by over all integers x, y with |x|, |y| ≤ max(a, b), together with a pair (x, y) achieving it, as ((value), (x, y)) choosing the pair found first in a loop over x then y from −max(a, b) upwards. Check in the tests that the value equals gcd(a, b) (Bézout). Then write <C>min_counterexample(P, N)</C>, the least n in 1 … N with P(n) false, or <C>None</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def least_combination(a, b):
+    return (1, (1, 0))
+
+def min_counterexample(P, N):
+    return None
+`,
+        solution: `def least_combination(a, b):
+    m = max(a, b)
+    best = None
+    for x in range(-m, m + 1):
+        for y in range(-m, m + 1):
+            v = a * x + b * y
+            if v > 0 and (best is None or v < best[0]):
+                best = (v, (x, y))
+    return best
+
+def min_counterexample(P, N):
+    for n in range(1, N + 1):
+        if not P(n):
+            return n
+    return None
+`,
+        tests: [
+          { name: "bezout", code: `from math import gcd
+for a, b in [(12, 18), (35, 64), (6, 9), (17, 5), (100, 75)]:
+    v, (x, y) = least_combination(a, b)
+    assert v == gcd(a, b) and a * x + b * y == v, (a, b)` },
+          { name: "pair", code: `assert least_combination(4, 6) == (2, (-4, 3)), 'Take the first pair found.'` },
+          { name: "counter", code: `assert min_counterexample(lambda n: n * n - n + 41 != 41 * 41, 100) == 41 and min_counterexample(lambda n: True, 10) is None, 'Search upwards from 1.'` },
         ],
       },
     },

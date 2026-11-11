@@ -195,6 +195,20 @@ print(sp.diff(x ** 2 * sp.sin(x), x))`}</Code>
       answer: { kind: "choice", options: ["The product rule", "The quotient rule", "The chain rule only", "The power rule only"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def deriv(c):
+    return [k * c[k] for k in range(1, len(c))]
+p = [5, 0, -3, 0, 1]
+print(deriv(p), deriv(deriv(p)), deriv([7]))`}</Code>
+          <p>Differentiating x⁴ − 3x² + 5 as a coefficient list, lowest power first. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0, -6, 0, 4] [-6, 0, 12] []", "[0, -6, 0, 4] [-6, 0, 12] [0]", "[-6, 0, 4] [-6, 12] []", "[0, -3, 0, 1] [-3, 0, 1] []"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -215,6 +229,72 @@ print(sp.diff(x ** 2 * sp.sin(x), x))`}</Code>
         tests: [
           { name: "cubic", code: `assert list(poly_derivative([1, 2, 3, 4])) == [2, 6, 12], '1 + 2x + 3x² + 4x³ has derivative 2 + 6x + 12x².'` },
           { name: "constant", code: `assert list(poly_derivative([5])) == [], 'A constant has derivative 0 (the empty list).'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write a small forward-mode automatic differentiation class <C>Dual</C>, holding a value and a derivative, with <C>+</C>, <C>-</C>, <C>*</C>, <C>/</C> (and their reflected forms, so numbers mix with Duals), <C>**</C> for an integer or float exponent, and unary minus, each implementing the sum, product, quotient and power rules. Then write <C>derivative(f, x)</C>, which returns f′(x) by evaluating f at <C>Dual(x, 1)</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `class Dual:
+    def __init__(self, v, d=0.0):
+        self.v, self.d = v, d
+
+def derivative(f, x):
+    return 0.0
+`,
+        solution: `class Dual:
+    def __init__(self, v, d=0.0):
+        self.v, self.d = v, d
+    @staticmethod
+    def lift(o):
+        return o if isinstance(o, Dual) else Dual(o, 0.0)
+    def __add__(self, o):
+        o = Dual.lift(o)
+        return Dual(self.v + o.v, self.d + o.d)
+    __radd__ = __add__
+    def __sub__(self, o):
+        o = Dual.lift(o)
+        return Dual(self.v - o.v, self.d - o.d)
+    def __rsub__(self, o):
+        return Dual.lift(o) - self
+    def __mul__(self, o):
+        o = Dual.lift(o)
+        return Dual(self.v * o.v, self.d * o.v + self.v * o.d)
+    __rmul__ = __mul__
+    def __truediv__(self, o):
+        o = Dual.lift(o)
+        return Dual(self.v / o.v, (self.d * o.v - self.v * o.d) / (o.v * o.v))
+    def __rtruediv__(self, o):
+        return Dual.lift(o) / self
+    def __pow__(self, n):
+        return Dual(self.v ** n, n * self.v ** (n - 1) * self.d)
+    def __neg__(self):
+        return Dual(-self.v, -self.d)
+
+def derivative(f, x):
+    return f(Dual(x, 1.0)).d
+`,
+        tests: [
+          { name: "polynomial", code: `assert derivative(lambda x: 3 * x ** 4 - 2 * x + 7, 2.0) == 94.0 and derivative(lambda x: x * 0 + 5, 1.0) == 0, '12x³ − 2 at 2 is 94.'` },
+          { name: "quotient", code: `f = lambda x: (x * x + 1) / (x - 3)
+d = derivative(f, 1.0)
+assert abs(d - ((2 * 1) * (1 - 3) - (1 + 1)) / (1 - 3) ** 2) < 1e-12, 'Quotient rule.'` },
+          { name: "mixed", code: `f = lambda x: 1 / x - x / 2 + 4 - x ** 0.5 * x
+h = 1e-6
+num = (f(2 + h) - f(2 - h)) / (2 * h)
+assert abs(derivative(f, 2.0) - num) < 1e-6, 'Reflected operators and powers.'` },
+          { name: "negation", code: `assert derivative(lambda x: -x * x, 3.0) == -6.0, 'Unary minus.'` },
+          { name: "exact", code: `f = lambda x: ((x - 1) * (x + 2)) ** 3
+assert derivative(f, 0.5) == 3 * ((0.5 - 1) * (0.5 + 2)) ** 2 * (2 * 0.5 + 1), 'Chain of products and a power.'` },
         ],
       },
     },

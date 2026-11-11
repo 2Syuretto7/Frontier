@@ -168,6 +168,20 @@ print(sorted(stock.items()))`}</Code>
       answer: { kind: "choice", options: ["[('rice', 10), ('salt', 1), ('tea', 5)]", "[('tea', 5), ('rice', 10), ('salt', 1)]", "[('rice', 10), ('tea', 5)]", "A KeyError"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`d = {"a": 1, "b": 2}
+d["c"] = d.get("a", 0) + d.get("z", 10)
+d["a"] += 5
+print(d, sorted(d, key=d.get), list(d.items())[0])`}</Code>
+          <p>get with a default, updating a value, and sorting keys by value. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["{'a': 6, 'b': 2, 'c': 11} ['b', 'a', 'c'] ('a', 6)", "{'a': 6, 'b': 2, 'c': 1} ['c', 'b', 'a'] ('a', 6)", "{'a': 6, 'b': 2, 'c': 11} ['a', 'b', 'c'] ('a', 6)", "{'a': 1, 'b': 2, 'c': 11} ['a', 'b', 'c'] ('a', 1)"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -194,6 +208,55 @@ print(sorted(stock.items()))`}</Code>
         tests: [
           { name: "counts", code: `assert word_counts('the cat and the hat') == {'the': 2, 'cat': 1, 'and': 1, 'hat': 1}, 'Add one to the count each time a word appears.'` },
           { name: "case", code: `assert word_counts('Go go GO') == {'go': 3}, 'Lower-case each word first.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>invert(d)</C>, a dict mapping each value of d to the sorted list of keys that had it; <C>group_by(items, key)</C>, a dict mapping <C>key(item)</C> to the list of items with that key, in their original order; and <C>merge_counts(a, b)</C>, a new dict adding the counts of two count dicts. None of them may change their inputs.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def invert(d):
+    return {v: k for k, v in d.items()}
+
+def group_by(items, key):
+    return {}
+
+def merge_counts(a, b):
+    a.update(b)
+    return a
+`,
+        solution: `def invert(d):
+    out = {}
+    for k, v in d.items():
+        out.setdefault(v, []).append(k)
+    return {v: sorted(ks) for v, ks in out.items()}
+
+def group_by(items, key):
+    out = {}
+    for x in items:
+        out.setdefault(key(x), []).append(x)
+    return out
+
+def merge_counts(a, b):
+    out = dict(a)
+    for k, v in b.items():
+        out[k] = out.get(k, 0) + v
+    return out
+`,
+        tests: [
+          { name: "invert", code: `assert invert({'x': 1, 'y': 2, 'z': 1, 'a': 1}) == {1: ['a', 'x', 'z'], 2: ['y']} and invert({}) == {}` },
+          { name: "group", code: `g = group_by(['apple', 'bat', 'avocado', 'cat', 'banana'], lambda w: w[0])
+assert g == {'a': ['apple', 'avocado'], 'b': ['bat', 'banana'], 'c': ['cat']} and group_by(range(6), lambda n: n % 3) == {0: [0, 3], 1: [1, 4], 2: [2, 5]}` },
+          { name: "merge", code: `a, b = {'x': 2, 'y': 1}, {'y': 4, 'z': 3}
+assert merge_counts(a, b) == {'x': 2, 'y': 5, 'z': 3} and a == {'x': 2, 'y': 1} and b == {'y': 4, 'z': 3}, 'Do not change the inputs.'` },
         ],
       },
     },

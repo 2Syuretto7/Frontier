@@ -156,6 +156,24 @@ print(axes.shape, len(axes[1, 2].lines), len(axes[0, 0].lines))`}</Code>
       answer: { kind: "choice", options: ["(2, 3) 1 0", "(3, 2) 1 0", "(2, 3) 1 1", "(6,) 1 0"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots()
+ax.plot([1, 2, 3], [1, 4, 9], label="sq")
+ax.bar([1, 2], [3, 5])
+ax.set_xlim(0, 4)
+print(len(ax.lines), len(ax.patches), tuple(map(float, ax.get_xlim())), ax.get_legend())`}</Code>
+          <p>What a Matplotlib Axes holds after one line, two bars and a limit. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1 2 (0.0, 4.0) None", "1 2 (1.0, 3.0) None", "3 2 (0.0, 4.0) None", "1 2 (0.0, 4.0) Legend"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -191,6 +209,65 @@ assert len(ax.lines) == 2 and sorted(l.get_label() for l in ax.lines) == ['a', '
           { name: "axes", code: `ax = plot_runs({'a': [3, 2, 1]})
 assert ax.get_yscale() == 'log' and ax.get_xlabel() and ax.get_ylabel() and ax.get_legend() is not None, 'Log scale, axis labels and a legend.'` },
         ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>histogram_plot(ax, data, bins)</C>, which draws a histogram yourself: compute counts and edges with <C>np.histogram</C>, draw them with one call to <C>ax.bar</C> (left edges, heights, width = the bin width, <C>align="edge"</C>), label the y-axis <C>"count"</C>, and return the counts. Then write <C>mark_max(ax, xs, ys)</C>, which plots the line, adds a red dot at the maximum with <C>ax.plot(..., "ro")</C>, and adds a text annotation <C>{`f"max {y:.2f}"`}</C> there with <C>ax.annotate</C>; return the (x, y) of the maximum (the first on ties).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def histogram_plot(ax, data, bins):
+    return np.histogram(data, bins)[0]
+
+def mark_max(ax, xs, ys):
+    ax.plot(xs, ys)
+    return (xs[0], ys[0])
+`,
+        solution: `import numpy as np
+
+def histogram_plot(ax, data, bins):
+    counts, edges = np.histogram(data, bins)
+    ax.bar(edges[:-1], counts, width=np.diff(edges), align='edge')
+    ax.set_ylabel('count')
+    return counts
+
+def mark_max(ax, xs, ys):
+    ax.plot(xs, ys)
+    i = int(np.argmax(ys))
+    x, y = xs[i], ys[i]
+    ax.plot([x], [y], 'ro')
+    ax.annotate(f'max {y:.2f}', (x, y))
+    return (x, y)
+`,
+        tests: [
+          { name: "bars", code: `import numpy as np
+import matplotlib.pyplot as plt
+rng = np.random.default_rng(0); data = rng.normal(size=500)
+fig, ax = plt.subplots()
+counts = histogram_plot(ax, data, 10)
+c, e = np.histogram(data, 10)
+assert np.array_equal(counts, c) and len(ax.patches) == 10 and ax.get_ylabel() == 'count'
+assert np.allclose([p.get_height() for p in ax.patches], c) and np.allclose([p.get_x() for p in ax.patches], e[:-1]) and np.allclose([p.get_width() for p in ax.patches], np.diff(e)), 'Bars start at the left edges and fill each bin.'` },
+          { name: "max", code: `import matplotlib.pyplot as plt
+fig, ax = plt.subplots()
+xs = [0, 1, 2, 3, 4]; ys = [1.0, 3.5, 2.0, 3.5, 0.0]
+assert mark_max(ax, xs, ys) == (1, 3.5) and len(ax.lines) == 2
+dot = ax.lines[1]
+assert list(dot.get_xdata()) == [1] and dot.get_color() == 'r' and dot.get_marker() == 'o'
+assert [t.get_text() for t in ax.texts] == ['max 3.50'], 'One annotation with the value to two decimals.'` },
+        ],
+        setup: `import matplotlib
+matplotlib.use('Agg')
+`,
       },
     },
     {

@@ -151,6 +151,20 @@ print([(x > 0) - (x < 0) + 2 * ((y > 0) - (y < 0)) for x, y in pts])`}</Code>
       answer: { kind: "choice", options: ["(0, 2)", "(3, −1)", "(−2, 4)", "(−5, −5)"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`pts = [(3, 4), (-1, 2), (0, -5), (-2, -2)]
+far = max(pts, key=lambda p: p[0] ** 2 + p[1] ** 2)
+mid = (sum(x for x, _ in pts) / 4, sum(y for _, y in pts) / 4)
+print(far, mid)`}</Code>
+          <p>The point farthest from the origin, and the centroid. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["(3, 4) (0.0, -0.25)", "(0, -5) (0.0, -0.25)", "(3, 4) (0, -1)", "(0, -5) (0.0, 0.25)"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -175,6 +189,61 @@ print([(x > 0) - (x < 0) + 2 * ((y > 0) - (y < 0)) for x, y in pts])`}</Code>
         tests: [
           { name: "quadrants", code: `assert [quadrant(1, 1), quadrant(-1, 1), quadrant(-1, -1), quadrant(1, -1)] == [1, 2, 3, 4], 'Anticlockwise from the top right.'` },
           { name: "axes", code: `assert quadrant(0, 5) == 0 and quadrant(-3, 0) == 0, 'Points on an axis are in no quadrant.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>polygon_area(pts)</C>, the area of a simple polygon whose vertices are listed in order (either direction), by the shoelace formula ½|Σ(xᵢyᵢ₊₁ − xᵢ₊₁yᵢ)|, and <C>orientation(pts)</C>, which returns <C>"anticlockwise"</C> or <C>"clockwise"</C> from the sign of that sum. Then write <C>lattice_points(pts)</C> for a polygon with integer vertices: the number of integer points strictly inside, from Pick&rsquo;s theorem A = I + B/2 − 1, where B, the number of lattice points on the boundary, is the sum of gcd(|dx|, |dy|) over the edges.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def polygon_area(pts):
+    return 0.0
+
+def orientation(pts):
+    return 'anticlockwise'
+
+def lattice_points(pts):
+    return 0
+`,
+        solution: `import math
+
+def _twice(pts):
+    n = len(pts)
+    return sum(pts[i][0] * pts[(i + 1) % n][1] - pts[(i + 1) % n][0] * pts[i][1] for i in range(n))
+
+def polygon_area(pts):
+    return abs(_twice(pts)) / 2
+
+def orientation(pts):
+    return 'anticlockwise' if _twice(pts) > 0 else 'clockwise'
+
+def lattice_points(pts):
+    n = len(pts)
+    B = sum(math.gcd(abs(pts[(i + 1) % n][0] - pts[i][0]), abs(pts[(i + 1) % n][1] - pts[i][1])) for i in range(n))
+    A2 = abs(_twice(pts))
+    return (A2 - B + 2) // 2
+`,
+        tests: [
+          { name: "square", code: `assert polygon_area([(0, 0), (4, 0), (4, 3), (0, 3)]) == 12 and polygon_area([(0, 3), (4, 3), (4, 0), (0, 0)]) == 12, 'Either direction gives the same area.'` },
+          { name: "orientation", code: `assert orientation([(0, 0), (1, 0), (0, 1)]) == 'anticlockwise' and orientation([(0, 0), (0, 1), (1, 0)]) == 'clockwise', 'The signed sum is positive anticlockwise.'` },
+          { name: "concave", code: `assert polygon_area([(0, 0), (4, 0), (4, 4), (2, 1), (0, 4)]) == 10, 'The shoelace formula handles concave polygons.'` },
+          { name: "pick", code: `assert lattice_points([(0, 0), (4, 0), (4, 3), (0, 3)]) == 6 and lattice_points([(0, 0), (5, 0), (0, 5)]) == 6, 'A 4 × 3 rectangle has 3 × 2 interior points.'` },
+          { name: "brute", code: `pts = [(0, 0), (7, 2), (3, 9), (-2, 4)]
+def inside(px, py):
+    s = []
+    for i in range(4):
+        (x1, y1), (x2, y2) = pts[i], pts[(i + 1) % 4]
+        s.append((x2 - x1) * (py - y1) - (y2 - y1) * (px - x1))
+    return all(v > 0 for v in s) or all(v < 0 for v in s)
+assert lattice_points(pts) == sum(inside(x, y) for x in range(-3, 9) for y in range(-1, 11)), 'Pick agrees with counting.'` },
         ],
       },
     },

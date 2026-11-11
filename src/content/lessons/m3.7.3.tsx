@@ -146,6 +146,22 @@ print(round(u[0], 4))`}</Code>
       answer: { kind: "numeric", value: 0.6667, tolerance: 0.0002 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+P = np.array([[0.9, 0.2], [0.1, 0.8]])
+x = np.array([1.0, 0.0])
+for _ in range(50):
+    x = P @ x
+print(np.round(x, 4), np.round(np.linalg.matrix_power(P, 50)[:, 1], 4))`}</Code>
+          <p>A Markov matrix with columns summing to 1, run for 50 steps from two starts. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0.6667 0.3333] [0.6667 0.3333]", "[0.5 0.5] [0.5 0.5]", "[0.6667 0.3333] [0.3333 0.6667]", "[0.9 0.1] [0.2 0.8]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -180,6 +196,70 @@ assert np.allclose(steady_state([[0.8, 0.3], [0.2, 0.7]]), [0.6, 0.4]), 'Scale t
 P = np.array([[0.5, 0.2, 0.3], [0.3, 0.6, 0.1], [0.2, 0.2, 0.6]])
 u = steady_state(P)
 assert np.allclose(P @ u, u) and abs(u.sum() - 1) < 1e-9, 'The steady state satisfies Pu = u.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>pagerank(links, n, damping=0.85, tol=1e-12)</C> for a directed graph on pages 0 … n − 1 given as a list of (from, to) links: build the column-stochastic matrix (a page with no out-links links to every page equally), mix it with the uniform matrix by damping, and run power iteration from the uniform vector until the 1-norm change is below tol. Return (ranks, iterations). Then write <C>absorbing_time(P, transient)</C> for a Markov chain with column-stochastic P: the expected number of steps to absorption from each transient state, from the fundamental matrix (I − Q)⁻¹ where Q is P restricted to the transient states.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def pagerank(links, n, damping=0.85, tol=1e-12):
+    return (np.ones(n) / n, 0)
+
+def absorbing_time(P, transient):
+    return np.zeros(len(transient))
+`,
+        solution: `import numpy as np
+
+def pagerank(links, n, damping=0.85, tol=1e-12):
+    M = np.zeros((n, n))
+    for a, b in links:
+        M[b, a] += 1
+    out = M.sum(0)
+    for j in range(n):
+        M[:, j] = M[:, j] / out[j] if out[j] else 1.0 / n
+    G = damping * M + (1 - damping) / n
+    x = np.ones(n) / n
+    for k in range(1, 10000):
+        y = G @ x
+        if np.abs(y - x).sum() < tol:
+            return (y, k)
+        x = y
+    return (x, k)
+
+def absorbing_time(P, transient):
+    P = np.asarray(P, float)
+    Q = P[np.ix_(transient, transient)]
+    N = np.linalg.inv(np.eye(len(transient)) - Q)
+    return np.ones(len(transient)) @ N
+`,
+        tests: [
+          { name: "cycle", code: `import numpy as np
+r, k = pagerank([(0, 1), (1, 2), (2, 0)], 3)
+assert np.allclose(r, 1 / 3) and abs(r.sum() - 1) < 1e-12, 'A cycle ranks all pages equally.'` },
+          { name: "hub", code: `import numpy as np
+r, k = pagerank([(1, 0), (2, 0), (3, 0), (0, 1)], 4)
+assert r.argmax() == 0 and r[1] > r[2] and abs(r.sum() - 1) < 1e-12 and np.isclose(r[2], r[3]), 'Everyone links to page 0.'` },
+          { name: "dangling", code: `import numpy as np
+r, k = pagerank([(0, 1)], 3)
+G = np.array([[0, 0, 1 / 3], [1, 1 / 3 * 0 + 1 / 3, 1 / 3], [0, 1 / 3, 1 / 3]])
+assert abs(r.sum() - 1) < 1e-12 and r[1] > r[0] and k < 200, 'Pages with no links spread their rank evenly.'` },
+          { name: "gambler", code: `import numpy as np
+P = np.zeros((5, 5))
+P[0, 0] = P[4, 4] = 1
+for i in (1, 2, 3):
+    P[i - 1, i] = P[i + 1, i] = 0.5
+assert np.allclose(absorbing_time(P, [1, 2, 3]), [3, 4, 3]), 'A fair walk on 0 … 4 from i takes i(4 − i) steps.'` },
         ],
       },
     },

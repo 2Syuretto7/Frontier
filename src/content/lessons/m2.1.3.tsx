@@ -190,6 +190,19 @@ print(abs(sum(xs)), sum(abs(x) for x in xs))`}</Code>
       answer: { kind: "numeric", value: 2 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`xs = [x / 4 for x in range(-20, 21)]
+sol = [x for x in xs if abs(x - 1) + abs(x + 2) <= 5]
+print(sol[0], sol[-1], len(sol))`}</Code>
+          <p>|x − 1| + |x + 2| ≤ 5 on a grid of quarters. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["-3.0 2.0 21", "-2.0 1.0 13", "-3.0 2.0 20", "-3.25 2.25 23"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -211,6 +224,68 @@ print(abs(sum(xs)), sum(abs(x) for x in xs))`}</Code>
           { name: "plain", code: `assert solve_abs(1, 3, 2) == (1, 5), '|x − 3| < 2 means 1 < x < 5.'` },
           { name: "scaled", code: `lo, hi = solve_abs(2, 6, 1)
 assert abs(lo - 2.5) < 1e-12 and abs(hi - 3.5) < 1e-12, '|2x − 6| < 1 means 2.5 < x < 3.5: divide by a.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>sum_abs_solve(points, r)</C>, the solution set of |x − p₁| + |x − p₂| + … + |x − pₖ| ≤ r as a closed interval (lo, hi), or <C>None</C>. The left side is convex and piecewise linear with kinks at the pᵢ, so: find its minimum (at a median of the points), return <C>None</C> if that exceeds r, and otherwise solve for each end on the correct linear piece. Then write <C>minimiser(points)</C>, the smallest x achieving the minimum.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def sum_abs_solve(points, r):
+    return (min(points) - r, max(points) + r)
+
+def minimiser(points):
+    return sum(points) / len(points)
+`,
+        solution: `def f(points, x):
+    return sum(abs(x - p) for p in points)
+
+def minimiser(points):
+    s = sorted(points)
+    return s[(len(s) - 1) // 2]
+
+def sum_abs_solve(points, r):
+    s = sorted(points)
+    m = minimiser(s)
+    if f(s, m) > r:
+        return None
+    def end(direction):
+        knots = sorted({p for p in s if (p - m) * direction > 0}, key=lambda p: direction * p)
+        x = m
+        for k in knots + [None]:
+            fx = f(s, x)
+            nxt = k if k is not None else x + direction
+            slope = abs(f(s, nxt) - fx) / abs(nxt - x)
+            if k is None or f(s, k) > r:
+                return x + direction * (r - fx) / slope
+            x = k
+    return (end(-1), end(1))
+`,
+        tests: [
+          { name: "two points", code: `assert sum_abs_solve([1, -2], 5) == (-3.0, 2.0) and sum_abs_solve([1, -2], 3) == (-2, 1), '|x − 1| + |x + 2| is 3 between the points.'` },
+          { name: "empty", code: `assert sum_abs_solve([0, 10], 9) is None, 'The sum is at least 10.'` },
+          { name: "three", code: `lo, hi = sum_abs_solve([0, 1, 5], 9)
+assert abs(lo - (-1)) < 1e-12 and abs(hi - 5) < 1e-12, 'Solve on the right linear piece.'` },
+          { name: "brute", code: `import random
+random.seed(6)
+for _ in range(40):
+    pts = [random.randint(-10, 10) for _ in range(random.randint(1, 6))]
+    r = random.randint(0, 60)
+    res = sum_abs_solve(pts, r)
+    grid = [k / 8 for k in range(-800, 801) if sum(abs(k / 8 - p) for p in pts) <= r + 1e-12]
+    if res is None:
+        assert not grid, (pts, r)
+    else:
+        assert abs(res[0] - grid[0]) <= 0.125 + 1e-9 and abs(res[1] - grid[-1]) <= 0.125 + 1e-9, (pts, r, res)` },
+          { name: "median", code: `assert minimiser([5, 1, 3]) == 3 and minimiser([4, 1, 3, 2]) == 2, 'A median minimises a sum of distances.'` },
         ],
       },
     },

@@ -169,6 +169,20 @@ print(y)`}</Code>
       answer: { kind: "numeric", value: 7 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def f(x):
+    return 2 * x ** 2 - 3 * x + 1
+vals = [f(x) for x in range(-1, 3)]
+print(vals, -3 ** 2)`}</Code>
+          <p>Precedence: ** binds tighter than unary minus. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[6, 1, 0, 3] -9", "[6, 1, 0, 3] 9", "[0, 1, 0, 3] -9", "[6, 1, 1, 3] -9"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -189,6 +203,52 @@ print(y)`}</Code>
         tests: [
           { name: "quadratic", code: `assert evaluate([1, -4, 2], 3) == 7, '1 − 4·3 + 2·9 = 7.'` },
           { name: "constant", code: `assert evaluate([5], 100) == 5 and evaluate([0, 1], -2) == -2, 'The constant term is multiplied by x⁰ = 1.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>horner(coeffs, x)</C>, which evaluates a₀ + a₁x + … + aₙxⁿ (coefficients lowest power first) with only n multiplications by Horner&rsquo;s rule, and <C>derivative(coeffs)</C>, the coefficient list of the derivative (use <C>[0]</C> for a constant).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def horner(coeffs, x):
+    return sum(c * x ** k for k, c in enumerate(coeffs))
+
+def derivative(coeffs):
+    return coeffs[1:]
+`,
+        solution: `def horner(coeffs, x):
+    r = 0
+    for c in reversed(coeffs):
+        r = r * x + c
+    return r
+
+def derivative(coeffs):
+    d = [k * c for k, c in enumerate(coeffs)][1:]
+    return d or [0]
+`,
+        tests: [
+          { name: "values", code: `assert horner([1, -3, 2], 2) == 3 and horner([5], 10) == 5 and horner([0, 0, 1], -4) == 16, '1 − 3x + 2x² at 2 is 3.'` },
+          { name: "counts", code: `class N(float):
+    count = 0
+    def __mul__(self, o):
+        N.count += 1
+        return N(float(self) * float(o))
+    __rmul__ = __mul__
+    def __add__(self, o):
+        return N(float(self) + float(o))
+    __radd__ = __add__
+N.count = 0
+horner([1, 2, 3, 4, 5], N(2.0))
+assert N.count <= 5, f'Horner uses one multiplication per coefficient, you used {N.count}.'` },
+          { name: "derivative", code: `assert derivative([1, -3, 2]) == [-3, 4] and derivative([7]) == [0] and derivative([0, 0, 0, 5]) == [0, 0, 15], 'The derivative of aₖxᵏ is k·aₖxᵏ⁻¹.'` },
         ],
       },
     },

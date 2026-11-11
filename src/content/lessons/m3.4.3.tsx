@@ -154,6 +154,19 @@ print(np.linalg.matrix_rank(V))`}</Code>
       answer: { kind: "numeric", value: 2 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+vs = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+print(np.linalg.matrix_rank(vs), vs[0] - 2 * vs[1] + vs[2])`}</Code>
+          <p>Are the rows (1, 2, 3), (4, 5, 6), (7, 8, 9) independent? What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2 [0 0 0]", "3 [0 0 0]", "2 [1 1 1]", "3 [6 6 6]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -181,6 +194,63 @@ def independent(vectors):
           { name: "independent triple", code: `assert independent([[1, 0, 0], [1, 1, 0], [1, 1, 1]]), 'These three are independent.'` },
           { name: "too many", code: `assert not independent([[1, 0], [0, 1], [1, 1]]), 'Three vectors in the plane are always dependent.'` },
           { name: "zero vector", code: `assert not independent([[1, 1, 0], [0, 0, 0]]), 'A set containing 0 is dependent.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>dependency(vectors)</C>, which returns <C>None</C> if the vectors are linearly independent and otherwise a list of integer coefficients, not all zero and with no common factor, giving a dependency Σ cᵢvᵢ = 0. Work exactly: use <C>sympy.Matrix(...).nullspace()</C> on the matrix with the vectors as columns, take the first basis vector, and clear denominators. Then write <C>maximal_independent(vectors)</C>, the indices of a maximal independent subset chosen greedily from the left (keep a vector if it raises the rank).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import sympy as sp
+
+def dependency(vectors):
+    return None
+
+def maximal_independent(vectors):
+    return list(range(len(vectors)))
+`,
+        solution: `import sympy as sp
+from math import gcd
+from functools import reduce
+
+def dependency(vectors):
+    M = sp.Matrix(vectors).T
+    ns = M.nullspace()
+    if not ns:
+        return None
+    v = ns[0]
+    den = reduce(sp.ilcm, [sp.fraction(sp.nsimplify(x))[1] for x in v], 1)
+    c = [int(x * den) for x in v]
+    g = reduce(gcd, [abs(x) for x in c])
+    c = [x // g for x in c]
+    first = next(x for x in c if x != 0)
+    return [-x for x in c] if first < 0 else c
+
+def maximal_independent(vectors):
+    keep = []
+    for i in range(len(vectors)):
+        if sp.Matrix([vectors[j] for j in keep + [i]]).rank() == len(keep) + 1:
+            keep.append(i)
+    return keep
+`,
+        tests: [
+          { name: "dependent", code: `c = dependency([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+assert c in ([1, -2, 1], [-1, 2, -1]), 'v₁ − 2v₂ + v₃ = 0.'` },
+          { name: "independent", code: `assert dependency([[1, 0, 0], [1, 1, 0], [1, 1, 1]]) is None, 'A triangular set is independent.'` },
+          { name: "fractions", code: `c = dependency([[2, 4], [3, 6]])
+assert c is not None and 2 * c[0] + 3 * c[1] == 0 and 4 * c[0] + 6 * c[1] == 0 and max(map(abs, c)) == 3, 'Clear denominators and common factors: 3v₁ − 2v₂ = 0.'` },
+          { name: "valid", code: `vs = [[1, 2, 0, 1], [0, 1, 1, 0], [1, 3, 1, 1], [2, 1, -3, 2]]
+c = dependency(vs)
+assert any(c) and all(sum(ci * v[k] for ci, v in zip(c, vs)) == 0 for k in range(4)), 'The combination must be zero.'` },
+          { name: "greedy", code: `assert maximal_independent([[1, 2, 3], [2, 4, 6], [0, 1, 1], [1, 3, 4], [0, 0, 1]]) == [0, 2, 4], 'Skip vectors already in the span.'` },
         ],
       },
     },

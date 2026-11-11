@@ -157,6 +157,63 @@ export const lesson: LessonContent = {
       },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`bad = [(a, b) for a in range(-20, 21) for b in range(-20, 21) if a % 3 == 0 and b % 3 == 0 and (a * b + a + b) % 3 != 0]
+print(len(bad), (7 * 3) % 9, (6 * 9 + 6 + 9) % 3)`}</Code>
+          <p>A direct proof claims: if 3 | a and 3 | b then 3 | ab + a + b. The code hunts for counterexamples. What does it print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0 3 0", "1 3 0", "0 0 0", "0 3 1"], correct: [0] },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A direct proof that the sum of two rationals is rational computes the witness: a/b + c/d = (ad + bc)/(bd). Write <C>add_witness(a, b, c, d)</C>, which returns that witness pair in lowest terms with a positive denominator, without using <C>fractions</C>. Then write <C>mean_between(a, b, c, d)</C>, the witness (p, q) in lowest terms for the claim that between two rationals a/b &lt; c/d there is a third, namely their average.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def add_witness(a, b, c, d):
+    return (a + c, b + d)
+
+def mean_between(a, b, c, d):
+    return (a + c, b + d)
+`,
+        solution: `from math import gcd
+
+def reduce(p, q):
+    if q < 0:
+        p, q = -p, -q
+    g = gcd(p, q)
+    return (p // g, q // g)
+
+def add_witness(a, b, c, d):
+    return reduce(a * d + b * c, b * d)
+
+def mean_between(a, b, c, d):
+    p, q = add_witness(a, b, c, d)
+    return reduce(p, 2 * q)
+`,
+        tests: [
+          { name: "add", code: `assert add_witness(1, 2, 1, 3) == (5, 6) and add_witness(1, 6, 1, 3) == (1, 2) and add_witness(1, 2, -1, 2) == (0, 1), 'Reduce by the gcd.'` },
+          { name: "signs", code: `assert add_witness(1, -3, 1, 6) == (-1, 6) and add_witness(-1, -2, -1, -2) == (1, 1), 'Keep the denominator positive.'` },
+          { name: "between", code: `from fractions import Fraction
+for a, b, c, d in [(1, 3, 1, 2), (-5, 7, 2, 9), (0, 1, 1, 1000)]:
+    p, q = mean_between(a, b, c, d)
+    assert Fraction(a, b) < Fraction(p, q) < Fraction(c, d) and q > 0 and Fraction(p, q).denominator == q, (a, b, c, d)` },
+          { name: "no fractions", code: `import inspect
+assert 'Fraction' not in inspect.getsource(add_witness) and 'fractions' not in inspect.getsource(mean_between), 'Work with the integers.'` },
+        ],
+      },
+    },
+    {
       key: "read",
       rung: "apply",
       prompt: (
@@ -187,6 +244,10 @@ export const lesson: LessonContent = {
 `,
         tests: [
           { name: "matches", code: `assert all((2 * k + 1) ** 2 == 2 * odd_square_witness(k) + 1 for k in range(-50, 50)), 'Expand (2k + 1)² and read off j.'` },
+          { name: "values", code: `assert [odd_square_witness(k) for k in range(4)] == [0, 4, 12, 24] and odd_square_witness(-1) == 0, '1 = 2·0 + 1, 9 = 2·4 + 1, 25 = 2·12 + 1.'` },
+          { name: "no division", code: `import inspect
+src = inspect.getsource(odd_square_witness)
+assert '/' not in src and '%' not in src, 'Use the formula from the proof, not division.'` },
         ],
       },
     },

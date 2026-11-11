@@ -149,6 +149,20 @@ print(round(sum((-1) ** (1 + j) * A[1, j] * np.linalg.det(minor(1, j)) for j in 
       answer: { kind: "numeric", value: -59 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+A = np.array([[1.0, 2.0, 0.0], [3.0, 4.0, 5.0], [0.0, 1.0, 2.0]])
+C = np.array([[(-1) ** (i + j) * np.linalg.det(np.delete(np.delete(A, i, 0), j, 1)) for j in range(3)] for i in range(3)])
+print(np.round(A[0] @ C[0], 6), np.round(A[1] @ C[0], 6))`}</Code>
+          <p>Expanding along row 0 with its own cofactors, and with the cofactors of another row. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["-9.0 0.0", "-9.0 -9.0", "9.0 0.0", "-1.0 0.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -186,6 +200,69 @@ def cofactor_det(A):
 rng = np.random.default_rng(8)
 A = rng.integers(-3, 4, (4, 4))
 assert abs(cofactor_det(A) - np.linalg.det(A)) < 1e-8, 'Recursion should work for any size.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>adjugate(A)</C>, the transpose of the cofactor matrix, for a square integer matrix, with each cofactor computed exactly (use <C>sympy.Matrix</C> minors or your own exact determinant), returned as a list of lists of ints. Then write <C>inverse_by_cramer(A)</C>, the exact inverse as a list of lists of <C>Fraction</C>, from A⁻¹ = adj(A)/det(A), and <C>cramer_solve(A, b)</C>, the exact solution of Ax = b by Cramer&rsquo;s rule (replace column i by b).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `from fractions import Fraction
+
+def adjugate(A):
+    return [list(row) for row in A]
+
+def inverse_by_cramer(A):
+    return [[Fraction(0)] * len(A) for _ in A]
+
+def cramer_solve(A, b):
+    return [Fraction(0)] * len(A)
+`,
+        solution: `from fractions import Fraction
+import sympy as sp
+
+def _det(M):
+    return int(sp.Matrix(M).det()) if len(M) else 1
+
+def adjugate(A):
+    n = len(A)
+    C = [[(-1) ** (i + j) * _det([[A[r][c] for c in range(n) if c != j] for r in range(n) if r != i]) for j in range(n)] for i in range(n)]
+    return [[C[j][i] for j in range(n)] for i in range(n)]
+
+def inverse_by_cramer(A):
+    d = _det(A)
+    return [[Fraction(x, d) for x in row] for row in adjugate(A)]
+
+def cramer_solve(A, b):
+    d = _det(A)
+    n = len(A)
+    out = []
+    for i in range(n):
+        Ai = [[b[r] if c == i else A[r][c] for c in range(n)] for r in range(n)]
+        out.append(Fraction(_det(Ai), d))
+    return out
+`,
+        tests: [
+          { name: "adj", code: `assert adjugate([[1, 2], [3, 4]]) == [[4, -2], [-3, 1]], 'For 2 × 2, swap the diagonal and negate the rest.'` },
+          { name: "identity", code: `A = [[1, 2, 0], [3, 4, 5], [0, 1, 2]]
+adj = adjugate(A)
+prod = [[sum(A[i][k] * adj[k][j] for k in range(3)) for j in range(3)] for i in range(3)]
+assert prod == [[-9, 0, 0], [0, -9, 0], [0, 0, -9]], 'A · adj(A) = det(A) · I.'` },
+          { name: "inverse", code: `from fractions import Fraction
+inv = inverse_by_cramer([[2, 1], [5, 3]])
+assert inv == [[3, -1], [-5, 2]] and inverse_by_cramer([[2, 0], [0, 4]]) == [[Fraction(1, 2), 0], [0, Fraction(1, 4)]], 'Exact fractions.'` },
+          { name: "cramer", code: `from fractions import Fraction
+A = [[2, 1, 1], [4, -6, 0], [-2, 7, 2]]
+x = cramer_solve(A, [5, -2, 9])
+assert x == [1, 1, 2], 'Strang’s system has solution (1, 1, 2).'` },
         ],
       },
     },

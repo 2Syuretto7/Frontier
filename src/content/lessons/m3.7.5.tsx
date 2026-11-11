@@ -152,6 +152,21 @@ for b in [0.5, 1.5, 2.5]:
       answer: { kind: "choice", options: ["yes yes no", "yes no no", "yes yes yes", "no no yes"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+S = np.array([[2.0, 1.0], [1.0, 2.0]])
+x = np.array([1.0, -3.0])
+L = np.linalg.cholesky(S)
+print(x @ S @ x, np.round(L, 4), np.all(np.linalg.eigvalsh(S) > 0))`}</Code>
+          <p>The energy xᵀSx, the Cholesky factor and the eigenvalue test for positive definiteness. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["14.0 [[1.4142 0.    ]\n [0.7071 1.2247]] True", "14.0 [[1.4142 0.7071]\n [0.     1.2247]] True", "26.0 [[1.4142 0.    ]\n [0.7071 1.2247]] True", "14.0 [[1.4142 0.    ]\n [0.7071 1.2247]] False"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -189,6 +204,84 @@ def is_pos_def(S):
           { name: "tridiagonal", code: `import numpy as np
 T = 2 * np.eye(5) - np.eye(5, k=1) - np.eye(5, k=-1)
 assert is_pos_def(T), 'The 2, −1 tridiagonal matrix is positive definite.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>cholesky(S)</C>, the lower-triangular L with S = LLᵀ, computed column by column (Lⱼⱼ = √(Sⱼⱼ − Σₖ&lt;ⱼ Lⱼₖ²), Lᵢⱼ = (Sᵢⱼ − Σₖ&lt;ⱼ LᵢₖLⱼₖ)/Lⱼⱼ), raising <C>np.linalg.LinAlgError</C> if a diagonal value is not positive (so S is not positive definite). Then write <C>sample_gaussian(mean, cov, n, seed)</C>, n samples from a multivariate normal as mean + Lz with standard normal z from a seeded <C>default_rng</C>, and <C>mahalanobis(x, mean, cov)</C>, √((x − m)ᵀΣ⁻¹(x − m)) computed with two triangular solves.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def cholesky(S):
+    return np.linalg.cholesky(S)
+
+def sample_gaussian(mean, cov, n, seed):
+    return np.zeros((n, len(mean)))
+
+def mahalanobis(x, mean, cov):
+    return float(np.linalg.norm(np.asarray(x) - mean))
+`,
+        solution: `import numpy as np
+
+from scipy.linalg import solve_triangular
+
+def cholesky(S):
+    S = np.asarray(S, float)
+    n = len(S)
+    L = np.zeros((n, n))
+    for j in range(n):
+        d = S[j, j] - L[j, :j] @ L[j, :j]
+        if d <= 0:
+            raise np.linalg.LinAlgError('not positive definite')
+        L[j, j] = np.sqrt(d)
+        for i in range(j + 1, n):
+            L[i, j] = (S[i, j] - L[i, :j] @ L[j, :j]) / L[j, j]
+    return L
+
+def sample_gaussian(mean, cov, n, seed):
+    L = cholesky(cov)
+    z = np.random.default_rng(seed).standard_normal((n, len(mean)))
+    return np.asarray(mean, float) + z @ L.T
+
+def mahalanobis(x, mean, cov):
+    L = cholesky(cov)
+    d = np.asarray(x, float) - np.asarray(mean, float)
+    y = solve_triangular(L, d, lower=True)
+    return float(np.sqrt(y @ y))
+`,
+        tests: [
+          { name: "factor", code: `import numpy as np
+L = cholesky([[4.0, 2.0], [2.0, 3.0]])
+assert np.allclose(L, [[2, 0], [1, 2 ** 0.5]]), 'S = LLᵀ.'` },
+          { name: "random", code: `import numpy as np
+rng = np.random.default_rng(22)
+B = rng.normal(size=(6, 6))
+S = B @ B.T + 0.1 * np.eye(6)
+L = cholesky(S)
+assert np.allclose(L @ L.T, S) and np.allclose(np.tril(L), L) and 'cholesky' not in __import__('inspect').getsource(cholesky).replace('def cholesky', ''), 'Your own factorisation.'` },
+          { name: "not pd", code: `import numpy as np
+try:
+    cholesky([[1.0, 2.0], [2.0, 1.0]])
+    ok = False
+except np.linalg.LinAlgError:
+    ok = True
+assert ok, 'Eigenvalues 3 and −1: not positive definite.'` },
+          { name: "samples", code: `import numpy as np
+cov = np.array([[2.0, 0.8], [0.8, 1.0]])
+X = sample_gaussian([1.0, -2.0], cov, 200000, 0)
+assert np.allclose(X.mean(0), [1, -2], atol=0.01) and np.allclose(np.cov(X.T), cov, atol=0.02), 'Lz has covariance LLᵀ.'` },
+          { name: "mahalanobis", code: `import numpy as np
+cov = np.array([[4.0, 0.0], [0.0, 1.0]])
+assert abs(mahalanobis([2, 0], [0, 0], cov) - 1) < 1e-12 and abs(mahalanobis([0, 2], [0, 0], cov) - 2) < 1e-12, 'Distance in units of standard deviation.'` },
         ],
       },
     },

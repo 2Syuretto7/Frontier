@@ -154,6 +154,20 @@ print(len(image), sorted(preimage))`}</Code>
       answer: { kind: "numeric", value: 4 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = lambda x: x * x
+img = lambda X: {f(x) for x in X}
+S, T = {-2, -1, 0}, {0, 1, 2}
+print(sorted(img(S & T)), sorted(img(S) & img(T)), img(S) == img(T))`}</Code>
+          <p>Is the image of an intersection the intersection of the images? What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0] [0, 1, 4] True", "[0, 1, 4] [0, 1, 4] True", "[0] [0] False", "[0] [0, 1, 4] False"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -183,6 +197,54 @@ assert image(f, {-2, 1, 2}) == {1, 4} and preimage(f, range(-3, 4), {4, 5}) == {
           { name: "inclusion", code: `f = lambda x: x % 4
 A = range(20); T = {1, 7}
 assert image(f, preimage(f, A, T)) <= T and image(f, preimage(f, A, T)) != T, 'f(f⁻¹(T)) can be smaller than T when f misses part of T.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            With functions given as Python callables on a finite domain A and codomain B, write <C>is_injective(f, A)</C>, <C>is_surjective(f, A, B)</C> and <C>inverse(f, A, B)</C>. The last returns the inverse as a dict from B to A when f is a bijection from A to B, and <C>None</C> otherwise. Assume every f(a) lies in B.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def is_injective(f, A):
+    return True
+
+def is_surjective(f, A, B):
+    return len(A) >= len(B)
+
+def inverse(f, A, B):
+    return {f(a): a for a in A}
+`,
+        solution: `def is_injective(f, A):
+    seen = set()
+    for a in A:
+        y = f(a)
+        if y in seen:
+            return False
+        seen.add(y)
+    return True
+
+def is_surjective(f, A, B):
+    return {f(a) for a in A} >= set(B)
+
+def inverse(f, A, B):
+    if not (is_injective(f, A) and is_surjective(f, A, B)):
+        return None
+    return {f(a): a for a in A}
+`,
+        tests: [
+          { name: "injective", code: `assert is_injective(lambda x: 2 * x, range(10)) and not is_injective(lambda x: x * x, range(-3, 4)) and is_injective(lambda x: x * x, range(0, 4)), 'Squaring is injective only on one side of 0.'` },
+          { name: "surjective", code: `assert is_surjective(lambda x: x % 3, range(10), {0, 1, 2}) and not is_surjective(lambda x: x % 3, range(2), {0, 1, 2}) and not is_surjective(lambda x: 0, [0, 1, 2], [0, 1]), 'Every element of B must be hit.'` },
+          { name: "inverse", code: `g = inverse(lambda x: (3 * x) % 7, range(7), range(7))
+assert g is not None and all((3 * g[y]) % 7 == y for y in range(7)) and g[1] == 5
+assert inverse(lambda x: (2 * x) % 6, range(6), range(6)) is None, 'Doubling mod 6 is not a bijection.'
+assert inverse(lambda x: x, range(3), range(4)) is None, 'Injective but not onto is not invertible.'` },
         ],
       },
     },

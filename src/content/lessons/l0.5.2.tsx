@@ -155,6 +155,19 @@ print(stages.index("preference tuning") - stages.index("pretraining"))`}</Code>
       answer: { kind: "numeric", value: 2 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`tokens = ["<s>", "the", "cat", "sat"]
+pairs = [(tuple(tokens[:i]), tokens[i]) for i in range(1, len(tokens))]
+print(len(pairs), pairs[-1])`}</Code>
+          <p>Next-token prediction turns one sequence into several training examples. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["3 (('<s>', 'the', 'cat'), 'sat')", "4 (('<s>', 'the', 'cat'), 'sat')", "3 (('the', 'cat'), 'sat')", "3 (('<s>', 'the', 'cat', 'sat'), None)"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -175,6 +188,57 @@ print(stages.index("preference tuning") - stages.index("pretraining"))`}</Code>
         tests: [
           { name: "format", code: `out = chat_format([('system', 'Be brief.'), ('user', 'Hi')])
 assert out == '<|system|>\\nBe brief.\\n<|user|>\\nHi\\n<|assistant|>\\n', 'Tag each message with its role, and end with the assistant tag.'` },
+          { name: "empty", code: `assert chat_format([]) == '<|assistant|>\\n', 'With no messages, only the assistant tag.'` },
+          { name: "multi", code: `out = chat_format([('user', 'a\\nb'), ('assistant', 'c'), ('user', 'd')])
+assert out == '<|user|>\\na\\nb\\n<|assistant|>\\nc\\n<|user|>\\nd\\n<|assistant|>\\n', 'Keep the order and the text exactly.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            In post-training the model learns only from the assistant&rsquo;s words. Write <C>tokens_and_mask(messages)</C> for a list of (role, text) pairs: emit the token <C>"&lt;|role|&gt;"</C> for each message followed by its whitespace-separated words, and return (tokens, mask) where mask is 1 exactly for the words of assistant messages (role tags always 0). Then write <C>masked_mean(losses, mask)</C>, the mean of the per-token losses where the mask is 1 (0.0 if none), and <C>next_token_pairs(tokens, mask)</C>, the (context, target) pairs for every position i ≥ 1 whose target token has mask 1, with context as a tuple of the earlier tokens.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def tokens_and_mask(messages):
+    return [], []
+
+def masked_mean(losses, mask):
+    return sum(losses) / len(losses)
+
+def next_token_pairs(tokens, mask):
+    return []
+`,
+        solution: `def tokens_and_mask(messages):
+    toks, mask = [], []
+    for role, text in messages:
+        toks.append(f'<|{role}|>')
+        mask.append(0)
+        for w in text.split():
+            toks.append(w)
+            mask.append(1 if role == 'assistant' else 0)
+    return toks, mask
+
+def masked_mean(losses, mask):
+    kept = [l for l, m in zip(losses, mask) if m]
+    return sum(kept) / len(kept) if kept else 0.0
+
+def next_token_pairs(tokens, mask):
+    return [(tuple(tokens[:i]), tokens[i]) for i in range(1, len(tokens)) if mask[i]]
+`,
+        tests: [
+          { name: "mask", code: `t, m = tokens_and_mask([('user', 'hi there'), ('assistant', 'hello'), ('user', 'bye'), ('assistant', 'see you')])
+assert t == ['<|user|>', 'hi', 'there', '<|assistant|>', 'hello', '<|user|>', 'bye', '<|assistant|>', 'see', 'you'] and m == [0, 0, 0, 0, 1, 0, 0, 0, 1, 1], 'Only assistant words are trained on.'` },
+          { name: "mean", code: `assert masked_mean([1.0, 2.0, 3.0, 4.0], [0, 1, 0, 1]) == 3.0 and masked_mean([5.0], [0]) == 0.0, 'Ignore masked positions.'` },
+          { name: "pairs", code: `t, m = tokens_and_mask([('user', 'hi'), ('assistant', 'hello friend')])
+assert next_token_pairs(t, m) == [(('<|user|>', 'hi', '<|assistant|>'), 'hello'), (('<|user|>', 'hi', '<|assistant|>', 'hello'), 'friend')], 'Predict each assistant word from everything before it.'
+assert next_token_pairs(*tokens_and_mask([('system', 'be brief')])) == []` },
         ],
       },
     },

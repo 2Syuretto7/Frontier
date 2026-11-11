@@ -165,6 +165,22 @@ print(f(1), f(1, 2), f(1, 2, 3, 4))`}</Code>
       answer: { kind: "choice", options: ["11 3 10", "11 3 3", "1 3 10", "11 12 20"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def stats(xs):
+    return min(xs), max(xs), sum(xs) / len(xs)
+lo, hi, avg = stats([4, 8, 6])
+def nothing(x):
+    x = x * 2
+print(lo, hi, avg, nothing(5))`}</Code>
+          <p>Returning several values as a tuple, and a function with no return. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["4 8 6.0 None", "4 8 6 10", "4 8 6.0 10", "(4, 8, 6.0) None"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -185,6 +201,64 @@ print(f(1), f(1, 2), f(1, 2, 3, 4))`}</Code>
         tests: [
           { name: "default tip", code: `assert split_bill(1000, 4) == 275.0, '1000 plus 10% shared by 4 is 275.'` },
           { name: "custom tip", code: `assert split_bill(900, 3, tip=0) == 300.0 and split_bill(100, 3, 0.2) == 40.0, 'tip can be given by name or position.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>summary(xs)</C>, returning the tuple (mean, median, mode) for a non-empty list (the median averages the two middle values of an even-length list; the mode is the smallest of the most frequent values), and raising <C>ValueError</C> for an empty list. Then write <C>indian_format(amount, decimals=2)</C>, which formats a number with Indian digit grouping: the last three digits, then groups of two, as in <C>"12,34,567.80"</C> (a negative sign goes in front; with decimals = 0 there is no decimal point).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def summary(xs):
+    return (0, 0, 0)
+
+def indian_format(amount, decimals=2):
+    return f'{amount:,.{decimals}f}'
+`,
+        solution: `def summary(xs):
+    if not xs:
+        raise ValueError('empty list')
+    s = sorted(xs)
+    n = len(s)
+    mid = s[n // 2] if n % 2 else (s[n // 2 - 1] + s[n // 2]) / 2
+    counts = {}
+    for x in s:
+        counts[x] = counts.get(x, 0) + 1
+    top = max(counts.values())
+    mode = min(x for x, c in counts.items() if c == top)
+    return (sum(s) / n, mid, mode)
+
+def indian_format(amount, decimals=2):
+    sign = '-' if amount < 0 else ''
+    text = f'{abs(amount):.{decimals}f}'
+    whole, _, frac = text.partition('.')
+    if len(whole) > 3:
+        head, tail = whole[:-3], whole[-3:]
+        groups = []
+        while len(head) > 2:
+            groups.insert(0, head[-2:])
+            head = head[:-2]
+        if head:
+            groups.insert(0, head)
+        whole = ','.join(groups + [tail])
+    return sign + whole + ('.' + frac if frac else '')
+`,
+        tests: [
+          { name: "summary", code: `assert summary([3, 1, 2]) == (2, 2, 1) and summary([4, 1, 2, 2, 4, 9]) == (11 / 3, 3.0, 2), 'Even length: average the middle two; ties in the mode go to the smallest.'` },
+          { name: "empty", code: `try:
+    summary([])
+    assert False, 'An empty list must raise ValueError.'
+except ValueError:
+    pass` },
+          { name: "indian", code: `assert indian_format(1234567.8) == '12,34,567.80' and indian_format(999) == '999.00' and indian_format(1000, 0) == '1,000' and indian_format(100000) == '1,00,000.00', 'Three digits, then pairs.'` },
+          { name: "more", code: `assert indian_format(-123456789.456, 1) == '-12,34,56,789.5' and indian_format(0) == '0.00' and indian_format(12345678901, 0) == '12,34,56,78,901'` },
         ],
       },
     },

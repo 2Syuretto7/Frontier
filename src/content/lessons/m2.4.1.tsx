@@ -205,6 +205,20 @@ print(round((f(a + h) - f(a)) / h, 2))`}</Code>
       answer: { kind: "numeric", value: 12.01, tolerance: 0.0005 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+f = math.exp
+for h in (1e-1, 1e-5, 1e-13):
+    print(abs((f(1 + h) - f(1)) / h - math.e) < 1e-4)`}</Code>
+          <p>Forward differences for eˣ at 1 with big, medium and tiny h. What does this print, line by line?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["False / True / False", "False / True / True", "True / True / True", "False / False / False"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -228,6 +242,55 @@ print(round((f(a + h) - f(a)) / h, 2))`}</Code>
           { name: "cube", code: `assert abs(derivative(lambda x: x ** 3, 2) - 12) < 1e-8, 'The derivative of x³ at 2 is 12. A one-sided quotient is not accurate enough.'` },
           { name: "sine", code: `import math
 assert abs(derivative(math.sin, 0.5) - math.cos(0.5)) < 1e-9, 'The derivative of sin is cos.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>best_h(f, df, a)</C>, which tries h = 10⁻¹, 10⁻², …, 10⁻¹⁵ in the central difference (f(a + h) − f(a − h))/2h and returns the h with the smallest error against the true derivative df(a). Then write <C>complex_step(f, a)</C>, the derivative estimate Im f(a + ih)/h with h = 10⁻³⁰, which has no subtraction and so no cancellation; f must accept complex input (use <C>cmath</C> functions in the tests).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def best_h(f, df, a):
+    return 1e-8
+
+def complex_step(f, a):
+    h = 1e-8
+    return (f(a + h) - f(a)) / h
+`,
+        solution: `def best_h(f, df, a):
+    best = None
+    for k in range(1, 16):
+        h = 10.0 ** -k
+        err = abs((f(a + h) - f(a - h)) / (2 * h) - df(a))
+        if best is None or err < best[0]:
+            best = (err, h)
+    return best[1]
+
+def complex_step(f, a):
+    h = 1e-30
+    return f(complex(a, h)).imag / h
+`,
+        tests: [
+          { name: "sweet spot", code: `import math
+h = best_h(math.exp, math.exp, 1.0)
+assert 1e-7 <= h <= 1e-3, f'Central differences are best near h ≈ 10⁻⁵, got {h}.'` },
+          { name: "sin", code: `import math
+h = best_h(math.sin, math.cos, 0.5)
+assert 1e-7 <= h <= 1e-3, 'Too small an h is swamped by rounding.'` },
+          { name: "complex", code: `import cmath, math
+v = complex_step(cmath.exp, 1.0)
+assert abs(v - math.e) < 1e-15 * math.e, 'The complex step is exact to rounding.'` },
+          { name: "composite", code: `import cmath, math
+f = lambda x: cmath.sin(x) * cmath.exp(x * x)
+df = lambda x: math.cos(x) * math.exp(x * x) + math.sin(x) * 2 * x * math.exp(x * x)
+assert abs(complex_step(f, 0.7) - df(0.7)) < 1e-13, 'It works for any analytic f.'` },
         ],
       },
     },

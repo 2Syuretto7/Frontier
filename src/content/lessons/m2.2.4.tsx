@@ -176,6 +176,20 @@ export const lesson: LessonContent = {
       answer: { kind: "choice", options: ["It tends to −∞", "It tends to +∞", "It tends to 0", "It tends to 1"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+f = lambda x: math.floor(x) + (x - math.floor(x)) ** 2
+h = 1e-9
+print(round(f(2 - h), 6), round(f(2 + h), 6), f(2))`}</Code>
+          <p>One-sided limits at an integer of floor(x) + frac(x)². What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2.0 2.0 2", "1.0 2.0 2", "2.0 2.0 4", "1.999998 2.0 2"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -198,6 +212,54 @@ export const lesson: LessonContent = {
 assert (l, r) == (0.0, 1.0), 'The step jumps at 0: the left limit is 0 and the right limit is 1.'` },
           { name: "abs over x", code: `l, r = one_sided(lambda x: abs(x) / x, 0)
 assert (l, r) == (-1.0, 1.0), '|x|/x is −1 on the left and 1 on the right.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>classify(f, a)</C>, which inspects f near a using h = 10⁻ᵏ for k = 3 … 8 on both sides and returns one of <C>"continuous"</C> (both sides settle to f(a)), <C>"removable"</C> (both sides settle to the same value but not f(a), or f(a) raises an exception), <C>"jump"</C> (both sides settle to different values), <C>"infinite"</C> (|f| exceeds 10⁶ on some side at the smallest h) or <C>"oscillating"</C> (otherwise). A side settles if its last three values agree to within 10⁻⁴; take the limit as the last value.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def classify(f, a):
+    return 'continuous'
+`,
+        solution: `def classify(f, a):
+    hs = [10.0 ** -k for k in range(3, 9)]
+    try:
+        L = [f(a - h) for h in hs]
+        Rv = [f(a + h) for h in hs]
+    except (ZeroDivisionError, ValueError, OverflowError):
+        return 'oscillating'
+    if abs(L[-1]) > 1e6 or abs(Rv[-1]) > 1e6:
+        return 'infinite'
+    settled = lambda v: max(v[-3:]) - min(v[-3:]) < 1e-4
+    if not (settled(L) and settled(Rv)):
+        return 'oscillating'
+    if abs(L[-1] - Rv[-1]) > 1e-4:
+        return 'jump'
+    try:
+        fa = f(a)
+    except (ZeroDivisionError, ValueError, OverflowError):
+        return 'removable'
+    return 'continuous' if abs(fa - L[-1]) < 1e-4 else 'removable'
+`,
+        tests: [
+          { name: "continuous", code: `import math
+assert classify(math.cos, 1) == 'continuous' and classify(lambda x: x * x, -2) == 'continuous', 'Polynomials and cosine are continuous.'` },
+          { name: "removable", code: `import math
+assert classify(lambda x: math.sin(x) / x, 0) == 'removable' and classify(lambda x: 5 if x == 1 else x, 1) == 'removable', 'A hole or a misplaced point.'` },
+          { name: "jump", code: `import math
+assert classify(math.floor, 3) == 'jump' and classify(lambda x: abs(x) / x if x else 0, 0) == 'jump', 'Floor jumps at integers.'` },
+          { name: "infinite", code: `assert classify(lambda x: 1 / (x - 2), 2) == 'infinite' and classify(lambda x: 1 / (x * x) if x else 0, 0) == 'infinite', 'A vertical asymptote.'` },
+          { name: "oscillating", code: `import math
+assert classify(lambda x: math.sin(1 / x) if x else 0, 0) == 'oscillating', 'sin(1/x) never settles.'` },
         ],
       },
     },

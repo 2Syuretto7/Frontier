@@ -148,6 +148,20 @@ print(x @ A @ x)`}</Code>
       answer: { kind: "numeric", value: 5 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+A = np.array([[2.0, 1.0], [1.0, 2.0]])
+vals, vecs = np.linalg.eigh(A)
+print(vals, np.trace(A), round(np.linalg.det(A), 6))`}</Code>
+          <p>Eigenvalues, trace and determinant of a symmetric 2 × 2 matrix. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[1. 3.] 4.0 3.0", "[3. 1.] 4.0 3.0", "[1. 3.] 4.0 4.0", "[2. 2.] 4.0 3.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -189,6 +203,78 @@ assert abs(np.linalg.norm(x) - 1) < 1e-9, 'Normalise x at every step.'` },
 S = np.array([[2, -1, 0], [-1, 2, -1], [0, -1, 2]], float)
 lam, x = power_iteration(S, 500)
 assert abs(lam - (2 + np.sqrt(2))) < 1e-6, 'For this matrix the top eigenvalue is 2 + √2.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>inverse_iteration(A, mu, steps)</C>, which finds the eigenvalue of A closest to a shift μ: factor A − μI once with <C>scipy.linalg.lu_factor</C>, repeatedly solve (A − μI)y = x and normalise, and return (λ, x) with λ the Rayleigh quotient xᵀAx/xᵀx. Then write <C>rayleigh_iteration(A, x0, steps)</C> for symmetric A, which updates the shift to the current Rayleigh quotient at every step (solving with <C>np.linalg.solve</C>) and stops early when the residual ‖Ax − λx‖ is below 1e−12; return (λ, x, steps used).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def inverse_iteration(A, mu, steps):
+    return (mu, np.ones(len(A)))
+
+def rayleigh_iteration(A, x0, steps):
+    return (0.0, np.asarray(x0, float), 0)
+`,
+        solution: `import numpy as np
+
+from scipy.linalg import lu_factor, lu_solve
+
+def inverse_iteration(A, mu, steps):
+    A = np.asarray(A, float)
+    n = len(A)
+    lu = lu_factor(A - mu * np.eye(n))
+    x = np.ones(n) / np.sqrt(n)
+    for _ in range(steps):
+        y = lu_solve(lu, x)
+        x = y / np.linalg.norm(y)
+    return (float(x @ A @ x), x)
+
+def rayleigh_iteration(A, x0, steps):
+    A = np.asarray(A, float)
+    x = np.asarray(x0, float)
+    x = x / np.linalg.norm(x)
+    lam = float(x @ A @ x)
+    for k in range(1, steps + 1):
+        if np.linalg.norm(A @ x - lam * x) < 1e-12:
+            return (lam, x, k - 1)
+        try:
+            y = np.linalg.solve(A - lam * np.eye(len(A)), x)
+        except np.linalg.LinAlgError:
+            return (lam, x, k - 1)
+        x = y / np.linalg.norm(y)
+        lam = float(x @ A @ x)
+    return (lam, x, steps)
+`,
+        tests: [
+          { name: "closest", code: `import numpy as np
+A = np.diag([1.0, 4.0, 9.0]) + 0.1 * np.ones((3, 3))
+vals = np.linalg.eigvalsh(A)
+for mu in (0, 3.5, 10):
+    lam, x = inverse_iteration(A, mu, 50)
+    assert abs(lam - vals[np.argmin(abs(vals - mu))]) < 1e-10 and np.allclose(A @ x, lam * x, atol=1e-8), mu` },
+          { name: "vector", code: `import numpy as np
+lam, x = inverse_iteration([[2.0, 1.0], [1.0, 2.0]], 0.9, 30)
+assert abs(lam - 1) < 1e-12 and np.allclose(abs(x), [2 ** -0.5, 2 ** -0.5]), 'λ = 1 with eigenvector (1, −1).'` },
+          { name: "rayleigh", code: `import numpy as np
+rng = np.random.default_rng(19)
+B = rng.normal(size=(8, 8))
+A = B + B.T
+lam, x, k = rayleigh_iteration(A, rng.normal(size=8), 50)
+assert np.min(abs(np.linalg.eigvalsh(A) - lam)) < 1e-10 and k <= 10, f'Cubic convergence: done in {k} steps.'` },
+          { name: "one lu", code: `import inspect
+src = inspect.getsource(inverse_iteration)
+assert src.count('lu_factor(') == 1 and 'for' in src.split('lu_factor(')[1], 'Factor once, outside the loop.'` },
         ],
       },
     },

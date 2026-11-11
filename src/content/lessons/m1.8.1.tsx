@@ -155,6 +155,21 @@ print(len(list(product([0, 1], repeat=len(A)))))`}</Code>
       answer: { kind: "numeric", value: 8 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from itertools import product
+A, B = range(3), range(2)
+fs = list(product(B, repeat=len(A)))
+inj = [f for f in product(range(4), repeat=2) if f[0] != f[1]]
+print(len(fs), len(inj), 2 ** 3)`}</Code>
+          <p>Functions from a 3-set to a 2-set, and injections from a 2-set to a 4-set. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["8 12 8", "9 12 8", "8 16 8", "6 12 8"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -186,6 +201,51 @@ def count_injections(m, n):
           { name: "injections", code: `assert count_injections(2, 3) == 6 and count_injections(3, 2) == 0, 'n(n − 1)… and none when m > n (pigeonhole).'` },
           { name: "brute force", code: `from itertools import product
 assert count_injections(3, 4) == sum(len(set(t)) == 3 for t in product(range(4), repeat=3)), 'Compare with listing all functions.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            The pigeonhole principle says a function from a larger finite set to a smaller one cannot be injective. Write <C>collision(f, A)</C>, the first pair (a, b) with a before b in A and f(a) == f(b), or <C>None</C>, using a dict so it runs in linear time. Then use it in <C>birthday_collision(n, days, seed)</C>, which seeds <C>random</C>, gives n people random birthdays in range(days), and returns the 0-based positions of the first repeated birthday found (by the order in which people are processed), or <C>None</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def collision(f, A):
+    return None
+
+def birthday_collision(n, days, seed):
+    return None
+`,
+        solution: `import random
+
+def collision(f, A):
+    seen = {}
+    for b in A:
+        v = f(b)
+        if v in seen:
+            return (seen[v], b)
+        seen[v] = b
+    return None
+
+def birthday_collision(n, days, seed):
+    random.seed(seed)
+    bdays = [random.randrange(days) for _ in range(n)]
+    return collision(lambda i: bdays[i], range(n))
+`,
+        tests: [
+          { name: "small", code: `assert collision(lambda x: x % 5, range(3, 12)) == (3, 8) and collision(lambda x: x, range(10)) is None, '3 and 8 share a remainder mod 5; the first repeat is found at 8.'` },
+          { name: "pigeonhole", code: `assert all(collision(lambda x, m=m: x * x % m, range(m + 1)) is not None for m in range(1, 60)), 'm + 1 inputs into m outputs must collide.'` },
+          { name: "fast", code: `import time
+t = time.time()
+assert collision(lambda x: x, range(200000)) is None and time.time() - t < 2, 'Use a dict, not a double loop.'` },
+          { name: "birthday", code: `a = birthday_collision(30, 365, 3)
+assert a is not None and a == birthday_collision(30, 365, 3) and birthday_collision(400, 365, 0) is not None and birthday_collision(1, 365, 0) is None, 'Seed, then look for a repeat.'` },
         ],
       },
     },

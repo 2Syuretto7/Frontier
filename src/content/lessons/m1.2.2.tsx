@@ -154,6 +154,18 @@ print(all(n * n > n for n in D), any(n * n == 4 * n for n in D))`}</Code>
       answer: { kind: "choice", options: ["False True", "True True", "False False", "True False"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`D = range(-3, 4)
+print(all(x * x >= 0 for x in D), any(x * x == 2 for x in D), all(x > 0 for x in []), any(x > 0 for x in []))`}</Code>
+          <p>Quantifiers over a finite domain, and over the empty domain. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True False True False", "True False False False", "True True True False", "True False True True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -186,6 +198,49 @@ def exists(P, D):
         tests: [
           { name: "squares", code: `assert not forall(lambda n: n * n > n, range(1, 10)) and exists(lambda n: n * n == 4 * n, range(1, 10)), 'n² > n fails at n = 1; n² = 4n holds at n = 4.'` },
           { name: "empty domain", code: `assert forall(lambda x: False, []) and not exists(lambda x: True, []), 'A ∀ statement over an empty domain is vacuously true; an ∃ statement is false.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Python&rsquo;s <C>all</C> and <C>any</C> stop early. Write <C>forall_count(P, D)</C> and <C>exists_count(P, D)</C>, which return a pair (truth value, number of calls of P made), stopping at the first counterexample or witness, and work for any iterable D, including a generator that never ends (as long as the answer is found). Do not use <C>all</C> or <C>any</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def forall_count(P, D):
+    return (all(P(x) for x in D), 0)
+
+def exists_count(P, D):
+    return (any(P(x) for x in D), 0)
+`,
+        solution: `def forall_count(P, D):
+    n = 0
+    for x in D:
+        n += 1
+        if not P(x):
+            return (False, n)
+    return (True, n)
+
+def exists_count(P, D):
+    n = 0
+    for x in D:
+        n += 1
+        if P(x):
+            return (True, n)
+    return (False, n)
+`,
+        tests: [
+          { name: "finite", code: `assert forall_count(lambda x: x < 10, range(5)) == (True, 5) and forall_count(lambda x: x < 3, range(10)) == (False, 4), 'Stop at the first counterexample.'` },
+          { name: "exists", code: `assert exists_count(lambda x: x * x > 50, range(100)) == (True, 9) and exists_count(lambda x: x < 0, range(6)) == (False, 6), 'Stop at the first witness.'` },
+          { name: "empty", code: `assert forall_count(lambda x: False, []) == (True, 0) and exists_count(lambda x: True, []) == (False, 0), 'Vacuous truth.'` },
+          { name: "infinite", code: `import itertools
+assert exists_count(lambda n: n > 1 and all(n % d for d in range(2, n)) and n > 1000, itertools.count()) == (True, 1010) and forall_count(lambda n: n < 7, itertools.count()) == (False, 8), 'Do not turn D into a list.'` },
         ],
       },
     },

@@ -134,6 +134,20 @@ for x in (0.0, 0.5, 2.0):
       answer: { kind: "choice", options: ["0.27 0.5 0.95 ", "0.0 0.5 1.0 ", "0.27 0.5 0.88 ", "-1.0 0.0 3.0 "], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+z = np.array([-1000.0, 0.0, 1000.0])
+p = 1 / (1 + np.exp(-np.clip(z, -500, 500)))
+print(np.round(p, 3).tolist(), np.round(np.logaddexp(0, -z), 3).tolist())`}</Code>
+          <p>Stable sigmoids and the log loss for label 1, −log σ(z) = log(1 + e^(−z)). What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0.0, 0.5, 1.0] [1000.0, 0.693, 0.0]", "[0.0, 0.5, 1.0] [0.0, 0.693, 1000.0]", "[nan, 0.5, nan] [inf, 0.693, 0.0]", "[0.0, 0.5, 1.0] [1000.0, 0.5, 0.0]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -168,6 +182,71 @@ X = rng.normal(size=(300, 2)); y = (X @ [1.5, -1] + 0.3 + rng.normal(0, 1, 300) 
 w = fit_logistic(X, y, 0.5, 3000)
 m = LogisticRegression(C=1e6).fit(X, y)
 assert np.allclose(w, np.r_[m.intercept_, m.coef_[0]], atol=0.05), 'Gradient descent should reach the same weights as an unregularised solver.'` },
+          { name: "one step", code: `import numpy as np
+w = fit_logistic(np.array([[1.0]]), np.array([1.0]), 1.0, 1)
+assert np.allclose(w, [0.5, 0.5]), 'At w = 0 every probability is ½, so the step is (½, ½).'` },
+          { name: "sign", code: `import numpy as np
+X = np.array([[-2.0], [-1.0], [1.0], [2.0], [0.5], [-0.5]]); y = np.array([0, 0, 1, 1, 0, 1.0])
+w = fit_logistic(X, y, 0.5, 200)
+assert w.shape == (2,) and w[1] > 0, 'Larger x makes class 1 more likely.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>log_loss_logits(y, z)</C>, the mean cross-entropy computed from logits z without ever forming σ(z): mean of log(1 + eᶻ) − yz, using <C>np.logaddexp</C>, so z = ±1000 is fine. Then write <C>newton_logistic(X, y, steps)</C>, logistic regression with an intercept by Newton&rsquo;s method (iteratively reweighted least squares): from w = 0, repeat w ← w − (AᵀSA)⁻¹Aᵀ(p − y) with S = diag(p(1 − p)), solving rather than inverting. Return w (intercept first).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def log_loss_logits(y, z):
+    p = 1 / (1 + np.exp(-z))
+    return float(-np.mean(y * np.log(p) + (1 - y) * np.log(1 - p)))
+
+def newton_logistic(X, y, steps):
+    return np.zeros(X.shape[1] + 1)
+`,
+        solution: `import numpy as np
+
+def log_loss_logits(y, z):
+    return float(np.mean(np.logaddexp(0, z) - y * z))
+
+def newton_logistic(X, y, steps):
+    A = np.column_stack([np.ones(len(X)), X])
+    w = np.zeros(A.shape[1])
+    for _ in range(steps):
+        p = 1 / (1 + np.exp(-(A @ w)))
+        H = A.T @ (A * (p * (1 - p))[:, None])
+        w = w - np.linalg.solve(H, A.T @ (p - y))
+    return w
+`,
+        tests: [
+          { name: "loss", code: `import numpy as np
+from sklearn.metrics import log_loss
+rng = np.random.default_rng(0)
+z = rng.normal(size=50); y = rng.integers(0, 2, 50)
+assert abs(log_loss_logits(y, z) - log_loss(y, 1 / (1 + np.exp(-z)))) < 1e-12
+v = log_loss_logits(np.array([1, 0, 1]), np.array([1000.0, -1000.0, -1000.0]))
+assert np.isfinite(v) and abs(v - 1000 / 3) < 1e-9, 'Confident and right costs 0; confident and wrong costs |z|.'` },
+          { name: "sklearn", code: `import numpy as np
+from sklearn.linear_model import LogisticRegression
+rng = np.random.default_rng(1)
+X = rng.normal(size=(400, 3)); y = (X @ [1.0, -2.0, 0.5] + 0.3 + rng.logistic(size=400) > 0).astype(float)
+w = newton_logistic(X, y, 25)
+m = LogisticRegression(C=1e8, tol=1e-10, max_iter=10000).fit(X, y)
+assert np.allclose(w, np.r_[m.intercept_, m.coef_[0]], atol=1e-4), 'Newton converges to the maximum-likelihood weights.'` },
+          { name: "fast", code: `import numpy as np
+rng = np.random.default_rng(2)
+X = rng.normal(size=(300, 2)); y = (X[:, 0] + rng.logistic(size=300) > 0).astype(float)
+w8, w30 = newton_logistic(X, y, 8), newton_logistic(X, y, 30)
+assert np.allclose(w8, w30, atol=1e-10), 'Newton converges in a handful of steps.'` },
         ],
       },
     },

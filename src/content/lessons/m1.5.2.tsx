@@ -154,12 +154,30 @@ print(factor(360))`}</Code>
       answer: { kind: "numeric", value: 6 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def reach(n):
+    if n in (0, 3, 5):
+        return True
+    if n < 0:
+        return False
+    return reach(n - 3) or reach(n - 5)
+
+print([n for n in range(1, 15) if not reach(n)], reach(23))`}</Code>
+          <p>reach(n) asks whether ₹n can be paid with ₹3 and ₹5 stamps, leaning on smaller cases. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[1, 2, 4, 7] True", "[1, 2, 4, 7, 11] True", "[1, 2, 4] True", "[1, 2, 4, 7] False"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
         <>
           <p>
-            Every amount of postage n ≥ 12 can be made from 4p and 5p stamps, by strong induction from 12, 13, 14 and 15. Write <C>stamps(n)</C>, which returns (fours, fives) recursively: base cases for 12 to 15, and stamps(n − 4) with one more 4p stamp otherwise.
+            Every amount of postage n ≥ 12 can be made from ₹4 and ₹5 stamps, by strong induction from 12, 13, 14 and 15. Write <C>stamps(n)</C>, which returns (fours, fives) recursively: base cases for 12 to 15, and stamps(n − 4) with one more ₹4 stamp otherwise.
           </p>
         </>
       ),
@@ -178,6 +196,45 @@ print(factor(360))`}</Code>
         tests: [
           { name: "bases", code: `assert all(4 * stamps(n)[0] + 5 * stamps(n)[1] == n for n in (12, 13, 14, 15)), 'Check the four base cases.'` },
           { name: "many", code: `assert all(4 * a + 5 * b == n and a >= 0 and b >= 0 for n in range(12, 300) for a, b in [stamps(n)]), 'Every n from 12 up should be made exactly.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Zeckendorf&rsquo;s theorem: every n ≥ 0 is a sum of distinct Fibonacci numbers (1, 2, 3, 5, 8, …) no two of which are consecutive in that list. The strong-induction proof is an algorithm: take the largest Fibonacci number f ≤ n and recurse on n − f, which is smaller than the next Fibonacci number after f minus f. Write <C>zeckendorf(n)</C>, returning the parts in decreasing order (the empty list for 0), recursively.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def zeckendorf(n):
+    return [1] * n
+`,
+        solution: `def zeckendorf(n):
+    if n == 0:
+        return []
+    a, b = 1, 2
+    while b <= n:
+        a, b = b, a + b
+    return [a] + zeckendorf(n - a)
+`,
+        tests: [
+          { name: "small", code: `assert zeckendorf(0) == [] and zeckendorf(1) == [1] and zeckendorf(4) == [3, 1] and zeckendorf(100) == [89, 8, 3], 'Take the largest Fibonacci number each time.'` },
+          { name: "valid", code: `fib = [1, 2]
+while fib[-1] < 10 ** 6:
+    fib.append(fib[-1] + fib[-2])
+pos = {f: i for i, f in enumerate(fib)}
+for n in range(1, 3000):
+    z = zeckendorf(n)
+    assert sum(z) == n and z == sorted(z, reverse=True), f'{n}: parts must sum to n, largest first.'
+    idx = [pos[f] for f in z]
+    assert all(i - j >= 2 for i, j in zip(idx, idx[1:])), f'{n}: no two consecutive Fibonacci numbers.'` },
+          { name: "large", code: `z = zeckendorf(10 ** 6)
+assert sum(z) == 10 ** 6 and len(z) <= 15` },
         ],
       },
     },

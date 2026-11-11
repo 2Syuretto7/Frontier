@@ -169,6 +169,20 @@ for h in [0.1, 0.01, 0.001]:
       answer: { kind: "numeric", value: 1.0, tolerance: 1e-06 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+f = lambda x: math.sin(x) / x
+for h in (0.1, 0.01, 1e-8):
+    print(round(f(h), 6))`}</Code>
+          <p>Estimating the limit of sin x / x as x → 0. What is the last value printed?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1.0", "0.999983", "0.998334", "0.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -190,6 +204,45 @@ for h in [0.1, 0.01, 0.001]:
           { name: "removable", code: `assert abs(estimate_limit(lambda x: (x * x - 1) / (x - 1), 1) - 2) < 1e-5, 'You cannot evaluate at a itself: the formula divides by zero there. Step a little to the side.'` },
           { name: "sine", code: `import math
 assert abs(estimate_limit(lambda x: math.sin(x) / x, 0) - 1) < 1e-6, 'sin(x)/x should approach 1 near 0.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>richardson(f, a, n)</C>, a better numerical estimate of the limit of f at a: take the values f(a + h) for h = 2⁻¹, 2⁻², …, 2⁻ⁿ, and, assuming the error is a power series in h, repeatedly combine neighbours in Richardson&rsquo;s table T[i][k] = (2ᵏ·T[i][k−1] − T[i−1][k−1])/(2ᵏ − 1). Return the last diagonal entry T[n−1][n−1]. It should beat the plain value f(a + 2⁻ⁿ) by many orders of magnitude.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def richardson(f, a, n):
+    return f(a + 2.0 ** -n)
+`,
+        solution: `def richardson(f, a, n):
+    T = []
+    for i in range(n):
+        row = [f(a + 2.0 ** -(i + 1))]
+        for k in range(1, i + 1):
+            row.append((2 ** k * row[k - 1] - T[i - 1][k - 1]) / (2 ** k - 1))
+        T.append(row)
+    return T[n - 1][n - 1]
+`,
+        tests: [
+          { name: "sinc", code: `import math
+v = richardson(lambda x: math.sin(x) / x, 0, 8)
+assert abs(v - 1) < 1e-10, f'Expected the limit 1, got {v!r}.'` },
+          { name: "e", code: `import math
+v = richardson(lambda h: (1 + h) ** (1 / h), 0, 10)
+assert abs(v - math.e) < 1e-8, 'The limit of (1 + h)^(1/h) is e.'` },
+          { name: "better", code: `import math
+f = lambda x: (math.exp(x) - 1) / x
+assert abs(richardson(f, 0, 6) - 1) < 1e-3 * abs(f(2 ** -6) - 1), 'Extrapolation removes the error terms one by one.'` },
+          { name: "shifted", code: `v = richardson(lambda x: (x * x - 4) / (x - 2), 2, 5)
+assert abs(v - 4) < 1e-12, 'Approach a = 2 from the right.'` },
         ],
       },
     },

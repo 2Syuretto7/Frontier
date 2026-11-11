@@ -174,6 +174,19 @@ print(round(math.cos(t), 3), round(math.sin(t), 3))`}</Code>
       answer: { kind: "choice", options: ["-0.866 0.5", "0.866 0.5", "-0.5 0.866", "0.866 -0.5"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+pts = [(round(math.cos(k * math.pi / 2), 6), round(math.sin(k * math.pi / 2), 6)) for k in range(4)]
+print(pts[1], pts[2], math.sin(math.pi) == 0)`}</Code>
+          <p>Quarter turns round the unit circle, and sin π in floating point. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["(0.0, 1.0) (-1.0, 0.0) False", "(0.0, 1.0) (-1.0, 0.0) True", "(1.0, 0.0) (0.0, 1.0) False", "(0.0, -1.0) (-1.0, 0.0) False"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -200,6 +213,67 @@ def polygon(n):
 exp = [(1, 0), (0, 1), (-1, 0), (0, -1)]
 assert len(pts) == 4 and all(abs(x - a) < 1e-9 and abs(y - b) < 1e-9 for (x, y), (a, b) in zip(pts, exp)), 'Space the angles 2π/n apart.'` },
           { name: "on the circle", code: `assert all(abs(x * x + y * y - 1) < 1e-9 for x, y in polygon(7)), 'Every vertex has cos² + sin² = 1.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>sin_cos(x)</C>, which returns (sin x, cos x) for any real x to within 1e−12, using only arithmetic: reduce x to r = x − kπ/2 with k the nearest integer to 2x/π, compute sin r and cos r by their Taylor series (enough terms for |r| ≤ π/4), and then use k mod 4 to pick the right signs and swap. Use <C>math.pi</C> but not <C>math.sin</C> or <C>math.cos</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def sin_cos(x):
+    s = x - x ** 3 / 6
+    c = 1 - x * x / 2
+    return (s, c)
+`,
+        solution: `import math
+
+def sin_cos(x):
+    k = round(2 * x / math.pi)
+    r = x - k * math.pi / 2
+    s, c = 0.0, 0.0
+    term = r
+    for n in range(1, 30, 2):
+        s += term
+        term *= -r * r / ((n + 1) * (n + 2))
+    term = 1.0
+    for n in range(0, 30, 2):
+        c += term
+        term *= -r * r / ((n + 1) * (n + 2))
+    q = k % 4
+    if q == 0:
+        return (s, c)
+    if q == 1:
+        return (c, -s)
+    if q == 2:
+        return (-s, -c)
+    return (-c, s)
+`,
+        tests: [
+          { name: "small", code: `import math
+for x in [0, 0.3, -0.7, 1.2]:
+    s, c = sin_cos(x)
+    assert abs(s - math.sin(x)) < 1e-12 and abs(c - math.cos(x)) < 1e-12, x` },
+          { name: "quadrants", code: `import math
+for x in [2, 3, 4, 5, -2.5, -4, 6]:
+    s, c = sin_cos(x)
+    assert abs(s - math.sin(x)) < 1e-12 and abs(c - math.cos(x)) < 1e-12, f'Wrong sign or swap at x = {x}.'` },
+          { name: "large", code: `import math
+for x in [100, -250.5, 1000]:
+    s, c = sin_cos(x)
+    assert abs(s - math.sin(x)) < 1e-10 and abs(c - math.cos(x)) < 1e-10, f'Reduce x first; at x = {x} the raw series is useless.'` },
+          { name: "no trig", code: `import inspect
+src = inspect.getsource(sin_cos)
+assert 'math.sin' not in src and 'math.cos' not in src, 'Use the series.'` },
         ],
       },
     },

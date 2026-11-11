@@ -164,6 +164,20 @@ print(len(bad))`}</Code>
       answer: { kind: "numeric", value: 0 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`ns = range(1, 100)
+direct = all(n % 2 == 1 for n in ns if (n * n) % 2 == 1)
+contra = all((n * n) % 2 == 0 for n in ns if n % 2 == 0)
+print(direct, contra, sum(1 for n in ns if (n * n) % 2 == 1))`}</Code>
+          <p>If n² is odd then n is odd; the contrapositive is that if n is even then n² is even. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True True 50", "True True 49", "True False 50", "False True 50"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -188,6 +202,60 @@ C = contrapositive(P, Q)
 assert all(C(n) == ((not P(n)) or Q(n)) for n in range(-20, 20)), 'The contrapositive must agree with P → Q for every x.'` },
           { name: "fails sometimes", code: `C = contrapositive(lambda n: n > 2, lambda n: n > 5)
 assert C(3) is False and C(6) is True, 'n > 2 → n > 5 fails at n = 3, and so must its contrapositive.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>contrapositive_holds(P, Q, D)</C> and <C>implication_holds(P, Q, D)</C> over a finite domain, and <C>first_counter(P, Q, D)</C>, the first x with P(x) and not Q(x) or <C>None</C>. Then use them in <C>sqrt_irrational_witness(N)</C>: the claim &ldquo;if n² is divisible by 3 then n is divisible by 3&rdquo; is proved by contrapositive; return the list of n in 1 … N with n not divisible by 3 for which n² <em>is</em> divisible by 3 (which should be empty) together with the number of n in range for which the contrapositive was checked.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def implication_holds(P, Q, D):
+    return True
+
+def contrapositive_holds(P, Q, D):
+    return True
+
+def first_counter(P, Q, D):
+    return None
+
+def sqrt_irrational_witness(N):
+    return ([], 0)
+`,
+        solution: `def first_counter(P, Q, D):
+    for x in D:
+        if P(x) and not Q(x):
+            return x
+    return None
+
+def implication_holds(P, Q, D):
+    return first_counter(P, Q, D) is None
+
+def contrapositive_holds(P, Q, D):
+    return first_counter(lambda x: not Q(x), lambda x: not P(x), D) is None
+
+def sqrt_irrational_witness(N):
+    checked = [n for n in range(1, N + 1) if n % 3 != 0]
+    bad = [n for n in checked if (n * n) % 3 == 0]
+    return (bad, len(checked))
+`,
+        tests: [
+          { name: "agree", code: `import random
+random.seed(5)
+for _ in range(200):
+    a, b = random.randint(1, 7), random.randint(1, 7)
+    P, Q = (lambda x, a=a: x % a == 0), (lambda x, b=b: x % b == 0)
+    assert implication_holds(P, Q, range(1, 60)) == contrapositive_holds(P, Q, range(1, 60)), (a, b)` },
+          { name: "counter", code: `assert first_counter(lambda n: n % 2 == 0, lambda n: n % 4 == 0, range(1, 10)) == 2 and first_counter(lambda n: n > 5, lambda n: n > 2, range(10)) is None, 'P true and Q false.'` },
+          { name: "sqrt3", code: `assert sqrt_irrational_witness(300) == ([], 200), '200 numbers up to 300 are not multiples of 3.'` },
+          { name: "separate", code: `assert contrapositive_holds(lambda x: x == 1, lambda x: x == 1, [1, 2]) and not contrapositive_holds(lambda x: x > 0, lambda x: x > 1, [0, 1, 2]), 'Check ¬Q → ¬P itself.'` },
         ],
       },
     },

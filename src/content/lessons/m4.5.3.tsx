@@ -157,6 +157,31 @@ print(merge([1, 4, 9], [2, 3, 10, 11]))`}</Code>
       answer: { kind: "choice", options: ["[1, 2, 3, 4, 9, 10, 11]", "[1, 4, 9, 2, 3, 10, 11]", "[1, 2, 3, 4, 9]", "[11, 10, 9, 4, 3, 2, 1]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def count_inv(xs):
+    if len(xs) <= 1:
+        return xs, 0
+    m = len(xs) // 2
+    L, a = count_inv(xs[:m])
+    R, b = count_inv(xs[m:])
+    out, i, j, c = [], 0, 0, 0
+    while i < len(L) and j < len(R):
+        if L[i] <= R[j]:
+            out.append(L[i]); i += 1
+        else:
+            out.append(R[j]); j += 1; c += len(L) - i
+    out += L[i:] + R[j:]
+    return out, a + b + c
+print(count_inv([3, 1, 2, 5, 4]))`}</Code>
+          <p>Merge sort that also counts inversions (pairs out of order). What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["([1, 2, 3, 4, 5], 3)", "([1, 2, 3, 4, 5], 2)", "([1, 2, 3, 4, 5], 4)", "([3, 1, 2, 5, 4], 3)"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -198,6 +223,66 @@ for n in (8, 64, 1000, 4096):
     xs = random.sample(range(10 * n), n)
     _, c = merge_sort(xs)
     assert 0 < c <= n * math.log2(n), 'Merge sort makes at most n log₂ n comparisons.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>closest_pair(points)</C>, the smallest distance between two of n ≥ 2 points in the plane, by divide and conquer in O(n log n): sort by x, split at the median, recurse on each half (returning the points sorted by y as well), and check the strip of points within d of the dividing line, comparing each strip point only with the following ones whose y differs by less than d. Solve tiny pieces (3 points or fewer) directly. Use <C>math.dist</C>. The tests use 20000 points, where the O(n²) method is far too slow.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def closest_pair(points):
+    return 0.0
+`,
+        solution: `import math
+from heapq import merge
+
+def closest_pair(points):
+    P = sorted(points)
+    def rec(lo, hi):
+        if hi - lo <= 3:
+            d = math.inf
+            for i in range(lo, hi):
+                for j in range(i + 1, hi):
+                    d = min(d, math.dist(P[i], P[j]))
+            return d, sorted(P[lo:hi], key=lambda q: q[1])
+        mid = (lo + hi) // 2
+        xm = P[mid][0]
+        dl, L = rec(lo, mid)
+        dr, R = rec(mid, hi)
+        d = min(dl, dr)
+        Y = list(merge(L, R, key=lambda q: q[1]))
+        strip = [q for q in Y if abs(q[0] - xm) < d]
+        for i in range(len(strip)):
+            j = i + 1
+            while j < len(strip) and strip[j][1] - strip[i][1] < d:
+                d = min(d, math.dist(strip[i], strip[j]))
+                j += 1
+        return d, Y
+    return rec(0, len(P))[0]
+`,
+        tests: [
+          { name: "small", code: `assert abs(closest_pair([(0, 0), (3, 4), (10, 10), (3, 5)]) - 1) < 1e-12 and closest_pair([(1, 1), (5, 5), (1, 1)]) == 0, 'Duplicates are at distance 0.'` },
+          { name: "brute", code: `import random, math
+random.seed(21)
+for _ in range(60):
+    pts = [(random.uniform(0, 100), random.uniform(0, 100)) for _ in range(random.randint(2, 120))]
+    want = min(math.dist(a, b) for i, a in enumerate(pts) for b in pts[i + 1:])
+    assert abs(closest_pair(pts) - want) < 1e-9, 'Agree with checking every pair.'` },
+          { name: "line", code: `pts = [(0, i * 1.0) for i in range(500)] + [(0.0, 250.5)]
+assert abs(closest_pair(pts) - 0.5) < 1e-12, 'All points on the dividing line.'` },
+          { name: "fast", code: `import random, math
+random.seed(22)
+pts = [(random.random(), random.random()) for _ in range(20000)]
+pts.append((pts[7][0] + 1e-9, pts[7][1]))
+assert abs(closest_pair(pts) - 1e-9) < 1e-12, 'O(n log n) on 20000 points.'` },
         ],
       },
     },

@@ -175,6 +175,22 @@ average([4, 8])`}</Code>
       answer: { kind: "choice", options: ["total so far 12", "total so far 8", "6.0", "total so far 4"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def average(xs):
+    total = 0
+    for x in xs:
+        total += x
+        return total / len(xs)
+print(average([2, 4, 6]), average([9]))`}</Code>
+          <p>An indentation bug that a one-element test would miss. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.6666666666666666 9.0", "4.0 9.0", "2.0 9.0", "0.6666666666666666 9"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -200,6 +216,65 @@ average([4, 8])`}</Code>
         tests: [
           { name: "odd", code: `assert median([3, 1, 2]) == 2, 'Odd length: the middle value.'` },
           { name: "even", code: `assert median([4, 1, 3, 2]) == 2.5, 'Even length: average the two middle values.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Debug by experiment, automatically. Write <C>first_difference(f, g, inputs)</C>, the first input on which a candidate f and a trusted g disagree, or <C>None</C>. Then write <C>shrink(f, g, xs)</C>: given a list on which they disagree, repeatedly try deleting one element at a time (from the left), keeping any deletion after which they still disagree, until no single deletion keeps the failure; return the smaller list. A short failing input makes the bug obvious.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def first_difference(f, g, inputs):
+    return None
+
+def shrink(f, g, xs):
+    return xs
+`,
+        solution: `def first_difference(f, g, inputs):
+    for x in inputs:
+        if f(x) != g(x):
+            return x
+    return None
+
+def shrink(f, g, xs):
+    xs = list(xs)
+    changed = True
+    while changed:
+        changed = False
+        for i in range(len(xs)):
+            ys = xs[:i] + xs[i + 1:]
+            if f(ys) != g(ys):
+                xs = ys
+                changed = True
+                break
+    return xs
+`,
+        tests: [
+          { name: "first", code: `assert first_difference(lambda x: x * 2, lambda x: x + x, range(10)) is None and first_difference(lambda x: x ** 2, lambda x: 2 * x, [2, 0, 3, 4]) == 3` },
+          { name: "shrink max", code: `def buggy_max(xs):
+    best = 0
+    for x in xs:
+        if x > best:
+            best = x
+    return best
+small = shrink(buggy_max, lambda xs: max(xs) if xs else 0, [-5, -2, -9, -4])
+assert small != [] and all(x < 0 for x in small) and len(small) == 1, 'The bug shows on a single negative number.'` },
+          { name: "shrink sort", code: `def buggy_sort(xs):
+    xs = list(xs)
+    for i in range(len(xs) - 1):
+        if xs[i] > xs[i + 1]:
+            xs[i], xs[i + 1] = xs[i + 1], xs[i]
+    return xs
+big = [5, 1, 4, 2, 8, 3, 7, 6]
+small = shrink(buggy_sort, sorted, big)
+assert buggy_sort(small) != sorted(small) and len(small) == 3, 'One bubble pass fails on three elements, such as [5, 4, 2].'` },
         ],
       },
     },

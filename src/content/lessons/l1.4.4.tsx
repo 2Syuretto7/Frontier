@@ -155,6 +155,21 @@ print(round(len(set(sample)) / n, 2))`}</Code>
       answer: { kind: "numeric", value: 0.63, tolerance: 0.021 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+rng = np.random.default_rng(0)
+n = 1000
+idx = rng.integers(0, n, n)
+print(round(len(np.unique(idx)) / n, 2), round(1 - (1 - 1 / n) ** n, 4))`}</Code>
+          <p>How many distinct rows does a bootstrap sample of size n contain, against the limit 1 − 1/e? What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.62 0.6323", "1.0 0.6323", "0.5 0.5", "0.62 0.3677"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -190,6 +205,84 @@ X, y = make_moons(600, noise=0.35, random_state=0)
 single = (DecisionTreeClassifier(random_state=0).fit(X[:300], y[:300]).predict(X[300:]) == y[300:]).mean()
 bag = (bagged_predict(X[:300], y[:300], X[300:], 50, 0) == y[300:]).mean()
 assert bag > single + 0.02, 'Averaging many bootstrapped trees should beat one tree on noisy data.'` },
+          { name: "one tree", code: `import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.datasets import make_moons
+X, y = make_moons(200, noise=0.3, random_state=1)
+rng = np.random.default_rng(5); idx = rng.integers(0, 100, 100)
+ref = DecisionTreeClassifier(random_state=0).fit(X[:100][idx], y[:100][idx]).predict(X[100:])
+out = bagged_predict(X[:100], y[:100], X[100:], 1, 5)
+assert (out == ref).all() and (bagged_predict(X[:100], y[:100], X[100:], 9, 2) == bagged_predict(X[:100], y[:100], X[100:], 9, 2)).all(), 'Draw rows with rng.integers from the seeded generator.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Each bootstrap sample leaves out about 37% of the rows, which can serve as free validation data. Write <C>oob_accuracy(X, y, n_trees, seed)</C>: with one <C>np.random.default_rng(seed)</C>, fit <C>DecisionTreeClassifier(random_state=0)</C> on each bootstrap sample (<C>rng.integers(0, n, n)</C>), and for every row collect the votes only of trees whose sample left it out; return the accuracy of the majority vote (ties to 1, labels 0/1) over rows that were left out at least once. Then write <C>permutation_importance(model, X, y, seed)</C>, the drop in <C>model.score</C> when each column in turn is shuffled with <C>rng.permutation</C> (one generator, columns in order).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def oob_accuracy(X, y, n_trees, seed):
+    return 1.0
+
+def permutation_importance(model, X, y, seed):
+    return np.zeros(X.shape[1])
+`,
+        solution: `import numpy as np
+
+from sklearn.tree import DecisionTreeClassifier
+
+def oob_accuracy(X, y, n_trees, seed):
+    rng = np.random.default_rng(seed)
+    n = len(X)
+    votes, counts = np.zeros(n), np.zeros(n)
+    for _ in range(n_trees):
+        idx = rng.integers(0, n, n)
+        out = np.ones(n, bool); out[idx] = False
+        if out.any():
+            t = DecisionTreeClassifier(random_state=0).fit(X[idx], y[idx])
+            votes[out] += t.predict(X[out]); counts[out] += 1
+    m = counts > 0
+    pred = (votes[m] >= counts[m] / 2).astype(int)
+    return float(np.mean(pred == y[m]))
+
+def permutation_importance(model, X, y, seed):
+    rng = np.random.default_rng(seed)
+    base = model.score(X, y)
+    out = []
+    for j in range(X.shape[1]):
+        Xp = X.copy(); Xp[:, j] = Xp[rng.permutation(len(X)), j]
+        out.append(base - model.score(Xp, y))
+    return np.array(out)
+`,
+        tests: [
+          { name: "oob", code: `from sklearn.datasets import make_moons
+from sklearn.ensemble import BaggingClassifier
+X, y = make_moons(800, noise=0.3, random_state=0)
+oob = oob_accuracy(X[:400], y[:400], 60, 0)
+test = BaggingClassifier(n_estimators=60, random_state=0).fit(X[:400], y[:400]).score(X[400:], y[400:])
+assert abs(oob - test) < 0.05 and 0.8 < oob < 0.95, f'Out-of-bag accuracy {oob:.3f} should estimate test accuracy {test:.3f}.'` },
+          { name: "tiny", code: `import numpy as np
+X = np.array([[0.0], [1.0], [2.0], [3.0]]); y = np.array([0, 0, 1, 1])
+a = oob_accuracy(X, y, 5, 3)
+assert a == oob_accuracy(X, y, 5, 3) and 0 <= a <= 1, 'Seeded.'` },
+          { name: "importance", code: `import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+rng = np.random.default_rng(1)
+X = rng.normal(size=(500, 3)); y = (X[:, 1] > 0).astype(int)
+m = RandomForestClassifier(50, random_state=0).fit(X[:300], y[:300])
+imp = permutation_importance(m, X[300:], y[300:], 0)
+assert imp.argmax() == 1 and imp[1] > 0.3 and abs(imp[0]) < 0.05 and abs(imp[2]) < 0.05, 'Only the informative column matters.'
+rng2 = np.random.default_rng(0); Xp = X[300:].copy(); Xp[:, 0] = Xp[rng2.permutation(200), 0]
+assert abs(imp[0] - (m.score(X[300:], y[300:]) - m.score(Xp, y[300:]))) < 1e-12, 'Columns shuffled in order with one generator.'` },
         ],
       },
     },

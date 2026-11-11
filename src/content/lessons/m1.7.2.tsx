@@ -157,6 +157,20 @@ print(len(set(f.values())))`}</Code>
       answer: { kind: "numeric", value: 3 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = lambda x: x * x % 7
+g = lambda x: 3 * x % 7
+A = range(7)
+print(sorted({f(x) for x in A}), len({g(x) for x in A}) == 7)`}</Code>
+          <p>Squaring mod 7 and multiplying by 3 mod 7. What is the image of squaring, and is multiplying by 3 a bijection?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0, 1, 2, 4] True", "[0, 1, 4] True", "[0, 1, 2, 4] False", "[0, 1, 2, 3, 4, 5, 6] True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -187,6 +201,51 @@ print(len(set(f.values())))`}</Code>
           { name: "multiply by 2", code: `assert kind({a: (2 * a) % 6 for a in range(6)}, range(6), range(6)) == 'neither', '2x mod 6 repeats values and misses odd numbers.'` },
           { name: "embedding", code: `assert kind({a: a for a in range(3)}, range(3), range(5)) == 'injection', 'Including {0, 1, 2} in {0, …, 4} is injective, not surjective.'` },
           { name: "halving", code: `assert kind({a: a // 2 for a in range(6)}, range(6), range(3)) == 'surjection', 'a ↦ ⌊a/2⌋ hits every value twice.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>count_surjections(m, n)</C>, the number of surjections from an m-set onto an n-set, by inclusion-exclusion Σ (−1)ᵏ C(n, k) (n − k)ᵐ, and <C>count_injections(m, n)</C>. Check both against brute force over all functions in the tests. Then write <C>stirling2(m, n)</C>, the number of partitions of an m-set into n non-empty blocks, from the relation surjections = n!·S(m, n).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def count_surjections(m, n):
+    return n ** m
+
+def count_injections(m, n):
+    return n ** m
+
+def stirling2(m, n):
+    return 1
+`,
+        solution: `from math import comb, factorial, perm
+
+def count_surjections(m, n):
+    return sum((-1) ** k * comb(n, k) * (n - k) ** m for k in range(n + 1))
+
+def count_injections(m, n):
+    return perm(n, m) if m <= n else 0
+
+def stirling2(m, n):
+    return count_surjections(m, n) // factorial(n)
+`,
+        tests: [
+          { name: "small", code: `assert count_surjections(3, 2) == 6 and count_surjections(2, 3) == 0 and count_injections(2, 3) == 6 and count_injections(3, 2) == 0, 'From 3 onto 2 there are 2³ − 2 = 6.'` },
+          { name: "brute", code: `from itertools import product
+for m in range(5):
+    for n in range(1, 5):
+        fs = list(product(range(n), repeat=m))
+        assert count_surjections(m, n) == sum(1 for f in fs if set(f) == set(range(n))), (m, n)
+        assert count_injections(m, n) == sum(1 for f in fs if len(set(f)) == m), (m, n)` },
+          { name: "stirling", code: `assert [stirling2(4, k) for k in range(1, 5)] == [1, 7, 6, 1] and stirling2(10, 3) == 9330, 'S(4, 2) = 7.'` },
+          { name: "bell", code: `assert sum(stirling2(6, k) for k in range(1, 7)) == 203, 'The Bell number B₆ = 203.'` },
         ],
       },
     },

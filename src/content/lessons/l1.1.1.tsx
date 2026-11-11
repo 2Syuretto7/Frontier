@@ -162,6 +162,21 @@ print(m.score(X, y))`}</Code>
       answer: { kind: "numeric", value: 0.7, tolerance: 1e-09 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+y = np.array([1, 0, 1, 1, 0, 1, 1, 1])
+for n in (2, 4, 8):
+    p = y[:n].mean()
+    print(n, p, np.mean((p > 0.5) == y))`}</Code>
+          <p>A majority-vote predictor trained on the first n labels, scored on all eight. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2 0.5 0.25\n4 0.75 0.75\n8 0.75 0.75", "2 0.5 0.75\n4 0.75 0.75\n8 0.75 0.75", "2 0.5 0.25\n4 0.75 0.75\n8 0.75 1.0", "2 0.5 0.5\n4 0.75 0.75\n8 0.75 0.75"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -187,6 +202,69 @@ rng = np.random.default_rng(0)
 X = rng.normal(size=(600, 5)); y = (X @ np.arange(1, 6) + rng.normal(size=600) > 0).astype(int)
 accs = learning_curve(lambda: LogisticRegression(), X, y, [10, 50, 400])
 assert len(accs) == 3 and accs[-1] > 0.85 and accs[-1] >= accs[0], 'Fit on the first n rows and score on the last 100.'` },
+          { name: "rows", code: `class M:
+    def fit(self, X, y):
+        self.n = len(X)
+        return self
+    def score(self, X, y):
+        return self.n + len(X) / 1000 + X[0] / 1e6
+accs = learning_curve(M, list(range(500)), list(range(500)), [5, 50, 300])
+assert all(abs(a - b) < 1e-12 for a, b in zip(accs, [5.1004, 50.1004, 300.1004])), 'Fit on the first n rows; score on rows 400 … 499.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            One learning curve from one split is noisy. Write <C>learning_curve_repeat(model_fn, X, y, sizes, repeats, seed)</C>: the test set is the last 20% of rows (the first int(0.8·n) rows form the pool); with one <C>np.random.default_rng(seed)</C>, for each size in order and each repeat in order, draw that many pool rows with <C>rng.choice(pool_size, size, replace=False)</C>, fit a fresh <C>model_fn()</C> on them and score it on the test set. Return (means, stds) as NumPy arrays, one entry per size.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def learning_curve_repeat(model_fn, X, y, sizes, repeats, seed):
+    return np.zeros(len(sizes)), np.zeros(len(sizes))
+`,
+        solution: `import numpy as np
+
+def learning_curve_repeat(model_fn, X, y, sizes, repeats, seed):
+    rng = np.random.default_rng(seed)
+    a = int(0.8 * len(X))
+    Xte, yte = X[a:], y[a:]
+    means, stds = [], []
+    for n in sizes:
+        s = []
+        for _ in range(repeats):
+            idx = rng.choice(a, n, replace=False)
+            s.append(model_fn().fit(X[idx], y[idx]).score(Xte, yte))
+        means.append(np.mean(s))
+        stds.append(np.std(s))
+    return np.array(means), np.array(stds)
+`,
+        tests: [
+          { name: "sampling", code: `import numpy as np
+class M:
+    def fit(self, X, y):
+        self.s = float(np.sum(X))
+        return self
+    def score(self, X, y):
+        return self.s + len(X) / 1000
+X = np.arange(50.0)[:, None]; y = np.zeros(50)
+m, s = learning_curve_repeat(M, X, y, [3, 5], 2, 7)
+rng = np.random.default_rng(7)
+want = [[float(np.sum(rng.choice(40, n, replace=False))) + 0.01 for _ in range(2)] for n in [3, 5]]
+assert np.allclose(m, [np.mean(w) for w in want]) and np.allclose(s, [np.std(w) for w in want]), 'One generator, sizes in order, repeats in order; test on the last 10 rows.'` },
+          { name: "improves", code: `import numpy as np
+from sklearn.linear_model import LogisticRegression
+rng = np.random.default_rng(0)
+X = rng.normal(size=(1000, 10)); y = (X @ rng.normal(size=10) + rng.normal(size=1000) > 0).astype(int)
+m, s = learning_curve_repeat(lambda: LogisticRegression(), X, y, [20, 100, 600], 8, 1)
+assert m[0] < m[1] < m[2] and s[0] > s[2], 'More data: higher accuracy and less spread between repeats.'` },
         ],
       },
     },

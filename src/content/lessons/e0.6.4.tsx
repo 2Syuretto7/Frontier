@@ -143,6 +143,24 @@ print([t["title"] for t in tasks if not t["done"]])`}</Code>
       answer: { kind: "choice", options: ["['buy milk', 'call home']", "['write lesson']", "['buy milk', 'write lesson']", "['call home']"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`log = []
+def add(item, amount):
+    log.append((item, amount))
+add("tea", 20); add("bus", 15); add("tea", 25)
+by = {}
+for item, amt in log:
+    by[item] = by.get(item, 0) + amt
+print(by, max(by, key=by.get), sum(by.values()))`}</Code>
+          <p>A tiny expense log totalled by item. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["{'tea': 45, 'bus': 15} tea 60", "{'tea': 25, 'bus': 15} tea 40", "{'bus': 15, 'tea': 45} bus 60", "{'tea': 45, 'bus': 15} bus 60"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -178,6 +196,72 @@ assert log == [('tea', 20)], 'add should append an (item, amount) pair.'` },
 for item, a in [('tea', 20), ('books', 450), ('bus', 30)]:
     add(log, item, a)
 assert report(log) == {'total': 500, 'largest': 'books', 'count': 3}, 'Total 500, the largest is books, three entries.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A small to-do manager. The state is a dict <C>{`{"next": 1, "tasks": {}}`}</C> made by <C>new_list()</C>. Write <C>add_task(todo, title, due)</C> (due is an ISO date string like <C>"2026-11-20"</C>), which stores the task under the next id, increments it, and returns the id; <C>complete(todo, task_id)</C>, which marks it done and raises <C>KeyError</C> for an unknown id; <C>pending(todo)</C>, the titles of tasks not done, sorted by due date then id; and <C>overdue(todo, today)</C>, the pending titles with a due date before today, in the same order.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def new_list():
+    return {'next': 1, 'tasks': {}}
+
+def add_task(todo, title, due):
+    return 1
+
+def complete(todo, task_id):
+    pass
+
+def pending(todo):
+    return []
+
+def overdue(todo, today):
+    return []
+`,
+        solution: `def new_list():
+    return {'next': 1, 'tasks': {}}
+
+def add_task(todo, title, due):
+    i = todo['next']
+    todo['tasks'][i] = {'title': title, 'due': due, 'done': False}
+    todo['next'] += 1
+    return i
+
+def complete(todo, task_id):
+    if task_id not in todo['tasks']:
+        raise KeyError(task_id)
+    todo['tasks'][task_id]['done'] = True
+
+def _open(todo):
+    return sorted((t['due'], i, t['title']) for i, t in todo['tasks'].items() if not t['done'])
+
+def pending(todo):
+    return [title for _, _, title in _open(todo)]
+
+def overdue(todo, today):
+    return [title for due, _, title in _open(todo) if due < today]
+`,
+        tests: [
+          { name: "ids", code: `t = new_list()
+assert [add_task(t, 'a', '2026-11-20'), add_task(t, 'b', '2026-11-18')] == [1, 2] and t['next'] == 3` },
+          { name: "pending", code: `t = new_list()
+add_task(t, 'pay rent', '2026-12-01'); add_task(t, 'buy milk', '2026-11-12'); add_task(t, 'call Ravi', '2026-11-12'); add_task(t, 'file taxes', '2026-11-30')
+complete(t, 4)
+assert pending(t) == ['buy milk', 'call Ravi', 'pay rent'] and overdue(t, '2026-11-15') == ['buy milk', 'call Ravi'] and overdue(t, '2026-11-12') == [], 'Sort by due date, then id; due today is not overdue.'` },
+          { name: "unknown", code: `t = new_list()
+try:
+    complete(t, 7)
+    assert False, 'Unknown ids raise KeyError.'
+except KeyError:
+    pass` },
         ],
       },
     },

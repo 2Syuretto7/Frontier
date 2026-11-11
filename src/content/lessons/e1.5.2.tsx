@@ -129,6 +129,19 @@ print((x - x.mean()) @ (x - x.mean()) / len(x))`}</Code>
       answer: { kind: "numeric", value: 1.25 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+x = np.array([3, 1, 4, 1, 5, 9, 2])
+print(np.cumsum(x)[-1], np.diff(x).tolist(), np.where(x > 3, x, 0).tolist(), (x[1:] > x[:-1]).sum())`}</Code>
+          <p>Four vectorised one-liners on the same array. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["25 [-2, 3, -3, 4, 4, -7] [0, 0, 4, 0, 5, 9, 0] 3", "25 [2, -3, 3, -4, -4, 7] [0, 0, 4, 0, 5, 9, 0] 3", "25 [-2, 3, -3, 4, 4, -7] [3, 1, 4, 1, 5, 9, 2] 3", "25 [-2, 3, -3, 4, 4, -7] [0, 0, 4, 0, 5, 9, 0] 4"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -166,6 +179,69 @@ rng = np.random.default_rng(0)
 X = rng.normal(size=(50, 8))
 ref = np.sqrt(((X[:, None, :] - X[None, :, :]) ** 2).sum(-1))
 assert np.allclose(pairwise_dist(X), ref, atol=1e-6), 'Check the formula on random data.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            No Python loops over elements in any of these. Write <C>moving_average(x, k)</C>, the means of every window of k consecutive values (length n − k + 1), from one <C>np.cumsum</C>; <C>histogram(x, bins, lo, hi)</C>, the counts in bins equal-width bins over [lo, hi] (values equal to hi go in the last bin; values outside are ignored) using <C>np.floor</C> and <C>np.bincount</C>; and <C>ranks(x)</C>, ranks from 1 with tied values sharing the average of their ranks.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def moving_average(x, k):
+    return np.array([x[i:i + k].mean() for i in range(len(x) - k + 1)])
+
+def histogram(x, bins, lo, hi):
+    return np.zeros(bins, dtype=int)
+
+def ranks(x):
+    return np.argsort(np.argsort(x)) + 1.0
+`,
+        solution: `import numpy as np
+
+def moving_average(x, k):
+    c = np.cumsum(np.concatenate([[0.0], np.asarray(x, float)]))
+    return (c[k:] - c[:-k]) / k
+
+def histogram(x, bins, lo, hi):
+    x = np.asarray(x, float)
+    x = x[(x >= lo) & (x <= hi)]
+    idx = np.minimum(np.floor((x - lo) / (hi - lo) * bins).astype(int), bins - 1)
+    return np.bincount(idx, minlength=bins)
+
+def ranks(x):
+    x = np.asarray(x)
+    order = np.argsort(x, kind='stable')
+    r = np.empty(len(x)); r[order] = np.arange(1, len(x) + 1)
+    vals, inv = np.unique(x, return_inverse=True)
+    sums = np.bincount(inv, weights=r); counts = np.bincount(inv)
+    return (sums / counts)[inv]
+`,
+        tests: [
+          { name: "moving", code: `import numpy as np
+assert np.allclose(moving_average(np.array([1, 2, 3, 4, 5]), 2), [1.5, 2.5, 3.5, 4.5]) and np.allclose(moving_average(np.arange(10.0), 10), [4.5])
+rng = np.random.default_rng(0); x = rng.normal(size=10 ** 6)
+m = moving_average(x, 50)
+assert len(m) == 10 ** 6 - 49 and abs(m[123] - x[123:173].mean()) < 1e-9, 'Fast on a million values.'` },
+          { name: "histogram", code: `import numpy as np
+rng = np.random.default_rng(1); x = rng.normal(size=5000)
+assert np.array_equal(histogram(x, 12, -2.0, 2.0), np.histogram(x, 12, (-2.0, 2.0))[0]), 'Agree with np.histogram.'
+assert histogram([0, 1, 1, 2, 5], 2, 0, 2).tolist() == [1, 3], 'hi itself goes in the last bin.'` },
+          { name: "ranks", code: `import numpy as np
+from scipy.stats import rankdata
+rng = np.random.default_rng(2)
+for _ in range(20):
+    x = rng.integers(0, 6, 30)
+    assert np.allclose(ranks(x), rankdata(x)), 'Ties share the average rank.'
+assert ranks([10, 30, 20, 20]).tolist() == [1.0, 4.0, 2.5, 2.5]` },
         ],
       },
     },

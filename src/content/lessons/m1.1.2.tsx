@@ -157,6 +157,20 @@ print(len(rows))`}</Code>
       answer: { kind: "numeric", value: 3 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from itertools import product
+f = lambda p, q, r: (p or q) and not r
+rows = [bits for bits in product([False, True], repeat=3) if f(*bits)]
+print(len(rows), rows[0])`}</Code>
+          <p>In how many of the 8 rows is (p ∨ q) ∧ ¬r true, and which comes first?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["3 (False, True, False)", "3 (True, False, False)", "4 (False, True, False)", "6 (False, False, True)"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -181,6 +195,42 @@ def truth_table(f, n):
         tests: [
           { name: "and", code: `assert truth_table(lambda p, q: p and q, 2) == [True, False, False, False], 'p ∧ q is true only in the first row.'` },
           { name: "three", code: `assert len(truth_table(lambda p, q, r: p or q or r, 3)) == 8 and truth_table(lambda p, q, r: p or q or r, 3)[-1] is False, 'Three variables give 8 rows; p ∨ q ∨ r fails only on the last.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>dnf(f, names)</C>, which returns a formula in disjunctive normal form for the Boolean function f of the variables in <C>names</C>: one clause per true row of the truth table, joined by <C>" or "</C>, each clause being the variables (negated with <C>not </C> when false in that row) joined by <C>" and "</C> and wrapped in brackets, rows in the order of <C>itertools.product([False, True], repeat=n)</C>. Return <C>"False"</C> if f is never true. The tests evaluate your string with <C>eval</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def dnf(f, names):
+    return 'True'
+`,
+        solution: `from itertools import product
+
+def dnf(f, names):
+    clauses = []
+    for bits in product([False, True], repeat=len(names)):
+        if f(*bits):
+            lits = [n if b else 'not ' + n for n, b in zip(names, bits)]
+            clauses.append('(' + ' and '.join(lits) + ')')
+    return ' or '.join(clauses) if clauses else 'False'
+`,
+        tests: [
+          { name: "shape", code: `assert dnf(lambda p, q: p and not q, ['p', 'q']) == '(p and not q)', 'One true row gives one clause.'` },
+          { name: "xor", code: `assert dnf(lambda p, q: p != q, ['p', 'q']) == '(not p and q) or (p and not q)', 'Rows in product order.'` },
+          { name: "never", code: `assert dnf(lambda a, b, c: False, ['a', 'b', 'c']) == 'False', 'A contradiction has no true rows.'` },
+          { name: "agrees", code: `from itertools import product
+f = lambda a, b, c, d: (a or not b) and (c != d) or (a and b and c)
+s = dnf(f, ['a', 'b', 'c', 'd'])
+assert all(eval(s, {}, dict(zip('abcd', v))) == bool(f(*v)) for v in product([False, True], repeat=4)), 'The formula must agree with f on every row.'` },
         ],
       },
     },

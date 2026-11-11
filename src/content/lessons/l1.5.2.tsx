@@ -138,6 +138,20 @@ print(folds[0], sum(len(f) for f in folds))`}</Code>
       answer: { kind: "choice", options: ["[0, 3, 6, 9] 10", "[0, 1, 2] 9", "[0, 3, 6] 10", "[0, 3, 6, 9] 12"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+from sklearn.model_selection import KFold
+f = [test.tolist() for _, test in KFold(3).split(np.zeros(7))]
+print(f)`}</Code>
+          <p>scikit-learn&rsquo;s KFold with three folds on seven rows, without shuffling. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[[0, 1, 2], [3, 4], [5, 6]]", "[[0, 1], [2, 3], [4, 5, 6]]", "[[0, 3, 6], [1, 4], [2, 5]]", "[[0, 1, 2], [3, 4, 5], [6]]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -170,6 +184,73 @@ from sklearn.datasets import make_classification
 X, y = make_classification(200, random_state=0)
 ref = cross_val_score(LogisticRegression(), X, y, cv=KFold(5)).mean()
 assert abs(kfold_score(lambda: LogisticRegression(), X, y, 5) - ref) < 1e-9, 'Match cross_val_score with unshuffled folds.'` },
+          { name: "folds", code: `import numpy as np
+sizes = []
+class M:
+    def fit(self, X, y):
+        sizes.append(len(X))
+        return self
+    def score(self, X, y):
+        return len(X)
+s = kfold_score(M, np.arange(10)[:, None], np.arange(10), 3)
+assert sizes == [6, 7, 7] and abs(s - 10 / 3) < 1e-12, 'np.array_split gives folds of 4, 3 and 3.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Choosing hyperparameters by cross-validation and then reporting that same score is optimistic. Write <C>nested_cv(model_fn, grid, X, y, outer, inner)</C>: split the rows with <C>KFold(outer)</C>; in each outer training part, choose parameters from the dict of lists <C>grid</C> by mean <C>cross_val_score</C> over <C>KFold(inner)</C> (the first best combination on ties, in <C>itertools.product</C> order), refit on the whole outer training part, and score on the outer test fold. Return (mean outer score, list of chosen parameter dicts).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def nested_cv(model_fn, grid, X, y, outer, inner):
+    return 1.0, []
+`,
+        solution: `import numpy as np
+
+from itertools import product
+from sklearn.model_selection import KFold, cross_val_score
+
+def nested_cv(model_fn, grid, X, y, outer, inner):
+    keys = list(grid)
+    scores, chosen = [], []
+    for tr, te in KFold(outer).split(X):
+        best = None
+        for vals in product(*grid.values()):
+            params = dict(zip(keys, vals))
+            s = cross_val_score(model_fn(**params), X[tr], y[tr], cv=KFold(inner)).mean()
+            if best is None or s > best[0]:
+                best = (s, params)
+        chosen.append(best[1])
+        scores.append(model_fn(**best[1]).fit(X[tr], y[tr]).score(X[te], y[te]))
+    return float(np.mean(scores)), chosen
+`,
+        tests: [
+          { name: "sklearn", code: `from sklearn.model_selection import GridSearchCV, KFold, cross_val_score
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.datasets import make_classification
+X, y = make_classification(240, n_informative=4, random_state=0)
+grid = {'max_depth': [1, 3, None], 'min_samples_leaf': [1, 8]}
+s, chosen = nested_cv(lambda **kw: DecisionTreeClassifier(random_state=0, **kw), grid, X, y, 4, 3)
+ref = cross_val_score(GridSearchCV(DecisionTreeClassifier(random_state=0), grid, cv=KFold(3)), X, y, cv=KFold(4)).mean()
+assert abs(s - ref) < 1e-12 and len(chosen) == 4, 'The same as GridSearchCV inside cross_val_score.'` },
+          { name: "optimism", code: `import numpy as np
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import KFold, cross_val_score
+rng = np.random.default_rng(0)
+X = rng.normal(size=(120, 20)); y = rng.integers(0, 2, 120)
+grid = {'n_neighbors': list(range(1, 40, 2))}
+inner_best = max(cross_val_score(KNeighborsClassifier(k), X, y, cv=KFold(4)).mean() for k in grid['n_neighbors'])
+s, _ = nested_cv(lambda **kw: KNeighborsClassifier(**kw), grid, X, y, 4, 4)
+assert inner_best > s and s < 0.6, 'On pure noise, the best inner score is optimistic; the nested score is honest.'` },
         ],
       },
     },
