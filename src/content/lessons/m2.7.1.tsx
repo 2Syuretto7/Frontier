@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { PartsViz } from "@/components/viz/PartsViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -119,6 +120,52 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Evaluate <M>{"\\int_0^\\pi x\\sin x\\,dx"}</M>. Give four decimal places.</p>,
       answer: { kind: "numeric", value: 3.1416, tolerance: 0.0001 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+x = np.linspace(0, 1, 200001)
+print(round(np.trapezoid(x * np.exp(x), x), 4))`}</Code>
+          <p>By parts, the integral of x eˣ from 0 to 1 is [x eˣ − eˣ] from 0 to 1. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 1.0, tolerance: 0.0001 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            By parts, the integral from 0 to 1 of xⁿeˣ is Iₙ = e − n·Iₙ₋₁, with I₀ = e − 1. Write <C>I(n)</C> using this recurrence.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def I(n):
+    return math.e - 1
+`,
+        solution: `import math
+
+def I(n):
+    v = math.e - 1
+    for k in range(1, n + 1):
+        v = math.e - k * v
+    return v
+`,
+        tests: [
+          { name: "first", code: `assert abs(I(1) - 1) < 1e-12, 'I₁ = e − (e − 1) = 1.'` },
+          { name: "third", code: `import numpy as np
+x = np.linspace(0, 1, 400001)
+assert abs(I(3) - np.trapezoid(x ** 3 * np.exp(x), x)) < 1e-6, 'Apply the recurrence n times.'` },
+        ],
+      },
     },
     {
       key: "esin",

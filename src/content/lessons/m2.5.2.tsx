@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { CurveShapeViz } from "@/components/viz/CurveShapeViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -188,6 +189,46 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "choice", options: ["(−1, 1)", "(−1/√3, 1/√3)", "(0, ∞)", "(−∞, −1) and (1, ∞)"], correct: [1] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+x = np.linspace(-2, 2, 9)
+f2 = 12 * x ** 2 - 4
+print(int((f2 < 0).sum()))`}</Code>
+          <p>f(x) = x⁴ − 2x² has f″ = 12x² − 4. On how many of these nine points is f concave?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 3 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>increasing_intervals(df, a, b, n)</C>: sample df at n + 1 evenly spaced points of [a, b] and return the fraction of them where df &gt; 0.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def increasing_intervals(df, a, b, n=1000):
+    return 1.0
+`,
+        solution: `def increasing_intervals(df, a, b, n=1000):
+    xs = [a + (b - a) * k / n for k in range(n + 1)]
+    return sum(df(x) > 0 for x in xs) / (n + 1)
+`,
+        tests: [
+          { name: "cubic", code: `frac = increasing_intervals(lambda x: 3 * x * x - 3, -2, 2, 4000)
+assert abs(frac - 0.5) < 0.01, 'x³ − 3x increases on [−2, −1] and [1, 2], half of [−2, 2].'` },
+          { name: "always", code: `assert increasing_intervals(lambda x: 1, 0, 1) == 1.0, 'A positive derivative everywhere gives 1.'` },
+        ],
+      },
     },
     {
       key: "strict",

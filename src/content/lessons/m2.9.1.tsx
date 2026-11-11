@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark, Theorem } from "@/components/lesson/Blocks";
 import { LittleOViz } from "@/components/viz/LittleOViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -124,6 +125,44 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Write <M>{"(1 + x)^{10} = 1 + 10x + cx^2 + O(x^3)"}</M>. What is c?</p>,
       answer: { kind: "numeric", value: 45 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`for n in [10, 100, 1000]:
+    print(n, (3 * n ** 2 + 5 * n) / n ** 2)`}</Code>
+          <p>The ratio (3n² + 5n)/n² settles towards a constant, so 3n² + 5n = O(n²). Which constant?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 3.0 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>ratio_limit(f, g)</C>, which returns f(n)/g(n) at n = 10⁸ as an estimate of the limit of the ratio. It is near 0 when f = o(g).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def ratio_limit(f, g):
+    return 1.0
+`,
+        solution: `def ratio_limit(f, g):
+    n = 1e8
+    return f(n) / g(n)
+`,
+        tests: [
+          { name: "same order", code: `assert abs(ratio_limit(lambda n: 3 * n * n + 5 * n, lambda n: n * n) - 3) < 1e-6, '3n² + 5n is about 3n².'` },
+          { name: "little o", code: `import math
+assert ratio_limit(lambda n: math.log(n), lambda n: n) < 1e-6, 'log n is o(n).'` },
+        ],
+      },
     },
     {
       key: "rules",

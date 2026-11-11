@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark, Theorem } from "@/components/lesson/Blocks";
 import { TaylorViz } from "@/components/viz/TaylorViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -128,6 +129,58 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 9 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+x = 1.0
+approx = sum((-1) ** k * x ** (2 * k + 1) / math.factorial(2 * k + 1) for k in range(3))
+print(abs(math.sin(x) - approx) < x ** 7 / math.factorial(7))`}</Code>
+          <p>Is the error of this Taylor polynomial for sin within the remainder bound x⁷/7!?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True", "False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>taylor_exp(x, n)</C>, the Taylor polynomial of eˣ at 0 of degree n, and <C>degree_needed(x, tol)</C>, the smallest n with |eˣ − taylor_exp(x, n)| &lt; tol.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def taylor_exp(x, n):
+    return 1.0
+
+def degree_needed(x, tol):
+    return 0
+`,
+        solution: `import math
+
+def taylor_exp(x, n):
+    return sum(x ** k / math.factorial(k) for k in range(n + 1))
+
+def degree_needed(x, tol):
+    n = 0
+    while abs(math.exp(x) - taylor_exp(x, n)) >= tol:
+        n += 1
+    return n
+`,
+        tests: [
+          { name: "value", code: `assert abs(taylor_exp(1, 10) - math.e) < 1e-7, 'Degree 10 at x = 1 is within 10⁻⁷ of e.'` },
+          { name: "degree", code: `assert degree_needed(1, 1e-6) == 9, 'Degree 9 is the first to get e within 10⁻⁶.'` },
+          { name: "further out", code: `assert degree_needed(5, 1e-6) > degree_needed(1, 1e-6), 'Further from 0 needs more terms.'` },
+        ],
+      },
     },
     {
       key: "exp-all",

@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ImproperViz } from "@/components/viz/ImproperViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -136,6 +137,49 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Evaluate <M>{"\\int_0^\\infty x e^{-x}\\,dx"}</M>.</p>,
       answer: { kind: "numeric", value: 1 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`for b in [10, 100, 1000]:
+    print(1 - 1 / b)`}</Code>
+          <p>These are the integrals of 1/x² from 1 to b. What is the improper integral from 1 to ∞?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 1.0 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>tail(p, b)</C>, the integral of 1/xᵖ from 1 to b for p ≠ 1, from the antiderivative x^(1−p)/(1−p). Then <C>converges(p)</C> should return whether the integral to ∞ is finite.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def tail(p, b):
+    return 0.0
+
+def converges(p):
+    return True
+`,
+        solution: `def tail(p, b):
+    return (b ** (1 - p) - 1) / (1 - p)
+
+def converges(p):
+    return p > 1
+`,
+        tests: [
+          { name: "square", code: `assert abs(tail(2, 1000) - 0.999) < 1e-12, 'The integral of 1/x² from 1 to 1000 is 1 − 1/1000.'` },
+          { name: "root", code: `assert abs(tail(0.5, 100) - 18) < 1e-9, 'The integral of 1/√x from 1 to 100 is 2(10 − 1) = 18.'` },
+          { name: "which", code: `assert converges(2) and converges(1.01) and not converges(0.5), 'It converges exactly when p > 1.'` },
+        ],
+      },
     },
     {
       key: "gamma",

@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ContinuityViz } from "@/components/viz/ContinuityViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -148,6 +149,45 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 2 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+f = lambda x: x * math.sin(1 / x) if x != 0 else 0.0
+print(max(abs(f(10 ** -k)) for k in range(3, 8)) < 1e-3)`}</Code>
+          <p>Is x·sin(1/x), set to 0 at 0, close to f(0) for small x? What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True", "False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>jump(f, a)</C>, which returns |f(a + h) − f(a − h)| for h = 10⁻⁹: near 0 for a function continuous at a, and clearly positive at a jump.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def jump(f, a):
+    return 0.0
+`,
+        solution: `def jump(f, a):
+    h = 1e-9
+    return abs(f(a + h) - f(a - h))
+`,
+        tests: [
+          { name: "continuous", code: `assert jump(lambda x: x * x, 3) < 1e-6, 'x² is continuous at 3.'` },
+          { name: "floor", code: `import math
+assert abs(jump(math.floor, 2) - 1) < 1e-12, 'The floor function jumps by 1 at every integer.'` },
+        ],
+      },
     },
     {
       key: "prove-abs",

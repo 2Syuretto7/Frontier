@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { FTCViz } from "@/components/viz/FTCViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -174,6 +175,53 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "expression", value: "3x^2 cos(x^3)", variables: ["x"] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+F = lambda x: -math.cos(x)
+print(round(F(math.pi) - F(0), 6))`}</Code>
+          <p>The fundamental theorem evaluates the integral of sin from 0 to π. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 2.0, tolerance: 1e-06 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>accumulate(f, a, xs)</C>, which returns a list of the integrals of f from a to each x in xs, using a midpoint sum with 10 000 strips each. Then the slope of the result should equal f.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def accumulate(f, a, xs):
+    return [0.0 for x in xs]
+`,
+        solution: `def accumulate(f, a, xs):
+    out = []
+    for x in xs:
+        n = 10000
+        dx = (x - a) / n
+        out.append(sum(f(a + (k + 0.5) * dx) for k in range(n)) * dx)
+    return out
+`,
+        tests: [
+          { name: "cosine", code: `import math
+v = accumulate(math.cos, 0, [0.5, 1.0])
+assert abs(v[0] - math.sin(0.5)) < 1e-8 and abs(v[1] - math.sin(1.0)) < 1e-8, 'The integral of cos from 0 to x is sin x.'` },
+          { name: "derivative", code: `import math
+h = 1e-3
+v = accumulate(lambda t: t * t, 0, [2 - h, 2 + h])
+assert abs((v[1] - v[0]) / (2 * h) - 4) < 1e-5, 'The slope of the accumulated area at 2 should be f(2) = 4.'` },
+        ],
+      },
     },
     {
       key: "proof1",

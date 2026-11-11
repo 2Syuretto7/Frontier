@@ -1,6 +1,6 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark, Theorem } from "@/components/lesson/Blocks";
-import { C } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import { DiffErrorViz } from "@/components/viz/DiffErrorViz";
 import type { LessonContent } from "@/lib/types";
 
@@ -130,6 +130,50 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: -8 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+x = 0.1
+print(math.sin(x) - x, -x ** 3 / 6)`}</Code>
+          <p>These two numbers agree to about four significant figures. Roughly what is the first?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["−0.000166", "0.1", "−0.1", "0"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            For tiny x, <C>1 - math.cos(x)</C> loses all its digits to cancellation. Write <C>one_minus_cos(x)</C> that uses the Taylor approximation x²/2 − x⁴/24 when |x| &lt; 10⁻³ and the direct formula otherwise.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def one_minus_cos(x):
+    return 1 - math.cos(x)
+`,
+        solution: `import math
+
+def one_minus_cos(x):
+    if abs(x) < 1e-3:
+        return x * x / 2 - x ** 4 / 24
+    return 1 - math.cos(x)
+`,
+        tests: [
+          { name: "tiny", code: `assert abs(one_minus_cos(1e-9) / 5e-19 - 1) < 1e-9, 'For x = 10⁻⁹ the answer is about 5 × 10⁻¹⁹, but the direct formula gives 0.'` },
+          { name: "ordinary", code: `import math
+assert abs(one_minus_cos(0.5) - (1 - math.cos(0.5))) < 1e-15, 'For ordinary x use the direct formula.'` },
+        ],
+      },
     },
     {
       key: "derive",

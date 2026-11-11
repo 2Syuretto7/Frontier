@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { ApproachViz } from "@/components/viz/ApproachViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -152,6 +153,44 @@ export const lesson: LessonContent = {
         kind: "choice",
         options: ["(sin x)/x", "x/|x|", "sin(1/x)", "(x² + x)/x"],
         correct: [0, 3],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+for h in [0.1, 0.01, 0.001]:
+    print(round(math.sin(h) / h, 6))`}</Code>
+          <p>What does the last line printed show, to six decimal places?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 1.0, tolerance: 1e-06 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>estimate_limit(f, a)</C>, which returns f(a + h) for h = 10⁻⁶ as a numerical guess at the limit of f(x) as x → a. Use it on (x² − 1)/(x − 1) at a = 1.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def estimate_limit(f, a):
+    return f(a)
+`,
+        solution: `def estimate_limit(f, a):
+    return f(a + 1e-6)
+`,
+        tests: [
+          { name: "removable", code: `assert abs(estimate_limit(lambda x: (x * x - 1) / (x - 1), 1) - 2) < 1e-5, 'You cannot evaluate at a itself: the formula divides by zero there. Step a little to the side.'` },
+          { name: "sine", code: `import math
+assert abs(estimate_limit(lambda x: math.sin(x) / x, 0) - 1) < 1e-6, 'sin(x)/x should approach 1 near 0.'` },
+        ],
       },
     },
     {

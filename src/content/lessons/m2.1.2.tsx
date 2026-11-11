@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { SupremumViz } from "@/components/viz/SupremumViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -185,6 +186,51 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 334 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`xs = [1 - 1 / n for n in range(1, 1001)]
+print(max(xs) < 1, round(max(xs), 3))`}</Code>
+          <p>Every element is below 1, and the supremum of the full infinite set is 1. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True 0.999", "True 1.0", "False 1.0", "True 0.99"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>sqrt2_bounds(steps)</C>, which narrows an interval [lo, hi] around the supremum of {"{x : x² < 2}"} by bisection, starting from [1, 2], and returns (lo, hi) after the given number of halvings. Keep lo² &lt; 2 ≤ hi².
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def sqrt2_bounds(steps):
+    lo, hi = 1.0, 2.0
+    return lo, hi
+`,
+        solution: `def sqrt2_bounds(steps):
+    lo, hi = 1.0, 2.0
+    for _ in range(steps):
+        mid = (lo + hi) / 2
+        if mid * mid < 2:
+            lo = mid
+        else:
+            hi = mid
+    return lo, hi
+`,
+        tests: [
+          { name: "one step", code: `assert sqrt2_bounds(1) == (1.0, 1.5), 'After one halving the interval is [1, 1.5].'` },
+          { name: "narrow", code: `lo, hi = sqrt2_bounds(40)
+assert lo * lo < 2 <= hi * hi and hi - lo < 1e-11, 'After 40 halvings the interval should be tiny and still contain √2.'` },
+        ],
+      },
     },
     {
       key: "unique",

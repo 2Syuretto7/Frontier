@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { UpperLowerViz } from "@/components/viz/UpperLowerViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -179,6 +180,45 @@ export const lesson: LessonContent = {
           "1/x for x > 0, with value 0 at 0",
         ],
         correct: [0, 1],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+x = np.linspace(-1, 2, 300001)
+print(round(np.trapezoid(x, x), 3))`}</Code>
+          <p>This approximates the integral of x from −1 to 2, counting area below the axis as negative. What does it print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 1.5, tolerance: 0.002 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>signed_area(f, a, b)</C> using a midpoint sum with 100 000 strips. It should respect the sign convention: swapping a and b flips the sign.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def signed_area(f, a, b):
+    return abs(b - a)
+`,
+        solution: `def signed_area(f, a, b):
+    n = 100000
+    dx = (b - a) / n
+    return sum(f(a + (k + 0.5) * dx) for k in range(n)) * dx
+`,
+        tests: [
+          { name: "linear", code: `assert abs(signed_area(lambda x: x, -1, 2) - 1.5) < 1e-8, 'The area under y = x from −1 to 2 is 2 − 1/2 = 1.5.'` },
+          { name: "reversed", code: `assert abs(signed_area(lambda x: x * x, 1, 0) + 1 / 3) < 1e-8, 'Integrating from 1 to 0 gives minus the integral from 0 to 1.'` },
+        ],
       },
     },
     {

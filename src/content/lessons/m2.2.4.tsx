@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ApproachViz } from "@/components/viz/ApproachViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -161,6 +162,44 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 0 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`for x in [0.1, 0.01, -0.01, -0.1]:
+    print(x, 1 / x)`}</Code>
+          <p>As x approaches 0 from the left, what does 1/x do?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["It tends to −∞", "It tends to +∞", "It tends to 0", "It tends to 1"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>one_sided(f, a)</C>, which returns (left, right): f evaluated at a − 10⁻⁹ and a + 10⁻⁹, as estimates of the one-sided limits.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def one_sided(f, a):
+    return f(a), f(a)
+`,
+        solution: `def one_sided(f, a):
+    return f(a - 1e-9), f(a + 1e-9)
+`,
+        tests: [
+          { name: "step", code: `l, r = one_sided(lambda x: 1.0 if x >= 0 else 0.0, 0)
+assert (l, r) == (0.0, 1.0), 'The step jumps at 0: the left limit is 0 and the right limit is 1.'` },
+          { name: "abs over x", code: `l, r = one_sided(lambda x: abs(x) / x, 0)
+assert (l, r) == (-1.0, 1.0), '|x|/x is −1 on the left and 1 on the right.'` },
+        ],
+      },
     },
     {
       key: "prove-infinite",

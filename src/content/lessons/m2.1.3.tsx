@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { AbsViz } from "@/components/viz/AbsViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -175,6 +176,43 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 7 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`xs = [3, -7, 2]
+print(abs(sum(xs)), sum(abs(x) for x in xs))`}</Code>
+          <p>This prints two numbers, illustrating the triangle inequality. What is the first?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 2 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>solve_abs(a, c, r)</C>, which returns the interval (lo, hi) of x with |x − c| &lt; r, scaled: the solutions of |a·x − c| &lt; r for a &gt; 0.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def solve_abs(a, c, r):
+    return (c - r, c + r)
+`,
+        solution: `def solve_abs(a, c, r):
+    return ((c - r) / a, (c + r) / a)
+`,
+        tests: [
+          { name: "plain", code: `assert solve_abs(1, 3, 2) == (1, 5), '|x − 3| < 2 means 1 < x < 5.'` },
+          { name: "scaled", code: `lo, hi = solve_abs(2, 6, 1)
+assert abs(lo - 2.5) < 1e-12 and abs(hi - 3.5) < 1e-12, '|2x − 6| < 1 means 2.5 < x < 3.5: divide by a.'` },
+        ],
+      },
     },
     {
       key: "reverse",

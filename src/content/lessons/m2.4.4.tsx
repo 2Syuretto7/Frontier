@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ExpSlopeViz } from "@/components/viz/ExpSlopeViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -139,6 +140,58 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>At a point where <M>{"\\sigma(x) = 0.9"}</M>, what is <M>{"\\sigma'(x)"}</M>?</p>,
       answer: { kind: "numeric", value: 0.09, tolerance: 0.001 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+s = lambda x: 1 / (1 + math.exp(-x))
+x = 0.7
+print(round(s(x) * (1 - s(x)), 4))`}</Code>
+          <p>This is the sigmoid's derivative at 0.7 by the formula σ(1 − σ). What does it print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 0.2217, tolerance: 0.0005 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>sigmoid(x)</C> and <C>sigmoid_grad(x)</C> for a NumPy array x, using σ′ = σ(1 − σ).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+def sigmoid_grad(x):
+    return sigmoid(x)
+`,
+        solution: `import numpy as np
+
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+def sigmoid_grad(x):
+    s = sigmoid(x)
+    return s * (1 - s)
+`,
+        tests: [
+          { name: "peak", code: `import numpy as np
+assert abs(sigmoid_grad(np.array([0.0]))[0] - 0.25) < 1e-12, 'The sigmoid is steepest at 0, with slope 1/4.'` },
+          { name: "matches difference", code: `import numpy as np
+x = np.linspace(-4, 4, 9); h = 1e-6
+assert np.allclose(sigmoid_grad(x), (sigmoid(x + h) - sigmoid(x - h)) / (2 * h), atol=1e-8), 'Use σ(1 − σ).'` },
+        ],
+      },
     },
     {
       key: "softplus",

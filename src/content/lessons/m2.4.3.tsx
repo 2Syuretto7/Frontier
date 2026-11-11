@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ChainViz } from "@/components/viz/ChainViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -157,6 +158,48 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "expression", value: "8 sin(4x) cos(4x)", variables: ["x"] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+f = lambda x: math.sin(x ** 2)
+x, h = 1.0, 1e-6
+print(round((f(x + h) - f(x - h)) / (2 * h), 4), round(2 * x * math.cos(x ** 2), 4))`}</Code>
+          <p>Both numbers are the derivative of sin(x²) at 1. What is it, to four decimal places?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 1.0806, tolerance: 0.0002 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>compose_derivative(f, df, g, dg)</C>, which returns a function computing the derivative of f(g(x)) by the chain rule, given f, its derivative df, g and its derivative dg.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def compose_derivative(f, df, g, dg):
+    return lambda x: df(x) * dg(x)
+`,
+        solution: `def compose_derivative(f, df, g, dg):
+    return lambda x: df(g(x)) * dg(x)
+`,
+        tests: [
+          { name: "sin of square", code: `import math
+d = compose_derivative(math.sin, math.cos, lambda x: x * x, lambda x: 2 * x)
+assert abs(d(1.0) - 2 * math.cos(1.0)) < 1e-12, 'Evaluate the outer derivative at the inner value g(x).'` },
+          { name: "exp of linear", code: `import math
+d = compose_derivative(math.exp, math.exp, lambda x: 3 * x, lambda x: 3)
+assert abs(d(0.5) - 3 * math.exp(1.5)) < 1e-9, 'd/dx e^(3x) = 3e^(3x).'` },
+        ],
+      },
     },
     {
       key: "even-odd",
