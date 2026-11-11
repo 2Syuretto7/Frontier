@@ -1045,3 +1045,13 @@ label { font-size: 13px; font-weight: 500; color: var(--text); }
 .sql-query span { display: block; padding: 1px 12px; white-space: pre-wrap; border-left: 3px solid transparent; color: var(--text-faint); }
 .sql-query span.is-done { color: var(--text-muted); }
 .sql-query span.is-on { color: var(--text); background: var(--accent-soft); border-left-color: var(--accent); font-weight: 600; }
+
+/* Matrices in linear algebra visualisations */
+.mat-row { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; justify-content: center; margin: 12px 0; font-family: var(--font-mono); font-size: 14px; }
+.mat-wrap { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; overflow-x: auto; }
+.mat-label { font-family: var(--font-sans); font-size: 13px; color: var(--text-muted); }
+.mat { border-collapse: separate; border-spacing: 0; border-left: 2px solid var(--text-muted); border-right: 2px solid var(--text-muted); border-radius: 4px; margin: 0; }
+.mat td { padding: 3px 8px; text-align: right; font-family: var(--font-mono); font-size: 13.5px; min-width: 2.2em; border: none; }
+.mat td.is-on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.mat td.mat-bar { border-left: 1px dashed var(--border-strong); }
+.mat-op { font-size: 16px; color: var(--text-muted); }
