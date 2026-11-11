@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { toPlainText } from "../src/lib/parton/plaintext.ts";
 import { renderParton } from "../src/lib/parton/render.ts";
-import { describeAnswer, rungFor, RUNGS } from "../src/lib/parton/prompts.ts";
+import { acceptWritten, describeAnswer, MARK_RULES, rungFor, RUNGS } from "../src/lib/parton/prompts.ts";
 import { lesson as counting } from "../src/content/lessons/m0.1.1.tsx";
 
 test("plain text keeps the lesson's words and its TeX", () => {
@@ -46,4 +46,16 @@ test("protected answers are described for the reviewing pass", () => {
   assert.equal(describeAnswer({ kind: "numeric", value: 4 }), "The answer is 4.");
   assert.match(describeAnswer({ kind: "choice", options: ["a", "b", "c"], correct: [0, 2] }), /options are: "a", "c"/);
   assert.match(describeAnswer({ kind: "written", rubric: ["One", "Two"] }), /1\. One\n2\. Two/);
+});
+
+test("written work is marked leniently", () => {
+  const crit = (...met: boolean[]) => met.map((m, i) => ({ criterion: `c${i}`, met: m }));
+  assert.equal(acceptWritten({ criteria: crit(true, true, true, true), accepted: false }, 4), true);
+  assert.equal(acceptWritten({ criteria: crit(true, false, true, true), accepted: false }, 4), true, "one missed criterion is still accepted");
+  assert.equal(acceptWritten({ criteria: crit(true, false, false, true), accepted: false }, 4), false);
+  assert.equal(acceptWritten({ criteria: crit(false, false, false, false), accepted: true }, 4), true, "Parton's judgement that the central idea is right is enough");
+  assert.equal(acceptWritten({ criteria: crit(true, false), accepted: false }, 2), true);
+  assert.equal(acceptWritten({ criteria: crit(false), accepted: false }, 1), false);
+  assert.match(MARK_RULES, /fair, friendly and lenient/);
+  assert.doesNotMatch(MARK_RULES, /Be rigorous/);
 });

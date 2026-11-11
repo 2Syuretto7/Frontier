@@ -26,7 +26,7 @@ type Status = { tone: "right" | "wrong" | "info"; text: string } | null;
 
 const WRITTEN_STATUS: Record<NonNullable<ExerciseView["verdict"]>, Status> = {
   accepted: { tone: "right", text: "Accepted by Parton." },
-  revise: { tone: "wrong", text: "Not yet accepted. Parton's comments are below; revise and submit again." },
+  revise: { tone: "info", text: "Nearly there. Parton has a friendly suggestion below; revise and submit again whenever you like." },
   pending: { tone: "info", text: "Submitted. Parton marks written work once connected; until then it counts as submitted." },
 };
 
