@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { IVTViz } from "@/components/viz/IVTViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -178,6 +179,58 @@ export const lesson: LessonContent = {
           "f is decreasing",
         ],
         correct: [0],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = lambda x: x ** 3 - x - 2
+lo, hi = 1.0, 2.0
+for _ in range(20):
+    mid = (lo + hi) / 2
+    if f(mid) > 0:
+        hi = mid
+    else:
+        lo = mid
+print(round(lo, 3))`}</Code>
+          <p>Bisection finds a root guaranteed by the intermediate value theorem. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 1.521, tolerance: 0.0005 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>bisect(f, lo, hi, tol)</C>, which assumes f(lo) and f(hi) have opposite signs and halves the interval until it is shorter than tol, then returns its midpoint.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def bisect(f, lo, hi, tol=1e-10):
+    return (lo + hi) / 2
+`,
+        solution: `def bisect(f, lo, hi, tol=1e-10):
+    flo = f(lo)
+    while hi - lo > tol:
+        mid = (lo + hi) / 2
+        fm = f(mid)
+        if (fm > 0) == (flo > 0):
+            lo, flo = mid, fm
+        else:
+            hi = mid
+    return (lo + hi) / 2
+`,
+        tests: [
+          { name: "cube root", code: `assert abs(bisect(lambda x: x ** 3 - 2, 0, 2) - 2 ** (1 / 3)) < 1e-9, 'The root of x³ − 2 is the cube root of 2.'` },
+          { name: "decreasing", code: `import math
+assert abs(bisect(lambda x: math.cos(x) - x, 0, 1) - 0.7390851332) < 1e-9, 'Handle a function that goes from positive to negative too.'` },
+        ],
       },
     },
     {

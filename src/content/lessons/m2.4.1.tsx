@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Quote, Remark, Theorem } from "@/components/lesson/Blocks";
 import { SecantViz } from "@/components/viz/SecantViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -188,6 +189,46 @@ export const lesson: LessonContent = {
         kind: "choice",
         options: ["|x| at x = 0", "x² at x = 0", "|x − 2| at x = 2", "|x| at x = 1"],
         correct: [0, 2],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = lambda x: x ** 3
+a, h = 2.0, 0.001
+print(round((f(a + h) - f(a)) / h, 2))`}</Code>
+          <p>What does this difference quotient print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 12.01, tolerance: 0.0005 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>derivative(f, a)</C>, the central difference (f(a + h) − f(a − h)) / 2h with h = 10⁻⁵.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def derivative(f, a):
+    h = 1e-5
+    return (f(a + h) - f(a)) / h
+`,
+        solution: `def derivative(f, a):
+    h = 1e-5
+    return (f(a + h) - f(a - h)) / (2 * h)
+`,
+        tests: [
+          { name: "cube", code: `assert abs(derivative(lambda x: x ** 3, 2) - 12) < 1e-8, 'The derivative of x³ at 2 is 12. A one-sided quotient is not accurate enough.'` },
+          { name: "sine", code: `import math
+assert abs(derivative(math.sin, 0.5) - math.cos(0.5)) < 1e-9, 'The derivative of sin is cos.'` },
+        ],
       },
     },
     {

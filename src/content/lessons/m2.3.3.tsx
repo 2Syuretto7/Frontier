@@ -1,6 +1,7 @@
 import { M } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { EVTViz } from "@/components/viz/EVTViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -159,6 +160,52 @@ export const lesson: LessonContent = {
         kind: "choice",
         options: ["x² on [−1, 2]", "x² on (−1, 2)", "1/(1 + x²) on (−∞, ∞)", "x on [0, ∞)"],
         correct: [1, 3],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+x = np.linspace(0, 3, 30001)
+f = x ** 3 - 6 * x ** 2 + 9 * x
+print(round(x[np.argmax(f)], 3), round(f.max(), 3))`}</Code>
+          <p>The maximum of x³ − 6x² + 9x on [0, 3] is attained. This prints where and the value. What is the value?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 4.0, tolerance: 0.001 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>grid_max(f, a, b, n)</C>, which evaluates f at n + 1 evenly spaced points of [a, b] and returns (x, f(x)) for the largest value found.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def grid_max(f, a, b, n=10000):
+    return a, f(a)
+`,
+        solution: `def grid_max(f, a, b, n=10000):
+    best = (a, f(a))
+    for k in range(n + 1):
+        x = a + (b - a) * k / n
+        y = f(x)
+        if y > best[1]:
+            best = (x, y)
+    return best
+`,
+        tests: [
+          { name: "interior", code: `x, y = grid_max(lambda x: x ** 3 - 6 * x ** 2 + 9 * x, 0, 3)
+assert abs(x - 1) < 1e-3 and abs(y - 4) < 1e-6, 'On [0, 3] the maximum 4 is at x = 1.'` },
+          { name: "endpoint", code: `x, y = grid_max(lambda x: x, 0, 5)
+assert x == 5, 'The maximum can sit at an endpoint.'` },
+        ],
       },
     },
     {

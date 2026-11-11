@@ -2,6 +2,7 @@ import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ModFieldViz } from "@/components/viz/ModFieldViz";
 import { OrderViz } from "@/components/viz/OrderViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -294,6 +295,44 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: -4 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`a = 0.1 + 0.2
+b = 0.3
+print(a == b, abs(a - b) < 1e-12)`}</Code>
+          <p>Floating-point numbers do not obey every field axiom exactly. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["False True", "True True", "False False", "True False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>assoc_gap(a, b, c)</C>, which returns |(a + b) + c − (a + (b + c))| computed in floating point. The real numbers obey associativity exactly; floats do not.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def assoc_gap(a, b, c):
+    return 0.0
+`,
+        solution: `def assoc_gap(a, b, c):
+    return abs((a + b) + c - (a + (b + c)))
+`,
+        tests: [
+          { name: "small and large", code: `assert assoc_gap(1e16, -1e16, 1.0) == 1.0, 'Try a = 10¹⁶, b = −10¹⁶, c = 1 by hand: the two groupings differ by 1.'` },
+          { name: "tenths", code: `assert assoc_gap(0.1, 0.2, 0.3) > 0, 'Even 0.1, 0.2 and 0.3 give a tiny non-zero gap.'` },
+          { name: "integers", code: `assert assoc_gap(1.0, 2.0, 3.0) == 0.0, 'Small whole numbers are exact in floating point.'` },
+        ],
+      },
     },
     {
       key: "no-zero-div",

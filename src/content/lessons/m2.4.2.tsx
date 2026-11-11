@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ProductRuleViz } from "@/components/viz/ProductRuleViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -179,6 +180,43 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 0 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import sympy as sp
+x = sp.symbols('x')
+print(sp.diff(x ** 2 * sp.sin(x), x))`}</Code>
+          <p>Which rule produced this output?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["The product rule", "The quotient rule", "The chain rule only", "The power rule only"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A polynomial is a list of coefficients, lowest power first: [c₀, c₁, c₂, …]. Write <C>poly_derivative(c)</C>, which returns the coefficients of its derivative by the power rule.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def poly_derivative(c):
+    return c
+`,
+        solution: `def poly_derivative(c):
+    return [k * c[k] for k in range(1, len(c))]
+`,
+        tests: [
+          { name: "cubic", code: `assert list(poly_derivative([1, 2, 3, 4])) == [2, 6, 12], '1 + 2x + 3x² + 4x³ has derivative 2 + 6x + 12x².'` },
+          { name: "constant", code: `assert list(poly_derivative([5])) == [], 'A constant has derivative 0 (the empty list).'` },
+        ],
+      },
     },
     {
       key: "recip",

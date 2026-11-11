@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { PartialSumViz } from "@/components/viz/PartialSumViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -137,6 +138,46 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Which of these series converge? Select all that apply.</p>,
       answer: { kind: "choice", options: ["Σ 1/n²", "Σ 1/√n", "Σ n/2ⁿ", "Σ n!/nⁿ"], correct: [0, 2, 3] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`s = sum(1 / n for n in range(1, 10 ** 6 + 1))
+print(round(s, 2))`}</Code>
+          <p>The harmonic partial sum S₁₀₀₀₀₀₀ grows like ln N plus 0.577. What does it print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 14.39, tolerance: 0.0005 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>terms_needed(target)</C>, which returns the smallest N with 1 + 1/2 + … + 1/N ≥ target.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def terms_needed(target):
+    return 1
+`,
+        solution: `def terms_needed(target):
+    s, n = 0.0, 0
+    while s < target:
+        n += 1
+        s += 1 / n
+    return n
+`,
+        tests: [
+          { name: "three", code: `assert terms_needed(3) == 11, 'The harmonic sum first reaches 3 at N = 11.'` },
+          { name: "ten", code: `assert terms_needed(10) == 12367, 'It first reaches 10 at N = 12367.'` },
+        ],
+      },
     },
     {
       key: "grouping",

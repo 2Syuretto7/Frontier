@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark, Theorem } from "@/components/lesson/Blocks";
 import { NewtonViz } from "@/components/viz/NewtonViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -139,6 +140,49 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 0.33, tolerance: 0.0001 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`x = 1.0
+for _ in range(4):
+    x = x - (x * x - 2) / (2 * x)
+print(round(x, 10))`}</Code>
+          <p>Newton's method on x² − 2 from 1. What does this print, to ten decimal places?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 1.4142135624, tolerance: 1e-10 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>newton(f, df, x0, steps)</C>, which applies Newton&rsquo;s update x ← x − f(x)/f′(x) the given number of times and returns x.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def newton(f, df, x0, steps=20):
+    return x0
+`,
+        solution: `def newton(f, df, x0, steps=20):
+    x = x0
+    for _ in range(steps):
+        x = x - f(x) / df(x)
+    return x
+`,
+        tests: [
+          { name: "root two", code: `assert abs(newton(lambda x: x * x - 2, lambda x: 2 * x, 1.0) - 2 ** 0.5) < 1e-14, 'Newton on x² − 2 should reach √2.'` },
+          { name: "fast", code: `assert abs(newton(lambda x: x * x - 2, lambda x: 2 * x, 1.0, 5) - 2 ** 0.5) < 1e-12, 'Five steps should already give twelve correct digits.'` },
+          { name: "cos", code: `import math
+assert abs(newton(lambda x: math.cos(x) - x, lambda x: -math.sin(x) - 1, 1.0) - 0.7390851332151607) < 1e-12, 'The fixed point of cos is about 0.739.'` },
+        ],
+      },
     },
     {
       key: "sqrt-error",

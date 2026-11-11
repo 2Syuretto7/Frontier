@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { LHopitalViz } from "@/components/viz/LHopitalViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -159,6 +160,45 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 0.5 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+x = 1e-4
+print(round((1 - math.cos(x)) / x ** 2, 4))`}</Code>
+          <p>L'Hôpital twice gives the limit of (1 − cos x)/x² at 0. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 0.5, tolerance: 0.0001 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>lhopital(df, dg, a)</C>, which returns f′(a)/g′(a), the limit of f/g at a when f(a) = g(a) = 0 and g′(a) ≠ 0.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def lhopital(df, dg, a):
+    return 0.0
+`,
+        solution: `def lhopital(df, dg, a):
+    return df(a) / dg(a)
+`,
+        tests: [
+          { name: "sine", code: `import math
+assert abs(lhopital(math.cos, lambda x: 1.0, 0) - 1) < 1e-12, 'sin x / x at 0: cos 0 / 1 = 1.'` },
+          { name: "exp", code: `import math
+assert abs(lhopital(math.exp, lambda x: 2.0, 0) - 0.5) < 1e-12, '(eˣ − 1)/(2x) at 0: e⁰/2 = 1/2.'` },
+        ],
+      },
     },
     {
       key: "proof",

@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { GrowthRateViz } from "@/components/viz/GrowthRateViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -117,6 +118,49 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>What is the smallest whole number n ≥ 2 for which <M>{"2^n > n^{10}"}</M>?</p>,
       answer: { kind: "numeric", value: 59 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+n = 50
+print(sorted(['n^3', '2^n', 'n log n', 'n!'], key=lambda s: {'n^3': 3 * math.log(n), '2^n': n * math.log(2), 'n log n': math.log(n * math.log(n)), 'n!': math.lgamma(n + 1)}[s]))`}</Code>
+          <p>This sorts four functions by their size at n = 50, comparing logarithms. What order does it print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["n log n, n^3, 2^n, n!", "n log n, 2^n, n^3, n!", "n^3, n log n, 2^n, n!", "n log n, n^3, n!, 2^n"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>crossover(logf, logg)</C>, given the logarithms of two functions f and g, which returns the first whole number n ≥ 2 from which on f(n) &gt; g(n) for every n up to 10 000.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def crossover(logf, logg):
+    return 2
+`,
+        solution: `def crossover(logf, logg):
+    last = None
+    for n in range(2, 10001):
+        if logf(n) <= logg(n):
+            last = n
+    return 2 if last is None else last + 1
+`,
+        tests: [
+          { name: "exp beats cube", code: `import math
+assert crossover(lambda n: n * math.log(2), lambda n: 3 * math.log(n)) == 10, '2ⁿ > n³ for every n ≥ 10.'` },
+          { name: "exp beats tenth power", code: `import math
+assert crossover(lambda n: n * math.log(2), lambda n: 10 * math.log(n)) == 59, '2ⁿ overtakes n¹⁰ for good at 59.'` },
+        ],
+      },
     },
     {
       key: "lnpower",

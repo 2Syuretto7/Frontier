@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { RearrangeViz } from "@/components/viz/RearrangeViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -132,6 +133,51 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Which of these converge absolutely? Select all that apply.</p>,
       answer: { kind: "choice", options: ["Σ (−1)ⁿ/n²", "Σ (−1)ⁿ/√n", "Σ sin(n)/n²", "Σ (−1)ⁿ/n"], correct: [0, 2] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+s = sum((-1) ** (n + 1) / n for n in range(1, 100001))
+print(round(s, 4), round(math.log(2), 4))`}</Code>
+          <p>The alternating harmonic series converges conditionally. To what?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 0.6931, tolerance: 0.0002 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>rearranged(target, n_terms)</C>, which adds terms of the alternating harmonic series in a new order to steer towards target: take unused positive terms 1, 1/3, 1/5, … while the sum is at most target, otherwise unused negative terms −1/2, −1/4, …. Return the sum after n_terms terms.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def rearranged(target, n_terms):
+    return 0.0
+`,
+        solution: `def rearranged(target, n_terms):
+    s, p, q = 0.0, 1, 2
+    for _ in range(n_terms):
+        if s <= target:
+            s += 1 / p
+            p += 2
+        else:
+            s -= 1 / q
+            q += 2
+    return s
+`,
+        tests: [
+          { name: "one and a half", code: `assert abs(rearranged(1.5, 200000) - 1.5) < 1e-3, 'The same terms can be rearranged to sum to 1.5.'` },
+          { name: "zero", code: `assert abs(rearranged(0.0, 200000)) < 1e-3, 'Or to 0.'` },
+        ],
+      },
     },
     {
       key: "proof",

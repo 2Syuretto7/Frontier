@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { GaussianViz } from "@/components/viz/GaussianViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -123,6 +124,51 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>What is <M>{"\\int_{-\\infty}^{\\infty} e^{-(x - 3)^2/8}\\,dx"}</M>? Give four decimal places.</p>,
       answer: { kind: "numeric", value: 5.0133, tolerance: 0.0001 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+x = np.linspace(-10, 10, 200001)
+print(round(np.trapezoid(np.exp(-x ** 2), x) ** 2, 4))`}</Code>
+          <p>The square of the Gaussian integral. What does this print, to four decimal places?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 3.1416, tolerance: 0.0002 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>normal_mass(k)</C>, the probability that a standard normal lies within k of 0: the integral of e^(−x²/2)/√(2π) from −k to k, by a midpoint sum with 100 000 strips.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def normal_mass(k):
+    return 1.0
+`,
+        solution: `import math
+
+def normal_mass(k):
+    n = 100000
+    dx = 2 * k / n
+    c = 1 / math.sqrt(2 * math.pi)
+    return sum(c * math.exp(-((-k + (j + 0.5) * dx) ** 2) / 2) for j in range(n)) * dx
+`,
+        tests: [
+          { name: "one", code: `assert abs(normal_mass(1) - 0.682689) < 1e-5, 'About 68.3% lies within one standard deviation.'` },
+          { name: "two", code: `assert abs(normal_mass(2) - 0.954500) < 1e-5, 'About 95.4% lies within two.'` },
+          { name: "far", code: `assert abs(normal_mass(8) - 1) < 1e-9, 'Almost everything lies within 8.'` },
+        ],
+      },
     },
     {
       key: "variance",

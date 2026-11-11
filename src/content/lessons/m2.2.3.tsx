@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { SqueezeViz } from "@/components/viz/SqueezeViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -198,6 +199,52 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 0 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+f = lambda x: (math.exp(x) - 1) / x
+g = lambda x: x ** 2 + 3
+x = 1e-7
+print(round(f(x) * g(x), 4))`}</Code>
+          <p>By the product law, the limit as x → 0 is (lim f)(lim g). What does this print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 3.0, tolerance: 0.0001 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>limit_of_quotient(p, q, a)</C> for polynomials given as coefficient lists (highest power first). If q(a) ≠ 0 return p(a)/q(a) by the quotient law; otherwise return <C>None</C>. Use <C>np.polyval</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def limit_of_quotient(p, q, a):
+    return np.polyval(p, a) / np.polyval(q, a)
+`,
+        solution: `import numpy as np
+
+def limit_of_quotient(p, q, a):
+    d = np.polyval(q, a)
+    if d == 0:
+        return None
+    return np.polyval(p, a) / d
+`,
+        tests: [
+          { name: "law applies", code: `assert abs(limit_of_quotient([1, 0, 1], [1, 2], 2) - 1.25) < 1e-12, '(x² + 1)/(x + 2) at x = 2 is 5/4.'` },
+          { name: "law does not apply", code: `assert limit_of_quotient([1, 0, -1], [1, -1], 1) is None, 'When the denominator is 0 at a, the quotient law says nothing: return None.'` },
+        ],
+      },
     },
     {
       key: "product-law",

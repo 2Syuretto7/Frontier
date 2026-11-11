@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ImplicitViz } from "@/components/viz/ImplicitViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -237,6 +238,44 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "expression", value: "(2/3) x^(-1/3)", variables: ["x"] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+y = math.log(5.0)
+print(round(1 / math.exp(y), 4))`}</Code>
+          <p>This is the derivative of ln at 5, computed as 1 over the derivative of exp at ln 5. What does it print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 0.2 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>inverse_slope(df, f_inv, y)</C>, which returns the derivative of the inverse function at y by the formula 1 / f′(f⁻¹(y)).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def inverse_slope(df, f_inv, y):
+    return 1 / df(y)
+`,
+        solution: `def inverse_slope(df, f_inv, y):
+    return 1 / df(f_inv(y))
+`,
+        tests: [
+          { name: "square root", code: `assert abs(inverse_slope(lambda x: 2 * x, lambda y: y ** 0.5, 9) - 1 / 6) < 1e-12, 'The slope of √y at 9 is 1/6: evaluate f′ at f⁻¹(y) = 3.'` },
+          { name: "arctan", code: `import math
+assert abs(inverse_slope(lambda x: 1 / math.cos(x) ** 2, math.atan, 1.0) - 0.5) < 1e-12, 'The slope of arctan at 1 is 1/2.'` },
+        ],
+      },
     },
     {
       key: "radius",

@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ConvergeViz } from "@/components/viz/ConvergeViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -133,6 +134,47 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 2 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`a = 1.0
+for _ in range(6):
+    a = (a + 2 / a) / 2
+print(round(a, 12))`}</Code>
+          <p>This sequence converges. To what, to twelve decimal places?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 1.414213562373, tolerance: 1e-12 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>first_index(a, L, eps)</C>, which returns the first n ≥ 1 with |a(n) − L| &lt; eps, where a is a function of n. This is the N in the definition of convergence.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def first_index(a, L, eps):
+    return 1
+`,
+        solution: `def first_index(a, L, eps):
+    n = 1
+    while abs(a(n) - L) >= eps:
+        n += 1
+    return n
+`,
+        tests: [
+          { name: "reciprocal", code: `assert first_index(lambda n: 1 / n, 0, 0.01) == 101, '1/n < 0.01 first holds at n = 101.'` },
+          { name: "geometric", code: `assert first_index(lambda n: 0.5 ** n, 0, 1e-3) == 10, '2⁻ⁿ < 0.001 first holds at n = 10.'` },
+        ],
+      },
     },
     {
       key: "unique",

@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Quote, Remark, Theorem } from "@/components/lesson/Blocks";
 import { BoxViz } from "@/components/viz/BoxViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -161,6 +162,51 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 32000 / 27, tolerance: 0.0001 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+x = np.linspace(0.01, 10, 100000)
+area = x * (20 - 2 * x) / 2
+print(round(x[np.argmax(area)], 2))`}</Code>
+          <p>A fence problem: what x maximises x(20 − 2x)/2?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 5.0, tolerance: 0.002 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A box with a square base of side x and volume 32 has surface area x² + 128/x (open top). Write <C>best_side()</C>, which returns the x that minimises it, found from f′(x) = 2x − 128/x² = 0 by bisection on [1, 10].
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def best_side():
+    return 1.0
+`,
+        solution: `def best_side():
+    g = lambda x: 2 * x - 128 / x ** 2
+    lo, hi = 1.0, 10.0
+    for _ in range(100):
+        mid = (lo + hi) / 2
+        if g(mid) < 0:
+            lo = mid
+        else:
+            hi = mid
+    return (lo + hi) / 2
+`,
+        tests: [
+          { name: "answer", code: `assert abs(best_side() - 4) < 1e-9, 'Solve 2x = 128/x², that is x³ = 64.'` },
+        ],
+      },
     },
     {
       key: "square",

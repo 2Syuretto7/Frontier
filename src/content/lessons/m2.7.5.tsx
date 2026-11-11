@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark, Theorem } from "@/components/lesson/Blocks";
 import { QuadratureViz } from "@/components/viz/QuadratureViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -124,6 +125,59 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Apply Simpson&rsquo;s rule with n = 2 to <M>{"\\int_0^2 x^2\\,dx"}</M>. Give four decimal places.</p>,
       answer: { kind: "numeric", value: 2.6667, tolerance: 0.0001 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+def simpson(f, a, b, n):
+    h = (b - a) / n
+    s = f(a) + f(b) + sum((4 if k % 2 else 2) * f(a + k * h) for k in range(1, n))
+    return s * h / 3
+print(round(simpson(math.sin, 0, math.pi, 4), 4))`}</Code>
+          <p>Simpson's rule with four strips on sin over [0, π]. What does it print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 2.0046, tolerance: 0.0002 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>trapezoid(f, a, b, n)</C> and <C>simpson(f, a, b, n)</C> (n even). Simpson&rsquo;s error should fall about 16 times when n doubles, the trapezoid&rsquo;s about 4 times.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def trapezoid(f, a, b, n):
+    return 0.0
+
+def simpson(f, a, b, n):
+    return 0.0
+`,
+        solution: `def trapezoid(f, a, b, n):
+    h = (b - a) / n
+    return h * (f(a) / 2 + f(b) / 2 + sum(f(a + k * h) for k in range(1, n)))
+
+def simpson(f, a, b, n):
+    h = (b - a) / n
+    s = f(a) + f(b) + sum((4 if k % 2 else 2) * f(a + k * h) for k in range(1, n))
+    return s * h / 3
+`,
+        tests: [
+          { name: "trapezoid", code: `import math
+assert abs(trapezoid(math.exp, 0, 1, 1000) - (math.e - 1)) < 2e-7, 'The trapezoid rule with 1000 strips on eˣ should be within about 10⁻⁷.'` },
+          { name: "simpson exact on cubics", code: `assert abs(simpson(lambda x: x ** 3, 0, 2, 2) - 4) < 1e-12, 'Simpson is exact for cubics.'` },
+          { name: "rates", code: `import math
+e1 = abs(simpson(math.exp, 0, 1, 8) - (math.e - 1)); e2 = abs(simpson(math.exp, 0, 1, 16) - (math.e - 1))
+assert 13 < e1 / e2 < 19, 'Doubling n should cut Simpson’s error by about 16.'` },
+        ],
+      },
     },
     {
       key: "trap-error",

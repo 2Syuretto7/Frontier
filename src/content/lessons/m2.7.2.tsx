@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark, Theorem } from "@/components/lesson/Blocks";
 import { PartialFracViz } from "@/components/viz/PartialFracViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -121,6 +122,51 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 0.99, tolerance: 0.0001 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import sympy as sp
+x = sp.symbols('x')
+print(sp.apart(1 / (x ** 2 - 1)))`}</Code>
+          <p>What does sympy's partial fraction decomposition give for 1/(x² − 1)?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["−1/(2(x + 1)) + 1/(2(x − 1))", "1/(x − 1) + 1/(x + 1)", "1/(x − 1) − 1/(x + 1)", "1/(2x)"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            For distinct roots r₁, …, rₖ, 1/((x − r₁)⋯(x − rₖ)) = Σ Aᵢ/(x − rᵢ) with Aᵢ = 1/∏ⱼ≠ᵢ(rᵢ − rⱼ) (the cover-up rule). Write <C>coefficients(roots)</C> returning the list of Aᵢ.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def coefficients(roots):
+    return [1.0 for r in roots]
+`,
+        solution: `def coefficients(roots):
+    out = []
+    for i, r in enumerate(roots):
+        p = 1.0
+        for j, s in enumerate(roots):
+            if j != i:
+                p *= r - s
+        out.append(1 / p)
+    return out
+`,
+        tests: [
+          { name: "two", code: `assert [round(a, 12) for a in coefficients([1, -1])] == [0.5, -0.5], '1/(x² − 1) = (1/2)/(x − 1) − (1/2)/(x + 1).'` },
+          { name: "check at a point", code: `rs = [0, 1, 3]; A = coefficients(rs); x = 7.0
+assert abs(sum(a / (x - r) for a, r in zip(A, rs)) - 1 / ((x - 0) * (x - 1) * (x - 3))) < 1e-12, 'The decomposition must agree with the original at any x.'` },
+        ],
+      },
     },
     {
       key: "logistic",

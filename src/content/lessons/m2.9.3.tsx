@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { StirlingViz } from "@/components/viz/StirlingViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -128,6 +129,48 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 693.1, tolerance: 0.0002 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+n = 20
+stirling = math.sqrt(2 * math.pi * n) * (n / math.e) ** n
+print(round(math.factorial(n) / stirling, 4))`}</Code>
+          <p>Stirling's approximation is off by a factor of about 1 + 1/(12n). What does this print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 1.0042, tolerance: 0.0002 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>log_factorial(n)</C> by Stirling: n ln n − n + ½ ln(2πn). Factorials of large n overflow floats, but their logarithms do not.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def log_factorial(n):
+    return n * math.log(n)
+`,
+        solution: `import math
+
+def log_factorial(n):
+    return n * math.log(n) - n + 0.5 * math.log(2 * math.pi * n)
+`,
+        tests: [
+          { name: "twenty", code: `assert abs(log_factorial(20) - math.lgamma(21)) < 0.005, 'At n = 20 Stirling is within 0.005 of ln 20!.'` },
+          { name: "huge", code: `assert abs(log_factorial(10 ** 6) - math.lgamma(10 ** 6 + 1)) < 1e-6, 'At n = 10⁶ it is extremely accurate.'` },
+        ],
+      },
     },
     {
       key: "bounds",

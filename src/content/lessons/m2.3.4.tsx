@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { UniformViz } from "@/components/viz/UniformViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -166,6 +167,45 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 1 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+for d in [0.1, 0.01, 0.001]:
+    x = d
+    print(abs(1 / x - 1 / (x + d)))`}</Code>
+          <p>For f(x) = 1/x near 0, points a distance d apart can have values far apart. How do the printed gaps behave as d shrinks?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["They grow, so f is not uniformly continuous on (0, 1)", "They shrink to 0", "They stay the same", "They are all 0"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>worst_gap(f, a, b, d, n)</C>: over n evenly spaced x in [a, b − d], return the largest |f(x + d) − f(x)|. For a uniformly continuous f this goes to 0 as d does.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def worst_gap(f, a, b, d, n=1000):
+    return abs(f(a + d) - f(a))
+`,
+        solution: `def worst_gap(f, a, b, d, n=1000):
+    xs = [a + (b - d - a) * k / (n - 1) for k in range(n)]
+    return max(abs(f(x + d) - f(x)) for x in xs)
+`,
+        tests: [
+          { name: "square", code: `assert abs(worst_gap(lambda x: x * x, 0, 1, 0.01) - (1 - 0.99 ** 2)) < 1e-9, 'For x² on [0, 1] the worst gap is at the right end.'` },
+          { name: "reciprocal", code: `assert worst_gap(lambda x: 1 / x, 0.001, 1, 0.001) > 400, 'For 1/x near 0 the worst gap is large.'` },
+        ],
+      },
     },
     {
       key: "sqrt",

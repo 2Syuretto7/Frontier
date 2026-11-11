@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { RiemannViz } from "@/components/viz/RiemannViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -146,6 +147,46 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "expression", value: "(n + 1)/(2n)", variables: ["n"] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`n = 4
+dx = 1 / n
+print(sum((k * dx) ** 2 * dx for k in range(1, n + 1)))`}</Code>
+          <p>A right-endpoint Riemann sum for x² on [0, 1] with four strips. What does it print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 0.46875 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>riemann(f, a, b, n, rule)</C> where rule is <C>"left"</C>, <C>"right"</C> or <C>"mid"</C>, returning the Riemann sum with n equal strips.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def riemann(f, a, b, n, rule="left"):
+    return 0.0
+`,
+        solution: `def riemann(f, a, b, n, rule="left"):
+    dx = (b - a) / n
+    shift = {"left": 0.0, "right": 1.0, "mid": 0.5}[rule]
+    return sum(f(a + (k + shift) * dx) for k in range(n)) * dx
+`,
+        tests: [
+          { name: "right", code: `assert abs(riemann(lambda x: x * x, 0, 1, 4, 'right') - 0.46875) < 1e-12, 'Right endpoints for x² on [0, 1] with 4 strips give 0.46875.'` },
+          { name: "left", code: `assert abs(riemann(lambda x: x * x, 0, 1, 4, 'left') - 0.21875) < 1e-12, 'Left endpoints give 0.21875.'` },
+          { name: "mid", code: `assert abs(riemann(lambda x: x * x, 0, 1, 1000, 'mid') - 1 / 3) < 1e-6, 'Midpoints with many strips approach 1/3.'` },
+        ],
+      },
     },
     {
       key: "cubes",

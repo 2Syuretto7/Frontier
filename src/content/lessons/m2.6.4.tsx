@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { SubstitutionViz } from "@/components/viz/SubstitutionViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -123,6 +124,45 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Evaluate <M>{"\\int_0^1 x e^{-x^2}\\,dx"}</M>. Give four decimal places.</p>,
       answer: { kind: "numeric", value: 0.3161, tolerance: 0.0002 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+x = np.linspace(0, 1, 200001)
+print(round(np.trapezoid(2 * x * np.cos(x ** 2), x), 4), round(np.sin(1), 4))`}</Code>
+          <p>Substitution u = x² says these agree. What is the value?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 0.8415, tolerance: 0.0002 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>by_substitution(F, g, a, b)</C>: given an antiderivative F of f, return the integral of f(g(x))·g′(x) from a to b as F(g(b)) − F(g(a)).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def by_substitution(F, g, a, b):
+    return F(b) - F(a)
+`,
+        solution: `def by_substitution(F, g, a, b):
+    return F(g(b)) - F(g(a))
+`,
+        tests: [
+          { name: "cos square", code: `import math
+assert abs(by_substitution(math.sin, lambda x: x * x, 0, 1) - math.sin(1)) < 1e-12, 'With u = x², the limits become g(0) = 0 and g(1) = 1.'` },
+          { name: "exp", code: `import math
+assert abs(by_substitution(math.exp, lambda x: 3 * x, 0, 1) - (math.exp(3) - 1)) < 1e-9, 'Change the limits as well as the integrand.'` },
+        ],
+      },
     },
     {
       key: "odd",

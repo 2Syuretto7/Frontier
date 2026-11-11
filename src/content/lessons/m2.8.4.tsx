@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark, Theorem } from "@/components/lesson/Blocks";
 import { PowerSeriesViz } from "@/components/viz/PowerSeriesViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -136,6 +137,50 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Find <M>{"\\sum_{n \\ge 1} n (1/2)^{n-1}"}</M>.</p>,
       answer: { kind: "numeric", value: 4 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+x = 0.5
+print(round(sum(x ** n / math.factorial(n) for n in range(12)), 6), round(math.exp(x), 6))`}</Code>
+          <p>Twelve terms of the power series for eˣ at 0.5. What is the value?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 1.648721, tolerance: 1e-06 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>geometric_partial(x, n)</C>, the sum 1 + x + … + xⁿ⁻¹, and <C>radius()</C>, the radius of convergence of Σ xⁿ.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def geometric_partial(x, n):
+    return 1 / (1 - x)
+
+def radius():
+    return 0
+`,
+        solution: `def geometric_partial(x, n):
+    return sum(x ** k for k in range(n))
+
+def radius():
+    return 1
+`,
+        tests: [
+          { name: "inside", code: `assert abs(geometric_partial(0.5, 60) - 2) < 1e-12, 'At x = 1/2 the series sums to 2.'` },
+          { name: "outside", code: `assert geometric_partial(2, 20) == 2 ** 20 - 1, 'At x = 2 the partial sums blow up: compute the actual partial sum.'` },
+          { name: "radius", code: `assert radius() == 1, 'Σ xⁿ converges for |x| < 1.'` },
+        ],
+      },
     },
     {
       key: "leibniz",

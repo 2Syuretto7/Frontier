@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Quote, Remark, Theorem } from "@/components/lesson/Blocks";
 import { EpsDeltaViz } from "@/components/viz/EpsDeltaViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -173,6 +174,52 @@ export const lesson: LessonContent = {
           "f(a) ≠ L.",
         ],
         correct: [1],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`eps = 0.01
+delta = eps / 3
+xs = [2 + delta * t for t in (-0.99, -0.5, 0.5, 0.99)]
+print(all(abs((3 * x + 1) - 7) < eps for x in xs))`}</Code>
+          <p>This tests the limit of 3x + 1 as x → 2. What does it print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True", "False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            For f(x) = x² near a = 3 with limit 9, a working choice is δ = min(1, ε/7). Write <C>delta_for(eps)</C> that returns it, and <C>check(eps)</C> that returns <C>True</C> when every one of 1000 evenly spread points with 0 &lt; |x − 3| &lt; δ has |x² − 9| &lt; ε.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def delta_for(eps):
+    return eps
+
+def check(eps):
+    return True
+`,
+        solution: `def delta_for(eps):
+    return min(1, eps / 7)
+
+def check(eps):
+    d = delta_for(eps)
+    xs = [3 + d * (k / 500 - 1) * 0.999 for k in range(1001) if k != 500]
+    return all(abs(x * x - 9) < eps for x in xs)
+`,
+        tests: [
+          { name: "delta", code: `assert abs(delta_for(0.7) - 0.1) < 1e-12 and delta_for(70) == 1, 'δ = min(1, ε/7).'` },
+          { name: "works", code: `assert all(check(e) for e in (5, 1, 0.1, 1e-4)), 'Every tested x should satisfy |x² − 9| < ε.'` },
+        ],
       },
     },
     {

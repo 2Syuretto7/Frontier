@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { MVTViz } from "@/components/viz/MVTViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -180,6 +181,56 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 11 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = lambda x: x ** 3
+a, b = 0.0, 3.0
+slope = (f(b) - f(a)) / (b - a)
+c = (slope / 3) ** 0.5
+print(slope, c)`}</Code>
+          <p>The mean value theorem promises a c with f′(c) = slope. What is c?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 1.7321, tolerance: 0.0002 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>mvt_point(f, df, a, b)</C>, which finds by bisection a c in (a, b) where f′(c) equals the secant slope (f(b) − f(a))/(b − a). Assume df − slope changes sign exactly once on [a, b].
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def mvt_point(f, df, a, b):
+    return (a + b) / 2
+`,
+        solution: `def mvt_point(f, df, a, b):
+    s = (f(b) - f(a)) / (b - a)
+    g = lambda x: df(x) - s
+    lo, hi = a, b
+    for _ in range(100):
+        mid = (lo + hi) / 2
+        if (g(mid) > 0) == (g(lo) > 0):
+            lo = mid
+        else:
+            hi = mid
+    return (lo + hi) / 2
+`,
+        tests: [
+          { name: "cube", code: `assert abs(mvt_point(lambda x: x ** 3, lambda x: 3 * x * x, 0, 3) - 3 ** 0.5) < 1e-9, 'For x³ on [0, 3] the point is √3.'` },
+          { name: "log", code: `import math
+c = mvt_point(math.log, lambda x: 1 / x, 1, math.e)
+assert abs(c - (math.e - 1)) < 1e-9, 'For ln on [1, e] the point is e − 1.'` },
+        ],
+      },
     },
     {
       key: "one-root",
