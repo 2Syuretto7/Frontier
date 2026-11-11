@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { PartitionViz } from "@/components/viz/PartitionViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -142,6 +143,54 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 6 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`classes = {}
+for n in range(12):
+    classes.setdefault(n % 4, []).append(n)
+print(len(classes), classes[1])`}</Code>
+          <p>Congruence mod 4 partitions 0 to 11. How many classes are there?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 4 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>partition(A, same)</C>, which groups the elements of A into equivalence classes under the equivalence relation <C>same(x, y)</C>, returning a list of sets.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def partition(A, same):
+    return [set(A)]
+`,
+        solution: `def partition(A, same):
+    classes = []
+    for x in A:
+        for c in classes:
+            if same(x, next(iter(c))):
+                c.add(x)
+                break
+        else:
+            classes.append({x})
+    return classes
+`,
+        tests: [
+          { name: "mod three", code: `P = partition(range(9), lambda a, b: a % 3 == b % 3)
+assert sorted(sorted(c) for c in P) == [[0, 3, 6], [1, 4, 7], [2, 5, 8]], 'Congruence mod 3 gives three classes.'` },
+          { name: "words", code: `P = partition(['cat', 'dog', 'ox', 'emu', 'yak', 'be'], lambda a, b: len(a) == len(b))
+assert len(P) == 2, 'Same length splits these words into two classes.'` },
+        ],
+      },
     },
     {
       key: "fraction-trans",

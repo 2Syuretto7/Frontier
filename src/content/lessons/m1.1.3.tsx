@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { VennLogicViz } from "@/components/viz/VennLogicViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -125,6 +126,46 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Which simpler formula is equivalent to <M>{"(P \\wedge Q) \\vee (P \\wedge \\neg Q)"}</M>?</p>,
       answer: { kind: "choice", options: ["P", "Q", "P ∧ Q", "P ∨ Q"], correct: [0] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from itertools import product
+print(all((not (p and q)) == ((not p) or (not q)) for p, q in product([True, False], repeat=2)))`}</Code>
+          <p>This checks one of De Morgan's laws on every row. What does it print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True", "False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>equivalent(f, g, n)</C>, which returns <C>True</C> when the Boolean functions f and g of n variables agree on every row of the truth table.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `from itertools import product
+
+def equivalent(f, g, n):
+    return True
+`,
+        solution: `from itertools import product
+
+def equivalent(f, g, n):
+    return all(f(*r) == g(*r) for r in product([True, False], repeat=n))
+`,
+        tests: [
+          { name: "De Morgan", code: `assert equivalent(lambda p, q: not (p or q), lambda p, q: (not p) and (not q), 2), 'De Morgan: ¬(p ∨ q) ≡ ¬p ∧ ¬q.'` },
+          { name: "not equivalent", code: `assert not equivalent(lambda p, q: (not p) or q, lambda p, q: p or (not q), 2), 'p → q and its converse are not equivalent.'` },
+        ],
+      },
     },
     {
       key: "distributive",

@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proposition, Proof, Remark } from "@/components/lesson/Blocks";
 import { PredicateViz } from "@/components/viz/PredicateViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -135,6 +136,42 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Over the domain {"{1, 2, 3}"}, how many ordered pairs (x, y) make <M>{"x < y"}</M> true?</p>,
       answer: { kind: "numeric", value: 3 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`is_prime = lambda n: n > 1 and all(n % d for d in range(2, int(n ** 0.5) + 1))
+print([n for n in range(10, 20) if is_prime(n)])`}</Code>
+          <p>A predicate becomes a statement for each n. How many n between 10 and 19 make it true?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 4 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>truth_set(P, domain)</C>, which returns the set of elements of the domain for which the predicate P is true.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def truth_set(P, domain):
+    return set(domain)
+`,
+        solution: `def truth_set(P, domain):
+    return {x for x in domain if P(x)}
+`,
+        tests: [
+          { name: "even", code: `assert truth_set(lambda n: n % 2 == 0, range(10)) == {0, 2, 4, 6, 8}, 'Keep only the elements where P holds.'` },
+          { name: "empty", code: `assert truth_set(lambda n: n * n < 0, range(5)) == set(), 'No integer has a negative square.'` },
+        ],
+      },
     },
     {
       key: "conditional-set",

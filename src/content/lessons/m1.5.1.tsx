@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { DominoViz } from "@/components/viz/DominoViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -140,6 +141,47 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>In the false proof that all horses are the same colour, for which step k → k + 1 does the argument fail?</p>,
       answer: { kind: "choice", options: ["from 1 to 2", "from 2 to 3", "from 10 to 11", "it fails for every k"], correct: [0] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`print(all(sum(range(1, n + 1)) == n * (n + 1) // 2 for n in range(1, 1000)))`}</Code>
+          <p>This checks 1 + … + n = n(n + 1)/2 for n below 1000. What does it print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True", "False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            An induction proof has a base case and a step. Write <C>check_step(n)</C>, which returns whether assuming 1 + 3 + … + (2n − 1) = n² gives 1 + 3 + … + (2n + 1) = (n + 1)² — that is, whether n² + (2n + 1) == (n + 1)² — and <C>sum_odds(n)</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def sum_odds(n):
+    return n
+
+def check_step(n):
+    return False
+`,
+        solution: `def sum_odds(n):
+    return sum(2 * k - 1 for k in range(1, n + 1))
+
+def check_step(n):
+    return n * n + (2 * n + 1) == (n + 1) ** 2
+`,
+        tests: [
+          { name: "formula", code: `assert all(sum_odds(n) == n * n for n in range(1, 200)), 'The first n odd numbers add up to n².'` },
+          { name: "step", code: `assert all(check_step(n) for n in range(0, 200)), 'Adding the next odd number 2n + 1 to n² gives (n + 1)².'` },
+        ],
+      },
     },
     {
       key: "squares",

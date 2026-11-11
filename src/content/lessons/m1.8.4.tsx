@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { DartsViz } from "@/components/viz/DartsViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -154,6 +155,50 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>For a probability on some set, at most how many points can each have probability at least 0.01?</p>,
       answer: { kind: "numeric", value: 100 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import random
+random.seed(0)
+hits = sum(random.random() == 0.5 for _ in range(10 ** 6))
+print(hits)`}</Code>
+          <p>On a continuum each single point has probability 0. How many of a million uniform samples hit exactly 0.5?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 0 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>estimate(event, n)</C>, which draws n uniform samples from [0, 1) with <C>random.random()</C> (seed 0 first) and returns the fraction for which <C>event(x)</C> is true.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import random
+
+def estimate(event, n):
+    return 0.0
+`,
+        solution: `import random
+
+def estimate(event, n):
+    random.seed(0)
+    return sum(event(random.random()) for _ in range(n)) / n
+`,
+        tests: [
+          { name: "interval", code: `assert abs(estimate(lambda x: 0.2 < x < 0.5, 100000) - 0.3) < 0.01, 'The probability of an interval is its length.'` },
+          { name: "point", code: `assert estimate(lambda x: x == 0.25, 100000) == 0.0, 'A single point has probability 0.'` },
+          { name: "rationals", code: `assert estimate(lambda x: (x * 8).is_integer(), 100000) == 0.0, 'Countably many points still have probability 0.'` },
+        ],
+      },
     },
     {
       key: "countable",

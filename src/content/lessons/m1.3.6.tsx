@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { SpotErrorViz } from "@/components/viz/SpotErrorViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -151,6 +152,50 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 0 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def is_even(n):
+    return n % 2 == 0
+assert all(is_even(a + b) for a in range(0, 20, 2) for b in range(0, 20, 2))
+print("checked")`}</Code>
+          <p>The assert passes. Does that prove that the sum of any two even integers is even?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["No: it checks finitely many cases", "Yes: it checks enough cases", "Yes: assert statements are proofs", "No: the assert fails"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A proof that a + b is even names witnesses: if a = 2j and b = 2k then a + b = 2(j + k). Write <C>sum_witness(j, k)</C> returning the witness for a + b, and <C>product_witness(j, k)</C> returning m with ab = 2m.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def sum_witness(j, k):
+    return 0
+
+def product_witness(j, k):
+    return 0
+`,
+        solution: `def sum_witness(j, k):
+    return j + k
+
+def product_witness(j, k):
+    return 2 * j * k
+`,
+        tests: [
+          { name: "sum", code: `assert all(2 * j + 2 * k == 2 * sum_witness(j, k) for j in range(-5, 6) for k in range(-5, 6)), '2j + 2k = 2(j + k).'` },
+          { name: "product", code: `assert all((2 * j) * (2 * k) == 2 * product_witness(j, k) for j in range(-5, 6) for k in range(-5, 6)), '(2j)(2k) = 2(2jk).'` },
+        ],
+      },
     },
     {
       key: "rewrite",

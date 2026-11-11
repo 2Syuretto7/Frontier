@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { OddSumViz } from "@/components/viz/OddSumViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -153,6 +154,40 @@ export const lesson: LessonContent = {
           "Odd numbers cannot be written as 2k + 1.",
         ],
         correct: [1],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`print(all((m * m) % 2 == 1 for m in range(1, 100, 2)))`}</Code>
+          <p>This checks that the square of every odd number below 100 is odd. A check is not a proof. What does it print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True", "False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A direct proof shows (2k + 1)² = 2(2k² + 2k) + 1. Write <C>odd_square_witness(k)</C>, which returns the j with (2k + 1)² = 2j + 1, from the proof&rsquo;s formula, not by dividing.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def odd_square_witness(k):
+    return k
+`,
+        solution: `def odd_square_witness(k):
+    return 2 * k * k + 2 * k
+`,
+        tests: [
+          { name: "matches", code: `assert all((2 * k + 1) ** 2 == 2 * odd_square_witness(k) + 1 for k in range(-50, 50)), 'Expand (2k + 1)² and read off j.'` },
+        ],
       },
     },
     {

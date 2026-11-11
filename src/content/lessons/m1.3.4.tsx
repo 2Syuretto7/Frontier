@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { CasesViz } from "@/components/viz/CasesViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -143,6 +144,49 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>To prove a statement about every integer by splitting on its remainder when divided by 5, how many cases are needed?</p>,
       answer: { kind: "numeric", value: 5 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`print({n % 3: (n * n) % 3 for n in range(30)})`}</Code>
+          <p>Proof by cases on n mod 3. What does the dictionary show about n² mod 3?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["It is never 2", "It is always 0", "It equals n mod 3", "It is always 1"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>max_by_cases(a, b)</C> returning the maximum, and prove-by-testing the identity max(a, b) = (a + b + |a − b|)/2 by writing <C>formula(a, b)</C> too.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def max_by_cases(a, b):
+    return a
+
+def formula(a, b):
+    return (a + b) / 2
+`,
+        solution: `def max_by_cases(a, b):
+    if a >= b:
+        return a
+    return b
+
+def formula(a, b):
+    return (a + b + abs(a - b)) / 2
+`,
+        tests: [
+          { name: "cases", code: `assert max_by_cases(3, 7) == 7 and max_by_cases(7, 3) == 7 and max_by_cases(2, 2) == 2, 'Handle a ≥ b and a < b.'` },
+          { name: "identity", code: `assert all(formula(a, b) == max_by_cases(a, b) for a in range(-5, 6) for b in range(-5, 6)), 'The formula should agree with your cases everywhere.'` },
+        ],
+      },
     },
     {
       key: "absolute",

@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { HilbertViz } from "@/components/viz/HilbertViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -141,6 +142,47 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Which pair <M>{"(m, n)"}</M> has <M>{"\\pi(m, n) = 12"}</M>?</p>,
       answer: { kind: "choice", options: ["(2, 2)", "(2, 3)", "(3, 1)", "(1, 3)"], correct: [0] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def z(n):
+    return n // 2 if n % 2 == 0 else -(n + 1) // 2
+print([z(n) for n in range(7)])`}</Code>
+          <p>This lists the integers without repetition, proving ℤ is countable. What is z(5)?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: -3 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>pair(k)</C>, which returns the k-th pair (a, b) of non-negative integers in Cantor&rsquo;s diagonal order (0, 0), (0, 1), (1, 0), (0, 2), (1, 1), (2, 0), …, showing ℕ × ℕ is countable.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def pair(k):
+    return (k, 0)
+`,
+        solution: `def pair(k):
+    d = 0
+    while (d + 1) * (d + 2) // 2 <= k:
+        d += 1
+    i = k - d * (d + 1) // 2
+    return (i, d - i)
+`,
+        tests: [
+          { name: "start", code: `assert [pair(k) for k in range(6)] == [(0, 0), (0, 1), (1, 0), (0, 2), (1, 1), (2, 0)], 'Walk each diagonal a + b = d with a increasing.'` },
+          { name: "covers", code: `assert {pair(k) for k in range(55)} == {(a, b) for a in range(10) for b in range(10) if a + b < 10}, 'The first 55 pairs cover every diagonal up to d = 9 exactly once.'` },
+        ],
+      },
     },
     {
       key: "finite-strings",

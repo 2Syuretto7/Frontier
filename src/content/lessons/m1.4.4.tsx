@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { FamilyViz } from "@/components/viz/FamilyViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -131,6 +132,56 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 1 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`A = {n: set(range(n, 2 * n + 1)) for n in range(1, 5)}
+print(sorted(set.intersection(*A.values())))`}</Code>
+          <p>An indexed family Aₙ = {"{n, …, 2n}"} for n = 1 to 4. What is the intersection?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[]", "[4]", "[2]", "[1, 2, 3, 4]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>big_union(family)</C> and <C>big_intersection(family)</C> for a non-empty list of sets.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def big_union(family):
+    return set()
+
+def big_intersection(family):
+    return set()
+`,
+        solution: `def big_union(family):
+    out = set()
+    for S in family:
+        out |= S
+    return out
+
+def big_intersection(family):
+    out = set(family[0])
+    for S in family[1:]:
+        out &= S
+    return out
+`,
+        tests: [
+          { name: "nested", code: `F = [set(range(n, 10)) for n in range(5)]
+assert big_union(F) == set(range(10)) and big_intersection(F) == set(range(4, 10)), 'For the nested family {n, …, 9} the intersection starts at 4.'` },
+          { name: "intervals", code: `F = [set(range(n, 2 * n + 1)) for n in range(1, 5)]
+assert big_intersection(F) == set(), 'The sets {n, …, 2n} for n = 1 to 4 have nothing in common.'` },
+        ],
+      },
     },
     {
       key: "de-morgan-fam",

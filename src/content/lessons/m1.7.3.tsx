@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ComposeViz } from "@/components/viz/ComposeViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -130,6 +131,51 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Which of these functions from <M>{"\\mathbb{R}"}</M> to <M>{"\\mathbb{R}"}</M> have inverses?</p>,
       answer: { kind: "choice", options: ["x ↦ x³", "x ↦ x²", "x ↦ eˣ", "x ↦ 7 − x"], correct: [0, 3] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = lambda x: 3 * x + 1
+g = lambda x: x * x
+print(f(g(2)), g(f(2)))`}</Code>
+          <p>Composition is not commutative. What is (f ∘ g)(2) − (g ∘ f)(2)?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: -36 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>compose(f, g)</C> returning f ∘ g, and <C>inverse(f, A)</C> returning the inverse of a bijection given as a dict on A, as a dict.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def compose(f, g):
+    return lambda x: g(f(x))
+
+def inverse(f, A):
+    return dict(f)
+`,
+        solution: `def compose(f, g):
+    return lambda x: f(g(x))
+
+def inverse(f, A):
+    return {f[a]: a for a in A}
+`,
+        tests: [
+          { name: "order", code: `assert compose(lambda x: 3 * x + 1, lambda x: x * x)(2) == 13, '(f ∘ g)(x) = f(g(x)): apply g first.'` },
+          { name: "inverse", code: `f = {a: (5 * a) % 6 for a in range(6)}
+g = inverse(f, range(6))
+assert all(g[f[a]] == a for a in range(6)), 'The inverse undoes f.'` },
+        ],
+      },
     },
     {
       key: "comp-inj",

@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { SubsetViz } from "@/components/viz/SubsetViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -144,6 +145,53 @@ export const lesson: LessonContent = {
         kind: "choice",
         options: ["A ⊆ B only", "A ⊆ B and B ⊆ A", "A ∈ B and B ∈ A", "that A and B have the same number of elements"],
         correct: [1],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`A = {1, 2, 3}
+B = {3, 2, 1, 1}
+print(A == B, A <= {1, 2, 3, 4}, A < A)`}</Code>
+          <p>What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True True False", "False True False", "True True True", "True False False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>is_subset(A, B)</C> using only a loop and <C>in</C>, and <C>equal(A, B)</C> using <C>is_subset</C> both ways.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def is_subset(A, B):
+    return True
+
+def equal(A, B):
+    return True
+`,
+        solution: `def is_subset(A, B):
+    for x in A:
+        if x not in B:
+            return False
+    return True
+
+def equal(A, B):
+    return is_subset(A, B) and is_subset(B, A)
+`,
+        tests: [
+          { name: "subset", code: `assert is_subset({1, 2}, {1, 2, 3}) and not is_subset({1, 4}, {1, 2, 3}), 'Every element of A must be in B.'` },
+          { name: "empty", code: `assert is_subset(set(), {1}), 'The empty set is a subset of every set.'` },
+          { name: "equal", code: `assert equal({1, 2}, {2, 1}) and not equal({1}, {1, 2}), 'Equal means each is a subset of the other.'` },
+        ],
       },
     },
     {

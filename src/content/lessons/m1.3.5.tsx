@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { BisectionViz } from "@/components/viz/BisectionViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -155,6 +156,47 @@ export const lesson: LessonContent = {
           "That 2 is rational.",
         ],
         correct: [0],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`sols = [x for x in range(-10, 11) if 3 * x + 7 == 1]
+print(sols)`}</Code>
+          <p>Existence and uniqueness of a solution to 3x + 7 = 1 among the integers −10 to 10. How many are there?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 1 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>unique_witness(P, D)</C>, which returns the single x in D with P(x), or <C>None</C> if there are none or more than one.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def unique_witness(P, D):
+    for x in D:
+        if P(x):
+            return x
+    return None
+`,
+        solution: `def unique_witness(P, D):
+    found = [x for x in D if P(x)]
+    return found[0] if len(found) == 1 else None
+`,
+        tests: [
+          { name: "one", code: `assert unique_witness(lambda x: 3 * x + 7 == 1, range(-10, 11)) == -2, 'Exactly one x works.'` },
+          { name: "two", code: `assert unique_witness(lambda x: x * x == 4, range(-10, 11)) is None, 'x² = 4 has two solutions, so uniqueness fails.'` },
+          { name: "none", code: `assert unique_witness(lambda x: x * x == 2, range(-10, 11)) is None, 'No integer squares to 2.'` },
+        ],
       },
     },
     {

@@ -1,6 +1,7 @@
 import { M } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { HasseViz } from "@/components/viz/HasseViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -137,6 +138,43 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>In <M>{"\\{2, 3, 4, 5, 6, 8, 9, 10\\}"}</M> under divisibility, how many minimal elements are there?</p>,
       answer: { kind: "numeric", value: 3 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`words = ['b', 'ab', 'a', 'abc']
+print(sorted(words), sorted(words, key=len))`}</Code>
+          <p>Lexicographic order is a total order; ordering by length is not antisymmetric on words. What is the first word in sorted(words)?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["'a'", "'ab'", "'b'", "'abc'"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>maximal(A, leq)</C>, which returns the set of maximal elements of a finite partially ordered set: those x with no y ≠ x such that leq(x, y).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def maximal(A, leq):
+    return {max(A)}
+`,
+        solution: `def maximal(A, leq):
+    return {x for x in A if not any(y != x and leq(x, y) for y in A)}
+`,
+        tests: [
+          { name: "divisibility", code: `assert maximal(range(1, 11), lambda a, b: b % a == 0) == {6, 7, 8, 9, 10}, 'Under divisibility, 6, 7, 8, 9 and 10 divide nothing else in 1 to 10.'` },
+          { name: "subsets", code: `A = [frozenset(), frozenset({1}), frozenset({2}), frozenset({1, 2})]
+assert maximal(A, lambda a, b: a <= b) == {frozenset({1, 2})}, 'Under inclusion, {1, 2} is the only maximal set.'` },
+        ],
+      },
     },
     {
       key: "unique-least",

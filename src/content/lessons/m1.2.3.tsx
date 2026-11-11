@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Example, Proof, Proposition, Remark } from "@/components/lesson/Blocks";
 import { NegationViz } from "@/components/viz/NegationViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -133,6 +134,46 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>A sequence is bounded above if <M>{"\\exists M\\, \\forall n\\ a_n \\le M"}</M>. Which says it is not bounded above?</p>,
       answer: { kind: "choice", options: ["∀M ∀n aₙ > M", "∃M ∃n aₙ > M", "∀M ∃n aₙ > M", "∃n ∀M aₙ > M"], correct: [2] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`D = range(-3, 4)
+P = lambda x: x * x >= x
+print(not all(P(x) for x in D) == any(not P(x) for x in D))`}</Code>
+          <p>Careful with precedence: == binds before not. This line is the negation of a true identity. What does it print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["False", "True"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>counterexample(P, D)</C>, which returns the first x in D with P(x) false, or <C>None</C> when ∀x P(x) holds. This is ¬∀x P(x) ≡ ∃x ¬P(x) made concrete.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def counterexample(P, D):
+    return None
+`,
+        solution: `def counterexample(P, D):
+    for x in D:
+        if not P(x):
+            return x
+    return None
+`,
+        tests: [
+          { name: "Euler", code: `assert counterexample(lambda n: all((n * n + n + 41) % d for d in range(2, n * n + n + 41)), range(50)) == 40, 'n² + n + 41 is prime for n = 0, …, 39 but not 40.'` },
+          { name: "none", code: `assert counterexample(lambda n: n * n >= 0, range(-5, 5)) is None, 'Return None when there is no counterexample.'` },
+        ],
+      },
     },
     {
       key: "second-law",

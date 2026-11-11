@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { SetOpsViz } from "@/components/viz/SetOpsViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -135,6 +136,56 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 90 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`A, B = {1, 2, 3, 4}, {3, 4, 5}
+print(sorted(A - B), sorted(A ^ B))`}</Code>
+          <p>Difference and symmetric difference. How many elements does A ^ B have?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 3 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>union(A, B)</C>, <C>intersection(A, B)</C> and <C>difference(A, B)</C> with comprehensions, without the operators <C>|</C>, <C>&amp;</C> and <C>-</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def union(A, B):
+    return set()
+
+def intersection(A, B):
+    return set()
+
+def difference(A, B):
+    return set()
+`,
+        solution: `def union(A, B):
+    return {x for S in (A, B) for x in S}
+
+def intersection(A, B):
+    return {x for x in A if x in B}
+
+def difference(A, B):
+    return {x for x in A if x not in B}
+`,
+        tests: [
+          { name: "operations", code: `A, B = {1, 2, 3, 4}, {3, 4, 5}
+assert union(A, B) == {1, 2, 3, 4, 5} and intersection(A, B) == {3, 4} and difference(A, B) == {1, 2}, 'Check each operation on A = {1, 2, 3, 4}, B = {3, 4, 5}.'` },
+          { name: "De Morgan", code: `U = set(range(10)); A, B = {1, 2, 3}, {3, 4}
+assert difference(U, union(A, B)) == intersection(difference(U, A), difference(U, B)), 'The complement of a union is the intersection of the complements.'` },
+        ],
+      },
     },
     {
       key: "diff-law",

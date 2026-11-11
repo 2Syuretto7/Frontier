@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { FactorTreeViz } from "@/components/viz/FactorTreeViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -135,6 +136,50 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 23 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def factor(n):
+    for d in range(2, n):
+        if n % d == 0:
+            return factor(d) + factor(n // d)
+    return [n]
+print(factor(360))`}</Code>
+          <p>Strong induction justifies this recursion. How many prime factors, with repetition, does it return for 360?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 6 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Every amount of postage n ≥ 12 can be made from 4p and 5p stamps, by strong induction from 12, 13, 14 and 15. Write <C>stamps(n)</C>, which returns (fours, fives) recursively: base cases for 12 to 15, and stamps(n − 4) with one more 4p stamp otherwise.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def stamps(n):
+    return (0, 0)
+`,
+        solution: `def stamps(n):
+    base = {12: (3, 0), 13: (2, 1), 14: (1, 2), 15: (0, 3)}
+    if n in base:
+        return base[n]
+    a, b = stamps(n - 4)
+    return (a + 1, b)
+`,
+        tests: [
+          { name: "bases", code: `assert all(4 * stamps(n)[0] + 5 * stamps(n)[1] == n for n in (12, 13, 14, 15)), 'Check the four base cases.'` },
+          { name: "many", code: `assert all(4 * a + 5 * b == n and a >= 0 and b >= 0 for n in range(12, 300) for a, b in [stamps(n)]), 'Every n from 12 up should be made exactly.'` },
+        ],
+      },
     },
     {
       key: "chocolate-proof",

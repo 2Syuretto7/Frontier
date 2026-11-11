@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { NestedSetsViz } from "@/components/viz/NestedSetsViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -130,6 +131,43 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Let <M>{"A = \\{1, \\{2, 3\\}, \\{\\{4\\}\\}\\}"}</M>. Which are elements of A?</p>,
       answer: { kind: "choice", options: ["1", "2", "{2, 3}", "{4}"], correct: [0, 2] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`A = {x for x in range(20) if x % 3 == 0}
+print(len(A), 9 in A, 10 in A)`}</Code>
+          <p>What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["7 True False", "6 True False", "7 False True", "6 False False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>build(n)</C>, which returns the set {"{k² : k an integer, 0 ≤ k ≤ n}"} using a set comprehension.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def build(n):
+    return set()
+`,
+        solution: `def build(n):
+    return {k * k for k in range(n + 1)}
+`,
+        tests: [
+          { name: "small", code: `assert build(4) == {0, 1, 4, 9, 16}, 'The squares of 0 to 4.'` },
+          { name: "membership", code: `S = build(100)
+assert 49 in S and 50 not in S and len(S) == 101, 'Use a set comprehension over range(n + 1).'` },
+        ],
+      },
     },
     {
       key: "empty-not",

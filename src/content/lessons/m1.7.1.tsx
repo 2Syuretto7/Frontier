@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { FunctionViz } from "@/components/viz/FunctionViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -139,6 +140,51 @@ export const lesson: LessonContent = {
         kind: "choice",
         options: ["p/q ↦ p + q", "p/q ↦ p/q + 1", "p/q ↦ 2p/q", "p/q ↦ q"],
         correct: [1, 2],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = {(1, 'a'), (2, 'b'), (3, 'a')}
+g = {(1, 'a'), (1, 'b'), (2, 'c')}
+is_function = lambda R, A: all(sum(1 for (x, y) in R if x == a) == 1 for a in A)
+print(is_function(f, {1, 2, 3}), is_function(g, {1, 2}))`}</Code>
+          <p>Which of the relations f and g is a function on its domain?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["f only", "g only", "Both", "Neither"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>as_function(R, A)</C>, which returns a dict mapping each a in A to its single partner if the relation R (a set of pairs) is a function on A, and <C>None</C> otherwise.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def as_function(R, A):
+    return dict(R)
+`,
+        solution: `def as_function(R, A):
+    out = {}
+    for a in A:
+        ys = [y for (x, y) in R if x == a]
+        if len(ys) != 1:
+            return None
+        out[a] = ys[0]
+    return out
+`,
+        tests: [
+          { name: "function", code: `assert as_function({(1, 'a'), (2, 'b'), (3, 'a')}, {1, 2, 3}) == {1: 'a', 2: 'b', 3: 'a'}, 'Each input has exactly one output.'` },
+          { name: "two outputs", code: `assert as_function({(1, 'a'), (1, 'b')}, {1}) is None, '1 has two partners: not a function.'` },
+          { name: "missing", code: `assert as_function({(1, 'a')}, {1, 2}) is None, '2 has no partner: not a function on {1, 2}.'` },
+        ],
       },
     },
     {

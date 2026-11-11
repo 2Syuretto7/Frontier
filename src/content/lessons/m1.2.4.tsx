@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark } from "@/components/lesson/Blocks";
 import { NestedViz } from "@/components/viz/NestedViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -137,6 +138,52 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Symbolise &ldquo;There is a smallest natural number&rdquo;, with x and y ranging over the natural numbers.</p>,
       answer: { kind: "choice", options: ["∀y ∃x (x ≤ y)", "∃x ∀y (x ≤ y)", "∀x ∃y (x ≤ y)", "∃x ∃y (x ≤ y)"], correct: [1] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`D = range(0, 5)
+a = all(any(y > x for y in D) for x in D)
+b = any(all(y >= x for x in D) for y in D)
+print(a, b)`}</Code>
+          <p>∀x ∃y (y &gt; x) and ∃y ∀x (y ≥ x) over {"{0, …, 4}"}. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["False True", "True True", "True False", "False False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>forall_exists(R, D)</C>, the truth of ∀x ∃y R(x, y), and <C>exists_forall(R, D)</C>, the truth of ∃y ∀x R(x, y), over the same finite domain.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def forall_exists(R, D):
+    return True
+
+def exists_forall(R, D):
+    return True
+`,
+        solution: `def forall_exists(R, D):
+    return all(any(R(x, y) for y in D) for x in D)
+
+def exists_forall(R, D):
+    return any(all(R(x, y) for x in D) for y in D)
+`,
+        tests: [
+          { name: "order matters", code: `R = lambda x, y: x != y
+D = range(3)
+assert forall_exists(R, D) and not exists_forall(R, D), 'Each x has some y ≠ x, but no single y differs from every x (including itself).'` },
+          { name: "bounded", code: `assert exists_forall(lambda x, y: y >= x, range(5)), 'y = 4 is at least every x.'` },
+        ],
+      },
     },
     {
       key: "direction",
