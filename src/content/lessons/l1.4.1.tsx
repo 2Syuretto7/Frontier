@@ -1,6 +1,6 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark, Theorem } from "@/components/lesson/Blocks";
-import { KnnViz } from "@/components/viz/KnnViz";
+import { KnnRegionViz } from "@/components/viz/KnnRegionViz";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -36,7 +36,7 @@ export const lesson: LessonContent = {
         At 2.6 the nearest point is 2, so one neighbour says A. The three nearest are 2, 3.5 and 4, so the vote is B. One
         neighbour trusts a single example completely; three neighbours average away some of the noise.
       </p>
-      <KnnViz />
+      <KnnRegionViz />
       <p>
         Slide <M>k</M> from 1 upwards. At <M>{"k = 1"}</M> the training accuracy is perfect and the boundary is ragged, which
         is overfitting in its purest form. Somewhere in the middle, accuracy on new points peaks. At very large <M>k</M>, the

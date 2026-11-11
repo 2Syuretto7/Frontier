@@ -1,6 +1,6 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
-import { KMeansViz } from "@/components/viz/KMeansViz";
+import { KMeansLloydViz } from "@/components/viz/KMeansLloydViz";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -33,7 +33,7 @@ export const lesson: LessonContent = {
         can only fall. This back and forth is <strong>k-means</strong>, the most used clustering method, and it needs no
         labels at all.
       </p>
-      <KMeansViz />
+      <KMeansLloydViz />
       <p>
         Press Step to watch the crosses settle. Then try new random starts: most runs find the four groups, but some get stuck
         with two crosses sharing one group and one cross straddling two. The method only finds a local minimum, so in practice
