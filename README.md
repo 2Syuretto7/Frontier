@@ -42,6 +42,27 @@ npm run typecheck
 - Answers never reach the browser: exercises are checked on the server (`src/lib/check.ts`).
 - Mastered lessons become spaced-review cards scheduled with FSRS (`src/lib/learning.ts`).
 
+## Code, run in the browser
+
+Every lesson can carry runnable code. Nothing runs on Frontier's servers: Python runs in the learner's browser with
+[Pyodide](https://pyodide.org) (Python 3.13, loaded from the jsDelivr CDN and cached), so there is no server or GPU cost.
+
+- **Editor** (`src/components/code/`). CodeMirror 6 with Python highlighting, autocompletion from jedi (names, NumPy
+  methods, signatures and docs), live syntax checking, and runtime errors marked on their line with a plain-English
+  explanation. Ctrl or Cmd + Enter runs. Expand opens a full-screen editor, side by side from 900px. On touch screens a
+  key row adds Tab, outdent and the symbols phone keyboards hide. Programs that ask for `input()` get an Input box;
+  Matplotlib plots are shown under the output; runs longer than 20 seconds are stopped.
+- **Runtime** (`public/python-worker.js`, `public/python/harness.py`). One Web Worker per page. Imports of NumPy, pandas,
+  SciPy, Matplotlib, scikit-learn or SymPy are loaded on first use. `language` on a code exercise leaves room for further
+  in-browser runtimes, such as WebGPU, later.
+- **Runnable examples.** `<Playground code={`...`} />` in any part of a lesson. Use `<Code>` for code the learner should
+  read rather than run, such as "what does this print?" questions.
+- **Code exercises.** An answer of kind `"code"` has a `starter`, a `solution` (server only), named `tests` (Python run
+  after the learner's program in its namespace; `printed` holds what it printed; assertion messages are shown as hints),
+  and optional `setup` and `files`. Tests are fetched only when Check is pressed and run in the browser; the server
+  records the result. `npm test` runs every solution and starter against its tests with the local `python3`, so a broken
+  exercise fails the build checks. Parton sees the learner's current code, output and error when asked for a hint.
+
 ## Parton
 
 Parton is the tutor on every lesson page (`src/lib/parton/`). It needs `ANTHROPIC_API_KEY` in Vercel; without it, the panel says so and written work is provisionally accepted on submission.

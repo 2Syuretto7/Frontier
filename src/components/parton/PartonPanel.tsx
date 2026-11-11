@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { askPartonAction } from "@/app/actions";
 import { Pill } from "@/components/ui/Pill";
 import { Close, Send } from "@/components/ui/Icons";
+import { workspaces } from "@/components/code/runtime";
 
 export type PanelMessage = { id: number | string; role: "user" | "parton"; html: string; rung: number | null; exerciseLabel: string | null };
 
@@ -86,7 +87,8 @@ export function PartonPanel({ lessonId, lessonTitle, initial, connected }: {
     setMessages((m) => [...m, optimistic]);
     setDraft("");
     start(async () => {
-      const res = await askPartonAction(lessonId, focus?.exerciseId ?? null, text);
+      const workspace = focus ? workspaces.get(focus.exerciseId) ?? null : null;
+      const res = await askPartonAction(lessonId, focus?.exerciseId ?? null, text, workspace);
       if (!res.ok) {
         setMessages((m) => m.filter((x) => x.id !== tempId));
         setDraft(text);
