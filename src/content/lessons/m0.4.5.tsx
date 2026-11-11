@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { CompoundingViz } from "@/components/viz/CompoundingViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -148,6 +149,47 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Writing <M>{"5^t = e^{kt}"}</M>, what is <M>k</M>, to three decimal places?</p>,
       answer: { kind: "numeric", value: 1.609, tolerance: 0.001 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`for n in [1, 10, 1000]:
+    print(round((1 + 1 / n) ** n, 4))`}</Code>
+          <p>Compounding n times a year at 100%. What is the last line printed?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 2.7169, tolerance: 0.0001 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>e_series(n)</C>, the sum 1 + 1/1! + 1/2! + … + 1/n!, building each term from the previous one rather than computing factorials afresh.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def e_series(n):
+    return 1 + 1 / n
+`,
+        solution: `def e_series(n):
+    total, term = 1.0, 1.0
+    for k in range(1, n + 1):
+        term /= k
+        total += term
+    return total
+`,
+        tests: [
+          { name: "few terms", code: `assert abs(e_series(0) - 1) < 1e-12 and abs(e_series(3) - (1 + 1 + 0.5 + 1 / 6)) < 1e-12, 'Each term is the previous one divided by k.'` },
+          { name: "converges", code: `import math
+assert abs(e_series(15) - math.e) < 1e-10, 'The series reaches e quickly.'` },
+        ],
+      },
     },
     {
       key: "bound",

@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { SequenceViz } from "@/components/viz/SequenceViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -141,6 +142,52 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>What is <M>{"9 + 3 + 1 + \\tfrac13 + \\tfrac19 + \\cdots"}</M>, continued for ever?</p>,
       answer: { kind: "numeric", value: 13.5 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`a = [5 + 3 * n for n in range(5)]
+g = [2 * 3 ** n for n in range(5)]
+print(a[-1], g[-1], sum(a))`}</Code>
+          <p>An arithmetic and a geometric sequence. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["17 162 55", "17 486 55", "20 162 55", "17 162 85"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>arith_sum(a, d, n)</C> and <C>geom_sum(a, r, n)</C>, the sums of the first n terms, using the closed forms n(2a + (n − 1)d)/2 and a(1 − rⁿ)/(1 − r), with the case r = 1 handled separately.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def arith_sum(a, d, n):
+    return a * n
+
+def geom_sum(a, r, n):
+    return a * (1 - r ** n) / (1 - r)
+`,
+        solution: `def arith_sum(a, d, n):
+    return n * (2 * a + (n - 1) * d) / 2
+
+def geom_sum(a, r, n):
+    if r == 1:
+        return a * n
+    return a * (1 - r ** n) / (1 - r)
+`,
+        tests: [
+          { name: "arithmetic", code: `assert abs(arith_sum(5, 3, 5) - 55) < 1e-9 and abs(arith_sum(1, 1, 100) - 5050) < 1e-9, 'Pair the first and last terms.'` },
+          { name: "geometric", code: `assert abs(geom_sum(2, 3, 5) - 242) < 1e-9 and abs(geom_sum(1, 0.5, 10) - 1.998046875) < 1e-12, '2 + 6 + 18 + 54 + 162 = 242.'` },
+          { name: "ratio one", code: `assert geom_sum(4, 1, 6) == 24, 'When r = 1 every term is a.'` },
+        ],
+      },
     },
     {
       key: "arith-proof",

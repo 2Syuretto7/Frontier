@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Axiom, Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { NestedIntervalsViz } from "@/components/viz/NestedIntervalsViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -188,6 +189,44 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 1.73 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`xs = [-2, 3.5, -0.5, 1, 0]
+print(sorted(xs)[1], max(xs) - min(xs))`}</Code>
+          <p>Sorting puts numbers in their order on the line. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["-0.5 5.5", "-2 5.5", "0 3.5", "-0.5 1.5"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>in_interval(x, a, b, closed)</C>, which says whether x lies in [a, b] when <C>closed</C> is true and in (a, b) when it is false.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def in_interval(x, a, b, closed):
+    return a < x < b
+`,
+        solution: `def in_interval(x, a, b, closed):
+    if closed:
+        return a <= x <= b
+    return a < x < b
+`,
+        tests: [
+          { name: "open", code: `assert in_interval(1, 0, 2, False) and not in_interval(0, 0, 2, False), 'An open interval leaves out its ends.'` },
+          { name: "closed", code: `assert in_interval(0, 0, 2, True) and in_interval(2, 0, 2, True) and not in_interval(2.1, 0, 2, True), 'A closed interval includes its ends.'` },
+        ],
+      },
     },
     {
       key: "reverse",

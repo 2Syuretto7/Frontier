@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { VerticalLineViz } from "@/components/viz/VerticalLineViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -173,6 +174,43 @@ export const lesson: LessonContent = {
           "the whole circle, if we allow two outputs",
         ],
         correct: [0],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`xs = [-2, -1, 0, 1, 2]
+print([x * x - 1 for x in xs])`}</Code>
+          <p>A table of values for y = x² − 1. Where does the graph cross the x-axis, inside this table?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["At x = −1 and x = 1", "At x = 0 only", "Nowhere", "At x = −2 and x = 2"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>table(f, a, b, n)</C>, which returns the list of n + 1 points (x, f(x)) with x evenly spaced from a to b, the first step in drawing any graph.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def table(f, a, b, n):
+    return [(a, f(a)), (b, f(b))]
+`,
+        solution: `def table(f, a, b, n):
+    h = (b - a) / n
+    return [(a + i * h, f(a + i * h)) for i in range(n + 1)]
+`,
+        tests: [
+          { name: "square", code: `pts = table(lambda x: x * x, 0, 2, 4)
+assert len(pts) == 5 and all(abs(x - y) < 1e-9 for (x, _), y in zip(pts, [0, 0.5, 1, 1.5, 2])) and abs(pts[3][1] - 2.25) < 1e-9, 'Step by (b − a)/n, and include both ends.'` },
+        ],
       },
     },
     {

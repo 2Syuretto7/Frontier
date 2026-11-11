@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark } from "@/components/lesson/Blocks";
 import { MappingViz } from "@/components/viz/MappingViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -180,6 +181,47 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>If <M>{"f(x) = x^2 + 1"}</M>, write <M>{"f(a + 1)"}</M> in terms of <M>a</M>.</p>,
       answer: { kind: "expression", value: "a^2 + 2a + 2", variables: ["a"] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = {1: 'a', 2: 'b', 3: 'a'}
+print(len(f), len(set(f.values())))`}</Code>
+          <p>A dictionary is a function from its keys to its values. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["3 2", "3 3", "2 3", "2 2"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A rule pairs inputs with outputs. Write <C>is_function(pairs)</C>, which takes a list of (input, output) pairs and says whether no input is paired with two different outputs.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def is_function(pairs):
+    return True
+`,
+        solution: `def is_function(pairs):
+    seen = {}
+    for x, y in pairs:
+        if x in seen and seen[x] != y:
+            return False
+        seen[x] = y
+    return True
+`,
+        tests: [
+          { name: "function", code: `assert is_function([(1, 2), (2, 4), (3, 6), (1, 2)]), 'Repeating the same pair is fine.'` },
+          { name: "not a function", code: `assert not is_function([(1, 1), (1, -1)]), 'The input 1 cannot have two outputs, as in y² = x.'` },
+        ],
+      },
     },
     {
       key: "range-proof",

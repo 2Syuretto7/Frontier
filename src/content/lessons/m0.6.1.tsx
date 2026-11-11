@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { DistanceViz } from "@/components/viz/DistanceViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -136,6 +137,46 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>A point on the <M>x</M>-axis is the same distance from <M>{"(1, 3)"}</M> as from <M>{"(5, 1)"}</M>. What is its <M>x</M>-coordinate?</p>,
       answer: { kind: "numeric", value: 2 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`pts = [(3, -1), (-2, 4), (-5, -5), (0, 2)]
+print([(x > 0) - (x < 0) + 2 * ((y > 0) - (y < 0)) for x, y in pts])`}</Code>
+          <p>This encodes the signs of x and y. Which point lies on an axis?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["(0, 2)", "(3, −1)", "(−2, 4)", "(−5, −5)"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>quadrant(x, y)</C>, which returns 1, 2, 3 or 4 for the quadrant of the point, numbered anticlockwise from the top right, and 0 for a point on an axis.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def quadrant(x, y):
+    return 1
+`,
+        solution: `def quadrant(x, y):
+    if x == 0 or y == 0:
+        return 0
+    if x > 0:
+        return 1 if y > 0 else 4
+    return 2 if y > 0 else 3
+`,
+        tests: [
+          { name: "quadrants", code: `assert [quadrant(1, 1), quadrant(-1, 1), quadrant(-1, -1), quadrant(1, -1)] == [1, 2, 3, 4], 'Anticlockwise from the top right.'` },
+          { name: "axes", code: `assert quadrant(0, 5) == 0 and quadrant(-3, 0) == 0, 'Points on an axis are in no quadrant.'` },
+        ],
+      },
     },
     {
       key: "midpoint-proof",

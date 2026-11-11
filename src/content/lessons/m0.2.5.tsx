@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { PowerLadderViz } from "@/components/viz/PowerLadderViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -161,6 +162,44 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Which is equal to <M>{"\\sqrt{12} + \\sqrt{27}"}</M>?</p>,
       answer: { kind: "choice", options: ["√39", "5√3", "6√3", "13√3"], correct: [1] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`print(2 ** 10, 8 ** (1 / 3), 4 ** -0.5)`}</Code>
+          <p>A fractional power is a root and a negative power is a reciprocal. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1024 2.0 0.5", "20 2.0 -2.0", "1024 2.67 0.5", "1024 2.0 -0.5"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>power(b, n)</C> for a number b and a non-negative integer n by repeated squaring: b<sup>2k</sup> = (b<sup>k</sup>)² and b<sup>2k+1</sup> = b · b<sup>2k</sup>. Do not use <C>**</C> or <C>pow</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def power(b, n):
+    return b * n
+`,
+        solution: `def power(b, n):
+    if n == 0:
+        return 1
+    h = power(b, n // 2)
+    return h * h * (b if n % 2 else 1)
+`,
+        tests: [
+          { name: "small", code: `assert power(2, 10) == 1024 and power(3, 0) == 1 and power(5, 3) == 125, 'b⁰ = 1, and split the exponent in half.'` },
+          { name: "large", code: `assert power(3, 200) == 3 ** 200, 'Repeated squaring handles large exponents exactly.'` },
+        ],
+      },
     },
     {
       key: "forced",

@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ThinkOfNumberViz } from "@/components/viz/ThinkOfNumberViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -153,6 +154,43 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Use an identity to compute <M>{"103 \\times 97"}</M> without a calculator.</p>,
       answer: { kind: "numeric", value: 9991 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`x = 3
+y = 2 * x ** 2 - 4 * x + 1
+print(y)`}</Code>
+          <p>Powers come before multiplication, which comes before addition. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 7 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>evaluate(coeffs, x)</C>, which evaluates a₀ + a₁x + a₂x² + … where <C>coeffs</C> is the list [a₀, a₁, a₂, …].
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def evaluate(coeffs, x):
+    return sum(coeffs)
+`,
+        solution: `def evaluate(coeffs, x):
+    return sum(a * x ** i for i, a in enumerate(coeffs))
+`,
+        tests: [
+          { name: "quadratic", code: `assert evaluate([1, -4, 2], 3) == 7, '1 − 4·3 + 2·9 = 7.'` },
+          { name: "constant", code: `assert evaluate([5], 100) == 5 and evaluate([0, 1], -2) == -2, 'The constant term is multiplied by x⁰ = 1.'` },
+        ],
+      },
     },
     {
       key: "trick",

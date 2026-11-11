@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { LongDivisionViz } from "@/components/viz/LongDivisionViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -249,6 +250,50 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 22 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`print(0.1 + 0.2 == 0.3, abs(0.1 + 0.2 - 0.3) < 1e-9)`}</Code>
+          <p>Decimals are stored in binary, which cannot hold 0.1 exactly. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["False True", "True True", "True False", "False False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>sci(x)</C>, which returns (m, e) with x = m × 10<sup>e</sup>, 1 ≤ |m| &lt; 10 and e an integer, for any non-zero x. Use <C>math.log10</C> and <C>math.floor</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def sci(x):
+    return (x, 0)
+`,
+        solution: `import math
+
+def sci(x):
+    e = math.floor(math.log10(abs(x)))
+    return (x / 10 ** e, e)
+`,
+        tests: [
+          { name: "big", code: `m, e = sci(299792458)
+assert e == 8 and abs(m - 2.99792458) < 1e-9, 'The speed of light is 2.99792458 × 10⁸ m/s.'` },
+          { name: "small", code: `m, e = sci(0.00042)
+assert e == -4 and abs(m - 4.2) < 1e-9, '0.00042 is 4.2 × 10⁻⁴.'` },
+          { name: "negative", code: `m, e = sci(-5000)
+assert e == 3 and abs(m + 5) < 1e-9, 'Take the logarithm of |x| and keep the sign in m.'` },
+        ],
+      },
     },
     {
       key: "root-three",

@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark } from "@/components/lesson/Blocks";
 import { GnomonViz } from "@/components/viz/GnomonViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -126,6 +127,41 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Use the formula to find <M>{"1^2 + 2^2 + \\cdots + 10^2"}</M>.</p>,
       answer: { kind: "numeric", value: 385 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`print(sum(k * k for k in range(1, 11)), sum(2 * k - 1 for k in range(1, 8)))`}</Code>
+          <p>Two sums in sigma notation. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["385 49", "385 64", "55 49", "100 49"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>sigma(f, lo, hi)</C>, which computes the sum of f(k) for k from lo to hi inclusive, and returns 0 when hi &lt; lo (the empty sum).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def sigma(f, lo, hi):
+    return sum(f(k) for k in range(lo, hi))
+`,
+        solution: `def sigma(f, lo, hi):
+    return sum(f(k) for k in range(lo, hi + 1))
+`,
+        tests: [
+          { name: "inclusive", code: `assert sigma(lambda k: k, 1, 100) == 5050 and sigma(lambda k: k * k, 1, 10) == 385, 'Both limits are included.'` },
+          { name: "empty", code: `assert sigma(lambda k: k, 5, 4) == 0, 'An empty sum is 0.'` },
+        ],
+      },
     },
     {
       key: "odd-proof",

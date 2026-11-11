@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { SlopeViz } from "@/components/viz/SlopeViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -182,6 +183,51 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>How far is the point <M>{"(1, 2)"}</M> from the line <M>{"5x + 12y = 3"}</M>?</p>,
       answer: { kind: "numeric", value: 2 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`x1, y1, x2, y2 = 1, 2, 4, 8
+m = (y2 - y1) / (x2 - x1)
+print(m, y1 - m * x1)`}</Code>
+          <p>The line through (1, 2) and (4, 8). What are its slope and intercept?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2.0 0.0", "0.5 1.5", "2.0 2.0", "6.0 -4.0"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>distance(p, q)</C> between two points and <C>perpendicular(m1, m2)</C>, which says whether lines with slopes m1 and m2 are perpendicular (m1 · m2 = −1, to within 1e-9).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def distance(p, q):
+    return abs(p[0] - q[0]) + abs(p[1] - q[1])
+
+def perpendicular(m1, m2):
+    return m1 == -m2
+`,
+        solution: `import math
+
+def distance(p, q):
+    return math.hypot(p[0] - q[0], p[1] - q[1])
+
+def perpendicular(m1, m2):
+    return abs(m1 * m2 + 1) < 1e-9
+`,
+        tests: [
+          { name: "distance", code: `assert abs(distance((1, 2), (4, 6)) - 5) < 1e-9, 'Pythagoras on the differences: 3, 4, 5.'` },
+          { name: "perpendicular", code: `assert perpendicular(2, -0.5) and not perpendicular(1, -1.5), 'Slopes of perpendicular lines multiply to −1.'` },
+        ],
+      },
     },
     {
       key: "perp-proof",

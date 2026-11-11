@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { UnitCircleViz } from "@/components/viz/UnitCircleViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -158,6 +159,49 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 12 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+t = 5 * math.pi / 6
+print(round(math.cos(t), 3), round(math.sin(t), 3))`}</Code>
+          <p>The point at angle 5π/6 on the unit circle. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["-0.866 0.5", "0.866 0.5", "-0.5 0.866", "0.866 -0.5"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>polygon(n)</C>, which returns the n vertices of a regular n-gon on the unit circle as (cos θ, sin θ) points, starting at angle 0 and going anticlockwise.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def polygon(n):
+    return [(math.cos(k), math.sin(k)) for k in range(n)]
+`,
+        solution: `import math
+
+def polygon(n):
+    return [(math.cos(2 * math.pi * k / n), math.sin(2 * math.pi * k / n)) for k in range(n)]
+`,
+        tests: [
+          { name: "square", code: `pts = polygon(4)
+exp = [(1, 0), (0, 1), (-1, 0), (0, -1)]
+assert len(pts) == 4 and all(abs(x - a) < 1e-9 and abs(y - b) < 1e-9 for (x, y), (a, b) in zip(pts, exp)), 'Space the angles 2π/n apart.'` },
+          { name: "on the circle", code: `assert all(abs(x * x + y * y - 1) < 1e-9 for x, y in polygon(7)), 'Every vertex has cos² + sin² = 1.'` },
+        ],
+      },
     },
     {
       key: "supplement",

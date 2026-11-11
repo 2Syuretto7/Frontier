@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { AngleAdditionViz } from "@/components/viz/AngleAdditionViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -140,6 +141,46 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>If <M>{"\\tan\\alpha = \\tfrac12"}</M> and <M>{"\\tan\\beta = \\tfrac13"}</M>, what is <M>{"\\tan(\\alpha + \\beta)"}</M>?</p>,
       answer: { kind: "numeric", value: 1 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+x = 0.7
+print(abs(math.sin(2 * x) - 2 * math.sin(x) * math.cos(x)) < 1e-12, round(math.sin(x) ** 2 + math.cos(x) ** 2, 12))`}</Code>
+          <p>Two identities checked at x = 0.7. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True 1.0", "False 1.0", "True 0.7", "False 0.0"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>holds(lhs, rhs)</C>, which tests a proposed identity by checking that the functions <C>lhs</C> and <C>rhs</C> agree to within 1e-9 at 1000 points spread over [−10, 10]. A test like this can refute an identity but never prove one.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def holds(lhs, rhs):
+    return abs(lhs(1.0) - rhs(1.0)) < 1e-9
+`,
+        solution: `def holds(lhs, rhs):
+    xs = [-10 + 20 * i / 999 for i in range(1000)]
+    return all(abs(lhs(x) - rhs(x)) < 1e-9 for x in xs)
+`,
+        tests: [
+          { name: "true identity", code: `import math
+assert holds(lambda x: math.cos(2 * x), lambda x: 1 - 2 * math.sin(x) ** 2), 'cos 2x = 1 − 2 sin² x is an identity.'` },
+          { name: "false identity", code: `import math
+assert not holds(lambda x: math.sqrt(x * x), lambda x: x), '√(x²) is |x|, not x: they agree at x = 1 but not for negative x.'` },
+        ],
+      },
     },
     {
       key: "cos-double-proof",

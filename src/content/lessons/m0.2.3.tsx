@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { TwoLinesViz } from "@/components/viz/TwoLinesViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -177,6 +178,50 @@ export const lesson: LessonContent = {
         kind: "choice",
         options: ["x + y = 1 and 2x + 2y = 2", "x + y = 1 and x + y = 2", "x − y = 0 and 3x − 3y = 0", "x + y = 1 and x − y = 1"],
         correct: [0, 2],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`a, b, e = 1, 1, 10
+c, d, f = 1, -1, 2
+det = a * d - b * c
+print(det, (e * d - b * f) / det, (a * f - e * c) / det)`}</Code>
+          <p>Cramer's rule for x + y = 10, x − y = 2. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["-2 6.0 4.0", "2 6.0 4.0", "-2 4.0 6.0", "0 6.0 4.0"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>solve2(a, b, e, c, d, f)</C> for the system ax + by = e, cx + dy = f, returning (x, y) by elimination, or <C>None</C> when ad − bc = 0.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def solve2(a, b, e, c, d, f):
+    return (e / a, f / d)
+`,
+        solution: `def solve2(a, b, e, c, d, f):
+    det = a * d - b * c
+    if det == 0:
+        return None
+    return ((e * d - b * f) / det, (a * f - e * c) / det)
+`,
+        tests: [
+          { name: "sum and difference", code: `x, y = solve2(1, 1, 10, 1, -1, 2)
+assert abs(x - 6) < 1e-9 and abs(y - 4) < 1e-9, 'x + y = 10 and x − y = 2 give x = 6, y = 4.'` },
+          { name: "mixed", code: `x, y = solve2(2, 3, 13, 5, -1, 7)
+assert abs(x - 2) < 1e-9 and abs(y - 3) < 1e-9, 'Check by substituting back.'` },
+          { name: "parallel", code: `assert solve2(1, 2, 3, 2, 4, 5) is None, 'Parallel lines never meet.'` },
+        ],
       },
     },
     {

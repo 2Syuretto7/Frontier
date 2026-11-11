@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark } from "@/components/lesson/Blocks";
 import { DotPlotViz } from "@/components/viz/DotPlotViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -151,6 +152,51 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>The largest value in a data set of 11 values is changed from 50 to 500. Select everything that must change.</p>,
       answer: { kind: "choice", options: ["the mean", "the median", "the range", "the standard deviation"], correct: [0, 2, 3] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import statistics as st
+xs = [2, 4, 4, 4, 5, 5, 7, 9]
+print(st.mean(xs), st.median(xs), st.pstdev(xs))`}</Code>
+          <p>Mean, median and population standard deviation. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["5 4.5 2.0", "5 4 2.0", "5 4.5 4.0", "4.5 5 2.0"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>summary(xs)</C>, which returns (mean, median, population standard deviation) of a non-empty list without the <C>statistics</C> module or numpy.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def summary(xs):
+    m = sum(xs) / len(xs)
+    return (m, m, 0.0)
+`,
+        solution: `def summary(xs):
+    n = len(xs)
+    m = sum(xs) / n
+    s = sorted(xs)
+    med = s[n // 2] if n % 2 else (s[n // 2 - 1] + s[n // 2]) / 2
+    sd = (sum((x - m) ** 2 for x in xs) / n) ** 0.5
+    return (m, med, sd)
+`,
+        tests: [
+          { name: "even", code: `m, med, sd = summary([2, 4, 4, 4, 5, 5, 7, 9])
+assert abs(m - 5) < 1e-9 and abs(med - 4.5) < 1e-9 and abs(sd - 2) < 1e-9, 'With an even count the median averages the middle two.'` },
+          { name: "odd", code: `m, med, sd = summary([9, 1, 5])
+assert abs(med - 5) < 1e-9 and abs(sd - (32 / 3) ** 0.5) < 1e-9, 'Sort before taking the middle value.'` },
+        ],
+      },
     },
     {
       key: "shift",

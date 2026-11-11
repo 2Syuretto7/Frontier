@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { InverseMirrorViz } from "@/components/viz/InverseMirrorViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -176,6 +177,51 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 5.75 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = lambda x: 2 * x + 3
+g = lambda x: (x - 3) / 2
+print(f(g(11)), g(f(11)), f(f(1)))`}</Code>
+          <p>g undoes f. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["11.0 11.0 13", "11.0 11.0 5", "25 4.0 13", "11 11 13"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>compose(f, g)</C>, which returns the function x ↦ f(g(x)), and <C>inverse_linear(m, c)</C>, which returns the inverse of x ↦ mx + c as a function (m ≠ 0).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def compose(f, g):
+    return lambda x: g(f(x))
+
+def inverse_linear(m, c):
+    return lambda y: m * y + c
+`,
+        solution: `def compose(f, g):
+    return lambda x: f(g(x))
+
+def inverse_linear(m, c):
+    return lambda y: (y - c) / m
+`,
+        tests: [
+          { name: "order", code: `h = compose(lambda x: x + 1, lambda x: x * x)
+assert h(3) == 10, 'f ∘ g applies g first: 3² + 1 = 10.'` },
+          { name: "inverse", code: `inv = inverse_linear(2, 3)
+assert all(abs(inv(2 * x + 3) - x) < 1e-9 for x in range(-5, 6)), 'Undo the steps in reverse order: subtract c, then divide by m.'` },
+        ],
+      },
     },
     {
       key: "compose-injective",

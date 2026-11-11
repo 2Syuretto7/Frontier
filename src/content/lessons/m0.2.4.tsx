@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Axiom, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { SignChartViz } from "@/components/viz/SignChartViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -179,6 +180,44 @@ export const lesson: LessonContent = {
         kind: "choice",
         options: ["x > 1", "x < 0 or x > 1", "0 < x < 1", "x < 1"],
         correct: [1],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`print([x for x in range(-5, 6) if -2 * x + 1 > 5])`}</Code>
+          <p>Dividing an inequality by a negative number flips it. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[-5, -4, -3]", "[3, 4, 5]", "[-5, -4, -3, -2]", "[]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>solve_ineq(a, b, c)</C> for ax + b &gt; c with a ≠ 0, returning a pair (direction, bound): <C>("&gt;", t)</C> when the solution is x &gt; t and <C>("&lt;", t)</C> when it is x &lt; t.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def solve_ineq(a, b, c):
+    return ('>', (c - b) / a)
+`,
+        solution: `def solve_ineq(a, b, c):
+    t = (c - b) / a
+    return ('>', t) if a > 0 else ('<', t)
+`,
+        tests: [
+          { name: "positive", code: `d, t = solve_ineq(3, 1, 7)
+assert d == '>' and abs(t - 2) < 1e-9, '3x + 1 > 7 gives x > 2.'` },
+          { name: "negative", code: `d, t = solve_ineq(-2, 1, 5)
+assert d == '<' and abs(t + 2) < 1e-9, 'Dividing by −2 flips the inequality: x < −2.'` },
+        ],
       },
     },
     {

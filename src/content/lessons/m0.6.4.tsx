@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ComplexMultViz } from "@/components/viz/ComplexMultViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -140,6 +141,56 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>What is the real part of <M>{"\\dfrac{10 - 5i}{2 + i}"}</M>?</p>,
       answer: { kind: "numeric", value: 3 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`z = 3 + 4j
+print(abs(z), z * 1j, z.conjugate())`}</Code>
+          <p>Multiplying by i turns a point a quarter turn. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["5.0 (-4+3j) (3-4j)", "5.0 (4+3j) (3-4j)", "7.0 (-4+3j) (-3+4j)", "5.0 (3+4j) (3-4j)"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>rotate(z, degrees)</C>, which rotates the complex number z about 0 by multiplying by cos θ + i sin θ, and <C>to_polar(z)</C>, which returns (r, θ) with θ in radians from <C>math.atan2</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def rotate(z, degrees):
+    return z + degrees
+
+def to_polar(z):
+    return (z.real, z.imag)
+`,
+        solution: `import math
+
+def rotate(z, degrees):
+    t = math.radians(degrees)
+    return z * complex(math.cos(t), math.sin(t))
+
+def to_polar(z):
+    return (abs(z), math.atan2(z.imag, z.real))
+`,
+        tests: [
+          { name: "quarter turn", code: `w = rotate(3 + 4j, 90)
+assert abs(w - (-4 + 3j)) < 1e-9, 'A 90 degree turn is multiplication by i.'` },
+          { name: "polar", code: `import math
+r, t = to_polar(-1 + 1j)
+assert abs(r - math.sqrt(2)) < 1e-9 and abs(t - 3 * math.pi / 4) < 1e-9, '−1 + i is at distance √2 and angle 3π/4.'` },
+        ],
+      },
     },
     {
       key: "conjugate-proof",

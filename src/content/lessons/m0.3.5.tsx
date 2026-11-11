@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { TransformViz } from "@/components/viz/TransformViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -160,6 +161,45 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>The only root of <M>f</M> is <M>{"x = 6"}</M>. What is the only root of <M>{"y = f(2x)"}</M>?</p>,
       answer: { kind: "numeric", value: 3 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`f = lambda x: x * x
+g = lambda x: f(x - 2) + 1
+print(min(range(-10, 11), key=g), g(2))`}</Code>
+          <p>g is f shifted. Where is the lowest point of g, and its height?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2 1", "-2 1", "2 -1", "-2 5"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>transform(f, h, k, a)</C>, which returns the function x ↦ a · f(x − h) + k: f stretched by a, moved right by h and up by k.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def transform(f, h, k, a):
+    return lambda x: a * f(x + h) + k
+`,
+        solution: `def transform(f, h, k, a):
+    return lambda x: a * f(x - h) + k
+`,
+        tests: [
+          { name: "shift", code: `g = transform(lambda x: x * x, 3, -1, 1)
+assert g(3) == -1 and g(4) == 0, 'Moving right by h means feeding x − h into f.'` },
+          { name: "stretch", code: `g = transform(abs, 0, 0, -2)
+assert g(-3) == -6, 'A negative a flips the graph and stretches it.'` },
+        ],
+      },
     },
     {
       key: "shift-proof",

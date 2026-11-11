@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { SlideRuleViz } from "@/components/viz/SlideRuleViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -146,6 +147,53 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 11 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+a, b = 8, 32
+print(math.log2(a * b), math.log2(a) + math.log2(b), math.log2(b / a))`}</Code>
+          <p>Logarithms turn products into sums. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["8.0 8.0 2.0", "8.0 15.0 2.0", "256.0 8.0 4.0", "8.0 8.0 -2.0"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>log_base(x, b)</C> using only <C>math.log</C> and the change-of-base law, and <C>digits(n)</C>, the number of decimal digits of a positive integer n, using <C>math.log10</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import math
+
+def log_base(x, b):
+    return math.log(x) * math.log(b)
+
+def digits(n):
+    return round(math.log10(n))
+`,
+        solution: `import math
+
+def log_base(x, b):
+    return math.log(x) / math.log(b)
+
+def digits(n):
+    return math.floor(math.log10(n)) + 1
+`,
+        tests: [
+          { name: "change of base", code: `assert abs(log_base(81, 3) - 4) < 1e-9 and abs(log_base(0.5, 4) + 0.5) < 1e-9, 'log_b x = ln x / ln b.'` },
+          { name: "digits", code: `assert digits(1) == 1 and digits(999) == 3 and digits(1000) == 4 and digits(2 ** 100) == 31, 'A number with d digits has log₁₀ between d − 1 and d.'` },
+        ],
+      },
     },
     {
       key: "product-law",

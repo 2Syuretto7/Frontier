@@ -2,6 +2,7 @@ import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Proposition, Remark, Theorem } from "@/components/lesson/Blocks";
 import { AngleSumViz } from "@/components/viz/AngleSumViz";
 import { PythagorasViz } from "@/components/viz/PythagorasViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -200,6 +201,45 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 18 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+print(math.hypot(5, 12), [(a, b) for a in range(1, 13) for b in range(a, 13) if math.hypot(a, b) == 13])`}</Code>
+          <p>Pythagoras: c² = a² + b². What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["13.0 [(5, 12)]", "13.0 []", "17.0 [(5, 12)]", "13.0 [(5, 12), (12, 5)]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>triangle_kind(a, b, c)</C> for side lengths of a valid triangle, returning <C>"right"</C>, <C>"acute"</C> or <C>"obtuse"</C> by comparing the square of the longest side with the sum of the other two squares. Work with integers so equality is exact.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def triangle_kind(a, b, c):
+    return 'right'
+`,
+        solution: `def triangle_kind(a, b, c):
+    a, b, c = sorted([a, b, c])
+    if c * c == a * a + b * b:
+        return 'right'
+    return 'acute' if c * c < a * a + b * b else 'obtuse'
+`,
+        tests: [
+          { name: "right", code: `assert triangle_kind(13, 5, 12) == 'right', 'The longest side need not come last.'` },
+          { name: "others", code: `assert triangle_kind(4, 5, 6) == 'acute' and triangle_kind(2, 3, 4) == 'obtuse', '36 < 41 is acute, 16 > 13 is obtuse.'` },
+        ],
+      },
     },
     {
       key: "exterior",
