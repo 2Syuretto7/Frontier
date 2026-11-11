@@ -142,6 +142,22 @@ print(x[0] + x[1])`}</Code>
       answer: { kind: "numeric", value: 2 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+t = np.array([0.0, 1.0, 2.0])
+y = np.array([6.0, 0.0, 0.0])
+A = np.column_stack([np.ones(3), t])
+x = np.linalg.solve(A.T @ A, A.T @ y)
+print(x, A @ x - y)`}</Code>
+          <p>Strang's least squares line through (0, 6), (1, 0), (2, 0). What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[ 5. -3.] [-1.  2. -1.]", "[ 6. -3.] [ 0.  3.  0.]", "[ 5. -3.] [ 1. -2.  1.]", "[-3.  5.] [-1.  2. -1.]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -174,6 +190,75 @@ assert abs(C - 5) < 1e-9 and abs(D + 3) < 1e-9, 'The best line through (0, 6), (
 assert abs(D - 0.98214) < 1e-4, 'The slope for the visualisation data is about 0.982.'` },
           { name: "exact line", code: `C, D = fit_line([1, 2, 3, 4], [3, 5, 7, 9])
 assert abs(C - 1) < 1e-9 and abs(D - 2) < 1e-9, 'Points on y = 1 + 2t should be fitted exactly.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>polyfit_ls(t, y, deg)</C>, the least-squares polynomial coefficients (lowest power first) found by solving with a QR factorisation of the Vandermonde matrix (<C>np.linalg.qr</C>, then a triangular solve), not the normal equations, and <C>weighted_ls(A, b, w)</C>, the solution of the weighted problem minimising Σ wᵢ(Ax − b)ᵢ². Then write <C>ridge(A, b, lam)</C>, the minimiser of ‖Ax − b‖² + λ‖x‖², by stacking √λ·I under A.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def polyfit_ls(t, y, deg):
+    A = np.vander(np.asarray(t, float), deg + 1, increasing=True)
+    return np.linalg.solve(A.T @ A, A.T @ np.asarray(y, float))
+
+def weighted_ls(A, b, w):
+    return np.linalg.lstsq(A, b, rcond=None)[0]
+
+def ridge(A, b, lam):
+    return np.linalg.lstsq(A, b, rcond=None)[0]
+`,
+        solution: `import numpy as np
+
+def _qr_solve(A, b):
+    Q, R = np.linalg.qr(A)
+    z = Q.T @ b
+    n = R.shape[1]
+    x = np.zeros(n)
+    for i in range(n - 1, -1, -1):
+        x[i] = (z[i] - R[i, i + 1:] @ x[i + 1:]) / R[i, i]
+    return x
+
+def polyfit_ls(t, y, deg):
+    A = np.vander(np.asarray(t, float), deg + 1, increasing=True)
+    return _qr_solve(A, np.asarray(y, float))
+
+def weighted_ls(A, b, w):
+    sw = np.sqrt(np.asarray(w, float))
+    return _qr_solve(np.asarray(A, float) * sw[:, None], np.asarray(b, float) * sw)
+
+def ridge(A, b, lam):
+    A, b = np.asarray(A, float), np.asarray(b, float)
+    n = A.shape[1]
+    return _qr_solve(np.vstack([A, np.sqrt(lam) * np.eye(n)]), np.concatenate([b, np.zeros(n)]))
+`,
+        tests: [
+          { name: "line", code: `import numpy as np
+assert np.allclose(polyfit_ls([0, 1, 2], [6, 0, 0], 1), [5, -3]), 'Strang’s example.'` },
+          { name: "ill-conditioned", code: `import numpy as np
+t = np.linspace(0, 1, 40)
+coef = np.arange(1, 12, dtype=float)
+y = np.vander(t, 11, increasing=True) @ coef
+assert np.allclose(polyfit_ls(t, y, 10), coef, atol=1e-5), 'Degree 10: the normal equations lose too many digits, QR does not.'` },
+          { name: "weighted", code: `import numpy as np
+A = np.column_stack([np.ones(4), [0, 1, 2, 3]])
+b = np.array([1.0, 2.0, 2.0, 10.0])
+x = weighted_ls(A, b, [1, 1, 1, 1e-12])
+assert np.allclose(x, np.polyfit([0, 1, 2], [1, 2, 2], 1)[::-1], atol=1e-5), 'A tiny weight ignores the outlier.'` },
+          { name: "ridge", code: `import numpy as np
+rng = np.random.default_rng(15)
+A, b = rng.normal(size=(20, 5)), rng.normal(size=20)
+x = ridge(A, b, 2.0)
+assert np.allclose(x, np.linalg.solve(A.T @ A + 2 * np.eye(5), A.T @ b)) and np.linalg.norm(ridge(A, b, 100.0)) < np.linalg.norm(x), 'A larger λ shrinks x.'` },
         ],
       },
     },

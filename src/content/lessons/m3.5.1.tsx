@@ -139,6 +139,20 @@ print(xr @ xn, xn[0])`}</Code>
       answer: { kind: "numeric", value: 1 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+A = np.array([[1.0, 1.0, 0.0], [0.0, 1.0, 1.0]])
+x = np.array([1.0, -1.0, 1.0])
+print(A @ x, np.cross(A[0], A[1]))`}</Code>
+          <p>Is x orthogonal to the row space of A? The cross product of the rows gives the null direction. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0. 0.] [ 1. -1.  1.]", "[0. 0.] [-1.  1. -1.]", "[1. 0.] [ 1. -1.  1.]", "[0. 0.] [1. 1. 1.]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -174,6 +188,66 @@ A = rng.standard_normal((2, 4)); x = rng.standard_normal(4)
 xr, xn = split(A, x)
 assert np.allclose(A @ xn, 0), 'The null space part must satisfy A xn = 0.'
 assert abs(xr @ xn) < 1e-9 and np.allclose(xr + xn, x), 'The two parts must be perpendicular and add up to x.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>orthogonal_complement(V, tol=1e-10)</C>, an orthonormal basis (as columns) of the orthogonal complement of the span of the columns of V in ℝⁿ, via the SVD of V. Then write <C>decompose(V, x)</C>, which splits x into (p, q) with p in the span of V and q in its complement, and <C>angle_between_subspaces(V, W)</C>, the smallest principal angle in degrees between two subspaces given by bases: the arccosine of the largest singular value of QᵥᵀQ_W, where Qᵥ and Q_W are orthonormal bases.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def orthogonal_complement(V, tol=1e-10):
+    return np.zeros((np.asarray(V).shape[0], 0))
+
+def decompose(V, x):
+    x = np.asarray(x, float)
+    return (x, np.zeros_like(x))
+
+def angle_between_subspaces(V, W):
+    return 0.0
+`,
+        solution: `import numpy as np
+
+def _basis(V, tol=1e-10):
+    U, s, _ = np.linalg.svd(np.asarray(V, float))
+    r = int(np.sum(s > tol * s[0])) if s.size and s[0] > 0 else 0
+    return U[:, :r], U[:, r:]
+
+def orthogonal_complement(V, tol=1e-10):
+    return _basis(V, tol)[1]
+
+def decompose(V, x):
+    Q = _basis(V)[0]
+    x = np.asarray(x, float)
+    p = Q @ (Q.T @ x)
+    return (p, x - p)
+
+def angle_between_subspaces(V, W):
+    Qv, Qw = _basis(V)[0], _basis(W)[0]
+    s = np.linalg.svd(Qv.T @ Qw, compute_uv=False)
+    return float(np.degrees(np.arccos(np.clip(s.max(), -1, 1))))
+`,
+        tests: [
+          { name: "complement", code: `import numpy as np
+V = np.array([[1.0, 0.0], [1.0, 1.0], [0.0, 1.0]])
+C = orthogonal_complement(V)
+assert C.shape == (3, 1) and np.allclose(V.T @ C, 0) and np.allclose(abs(C[:, 0]), np.array([1, 1, 1]) / 3 ** 0.5), 'The complement of a plane in ℝ³ is a line.'` },
+          { name: "decompose", code: `import numpy as np
+V = np.array([[1.0], [1.0], [0.0]])
+p, q = decompose(V, [3, 1, 4])
+assert np.allclose(p, [2, 2, 0]) and np.allclose(q, [1, -1, 4]) and abs(p @ q) < 1e-12, 'Orthogonal pieces that add to x.'` },
+          { name: "angle", code: `import numpy as np
+assert abs(angle_between_subspaces([[1], [0], [0]], [[1], [1], [0]]) - 45) < 1e-9 and abs(angle_between_subspaces([[1, 0], [0, 1], [0, 0]], [[1], [1], [1]]) - np.degrees(np.arccos(np.sqrt(2 / 3)))) < 1e-9, 'Principal angles.'` },
+          { name: "meet", code: `assert angle_between_subspaces([[1, 0], [0, 1], [0, 0]], [[0, 0], [1, 0], [0, 1]]) < 1e-6, 'Two planes in ℝ³ share a line: angle 0.'` },
         ],
       },
     },

@@ -146,6 +146,20 @@ print(round(np.trace(A5)))`}</Code>
       answer: { kind: "numeric", value: 3157 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+A = np.array([[4.0, 1.0], [2.0, 3.0]])
+vals, X = np.linalg.eig(A)
+print(np.sort(vals.real), np.allclose(X @ np.diag(vals) @ np.linalg.inv(X), A))`}</Code>
+          <p>Eigenvalues of [[4, 1], [2, 3]] and the check A = XΛX⁻¹. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[2. 5.] True", "[3. 4.] True", "[2. 5.] False", "[1. 6.] True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -176,6 +190,79 @@ assert np.allclose(power_by_eig([[4, 1], [2, 3]], 3), np.linalg.matrix_power(np.
 assert round(F[0, 1]) == 832040, 'The off-diagonal entry of the 30th power is F₃₀ = 832040.'` },
           { name: "zero power", code: `import numpy as np
 assert np.allclose(power_by_eig([[2, 1], [1, 2]], 0), np.eye(2)), 'A to the power 0 is the identity.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>matrix_function(A, f)</C>, f(A) = X f(Λ) X⁻¹ for a diagonalisable matrix and a scalar function f applied to the eigenvalues (allow complex eigenvalues and return the real part when the imaginary part is below 1e−10, raising <C>ValueError</C> if X is too ill-conditioned: condition number above 1e12). Use it in <C>expm(A)</C> and <C>sqrtm(A)</C>. Then write <C>is_diagonalisable(A)</C>, true when the eigenvector matrix has condition number below 1e8.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def matrix_function(A, f):
+    return f(np.asarray(A, float))
+
+def expm(A):
+    return matrix_function(A, np.exp)
+
+def sqrtm(A):
+    return matrix_function(A, np.sqrt)
+
+def is_diagonalisable(A):
+    return True
+`,
+        solution: `import numpy as np
+
+def matrix_function(A, f):
+    A = np.asarray(A, float)
+    vals, X = np.linalg.eig(A)
+    if np.linalg.cond(X) > 1e12:
+        raise ValueError('not diagonalisable')
+    F = X @ np.diag(f(vals.astype(complex))) @ np.linalg.inv(X)
+    if np.abs(F.imag).max() < 1e-10:
+        return F.real
+    return F
+
+def expm(A):
+    return matrix_function(A, np.exp)
+
+def sqrtm(A):
+    return matrix_function(A, np.sqrt)
+
+def is_diagonalisable(A):
+    vals, X = np.linalg.eig(np.asarray(A, float))
+    return bool(np.linalg.cond(X) < 1e8)
+`,
+        tests: [
+          { name: "exp", code: `import numpy as np
+from scipy.linalg import expm as ref
+A = np.array([[4.0, 1.0], [2.0, 3.0]])
+assert np.allclose(expm(A), ref(A)), 'Agree with SciPy.'` },
+          { name: "rotation", code: `import numpy as np
+t = 0.7
+A = np.array([[0.0, -t], [t, 0.0]])
+assert np.allclose(expm(A), [[np.cos(t), -np.sin(t)], [np.sin(t), np.cos(t)]]), 'Complex eigenvalues ±it give a rotation.'` },
+          { name: "sqrt", code: `import numpy as np
+rng = np.random.default_rng(20)
+B = rng.normal(size=(4, 4))
+S = B @ B.T + np.eye(4)
+Rt = sqrtm(S)
+assert np.allclose(Rt @ Rt, S) and np.allclose(Rt, Rt.T), 'The square root of a positive definite matrix.'` },
+          { name: "defective", code: `assert not is_diagonalisable([[1.0, 1.0], [0.0, 1.0]]) and is_diagonalisable([[2.0, 0.0], [0.0, 2.0]])
+try:
+    expm([[1.0, 1.0], [0.0, 1.0]])
+    ok = False
+except ValueError:
+    ok = True
+assert ok, 'A Jordan block cannot be diagonalised.'` },
         ],
       },
     },

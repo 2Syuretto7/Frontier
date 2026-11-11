@@ -153,6 +153,20 @@ print(w[0] + w[1])`}</Code>
       answer: { kind: "numeric", value: 3 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+u, v = np.array([1, 2]), np.array([3, -1])
+pts = {tuple(a * u + b * v) for a in range(-1, 2) for b in range(-1, 2)}
+print(len(pts), (4, 1) in pts, (0, 0) in pts)`}</Code>
+          <p>All combinations au + bv with a, b in −1, 0, 1. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["9 True True", "9 False True", "8 True True", "9 True False"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -187,6 +201,66 @@ assert np.allclose(combine([2, 1], [[2, 1], [1, 2]]), [5, 4]), 'Two of u = (2, 1
 assert np.allclose(combine([3, -2], [[1, 2], [2, -1]]), [-1, 8]), 'Check how negative coefficients are handled.'` },
           { name: "three dimensions", code: `import numpy as np
 assert np.allclose(combine([1, 1, -1], [[1, 0, 1], [0, 1, 1], [1, 1, 2]]), [0, 0, 0]), 'In three dimensions each vector has three entries.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>solve_combination(u, v, w)</C> for vectors in ℝ², which returns the coefficients (a, b) with au + bv = w by Cramer&rsquo;s rule, or <C>None</C> if u and v are parallel (determinant within 1e−12 of 0). Then write <C>lattice_points(u, v, box)</C>, the sorted list of integer combinations au + bv (as tuples of integers) whose two coordinates both lie in [−box, box], for integer vectors u, v that are not parallel; search a range of a and b large enough to be sure (use the bound |a|, |b| ≤ 2·box·(|u| + |v|)/|det| + 1).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def solve_combination(u, v, w):
+    return (0.0, 0.0)
+
+def lattice_points(u, v, box):
+    return []
+`,
+        solution: `import numpy as np
+
+def solve_combination(u, v, w):
+    d = u[0] * v[1] - u[1] * v[0]
+    if abs(d) < 1e-12:
+        return None
+    a = (w[0] * v[1] - w[1] * v[0]) / d
+    b = (u[0] * w[1] - u[1] * w[0]) / d
+    return (a, b)
+
+def lattice_points(u, v, box):
+    d = abs(u[0] * v[1] - u[1] * v[0])
+    nu, nv = np.hypot(*u), np.hypot(*v)
+    K = int(2 * box * (nu + nv) / d) + 1
+    out = set()
+    for a in range(-K, K + 1):
+        for b in range(-K, K + 1):
+            x, y = a * u[0] + b * v[0], a * u[1] + b * v[1]
+            if -box <= x <= box and -box <= y <= box:
+                out.add((int(x), int(y)))
+    return sorted(out)
+`,
+        tests: [
+          { name: "solve", code: `a, b = solve_combination((2, 1), (1, 2), (5, 4))
+assert abs(a - 2) < 1e-12 and abs(b - 1) < 1e-12, '2u + v = (5, 4).'` },
+          { name: "parallel", code: `assert solve_combination((1, 2), (2, 4), (1, 1)) is None and solve_combination((0, 0), (1, 0), (1, 0)) is None, 'Parallel vectors do not span the plane.'` },
+          { name: "random", code: `import numpy as np
+import random
+random.seed(3)
+for _ in range(50):
+    u, v, w = [(random.uniform(-5, 5), random.uniform(-5, 5)) for _ in range(3)]
+    r = solve_combination(u, v, w)
+    assert r is not None and np.allclose(r[0] * np.array(u) + r[1] * np.array(v), w)` },
+          { name: "lattice", code: `pts = lattice_points((1, 0), (0, 1), 1)
+assert pts == [(x, y) for x in (-1, 0, 1) for y in (-1, 0, 1)], 'The standard basis gives every integer point.'` },
+          { name: "sublattice", code: `pts = lattice_points((2, 1), (1, 3), 3)
+assert len(pts) == 9 and (0, 0) in pts and (2, 1) in pts and (3, 4) not in pts and (1, 0) not in pts, 'det = 5: about one point in five of the 49.'` },
         ],
       },
     },

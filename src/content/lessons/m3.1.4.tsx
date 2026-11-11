@@ -143,6 +143,23 @@ print((n @ q - c) / np.linalg.norm(n))`}</Code>
       answer: { kind: "numeric", value: 3 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+n = np.array([1.0, 2.0, 2.0])
+c = 9.0
+q = np.array([0.0, 0.0, 0.0])
+t = (c - n @ q) / (n @ n)
+foot = q + t * n
+print(foot, abs(n @ q - c) / np.linalg.norm(n))`}</Code>
+          <p>The foot of the perpendicular from the origin to the plane x + 2y + 2z = 9, and its distance. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[1. 2. 2.] 3.0", "[1. 2. 2.] 9.0", "[3. 3. 3.] 3.0", "[0.33 0.67 0.67] 3.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -171,6 +188,79 @@ def distance(n, c, q):
           { name: "other side", code: `assert abs(distance([1, 2, 2], 1, [3, 1, 4]) - 4) < 1e-9, 'Distance is never negative.'` },
           { name: "on the plane", code: `assert abs(distance([1, 1, 1], 3, [1, 1, 1])) < 1e-9, 'A point on the plane is at distance 0.'` },
           { name: "below", code: `assert abs(distance([0, 0, 1], 5, [7, 7, 1]) - 4) < 1e-9, 'Points on the other side are still a positive distance away.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>plane_through(p, q, r)</C>, the plane through three points in ℝ³ as (n, c) with n · x = c, where n is the unit normal (from the cross product, sign chosen so that its first non-zero entry is positive), raising <C>ValueError</C> if the points are collinear. Then write <C>line_plane(a, d, n, c)</C>, the intersection of the line a + td with the plane, or <C>None</C> if the line is parallel to it (|n · d| &lt; 1e−12), and <C>line_distance(a1, d1, a2, d2)</C>, the shortest distance between two lines in ℝ³ (handle parallel lines).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def plane_through(p, q, r):
+    return (np.array([0.0, 0.0, 1.0]), 0.0)
+
+def line_plane(a, d, n, c):
+    return None
+
+def line_distance(a1, d1, a2, d2):
+    return 0.0
+`,
+        solution: `import numpy as np
+
+def plane_through(p, q, r):
+    p, q, r = (np.asarray(x, float) for x in (p, q, r))
+    n = np.cross(q - p, r - p)
+    L = np.linalg.norm(n)
+    if L < 1e-12:
+        raise ValueError('collinear')
+    n = n / L
+    first = n[np.nonzero(np.abs(n) > 1e-12)[0][0]]
+    if first < 0:
+        n = -n
+    return (n, float(n @ p))
+
+def line_plane(a, d, n, c):
+    a, d, n = (np.asarray(x, float) for x in (a, d, n))
+    nd = n @ d
+    if abs(nd) < 1e-12:
+        return None
+    t = (c - n @ a) / nd
+    return a + t * d
+
+def line_distance(a1, d1, a2, d2):
+    a1, d1, a2, d2 = (np.asarray(x, float) for x in (a1, d1, a2, d2))
+    w = a2 - a1
+    m = np.cross(d1, d2)
+    if np.linalg.norm(m) < 1e-12:
+        return float(np.linalg.norm(np.cross(w, d1)) / np.linalg.norm(d1))
+    return float(abs(w @ m) / np.linalg.norm(m))
+`,
+        tests: [
+          { name: "plane", code: `import numpy as np
+n, c = plane_through((1, 0, 0), (0, 1, 0), (0, 0, 1))
+assert np.allclose(n, np.ones(3) / 3 ** 0.5) and abs(c - 1 / 3 ** 0.5) < 1e-12, 'x + y + z = 1, normalised.'` },
+          { name: "sign", code: `import numpy as np
+n, c = plane_through((0, 0, 0), (0, 1, 0), (1, 0, 0))
+assert np.allclose(n, [0, 0, 1]) and abs(c) < 1e-12, 'First non-zero entry positive.'` },
+          { name: "collinear", code: `try:
+    plane_through((0, 0, 0), (1, 1, 1), (2, 2, 2))
+    ok = False
+except ValueError:
+    ok = True
+assert ok, 'Three collinear points fix no plane.'` },
+          { name: "intersect", code: `import numpy as np
+x = line_plane((0, 0, 0), (1, 1, 1), (1, 2, 2), 10)
+assert np.allclose(x, [2, 2, 2]) and line_plane((0, 0, 0), (2, -1, 0), (1, 2, 2), 10) is None, 'Parallel lines miss the plane.'` },
+          { name: "skew", code: `assert abs(line_distance((0, 0, 0), (1, 0, 0), (0, 1, 5), (0, 1, 0)) - 5) < 1e-12 and abs(line_distance((0, 0, 0), (1, 1, 0), (0, 3, 0), (2, 2, 0)) - 3 / 2 ** 0.5) < 1e-12, 'Skew lines and parallel lines.'` },
         ],
       },
     },

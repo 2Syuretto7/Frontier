@@ -150,6 +150,19 @@ print(area)`}</Code>
       answer: { kind: "numeric", value: 2.5 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+u, v, w = np.array([1.0, 0, 0]), np.array([1.0, 2, 0]), np.array([0.0, 1, 3])
+print(abs(np.linalg.det(np.array([u, v, w]))), np.cross(u, v) @ w)`}</Code>
+          <p>The volume of the box spanned by three vectors, two ways. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["6.0 6.0", "6.0 -6.0", "3.0 6.0", "6.0 0.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -181,6 +194,62 @@ def area(points):
 A = np.array([[2, 1], [0.5, 1.5]])
 sq = np.array([(0, 0), (1, 0), (1, 1), (0, 1)])
 assert abs(area(sq @ A.T) - 2.5) < 1e-12, 'The image of the unit square has area |det A| = 2.5.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>simplex_volume(points)</C>, the volume of the simplex with n + 1 vertices in ℝⁿ (a triangle in ℝ², a tetrahedron in ℝ³, …) as |det[p₁ − p₀, …, pₙ − p₀]|/n!, and <C>gram_volume(vectors)</C>, the k-dimensional volume of the parallelotope spanned by k vectors in ℝⁿ (k ≤ n) as √det(VᵀV), which works for a parallelogram in ℝ³. Then write <C>monte_carlo_volume(points, samples, seed)</C>, which estimates the simplex volume in ℝ³ by sampling the bounding box with a seeded <C>np.random.default_rng</C> and testing membership through barycentric coordinates.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def simplex_volume(points):
+    return 0.0
+
+def gram_volume(vectors):
+    return 0.0
+
+def monte_carlo_volume(points, samples, seed):
+    return 0.0
+`,
+        solution: `import numpy as np
+
+import math
+
+def simplex_volume(points):
+    P = np.asarray(points, float)
+    n = P.shape[1]
+    return float(abs(np.linalg.det(P[1:] - P[0])) / math.factorial(n))
+
+def gram_volume(vectors):
+    V = np.asarray(vectors, float).T
+    return float(np.sqrt(max(np.linalg.det(V.T @ V), 0.0)))
+
+def monte_carlo_volume(points, samples, seed):
+    P = np.asarray(points, float)
+    lo, hi = P.min(0), P.max(0)
+    rng = np.random.default_rng(seed)
+    X = lo + (hi - lo) * rng.random((samples, P.shape[1]))
+    T = (P[1:] - P[0]).T
+    lam = np.linalg.solve(T, (X - P[0]).T).T
+    inside = (lam >= 0).all(1) & (lam.sum(1) <= 1)
+    return float(np.prod(hi - lo) * inside.mean())
+`,
+        tests: [
+          { name: "triangle", code: `assert abs(simplex_volume([[0, 0], [4, 0], [0, 3]]) - 6) < 1e-12 and abs(simplex_volume([[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]]) - 1 / 6) < 1e-12, 'Triangle area 6, unit tetrahedron 1/6.'` },
+          { name: "degenerate", code: `assert simplex_volume([[0, 0, 0], [1, 1, 1], [2, 2, 2], [0, 1, 0]]) < 1e-12, 'Coplanar points enclose nothing.'` },
+          { name: "gram", code: `assert abs(gram_volume([[1, 0, 0], [0, 2, 0]]) - 2) < 1e-12 and abs(gram_volume([[1, 1, 0], [1, -1, 0]]) - 2) < 1e-12 and abs(gram_volume([[3, 4, 0]]) - 5) < 1e-12, 'A parallelogram in ℝ³ has area √det(VᵀV).'` },
+          { name: "monte carlo", code: `pts = [[0, 0, 0], [2, 0, 0], [0, 3, 0], [0, 0, 1]]
+v = monte_carlo_volume(pts, 200000, 0)
+assert abs(v - simplex_volume(pts)) < 0.02 and v == monte_carlo_volume(pts, 200000, 0), 'Estimate 1 by sampling the box.'` },
         ],
       },
     },

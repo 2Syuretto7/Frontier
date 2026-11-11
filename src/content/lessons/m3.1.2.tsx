@@ -142,6 +142,20 @@ print(u @ v / (np.linalg.norm(u) * np.linalg.norm(v)))`}</Code>
       answer: { kind: "numeric", value: 0.7333, tolerance: 0.0002 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+u = np.array([3.0, 4.0])
+v = np.array([4.0, -3.0])
+print(u @ v, round(np.linalg.norm(u + v) ** 2, 9), np.linalg.norm(u) ** 2 + np.linalg.norm(v) ** 2)`}</Code>
+          <p>Pythagoras for perpendicular vectors. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.0 50.0 50.0", "0.0 49.99999999999999 50.0", "24.0 50.0 50.0", "0.0 98.0 50.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -172,6 +186,57 @@ def angle_deg(u, v):
           { name: "cube diagonal", code: `assert abs(angle_deg([1, 1, 1], [1, 0, 0]) - 54.7356) < 1e-3, 'The cube diagonal and an edge meet at about 54.7 degrees.'` },
           { name: "parallel", code: `assert abs(angle_deg([1, 2], [2, 4])) < 1e-3, 'Parallel vectors give 0 degrees. Did you clip the cosine?'` },
           { name: "opposite", code: `assert abs(angle_deg([1, 2], [-3, -6]) - 180) < 1e-3, 'Opposite vectors give 180 degrees.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>check_inequalities(U, V)</C> for two arrays of shape (n, d) holding n pairs of vectors: return a dict with the largest value over the pairs of |u·v| − ‖u‖‖v‖ (Cauchy–Schwarz says ≤ 0) under <C>"cs"</C>, and of ‖u + v‖ − ‖u‖ − ‖v‖ (triangle inequality, ≤ 0) under <C>"tri"</C>, computed with vectorised NumPy (no Python loop over pairs). Then write <C>equality_cases(U, V, tol)</C>, the indices where Cauchy–Schwarz is an equality to within tol, which happens exactly when the vectors are parallel.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def check_inequalities(U, V):
+    return {'cs': 0.0, 'tri': 0.0}
+
+def equality_cases(U, V, tol):
+    return []
+`,
+        solution: `import numpy as np
+
+def check_inequalities(U, V):
+    U, V = np.asarray(U, float), np.asarray(V, float)
+    dots = np.einsum('ij,ij->i', U, V)
+    nu, nv = np.linalg.norm(U, axis=1), np.linalg.norm(V, axis=1)
+    return {'cs': float(np.max(np.abs(dots) - nu * nv)), 'tri': float(np.max(np.linalg.norm(U + V, axis=1) - nu - nv))}
+
+def equality_cases(U, V, tol):
+    U, V = np.asarray(U, float), np.asarray(V, float)
+    gap = np.linalg.norm(U, axis=1) * np.linalg.norm(V, axis=1) - np.abs(np.einsum('ij,ij->i', U, V))
+    return [int(i) for i in np.nonzero(gap <= tol)[0]]
+`,
+        tests: [
+          { name: "random", code: `import numpy as np
+rng = np.random.default_rng(0)
+U, V = rng.normal(size=(1000, 5)), rng.normal(size=(1000, 5))
+r = check_inequalities(U, V)
+assert r['cs'] <= 1e-12 and r['tri'] <= 1e-12 and r['cs'] < -1e-6, 'Both inequalities hold, strictly for random vectors.'` },
+          { name: "parallel", code: `import numpy as np
+U = np.array([[1.0, 2.0], [1.0, 0.0], [3.0, 3.0]])
+V = np.array([[-2.0, -4.0], [0.0, 1.0], [1.0, 1.0]])
+assert equality_cases(U, V, 1e-9) == [0, 2], 'Parallel pairs give equality.'` },
+          { name: "vectorised", code: `import inspect
+src = inspect.getsource(check_inequalities)
+assert 'for ' not in src, 'Use array operations, not a loop.'` },
+          { name: "triangle tight", code: `r = check_inequalities([[1.0, 1.0]], [[2.0, 2.0]])
+assert abs(r['tri']) < 1e-12 and abs(r['cs']) < 1e-12, 'Same direction: both are equalities.'` },
         ],
       },
     },

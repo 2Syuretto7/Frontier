@@ -145,6 +145,20 @@ for x in ([-2, 1, 0], [1, 1, -1], [3, 0, -1], [1, 1, 1]):
       answer: { kind: "numeric", value: 3 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+A = np.array([[1.0, 2.0, 3.0], [2.0, 4.0, 6.0]])
+x = np.array([1.0, 1.0, -1.0])
+print(A @ x, np.linalg.matrix_rank(A), A.shape[1] - np.linalg.matrix_rank(A))`}</Code>
+          <p>Is x in the null space, and what are the rank and the dimension of the null space? What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0. 0.] 1 2", "[0. 0.] 2 1", "[1. 2.] 1 2", "[0. 0.] 1 1"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -181,6 +195,72 @@ assert np.allclose(A @ N, 0), 'Every column must solve Ax = 0.'` },
 N = null_basis([[1, 2, 3]])
 assert np.linalg.matrix_rank(N) == 2, 'The basis vectors must be independent.'` },
           { name: "trivial", code: `assert null_basis([[1, 0], [0, 1]]).shape[1] == 0, 'An invertible matrix has only the zero vector in its null space.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>null_space_svd(A, tol=1e-10)</C>, an orthonormal basis of the null space of A as the columns of a matrix, taken from the rows of Vᵀ in the SVD whose singular values are below tol times the largest (or beyond the number of singular values). Then write <C>col_space_basis(A, tol=1e-10)</C>, an orthonormal basis of the column space from the columns of U, and <C>in_col_space(A, b)</C>, whether b lies in the column space (the residual after projecting onto that basis is below 1e−9 times ‖b‖ + 1).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def null_space_svd(A, tol=1e-10):
+    return np.zeros((np.asarray(A).shape[1], 0))
+
+def col_space_basis(A, tol=1e-10):
+    return np.asarray(A, float)
+
+def in_col_space(A, b):
+    return True
+`,
+        solution: `import numpy as np
+
+def _rank(s, tol):
+    return int(np.sum(s > tol * s[0])) if s.size and s[0] > 0 else 0
+
+def null_space_svd(A, tol=1e-10):
+    A = np.asarray(A, float)
+    U, s, Vt = np.linalg.svd(A)
+    r = _rank(s, tol)
+    return Vt[r:].T
+
+def col_space_basis(A, tol=1e-10):
+    A = np.asarray(A, float)
+    U, s, Vt = np.linalg.svd(A)
+    r = _rank(s, tol)
+    return U[:, :r]
+
+def in_col_space(A, b):
+    Q = col_space_basis(A)
+    b = np.asarray(b, float)
+    return bool(np.linalg.norm(b - Q @ (Q.T @ b)) < 1e-9 * (np.linalg.norm(b) + 1))
+`,
+        tests: [
+          { name: "null", code: `import numpy as np
+A = np.array([[1.0, 2.0, 3.0], [2.0, 4.0, 6.0]])
+N = null_space_svd(A)
+assert N.shape == (3, 2) and np.allclose(A @ N, 0) and np.allclose(N.T @ N, np.eye(2)), 'Two orthonormal null vectors.'` },
+          { name: "full rank", code: `import numpy as np
+assert null_space_svd(np.eye(3)).shape == (3, 0) and null_space_svd(np.zeros((2, 3))).shape == (3, 3), 'No null space, or everything.'` },
+          { name: "columns", code: `import numpy as np
+A = np.array([[1.0, 2.0], [2.0, 4.0], [3.0, 6.0]])
+Q = col_space_basis(A)
+assert Q.shape == (3, 1) and np.allclose(abs(Q[:, 0]), np.array([1, 2, 3]) / 14 ** 0.5), 'The column space is the line through (1, 2, 3).'` },
+          { name: "membership", code: `import numpy as np
+A = np.array([[1.0, 2.0], [2.0, 4.0], [3.0, 6.0]])
+assert in_col_space(A, [2, 4, 6]) and not in_col_space(A, [1, 0, 0]) and in_col_space(np.eye(3), [5, -1, 2]), 'b must be a combination of the columns.'` },
+          { name: "rank-nullity", code: `import numpy as np
+rng = np.random.default_rng(11)
+A = rng.normal(size=(5, 3)) @ rng.normal(size=(3, 7))
+assert col_space_basis(A).shape[1] + null_space_svd(A).shape[1] == 7, 'rank + nullity = number of columns.'` },
         ],
       },
     },

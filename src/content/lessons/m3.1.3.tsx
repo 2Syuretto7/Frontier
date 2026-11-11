@@ -154,6 +154,21 @@ print(np.argmax(E @ q))`}</Code>
       answer: { kind: "numeric", value: 0 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+E = np.array([[1.0, 0.0], [1.0, 1.0], [0.0, 2.0], [-1.0, 0.1]])
+q = np.array([2.0, 2.0])
+cos = E @ q / (np.linalg.norm(E, axis=1) * np.linalg.norm(q))
+print(np.argsort(-cos), round(float(cos.max()), 4))`}</Code>
+          <p>Ranking rows by cosine similarity to q. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[1 0 2 3] 1.0", "[1 2 0 3] 1.0", "[2 1 0 3] 1.0", "[1 0 2 3] 0.7071"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -187,6 +202,65 @@ assert list(top_k(E, [0.85, 0.75, 0.15], 1)) == [0], 'A long vector should not w
 assert list(top_k(E, [1, 0.1], 3)) == [0, 1, 2], 'Return the indices from most to least similar.'` },
           { name: "scale invariant", code: `E = [[10, 0], [0, 1]]
 assert list(top_k(E, [0.1, 1], 1)) == [1], 'Scaling a row should not change its similarity.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>normalise_rows(E)</C>, which scales each row of a matrix to unit length (leaving all-zero rows as zeros instead of dividing by 0), and <C>similarity_matrix(E)</C>, the matrix of cosine similarities between all pairs of rows, as one matrix product of normalised rows. Then write <C>nearest_pairs(E, k)</C>, the k pairs (i, j) with i &lt; j of highest cosine similarity, in decreasing order of similarity (break ties by (i, j)).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def normalise_rows(E):
+    return np.asarray(E, float)
+
+def similarity_matrix(E):
+    E = np.asarray(E, float)
+    return E @ E.T
+
+def nearest_pairs(E, k):
+    return []
+`,
+        solution: `import numpy as np
+
+def normalise_rows(E):
+    E = np.asarray(E, float)
+    n = np.linalg.norm(E, axis=1, keepdims=True)
+    return np.divide(E, n, out=np.zeros_like(E), where=n > 0)
+
+def similarity_matrix(E):
+    N = normalise_rows(E)
+    return N @ N.T
+
+def nearest_pairs(E, k):
+    S = similarity_matrix(E)
+    n = len(S)
+    pairs = [(-S[i, j], i, j) for i in range(n) for j in range(i + 1, n)]
+    pairs.sort()
+    return [(i, j) for _, i, j in pairs[:k]]
+`,
+        tests: [
+          { name: "normalise", code: `import numpy as np
+N = normalise_rows([[3, 4], [0, 0], [0, -2]])
+assert np.allclose(N, [[0.6, 0.8], [0, 0], [0, -1]]), 'Zero rows stay zero.'` },
+          { name: "matrix", code: `import numpy as np
+S = similarity_matrix([[1, 0], [1, 1], [0, 3]])
+assert np.allclose(S, [[1, 2 ** -0.5, 0], [2 ** -0.5, 1, 2 ** -0.5], [0, 2 ** -0.5, 1]]), 'Cosines between all pairs.'` },
+          { name: "pairs", code: `E = [[1, 0], [0.9, 0.1], [0, 1], [-1, 0.05], [0.1, 1]]
+assert nearest_pairs(E, 2) == [(2, 4), (0, 1)], 'The two most similar pairs.'` },
+          { name: "scale free", code: `import numpy as np
+rng = np.random.default_rng(1)
+E = rng.normal(size=(6, 4))
+D = E * rng.uniform(0.5, 10, size=(6, 1))
+assert np.allclose(similarity_matrix(E), similarity_matrix(D)), 'Scaling a row does not change cosines.'` },
         ],
       },
     },

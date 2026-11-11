@@ -140,6 +140,20 @@ print(A.shape[1] - np.linalg.matrix_rank(A))`}</Code>
       answer: { kind: "numeric", value: 2 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import sympy as sp
+A = sp.Matrix([[1, 2, 2, 2], [2, 4, 6, 8], [3, 6, 8, 10]])
+R, piv = A.rref()
+print(R.row(1), piv)`}</Code>
+          <p>The reduced row echelon form of a rank-2 matrix. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["Matrix([[0, 0, 1, 2]]) (0, 2)", "Matrix([[0, 1, 1, 2]]) (0, 1)", "Matrix([[0, 0, 1, 2]]) (0, 1, 2)", "Matrix([[0, 0, 2, 4]]) (0, 2)"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -186,6 +200,83 @@ assert np.allclose(rref([[1, 2, 2, 2], [2, 4, 6, 8], [3, 6, 8, 10]]), [[1, 2, 0,
 assert np.allclose(rref([[1, 1, 2], [2, 1, 1], [1, 2, 4]]), np.eye(3)), 'An invertible matrix reduces to the identity.'` },
           { name: "zero first column", code: `import numpy as np
 assert np.allclose(rref([[0, 2, 4], [0, 1, 3]]), [[0, 1, 0], [0, 0, 1]]), 'Skip a column with no non-zero entry: it has no pivot.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>rref_exact(A)</C>, the reduced row echelon form of a matrix of integers or fractions computed exactly with <C>fractions.Fraction</C> (no tolerance needed), returned as (R, pivots), where R is a list of lists of Fractions and pivots the tuple of pivot columns. Choose as pivot the first non-zero entry at or below the current row. Then write <C>solution_set(A, b)</C>, returning (particular solution, list of null-space basis vectors) for a consistent system, or <C>None</C> if inconsistent, with the free variables set to 0 in the particular solution and to the standard choices in the null vectors.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `from fractions import Fraction
+
+def rref_exact(A):
+    return ([[Fraction(x) for x in row] for row in A], ())
+
+def solution_set(A, b):
+    return None
+`,
+        solution: `from fractions import Fraction
+
+def rref_exact(A):
+    M = [[Fraction(x) for x in row] for row in A]
+    rows, cols = len(M), len(M[0])
+    piv, r = [], 0
+    for c in range(cols):
+        k = next((i for i in range(r, rows) if M[i][c] != 0), None)
+        if k is None:
+            continue
+        M[r], M[k] = M[k], M[r]
+        p = M[r][c]
+        M[r] = [x / p for x in M[r]]
+        for i in range(rows):
+            if i != r and M[i][c] != 0:
+                f = M[i][c]
+                M[i] = [x - f * y for x, y in zip(M[i], M[r])]
+        piv.append(c)
+        r += 1
+        if r == rows:
+            break
+    return (M, tuple(piv))
+
+def solution_set(A, b):
+    n = len(A[0])
+    Rm, piv = rref_exact([list(row) + [bi] for row, bi in zip(A, b)])
+    if n in piv:
+        return None
+    x = [Fraction(0)] * n
+    for i, c in enumerate(piv):
+        x[c] = Rm[i][n]
+    free = [j for j in range(n) if j not in piv]
+    basis = []
+    for f in free:
+        v = [Fraction(0)] * n
+        v[f] = Fraction(1)
+        for i, c in enumerate(piv):
+            v[c] = -Rm[i][f]
+        basis.append(v)
+    return (x, basis)
+`,
+        tests: [
+          { name: "strang", code: `Rm, piv = rref_exact([[1, 2, 2, 2], [2, 4, 6, 8], [3, 6, 8, 10]])
+assert piv == (0, 2) and Rm == [[1, 2, 0, -2], [0, 0, 1, 2], [0, 0, 0, 0]], 'Pivots in columns 0 and 2.'` },
+          { name: "fractions", code: `from fractions import Fraction
+Rm, piv = rref_exact([[3, 1], [1, 3]])
+assert Rm == [[1, 0], [0, 1]] and piv == (0, 1) and all(isinstance(x, Fraction) for row in Rm for x in row), 'Exact arithmetic.'` },
+          { name: "solution", code: `x, N = solution_set([[1, 2, 2, 2], [2, 4, 6, 8], [3, 6, 8, 10]], [1, 5, 6])
+assert x == [-2, 0, 1.5, 0] and N == [[-2, 1, 0, 0], [2, 0, -2, 1]], 'Particular solution plus null space.'` },
+          { name: "inconsistent", code: `assert solution_set([[1, 1], [2, 2]], [1, 3]) is None and solution_set([[1, 1], [2, 2]], [1, 2])[1] == [[-1, 1]], 'A zero row with a non-zero right side means no solution.'` },
+          { name: "hilbert", code: `from fractions import Fraction
+H = [[Fraction(1, i + j + 1) for j in range(6)] for i in range(6)]
+Rm, piv = rref_exact(H)
+assert piv == tuple(range(6)) and Rm == [[int(i == j) for j in range(6)] for i in range(6)], 'The Hilbert matrix is invertible, exactly.'` },
         ],
       },
     },

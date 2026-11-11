@@ -142,6 +142,21 @@ print(round(np.linalg.det(B)))`}</Code>
       answer: { kind: "numeric", value: 48 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+A = np.array([[2.0, 1.0], [1.0, 3.0]])
+B = np.array([[1.0, 4.0], [0.0, 2.0]])
+d = np.linalg.det
+print(round(d(A @ B), 6), round(d(A) * d(B), 6), round(d(3 * A), 6), round(d(A.T), 6))`}</Code>
+          <p>Product rule, scaling and transpose for determinants. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["10.0 10.0 45.0 5.0", "10.0 10.0 15.0 5.0", "10.0 10.0 45.0 -5.0", "10.0 7.0 45.0 5.0"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -184,6 +199,88 @@ def det(A):
 rng = np.random.default_rng(7)
 A = rng.standard_normal((6, 6))
 assert abs(det(A) - np.linalg.det(A)) < 1e-8, 'Your determinant differs from the true one on a random 6 × 6 matrix.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>det_exact(A)</C>, the determinant of an integer matrix computed exactly by the Bareiss algorithm: fraction-free elimination where each update is M[i][j] = (M[i][j]·M[k][k] − M[i][k]·M[k][j]) // previous pivot, with row swaps (changing the sign) when a pivot is 0. Every division is exact, all numbers stay integers, and the last pivot is the determinant. Then write <C>log_abs_det(A)</C> for a float matrix as the sum of log|uᵢᵢ| from an LU factorisation (use <C>scipy.linalg.lu_factor</C>), which works where the determinant itself overflows.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def det_exact(A):
+    return int(round(np.linalg.det(np.array(A, float))))
+
+def log_abs_det(A):
+    return float(np.log(abs(np.linalg.det(A))))
+`,
+        solution: `import numpy as np
+from scipy.linalg import lu_factor
+
+def det_exact(A):
+    M = [list(map(int, row)) for row in A]
+    n = len(M)
+    sign, prev = 1, 1
+    for k in range(n - 1):
+        if M[k][k] == 0:
+            swap = next((i for i in range(k + 1, n) if M[i][k] != 0), None)
+            if swap is None:
+                return 0
+            M[k], M[swap] = M[swap], M[k]
+            sign = -sign
+        for i in range(k + 1, n):
+            for j in range(k + 1, n):
+                M[i][j] = (M[i][j] * M[k][k] - M[i][k] * M[k][j]) // prev
+        prev = M[k][k]
+    return sign * M[n - 1][n - 1]
+
+def log_abs_det(A):
+    lu, piv = lu_factor(np.asarray(A, float))
+    return float(np.sum(np.log(np.abs(np.diag(lu)))))
+`,
+        tests: [
+          { name: "small", code: `assert det_exact([[2, 1], [1, 3]]) == 5 and det_exact([[0, 1], [1, 0]]) == -1 and det_exact([[1, 2], [2, 4]]) == 0, 'Swaps flip the sign.'` },
+          { name: "exact", code: `import random
+random.seed(5)
+from fractions import Fraction
+def ref(M):
+    M = [[Fraction(x) for x in r] for r in M]
+    n, d = len(M), Fraction(1)
+    for c in range(n):
+        p = next((i for i in range(c, n) if M[i][c] != 0), None)
+        if p is None:
+            return 0
+        if p != c:
+            M[c], M[p] = M[p], M[c]
+            d = -d
+        d *= M[c][c]
+        for i in range(c + 1, n):
+            f = M[i][c] / M[c][c]
+            M[i] = [a - f * b for a, b in zip(M[i], M[c])]
+    return d
+for _ in range(20):
+    n = random.randint(1, 7)
+    M = [[random.randint(-9, 9) for _ in range(n)] for _ in range(n)]
+    assert det_exact(M) == ref(M), M` },
+          { name: "big", code: `M = [[(i + 1) ** j for j in range(12)] for i in range(12)]
+import math
+expected = math.prod(j - i for i in range(1, 13) for j in range(i + 1, 13))
+assert det_exact(M) == expected, 'A 12 × 12 Vandermonde determinant, exactly.'` },
+          { name: "log det", code: `import numpy as np
+rng = np.random.default_rng(18)
+A = rng.normal(size=(400, 400)) * 10
+with np.errstate(all='ignore'):
+    raw = np.linalg.det(A)
+v = log_abs_det(A)
+assert np.isfinite(v) and abs(v - np.linalg.slogdet(A)[1]) < 1e-8, 'Sum logs instead of multiplying.'` },
         ],
       },
     },

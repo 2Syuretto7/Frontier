@@ -144,6 +144,23 @@ print(L[2, 1], U[1, 1])`}</Code>
       answer: { kind: "numeric", value: 8 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+A = np.array([[2.0, 1.0], [6.0, 8.0]])
+l = A[1, 0] / A[0, 0]
+U = A.copy()
+U[1] -= l * U[0]
+L = np.array([[1.0, 0.0], [l, 1.0]])
+print(L[1, 0], U[1], np.allclose(L @ U, A))`}</Code>
+          <p>One elimination step gives A = LU. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["3.0 [0. 5.] True", "3.0 [0. 8.] True", "0.3333333333333333 [0. 5.] True", "3.0 [0. 5.] False"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -184,6 +201,90 @@ rng = np.random.default_rng(2)
 A = rng.standard_normal((5, 5)) + 5 * np.eye(5)
 L, U = lu(A)
 assert np.allclose(L @ U, A) and np.allclose(np.triu(U), U) and np.allclose(np.tril(L), L), 'L must be lower triangular, U upper triangular, and LU must equal A.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>plu(A)</C>, the factorisation PA = LU with partial pivoting, returning (P, L, U) where P is a permutation matrix, L unit lower triangular with all multipliers of size at most 1, and U upper triangular. Then write <C>lu_solve(P, L, U, b)</C>, which solves Ax = b by forward and back substitution (loops, not <C>np.linalg.solve</C>), and <C>det_from_lu(P, U)</C>, det A = (sign of P)·∏ uᵢᵢ.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def plu(A):
+    A = np.asarray(A, float)
+    n = len(A)
+    return (np.eye(n), np.eye(n), A.copy())
+
+def lu_solve(P, L, U, b):
+    return np.linalg.solve(P.T @ L @ U, b)
+
+def det_from_lu(P, U):
+    return float(np.prod(np.diag(U)))
+`,
+        solution: `import numpy as np
+
+def plu(A):
+    U = np.asarray(A, float).copy()
+    n = len(U)
+    L, perm = np.eye(n), list(range(n))
+    for c in range(n - 1):
+        k = c + int(np.argmax(np.abs(U[c:, c])))
+        if k != c:
+            U[[c, k]] = U[[k, c]]
+            L[[c, k], :c] = L[[k, c], :c]
+            perm[c], perm[k] = perm[k], perm[c]
+        if U[c, c] == 0:
+            continue
+        for i in range(c + 1, n):
+            L[i, c] = U[i, c] / U[c, c]
+            U[i] -= L[i, c] * U[c]
+    P = np.eye(n)[perm]
+    return (P, L, U)
+
+def lu_solve(P, L, U, b):
+    y = P @ np.asarray(b, float)
+    n = len(y)
+    z = np.zeros(n)
+    for i in range(n):
+        z[i] = y[i] - L[i, :i] @ z[:i]
+    x = np.zeros(n)
+    for i in range(n - 1, -1, -1):
+        x[i] = (z[i] - U[i, i + 1:] @ x[i + 1:]) / U[i, i]
+    return x
+
+def det_from_lu(P, U):
+    return float(round(np.linalg.det(P)) * np.prod(np.diag(U)))
+`,
+        tests: [
+          { name: "factor", code: `import numpy as np
+rng = np.random.default_rng(8)
+A = rng.normal(size=(6, 6))
+P, L, U = plu(A)
+assert np.allclose(P @ A, L @ U) and np.allclose(np.triu(U), U) and np.allclose(np.diag(L), 1) and np.abs(L).max() <= 1 + 1e-12, 'PA = LU with multipliers at most 1.'` },
+          { name: "zero pivot", code: `import numpy as np
+A = np.array([[0.0, 2.0, 1.0], [1.0, 1.0, 1.0], [2.0, 1.0, 0.0]])
+P, L, U = plu(A)
+assert np.allclose(P @ A, L @ U), 'A zero in the corner needs a swap.'` },
+          { name: "solve", code: `import numpy as np
+rng = np.random.default_rng(9)
+A, b = rng.normal(size=(7, 7)), rng.normal(size=7)
+P, L, U = plu(A)
+assert np.allclose(lu_solve(P, L, U, b), np.linalg.solve(A, b)), 'Forward then back substitution.'` },
+          { name: "det", code: `import numpy as np
+rng = np.random.default_rng(10)
+A = rng.normal(size=(5, 5))
+P, L, U = plu(A)
+assert abs(det_from_lu(P, U) - np.linalg.det(A)) < 1e-10 * max(1, abs(np.linalg.det(A))), 'Each swap flips the sign.'` },
+          { name: "no solve", code: `import inspect
+assert 'solve' not in inspect.getsource(lu_solve).split(':', 1)[1], 'Substitute by hand.'` },
         ],
       },
     },

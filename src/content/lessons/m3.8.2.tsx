@@ -145,6 +145,21 @@ print(np.round(np.linalg.inv(X) @ A @ X, 6))`}</Code>
       answer: { kind: "choice", options: ["[[5. 0.] [0. 2.]]", "[[4. 1.] [2. 3.]]", "[[2. 0.] [0. 5.]]", "[[1. 0.] [0. 1.]]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+A = np.array([[3.0, 1.0], [0.0, 2.0]])
+B = np.array([[1.0, 1.0], [0.0, -1.0]])
+C = np.linalg.inv(B) @ A @ B
+print(np.round(C, 6), np.round(np.trace(C), 6) == np.trace(A))`}</Code>
+          <p>The matrix of A in a new basis, and its trace. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[[3. 0.]\n [0. 2.]] True", "[[3. 1.]\n [0. 2.]] True", "[[2. 0.]\n [0. 3.]] True", "[[3. 0.]\n [0. 2.]] False"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -178,6 +193,69 @@ rng = np.random.default_rng(9)
 A = rng.standard_normal((3, 3)); B = rng.standard_normal((3, 3))
 M = in_new_basis(A, B)
 assert abs(np.trace(M) - np.trace(A)) < 1e-8, 'The trace does not depend on the basis.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>change_of_basis(B_old, B_new)</C>, the matrix that converts coordinates relative to the basis columns of B_old into coordinates relative to B_new (solve rather than invert). Then write <C>similar_invariants(A)</C>, the tuple (trace, determinant, sorted eigenvalues rounded to 8 places, rank), and <C>are_similar_diagonalisable(A, B)</C>, which decides whether two diagonalisable matrices are similar by comparing sorted eigenvalues to within 1e−8 (complex allowed).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def change_of_basis(B_old, B_new):
+    return np.eye(len(B_old))
+
+def similar_invariants(A):
+    return (0.0, 0.0, (), 0)
+
+def are_similar_diagonalisable(A, B):
+    return True
+`,
+        solution: `import numpy as np
+
+def change_of_basis(B_old, B_new):
+    return np.linalg.solve(np.asarray(B_new, float), np.asarray(B_old, float))
+
+def similar_invariants(A):
+    A = np.asarray(A, float)
+    ev = np.linalg.eigvals(A)
+    ev = sorted(np.round(ev.real, 8) + 1j * np.round(ev.imag, 8), key=lambda z: (z.real, z.imag))
+    return (round(float(np.trace(A)), 8), round(float(np.linalg.det(A)), 8), tuple(ev), int(np.linalg.matrix_rank(A)))
+
+def are_similar_diagonalisable(A, B):
+    key = lambda z: (round(z.real, 6), round(z.imag, 6))
+    a = sorted(np.linalg.eigvals(np.asarray(A, float)), key=key)
+    b = sorted(np.linalg.eigvals(np.asarray(B, float)), key=key)
+    return bool(np.allclose(a, b, atol=1e-8))
+`,
+        tests: [
+          { name: "convert", code: `import numpy as np
+Bo = np.array([[1.0, 1.0], [0.0, 1.0]])
+Bn = np.array([[2.0, 0.0], [0.0, 1.0]])
+c = np.array([3.0, -1.0])
+C = change_of_basis(Bo, Bn)
+assert np.allclose(Bn @ (C @ c), Bo @ c), 'The same vector, new coordinates.'` },
+          { name: "round trip", code: `import numpy as np
+rng = np.random.default_rng(23)
+B1, B2 = rng.normal(size=(4, 4)), rng.normal(size=(4, 4))
+assert np.allclose(change_of_basis(B2, B1) @ change_of_basis(B1, B2), np.eye(4)), 'Converting there and back is the identity.'` },
+          { name: "invariants", code: `import numpy as np
+rng = np.random.default_rng(24)
+A = rng.normal(size=(4, 4))
+P = rng.normal(size=(4, 4))
+B = np.linalg.solve(P, A @ P)
+a, b = similar_invariants(A), similar_invariants(B)
+assert abs(a[0] - b[0]) < 1e-6 and abs(a[1] - b[1]) < 1e-6 and a[3] == b[3] and np.allclose(a[2], b[2], atol=1e-6), 'Similar matrices share these.'` },
+          { name: "similar", code: `import numpy as np
+assert are_similar_diagonalisable([[3.0, 1.0], [0.0, 2.0]], np.diag([2.0, 3.0])) and not are_similar_diagonalisable(np.diag([1.0, 2.0]), np.diag([1.0, 3.0])) and are_similar_diagonalisable([[0.0, -1.0], [1.0, 0.0]], [[0.0, 1.0], [-1.0, 0.0]]), 'Same eigenvalues, including ±i.'` },
         ],
       },
     },

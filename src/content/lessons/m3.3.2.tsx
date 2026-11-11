@@ -145,6 +145,21 @@ print(C[1, 0])`}</Code>
       answer: { kind: "numeric", value: 10 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+A = np.array([[1, 2], [3, 4]])
+B = np.array([[5, 6], [7, 8]])
+outer = sum(np.outer(A[:, k], B[k]) for k in range(2))
+print(outer[1], (A @ B)[:, 0], A[1] @ B[:, 1])`}</Code>
+          <p>Columns times rows, columns of the product, and one entry as a row times a column. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[43 50] [19 43] 50", "[19 22] [19 43] 50", "[43 50] [19 22] 50", "[43 50] [19 43] 46"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -183,6 +198,85 @@ assert np.allclose(matmul(A, B), A @ B), 'A 3 × 5 times a 5 × 2 should be 3 ×
           { name: "not commutative", code: `import numpy as np
 a = [[0, 1], [0, 0]]; b = [[0, 0], [1, 0]]
 assert np.allclose(matmul(a, b), [[1, 0], [0, 0]]), 'Check the order: column k of the first, row k of the second.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>strassen(A, B)</C>, Strassen&rsquo;s algorithm for n × n matrices with n a power of 2: split each into 2 × 2 blocks, form the seven products M₁ … M₇ recursively, and combine them; below n = 32 fall back to <C>A @ B</C>. Also write <C>count_mults(n)</C>, the number of scalar multiplications Strassen uses for n = 2ᵏ if it recursed all the way to 1 × 1 (that is 7ᵏ), and <C>block_multiply(A, B, b)</C>, ordinary multiplication done block by block with b × b blocks (n divisible by b).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def strassen(A, B):
+    return A @ B
+
+def count_mults(n):
+    return n ** 3
+
+def block_multiply(A, B, b):
+    return A @ B
+`,
+        solution: `import numpy as np
+
+def strassen(A, B):
+    n = len(A)
+    if n <= 32:
+        return A @ B
+    m = n // 2
+    A11, A12, A21, A22 = A[:m, :m], A[:m, m:], A[m:, :m], A[m:, m:]
+    B11, B12, B21, B22 = B[:m, :m], B[:m, m:], B[m:, :m], B[m:, m:]
+    M1 = strassen(A11 + A22, B11 + B22)
+    M2 = strassen(A21 + A22, B11)
+    M3 = strassen(A11, B12 - B22)
+    M4 = strassen(A22, B21 - B11)
+    M5 = strassen(A11 + A12, B22)
+    M6 = strassen(A21 - A11, B11 + B12)
+    M7 = strassen(A12 - A22, B21 + B22)
+    C = np.empty((n, n), dtype=np.result_type(A, B))
+    C[:m, :m] = M1 + M4 - M5 + M7
+    C[:m, m:] = M3 + M5
+    C[m:, :m] = M2 + M4
+    C[m:, m:] = M1 - M2 + M3 + M6
+    return C
+
+def count_mults(n):
+    k = n.bit_length() - 1
+    return 7 ** k
+
+def block_multiply(A, B, b):
+    n = len(A)
+    C = np.zeros((n, n), dtype=np.result_type(A, B))
+    for i in range(0, n, b):
+        for j in range(0, n, b):
+            for k in range(0, n, b):
+                C[i:i + b, j:j + b] += A[i:i + b, k:k + b] @ B[k:k + b, j:j + b]
+    return C
+`,
+        tests: [
+          { name: "integers", code: `import numpy as np
+rng = np.random.default_rng(4)
+A, B = rng.integers(-5, 6, size=(128, 128)), rng.integers(-5, 6, size=(128, 128))
+assert np.array_equal(strassen(A, B), A @ B), 'Exact for integers.'` },
+          { name: "floats", code: `import numpy as np
+rng = np.random.default_rng(5)
+A, B = rng.normal(size=(64, 64)), rng.normal(size=(64, 64))
+assert np.allclose(strassen(A, B), A @ B), 'Close for floats.'` },
+          { name: "recursion", code: `import inspect
+src = inspect.getsource(strassen)
+assert src.count('strassen(') >= 8, 'Seven recursive products.'` },
+          { name: "count", code: `assert count_mults(1) == 1 and count_mults(2) == 7 and count_mults(1024) == 7 ** 10, '7ᵏ instead of 8ᵏ.'` },
+          { name: "blocks", code: `import numpy as np
+rng = np.random.default_rng(6)
+A, B = rng.normal(size=(12, 12)), rng.normal(size=(12, 12))
+assert np.allclose(block_multiply(A, B, 4), A @ B) and np.allclose(block_multiply(A, B, 3), A @ B), 'Sum of block products.'` },
         ],
       },
     },

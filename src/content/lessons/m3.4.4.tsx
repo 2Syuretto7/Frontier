@@ -153,6 +153,21 @@ print(c)`}</Code>
       answer: { kind: "choice", options: ["[2. 1.]", "[1. 2.]", "[3. 3.]", "[1. 1.]"], correct: [0] },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+B = np.array([[1.0, 1.0], [1.0, -1.0]]).T
+v = np.array([3.0, 1.0])
+c = np.linalg.solve(B, v)
+print(c, B @ c)`}</Code>
+          <p>Coordinates of v = (3, 1) in the basis (1, 1), (1, −1). What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[2. 1.] [3. 1.]", "[1. 2.] [3. 1.]", "[2. -1.] [3. 1.]", "[3. 1.] [4. 2.]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -184,6 +199,61 @@ rng = np.random.default_rng(3)
 B = list(rng.standard_normal((4, 4))); v = rng.standard_normal(4)
 c = coordinates(B, v)
 assert np.allclose(sum(ci * bi for ci, bi in zip(c, B)), v), 'Combining the basis vectors with your coordinates should give v back.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>extend_to_basis(vectors, n)</C>, which takes independent vectors in ℝⁿ and extends them to a basis by appending standard basis vectors e₁, e₂, … in order whenever they raise the rank, returning the full list (the originals first). Then write <C>dimension_of_span(vectors)</C> and <C>intersection_dim(U, W)</C>, the dimension of the intersection of the spans of two lists of vectors, from dim(U ∩ W) = dim U + dim W − dim(U + W).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def extend_to_basis(vectors, n):
+    return list(vectors)
+
+def dimension_of_span(vectors):
+    return len(vectors)
+
+def intersection_dim(U, W):
+    return 0
+`,
+        solution: `import numpy as np
+
+def dimension_of_span(vectors):
+    return int(np.linalg.matrix_rank(np.array(vectors, float))) if len(vectors) else 0
+
+def extend_to_basis(vectors, n):
+    out = [list(map(float, v)) for v in vectors]
+    for i in range(n):
+        e = [0.0] * n
+        e[i] = 1.0
+        if dimension_of_span(out + [e]) > len(out):
+            out.append(e)
+    return out
+
+def intersection_dim(U, W):
+    return dimension_of_span(U) + dimension_of_span(W) - dimension_of_span(list(U) + list(W))
+`,
+        tests: [
+          { name: "extend", code: `B = extend_to_basis([[1, 1, 0]], 3)
+assert len(B) == 3 and B[0] == [1, 1, 0] and B[1:] == [[1, 0, 0], [0, 0, 1]], 'e₂ is in the span of (1, 1, 0) and e₁, so skip it.'` },
+          { name: "basis", code: `import numpy as np
+rng = np.random.default_rng(12)
+vs = rng.normal(size=(3, 6)).tolist()
+B = extend_to_basis(vs, 6)
+assert len(B) == 6 and np.linalg.matrix_rank(np.array(B)) == 6, 'Six independent vectors in ℝ⁶.'` },
+          { name: "span", code: `assert dimension_of_span([[1, 2, 3], [2, 4, 6], [0, 0, 1]]) == 2 and dimension_of_span([]) == 0, 'Repeated directions do not count.'` },
+          { name: "intersection", code: `U = [[1, 0, 0], [0, 1, 0]]
+W = [[0, 1, 0], [0, 0, 1]]
+assert intersection_dim(U, W) == 1 and intersection_dim([[1, 0, 0, 0], [0, 1, 0, 0]], [[0, 0, 1, 0], [0, 0, 0, 1]]) == 0, 'Two planes in ℝ³ meet in a line.'` },
         ],
       },
     },

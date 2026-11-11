@@ -149,6 +149,20 @@ print(np.round(Q.T @ Q, 6)[0, 1], np.round(abs(R[0, 0]) ** 2, 6))`}</Code>
       answer: { kind: "numeric", value: 10 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+A = np.array([[1.0, 1.0], [1.0, 0.0], [0.0, 1.0]])
+Q, R = np.linalg.qr(A)
+print(Q.shape, R.shape, np.allclose(Q.T @ Q, np.eye(2)), np.allclose(np.triu(R), R))`}</Code>
+          <p>The reduced QR factorisation of a 3 × 2 matrix. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["(3, 2) (2, 2) True True", "(3, 3) (3, 2) True True", "(3, 2) (2, 2) False True", "(2, 3) (2, 2) True True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -193,6 +207,96 @@ A = rng.standard_normal((5, 3))
 Q = gram_schmidt(A)
 R = Q.T @ A
 assert np.allclose(Q @ R, A) and np.allclose(np.tril(R, -1), 0), 'A should equal QR with R upper triangular.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Classical Gram–Schmidt loses orthogonality on nearly dependent columns. Write <C>cgs(A)</C> (classical: each projection coefficient uses the original column) and <C>mgs(A)</C> (modified: subtract each projection from the running vector immediately), both returning (Q, R). Then write <C>householder_qr(A)</C>, QR by Householder reflections returning a full m × m orthogonal Q and m × n upper triangular R. The tests measure ‖QᵀQ − I‖ on a nearly singular matrix, where MGS beats CGS and Householder beats both.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def cgs(A):
+    return np.linalg.qr(A)
+
+def mgs(A):
+    return np.linalg.qr(A)
+
+def householder_qr(A):
+    return np.linalg.qr(A, mode='complete')
+`,
+        solution: `import numpy as np
+
+def cgs(A):
+    A = np.asarray(A, float)
+    m, n = A.shape
+    Q, R = np.zeros((m, n)), np.zeros((n, n))
+    for j in range(n):
+        v = A[:, j].copy()
+        for i in range(j):
+            R[i, j] = Q[:, i] @ A[:, j]
+            v -= R[i, j] * Q[:, i]
+        R[j, j] = np.linalg.norm(v)
+        Q[:, j] = v / R[j, j]
+    return Q, R
+
+def mgs(A):
+    A = np.asarray(A, float)
+    m, n = A.shape
+    Q, R = np.zeros((m, n)), np.zeros((n, n))
+    for j in range(n):
+        v = A[:, j].copy()
+        for i in range(j):
+            R[i, j] = Q[:, i] @ v
+            v -= R[i, j] * Q[:, i]
+        R[j, j] = np.linalg.norm(v)
+        Q[:, j] = v / R[j, j]
+    return Q, R
+
+def householder_qr(A):
+    R = np.asarray(A, float).copy()
+    m, n = R.shape
+    Q = np.eye(m)
+    for k in range(min(m - 1, n)):
+        x = R[k:, k]
+        v = x.copy()
+        v[0] += (1 if x[0] >= 0 else -1) * np.linalg.norm(x)
+        nv = np.linalg.norm(v)
+        if nv == 0:
+            continue
+        v /= nv
+        R[k:] -= 2 * np.outer(v, v @ R[k:])
+        Q[:, k:] -= 2 * np.outer(Q[:, k:] @ v, v)
+    return Q, R
+`,
+        tests: [
+          { name: "factor", code: `import numpy as np
+rng = np.random.default_rng(16)
+A = rng.normal(size=(6, 4))
+for f in (cgs, mgs):
+    Q, R = f(A)
+    assert np.allclose(Q @ R, A) and np.allclose(np.triu(R), R), f.__name__` },
+          { name: "householder", code: `import numpy as np
+rng = np.random.default_rng(17)
+A = rng.normal(size=(5, 3))
+Q, R = householder_qr(A)
+assert Q.shape == (5, 5) and R.shape == (5, 3) and np.allclose(Q @ R, A) and np.allclose(Q.T @ Q, np.eye(5)) and np.allclose(np.tril(R, -1), 0), 'Full QR.'` },
+          { name: "stability", code: `import numpy as np
+n = 10
+H = 1 / (np.arange(n)[:, None] + np.arange(n) + 1)
+loss = lambda Q: np.linalg.norm(Q.T @ Q - np.eye(Q.shape[1]))
+lc, lm, lh = loss(cgs(H)[0]), loss(mgs(H)[0]), loss(householder_qr(H)[0])
+assert lc > 1e-2 and lm < lc / 100 and lh < 1e-13, f'CGS {lc:.1e}, MGS {lm:.1e}, Householder {lh:.1e}.'` },
+          { name: "own code", code: `import inspect
+assert 'linalg.qr' not in inspect.getsource(cgs) + inspect.getsource(mgs) + inspect.getsource(householder_qr), 'Write the loops yourself.'` },
         ],
       },
     },

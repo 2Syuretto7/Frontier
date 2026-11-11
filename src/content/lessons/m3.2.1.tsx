@@ -148,6 +148,22 @@ print(A[1, 1])`}</Code>
       answer: { kind: "numeric", value: 5 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+A = np.array([[2.0, 1.0, 1.0], [4.0, -6.0, 0.0], [-2.0, 7.0, 2.0]])
+A[1] -= 2 * A[0]
+A[2] += A[0]
+A[2] += A[1]
+print(A[:, 0], np.diag(A))`}</Code>
+          <p>Elimination on Strang's example. What are the first column and the pivots afterwards?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[2. 0. 0.] [ 2. -8.  1.]", "[2. 0. 0.] [ 2. -6.  2.]", "[2. 4. -2.] [ 2. -8.  1.]", "[2. 0. 0.] [ 2. -8. -1.]"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -192,6 +208,73 @@ assert np.allclose(solve([[0, 2, 4], [1, 1, 1], [2, 3, 5]], [2, 3, 5]), np.linal
 rng = np.random.default_rng(1)
 A = rng.standard_normal((6, 6)); b = rng.standard_normal(6)
 assert np.allclose(solve(A, b), np.linalg.solve(A, b)), 'Your answer differs from the true solution on a random 6 × 6 system.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>solve_tridiagonal(a, b, c, d)</C>, the Thomas algorithm for a tridiagonal system with sub-diagonal a (length n − 1), diagonal b (length n), super-diagonal c (length n − 1) and right side d, by elimination without pivoting in O(n) time, returning x as a NumPy array. Do not build the full matrix. The tests solve a second-difference system with n = 100000 and compare with a dense solver for small n.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def solve_tridiagonal(a, b, c, d):
+    n = len(b)
+    A = np.diag(b) + np.diag(a, -1) + np.diag(c, 1)
+    return np.linalg.solve(A, d)
+`,
+        solution: `import numpy as np
+
+def solve_tridiagonal(a, b, c, d):
+    n = len(b)
+    cp = np.zeros(n - 1) if n > 1 else np.zeros(0)
+    dp = np.zeros(n)
+    b0 = float(b[0])
+    if n > 1:
+        cp[0] = c[0] / b0
+    dp[0] = d[0] / b0
+    for i in range(1, n):
+        m = b[i] - a[i - 1] * cp[i - 1]
+        if i < n - 1:
+            cp[i] = c[i] / m
+        dp[i] = (d[i] - a[i - 1] * dp[i - 1]) / m
+    x = np.zeros(n)
+    x[-1] = dp[-1]
+    for i in range(n - 2, -1, -1):
+        x[i] = dp[i] - cp[i] * x[i + 1]
+    return x
+`,
+        tests: [
+          { name: "small", code: `import numpy as np
+a, b, c, d = [1, 1], [4, 4, 4], [1, 1], [5, 6, 5]
+assert np.allclose(solve_tridiagonal(a, b, c, d), [1, 1, 1]), 'Each row sums to the right side.'` },
+          { name: "dense", code: `import numpy as np
+rng = np.random.default_rng(2)
+n = 30
+a, c = rng.normal(size=n - 1), rng.normal(size=n - 1)
+b = 5 + rng.random(n)
+d = rng.normal(size=n)
+A = np.diag(b) + np.diag(a, -1) + np.diag(c, 1)
+assert np.allclose(solve_tridiagonal(a, b, c, d), np.linalg.solve(A, d)), 'Agree with a dense solve.'` },
+          { name: "large", code: `import numpy as np
+import time
+n = 100000
+h = 1 / (n + 1)
+x = np.arange(1, n + 1) * h
+t = time.time()
+u = solve_tridiagonal(-np.ones(n - 1), 2 * np.ones(n), -np.ones(n - 1), h * h * np.ones(n))
+assert time.time() - t < 10 and np.allclose(u, x * (1 - x) / 2, atol=1e-8), '−u″ = 1 with u(0) = u(1) = 0 has u = x(1 − x)/2.'` },
+          { name: "no dense", code: `import numpy as np
+import inspect
+src = inspect.getsource(solve_tridiagonal)
+assert 'np.diag' not in src and 'linalg' not in src, 'Do not build the full matrix.'` },
         ],
       },
     },

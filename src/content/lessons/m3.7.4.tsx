@@ -144,6 +144,20 @@ print(lam[-1], round(abs(Q[:, 0] @ Q[:, 1]), 10))`}</Code>
       answer: { kind: "numeric", value: 3 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+S = np.array([[2.0, -1.0], [-1.0, 2.0]])
+vals, Q = np.linalg.eigh(S)
+print(vals, np.allclose(Q.T @ Q, np.eye(2)), np.allclose(Q @ np.diag(vals) @ Q.T, S))`}</Code>
+          <p>The spectral theorem for a symmetric matrix. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[1. 3.] True True", "[3. 1.] True True", "[1. 3.] False True", "[1. 2.] True True"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -179,6 +193,69 @@ assert all(np.linalg.matrix_rank(t) <= 1 for t in T), 'Each term is rank one: λ
           { name: "lesson", code: `import numpy as np
 T = spectral_terms([[2, 1], [1, 2]])
 assert any(np.allclose(t, [[1.5, 1.5], [1.5, 1.5]]) for t in T), 'For [[2, 1], [1, 2]] one term is 3 × (1/2)[[1, 1], [1, 1]].'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>jacobi_eigen(S, tol=1e-12)</C>, the cyclic Jacobi method for a symmetric matrix: sweep over all pairs p &lt; q, and whenever |S[p, q]| exceeds tol, apply the plane rotation that zeros it (θ from tan 2θ = 2S[p, q]/(S[q, q] − S[p, p]), or use the stable formulas with t = sign(τ)/(|τ| + √(1 + τ²)), τ = (S[q, q] − S[p, p])/(2S[p, q])), accumulating the rotations in V; stop when the off-diagonal norm is below tol. Return (eigenvalues sorted increasingly, matching eigenvector columns). Do not call <C>np.linalg.eig</C> or <C>eigh</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def jacobi_eigen(S, tol=1e-12):
+    S = np.asarray(S, float)
+    return (np.sort(np.diag(S)), np.eye(len(S)))
+`,
+        solution: `import numpy as np
+
+def jacobi_eigen(S, tol=1e-12):
+    A = np.asarray(S, float).copy()
+    n = len(A)
+    V = np.eye(n)
+    for _ in range(100):
+        off = np.sqrt(np.sum(A ** 2) - np.sum(np.diag(A) ** 2))
+        if off < tol:
+            break
+        for p in range(n - 1):
+            for q in range(p + 1, n):
+                if abs(A[p, q]) > tol / n:
+                    tau = (A[q, q] - A[p, p]) / (2 * A[p, q])
+                    t = (1.0 if tau >= 0 else -1.0) / (abs(tau) + np.sqrt(1 + tau * tau))
+                    c = 1 / np.sqrt(1 + t * t)
+                    s = t * c
+                    J = np.eye(n)
+                    J[p, p] = J[q, q] = c
+                    J[p, q], J[q, p] = s, -s
+                    A = J.T @ A @ J
+                    V = V @ J
+    vals = np.diag(A)
+    order = np.argsort(vals)
+    return (vals[order], V[:, order])
+`,
+        tests: [
+          { name: "2x2", code: `import numpy as np
+vals, V = jacobi_eigen([[2.0, -1.0], [-1.0, 2.0]])
+assert np.allclose(vals, [1, 3]) and np.allclose(abs(V[:, 0]), [2 ** -0.5] * 2), 'Eigenvalues 1 and 3.'` },
+          { name: "random", code: `import numpy as np
+rng = np.random.default_rng(21)
+B = rng.normal(size=(7, 7))
+S = B + B.T
+vals, V = jacobi_eigen(S)
+assert np.allclose(vals, np.linalg.eigvalsh(S), atol=1e-10) and np.allclose(V.T @ V, np.eye(7), atol=1e-10) and np.allclose(S @ V, V * vals, atol=1e-9), 'Orthogonal eigenvectors.'` },
+          { name: "diagonal", code: `import numpy as np
+vals, V = jacobi_eigen(np.diag([3.0, -1.0, 2.0]))
+assert np.allclose(vals, [-1, 2, 3]), 'Already diagonal.'` },
+          { name: "own code", code: `import inspect
+src = inspect.getsource(jacobi_eigen)
+assert 'eig' not in src.replace('jacobi_eigen', ''), 'Rotate the matrix yourself.'` },
         ],
       },
     },

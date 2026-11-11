@@ -141,6 +141,21 @@ print(n - r, m - r)`}</Code>
       answer: { kind: "numeric", value: 6 },
     },
     {
+      key: "read2",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+A = np.array([[1.0, 2.0], [2.0, 4.0], [0.0, 0.0]])
+r = np.linalg.matrix_rank(A)
+m, n = A.shape
+print(r, n - r, r, m - r)`}</Code>
+          <p>Dimensions of the column space, null space, row space and left null space of a 3 × 2 matrix of rank 1. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["1 1 1 2", "1 2 1 1", "2 0 2 1", "1 1 2 2"], correct: [0] },
+    },
+    {
       key: "write",
       rung: "apply",
       prompt: (
@@ -175,6 +190,61 @@ def dims(A):
 rng = np.random.default_rng(0)
 A = rng.standard_normal((5, 3)) @ rng.standard_normal((3, 7))
 assert tuple(dims(A)) == (3, 4, 3, 2), 'Use r, n − r, r and m − r.'` },
+        ],
+      },
+    },
+    {
+      key: "write2",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>four_subspaces(A, tol=1e-10)</C>, which returns a dict of orthonormal bases (as matrices whose columns are the basis vectors) for <C>"col"</C>, <C>"null"</C>, <C>"row"</C> and <C>"left_null"</C>, all read off one SVD A = UΣVᵀ: the first r columns of U and V, and the remaining columns. Then write <C>check_orthogonality(A)</C>, the largest absolute entry of (row basis)ᵀ(null basis) and of (col basis)ᵀ(left-null basis), which should be about 1e−15.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def four_subspaces(A, tol=1e-10):
+    A = np.asarray(A, float)
+    m, n = A.shape
+    return {'col': np.eye(m), 'null': np.zeros((n, 0)), 'row': np.eye(n), 'left_null': np.zeros((m, 0))}
+
+def check_orthogonality(A):
+    return 1.0
+`,
+        solution: `import numpy as np
+
+def four_subspaces(A, tol=1e-10):
+    A = np.asarray(A, float)
+    U, s, Vt = np.linalg.svd(A)
+    r = int(np.sum(s > tol * s[0])) if s.size and s[0] > 0 else 0
+    V = Vt.T
+    return {'col': U[:, :r], 'left_null': U[:, r:], 'row': V[:, :r], 'null': V[:, r:]}
+
+def check_orthogonality(A):
+    B = four_subspaces(A)
+    a = np.abs(B['row'].T @ B['null']).max(initial=0.0)
+    b = np.abs(B['col'].T @ B['left_null']).max(initial=0.0)
+    return float(max(a, b))
+`,
+        tests: [
+          { name: "dims", code: `B = four_subspaces([[1, 2], [2, 4], [0, 0]])
+assert [B[k].shape[1] for k in ('col', 'null', 'row', 'left_null')] == [1, 1, 1, 2], 'Dimensions r, n − r, r, m − r.'` },
+          { name: "null", code: `import numpy as np
+rng = np.random.default_rng(13)
+A = rng.normal(size=(4, 2)) @ rng.normal(size=(2, 6))
+B = four_subspaces(A)
+assert np.allclose(A @ B['null'], 0) and np.allclose(B['left_null'].T @ A, 0), 'Ax = 0 and yᵀA = 0.'` },
+          { name: "orthogonal", code: `import numpy as np
+rng = np.random.default_rng(14)
+A = rng.normal(size=(5, 3)) @ rng.normal(size=(3, 4))
+assert check_orthogonality(A) < 1e-12, 'The row space is orthogonal to the null space.'` },
+          { name: "full", code: `import numpy as np
+B = four_subspaces(np.eye(3))
+assert B['null'].shape == (3, 0) and B['left_null'].shape == (3, 0) and np.allclose(abs(np.linalg.det(B['col'])), 1), 'An invertible matrix has trivial null spaces.'` },
         ],
       },
     },
