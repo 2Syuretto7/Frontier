@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { KnnViz } from "@/components/viz/KnnViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -126,6 +127,54 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "choice", options: ["Area", "Bedrooms", "Both equally"], correct: [0] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`train = [((1, 1), "red"), ((2, 1), "red"), ((5, 5), "blue"), ((6, 5), "blue"), ((3, 3), "blue")]
+q = (2, 2)
+d = sorted(train, key=lambda t: (t[0][0] - q[0]) ** 2 + (t[0][1] - q[1]) ** 2)
+print(d[0][1], [lab for _, lab in d[:3]])`}</Code>
+          <p>The nearest neighbours of (2, 2). What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["red ['red', 'red', 'blue']", "red ['red', 'blue', 'red']", "blue ['blue', 'red', 'red']", "red ['red', 'red', 'red']"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>knn(train, q, k)</C>, which returns the majority label among the k training points nearest to q in Euclidean distance. <C>train</C> is a list of ((x, y), label) pairs. Break ties in the vote by the label of the single nearest point.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def knn(train, q, k):
+    return train[0][1]
+`,
+        solution: `from collections import Counter
+
+def knn(train, q, k):
+    d = sorted(train, key=lambda t: (t[0][0] - q[0]) ** 2 + (t[0][1] - q[1]) ** 2)
+    votes = Counter(lab for _, lab in d[:k])
+    best = max(votes.values())
+    tied = {lab for lab, v in votes.items() if v == best}
+    for _, lab in d:
+        if lab in tied:
+            return lab
+`,
+        tests: [
+          { name: "vote", code: `train = [((1, 1), 'red'), ((2, 1), 'red'), ((5, 5), 'blue'), ((6, 5), 'blue'), ((3, 3), 'blue')]
+assert knn(train, (2, 2), 3) == 'red' and knn(train, (5, 4), 3) == 'blue', 'Take the majority of the k nearest.'` },
+          { name: "tie", code: `train = [((0, 0), 'a'), ((3, 0), 'b'), ((10, 0), 'c')]
+assert knn(train, (1, 0), 2) == 'a', 'A one-one tie goes to the nearest point.'` },
+        ],
+      },
     },
     {
       key: "k-extremes",

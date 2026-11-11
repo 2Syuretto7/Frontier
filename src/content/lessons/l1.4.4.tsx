@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ForestViz } from "@/components/viz/ForestViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -137,6 +138,60 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>With the same trees, what does the variance of the average approach as <M>B</M> grows without limit?</p>,
       answer: { kind: "numeric", value: 1 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import random
+random.seed(0)
+n = 1000
+sample = [random.randrange(n) for _ in range(n)]
+print(round(len(set(sample)) / n, 2))`}</Code>
+          <p>A bootstrap sample draws n rows with replacement. What fraction of distinct rows does it contain, to two decimal places?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 0.63, tolerance: 0.021 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>bagged_predict(X, y, X_test, n_trees, seed)</C>: with <C>np.random.default_rng(seed)</C>, fit <C>n_trees</C> scikit-learn <C>DecisionTreeClassifier(random_state=0)</C> models on bootstrap samples (rows drawn with replacement) and return the majority vote for each test row. Labels are 0 or 1; ties go to 1.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+
+def bagged_predict(X, y, X_test, n_trees, seed):
+    return DecisionTreeClassifier(random_state=0).fit(X, y).predict(X_test)
+`,
+        solution: `import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+
+def bagged_predict(X, y, X_test, n_trees, seed):
+    rng = np.random.default_rng(seed)
+    votes = np.zeros(len(X_test))
+    for _ in range(n_trees):
+        idx = rng.integers(0, len(X), len(X))
+        votes += DecisionTreeClassifier(random_state=0).fit(X[idx], y[idx]).predict(X_test)
+    return (votes >= n_trees / 2).astype(int)
+`,
+        tests: [
+          { name: "better", code: `from sklearn.datasets import make_moons
+from sklearn.tree import DecisionTreeClassifier
+X, y = make_moons(600, noise=0.35, random_state=0)
+single = (DecisionTreeClassifier(random_state=0).fit(X[:300], y[:300]).predict(X[300:]) == y[300:]).mean()
+bag = (bagged_predict(X[:300], y[:300], X[300:], 50, 0) == y[300:]).mean()
+assert bag > single + 0.02, 'Averaging many bootstrapped trees should beat one tree on noisy data.'` },
+        ],
+      },
     },
     {
       key: "derive",

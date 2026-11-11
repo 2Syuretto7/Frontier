@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { BaselineViz } from "@/components/viz/BaselineViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -137,6 +138,50 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>A model&rsquo;s mean squared error is 4, and the variance of the target is 16. What is its <M>{"R^2"}</M>?</p>,
       answer: { kind: "numeric", value: 0.75 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+y = np.array([10, 12, 11, 30, 13])
+print(np.mean(np.abs(y - y.mean())), np.mean(np.abs(y - np.median(y))))`}</Code>
+          <p>Two constant baselines, judged by mean absolute error. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["5.92 4.4", "4.4 5.92", "5.92 5.92", "0.0 0.0"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>baselines(y_train, y_test)</C>, which returns a dict of test mean squared errors for three baselines: <C>"mean"</C> (predict the training mean), <C>"median"</C> (the training median) and <C>"last"</C> (for a time series, predict each test value by the previous actual value, using the last training value for the first).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def baselines(y_train, y_test):
+    return {'mean': 0.0, 'median': 0.0, 'last': 0.0}
+`,
+        solution: `import numpy as np
+
+def baselines(y_train, y_test):
+    mse = lambda p: float(np.mean((y_test - p) ** 2))
+    prev = np.concatenate([[y_train[-1]], y_test[:-1]])
+    return {'mean': mse(np.mean(y_train)), 'median': mse(np.median(y_train)), 'last': mse(prev)}
+`,
+        tests: [
+          { name: "values", code: `import numpy as np
+b = baselines(np.array([1.0, 2.0, 3.0, 10.0]), np.array([11.0, 12.0]))
+assert abs(b['mean'] - ((11 - 4) ** 2 + (12 - 4) ** 2) / 2) < 1e-9 and abs(b['median'] - ((11 - 2.5) ** 2 + (12 - 2.5) ** 2) / 2) < 1e-9 and abs(b['last'] - 1.0) < 1e-9, 'For a trend, predicting the last value is a hard baseline to beat.'` },
+        ],
+      },
     },
     {
       key: "meanbest",

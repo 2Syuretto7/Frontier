@@ -1,5 +1,6 @@
 import { Definition, Example, Quote, Remark } from "@/components/lesson/Blocks";
 import { ExpertSystemViz } from "@/components/viz/ExpertSystemViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -134,6 +135,57 @@ export const lesson: LessonContent = {
         kind: "choice",
         options: ["Finding the shortest driving route on a known road map", "Recognising faces in photographs", "Transcribing speech"],
         correct: [0],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`facts = {"socrates": "man"}
+rules = {"man": "mortal"}
+x = "socrates"
+chain = [x]
+while chain[-1] in facts or chain[-1] in rules:
+    chain.append(facts.get(chain[-1]) or rules[chain[-1]])
+print(chain)`}</Code>
+          <p>Symbolic AI chains facts and rules. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["['socrates', 'man', 'mortal']", "['socrates', 'mortal']", "['socrates', 'man']", "An infinite loop"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>forward_chain(facts, rules)</C>, a tiny expert system. <C>facts</C> is a set of strings and each rule is a pair (set of premises, conclusion). Keep adding conclusions whose premises all hold until nothing changes, and return the final set.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def forward_chain(facts, rules):
+    return set(facts)
+`,
+        solution: `def forward_chain(facts, rules):
+    known = set(facts)
+    changed = True
+    while changed:
+        changed = False
+        for premises, conclusion in rules:
+            if premises <= known and conclusion not in known:
+                known.add(conclusion)
+                changed = True
+    return known
+`,
+        tests: [
+          { name: "chain", code: `rules = [({'fever', 'cough'}, 'flu'), ({'flu'}, 'rest'), ({'rash'}, 'allergy')]
+assert forward_chain({'fever', 'cough'}, rules) == {'fever', 'cough', 'flu', 'rest'}, 'flu follows, and then rest follows from flu.'` },
+          { name: "order", code: `rules = [({'b'}, 'c'), ({'a'}, 'b')]
+assert forward_chain({'a'}, rules) == {'a', 'b', 'c'}, 'Keep looping until nothing new is added.'` },
+        ],
       },
     },
     {

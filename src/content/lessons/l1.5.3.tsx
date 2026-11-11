@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { RegPathViz } from "@/components/viz/RegPathViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -141,6 +142,56 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>A least-squares coefficient is <M>{"-0.4"}</M>. What is the lasso coefficient with <M>{"\\lambda = 0.5"}</M>?</p>,
       answer: { kind: "numeric", value: 0 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+from sklearn.linear_model import Lasso, Ridge
+rng = np.random.default_rng(0)
+X = rng.normal(size=(100, 5)); y = 3 * X[:, 0] + rng.normal(0, 0.1, 100)
+print(int((Lasso(alpha=0.1).fit(X, y).coef_ == 0).sum()), int((Ridge(alpha=10).fit(X, y).coef_ == 0).sum()))`}</Code>
+          <p>Lasso sets coefficients exactly to zero; ridge shrinks them. How many zero coefficients does each have?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["4 0", "0 4", "4 4", "5 0"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>ridge(X, y, lam)</C>, the closed-form ridge solution w = (XᵀX + λI)⁻¹Xᵀy with no intercept, using <C>np.linalg.solve</C>. Larger λ shrinks w towards zero.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def ridge(X, y, lam):
+    return np.linalg.solve(X.T @ X, X.T @ y)
+`,
+        solution: `import numpy as np
+
+def ridge(X, y, lam):
+    return np.linalg.solve(X.T @ X + lam * np.eye(X.shape[1]), X.T @ y)
+`,
+        tests: [
+          { name: "sklearn", code: `import numpy as np
+from sklearn.linear_model import Ridge
+rng = np.random.default_rng(0)
+X = rng.normal(size=(50, 4)); y = X @ [1, 2, 0, -1] + rng.normal(0, 0.5, 50)
+assert np.allclose(ridge(X, y, 5.0), Ridge(alpha=5.0, fit_intercept=False).fit(X, y).coef_), 'Add λ to the diagonal of XᵀX.'` },
+          { name: "shrinks", code: `import numpy as np
+rng = np.random.default_rng(1)
+X = rng.normal(size=(50, 4)); y = X @ [1, 2, 0, -1]
+assert np.linalg.norm(ridge(X, y, 100.0)) < np.linalg.norm(ridge(X, y, 0.1)), 'More regularisation, smaller weights.'` },
+        ],
+      },
     },
     {
       key: "soft",

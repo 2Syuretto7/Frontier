@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { SearchViz } from "@/components/viz/SearchViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -128,6 +129,60 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>What is the smallest number of random trials that gives at least a 95% chance of hitting the best 5%?</p>,
       answer: { kind: "numeric", value: 59 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from itertools import product
+grid = {"depth": [2, 4, 8], "lr": [0.1, 0.01], "n": [100, 200]}
+print(len(list(product(*grid.values()))))`}</Code>
+          <p>A grid search tries every combination. How many?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 12 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>grid_search(model_fn, grid, X, y)</C>, which tries every combination in the dict of lists <C>grid</C>, passing it as keyword arguments to <C>model_fn</C>, scores each by 3-fold <C>cross_val_score</C>, and returns (best parameter dict, best mean score).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def grid_search(model_fn, grid, X, y):
+    params = {k: v[0] for k, v in grid.items()}
+    return params, 0.0
+`,
+        solution: `from itertools import product
+from sklearn.model_selection import cross_val_score
+
+def grid_search(model_fn, grid, X, y):
+    best = (None, -float('inf'))
+    keys = list(grid)
+    for values in product(*grid.values()):
+        params = dict(zip(keys, values))
+        s = cross_val_score(model_fn(**params), X, y, cv=3).mean()
+        if s > best[1]:
+            best = (params, s)
+    return best
+`,
+        tests: [
+          { name: "search", code: `from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import GridSearchCV
+from sklearn.datasets import make_classification
+X, y = make_classification(300, random_state=0)
+grid = {'max_depth': [1, 3, 6], 'min_samples_leaf': [1, 10]}
+params, score = grid_search(lambda **kw: DecisionTreeClassifier(random_state=0, **kw), grid, X, y)
+ref = GridSearchCV(DecisionTreeClassifier(random_state=0), grid, cv=3).fit(X, y)
+assert params == ref.best_params_ and abs(score - ref.best_score_) < 1e-9, 'Try every combination and keep the best cross-validated score.'` },
+        ],
+      },
     },
     {
       key: "argue",

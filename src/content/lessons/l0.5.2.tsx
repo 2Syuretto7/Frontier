@@ -1,5 +1,6 @@
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { PipelineViz } from "@/components/viz/PipelineViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -140,6 +141,42 @@ export const lesson: LessonContent = {
         </p>
       ),
       answer: { kind: "numeric", value: 400 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`stages = ["pretraining", "supervised fine-tuning", "preference tuning", "evaluation", "deployment"]
+print(stages.index("preference tuning") - stages.index("pretraining"))`}</Code>
+          <p>The order of stages in building a model. How many steps after pretraining does preference tuning come?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 2 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>chat_format(messages)</C>, which turns a list of (role, text) pairs into the training text a post-trained chat model sees: each message as <C>"&lt;|role|&gt;\ntext\n"</C>, followed by a final <C>"&lt;|assistant|&gt;\n"</C> so the model writes the reply.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def chat_format(messages):
+    return ''.join(text for _, text in messages)
+`,
+        solution: `def chat_format(messages):
+    return ''.join(f'<|{role}|>\\n{text}\\n' for role, text in messages) + '<|assistant|>\\n'
+`,
+        tests: [
+          { name: "format", code: `out = chat_format([('system', 'Be brief.'), ('user', 'Hi')])
+assert out == '<|system|>\\nBe brief.\\n<|user|>\\nHi\\n<|assistant|>\\n', 'Tag each message with its role, and end with the assistant tag.'` },
+        ],
+      },
     },
     {
       key: "sycophancy",

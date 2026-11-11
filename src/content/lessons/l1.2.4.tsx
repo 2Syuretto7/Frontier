@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { GradientDescentViz } from "@/components/viz/GradientDescentViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -125,6 +126,56 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>For <M>{"L(w) = (w - 3)^2"}</M>, gradient descent converges for every learning rate between 0 and what value?</p>,
       answer: { kind: "numeric", value: 1 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`w = 0.0
+for step in range(3):
+    grad = 2 * (w - 5)
+    w -= 0.25 * grad
+    print(w, end=" ")`}</Code>
+          <p>Gradient descent on (w − 5)² with learning rate 0.25. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2.5 3.75 4.375 ", "5.0 5.0 5.0 ", "2.5 5.0 7.5 ", "1.25 2.5 3.75 "], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>gd_linear(X, y, lr, steps)</C>, which fits least squares without an intercept by gradient descent on the mean squared error, starting from zeros. The gradient is (2/n) Xᵀ(Xw − y). Return w.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def gd_linear(X, y, lr, steps):
+    return np.zeros(X.shape[1])
+`,
+        solution: `import numpy as np
+
+def gd_linear(X, y, lr, steps):
+    n = len(X)
+    w = np.zeros(X.shape[1])
+    for _ in range(steps):
+        w -= lr * (2 / n) * X.T @ (X @ w - y)
+    return w
+`,
+        tests: [
+          { name: "converges", code: `import numpy as np
+rng = np.random.default_rng(0)
+X = rng.normal(size=(200, 3)); y = X @ np.array([1.0, -2.0, 0.5])
+w = gd_linear(X, y, 0.1, 500)
+assert np.allclose(w, [1, -2, 0.5], atol=1e-3), 'Step against the gradient (2/n) Xᵀ(Xw − y).'` },
+        ],
+      },
     },
     {
       key: "factor",

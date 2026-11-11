@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { TaskSorterViz } from "@/components/viz/TaskSorterViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -143,6 +144,50 @@ export const lesson: LessonContent = {
         kind: "choice",
         options: ["Mark almost every message as spam", "Mark almost nothing as spam", "Become a perfect filter"],
         correct: [0],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from sklearn.dummy import DummyClassifier
+import numpy as np
+X = np.zeros((10, 1)); y = np.array([1] * 7 + [0] * 3)
+m = DummyClassifier(strategy="most_frequent").fit(X, y)
+print(m.score(X, y))`}</Code>
+          <p>Task, experience and performance: a model that ignores its input. What accuracy does it score?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 0.7, tolerance: 1e-09 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>learning_curve(model_fn, X, y, sizes)</C>, which for each n in <C>sizes</C> fits <C>model_fn()</C> on the first n rows and returns the list of accuracies on the last 100 rows. Performance at a task should improve with experience.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def learning_curve(model_fn, X, y, sizes):
+    return [0.0 for n in sizes]
+`,
+        solution: `def learning_curve(model_fn, X, y, sizes):
+    Xte, yte = X[-100:], y[-100:]
+    return [model_fn().fit(X[:n], y[:n]).score(Xte, yte) for n in sizes]
+`,
+        tests: [
+          { name: "improves", code: `import numpy as np
+from sklearn.linear_model import LogisticRegression
+rng = np.random.default_rng(0)
+X = rng.normal(size=(600, 5)); y = (X @ np.arange(1, 6) + rng.normal(size=600) > 0).astype(int)
+accs = learning_curve(lambda: LogisticRegression(), X, y, [10, 50, 400])
+assert len(accs) == 3 and accs[-1] > 0.85 and accs[-1] >= accs[0], 'Fit on the first n rows and score on the last 100.'` },
+        ],
       },
     },
     {

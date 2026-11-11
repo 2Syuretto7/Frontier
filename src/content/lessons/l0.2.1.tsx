@@ -1,5 +1,6 @@
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { BoundaryViz } from "@/components/viz/BoundaryViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -131,6 +132,51 @@ export const lesson: LessonContent = {
         kind: "choice",
         options: ["A false positive: a safe donation is thrown away", "A false negative: an infected donation is used"],
         correct: [1],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`scores = {"cat": 2.1, "dog": 3.4, "fox": 0.7}
+print(max(scores, key=scores.get))`}</Code>
+          <p>A classifier outputs a score per class and predicts the highest. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["dog", "cat", "fox", "3.4"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>accuracy(ys, preds)</C> and <C>majority_baseline(train_ys, test_ys)</C>, the accuracy on the test labels of always predicting the most common training label. Every classifier should beat this baseline.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def accuracy(ys, preds):
+    return 1.0
+
+def majority_baseline(train_ys, test_ys):
+    return 1.0
+`,
+        solution: `from collections import Counter
+
+def accuracy(ys, preds):
+    return sum(y == p for y, p in zip(ys, preds)) / len(ys)
+
+def majority_baseline(train_ys, test_ys):
+    top = Counter(train_ys).most_common(1)[0][0]
+    return accuracy(test_ys, [top] * len(test_ys))
+`,
+        tests: [
+          { name: "accuracy", code: `assert accuracy(['a', 'b', 'a', 'a'], ['a', 'a', 'a', 'b']) == 0.5, 'Two of four are right.'` },
+          { name: "baseline", code: `assert majority_baseline(['spam', 'ham', 'ham', 'ham'], ['ham', 'spam', 'ham', 'ham', 'ham']) == 0.8, 'Always predicting ham gets 4 of 5 right.'` },
+        ],
       },
     },
     {

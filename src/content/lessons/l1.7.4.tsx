@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ErrorViz } from "@/components/viz/ErrorViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -130,6 +131,46 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>A model is 95% accurate on 1,800 emails and 70% accurate on 200 others. What is its overall accuracy, as a decimal?</p>,
       answer: { kind: "numeric", value: 0.925 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import pandas as pd
+df = pd.DataFrame({"len": ["short", "long", "long", "short", "long"], "correct": [1, 0, 0, 1, 1]})
+print(df.groupby("len")["correct"].mean().round(2).to_dict())`}</Code>
+          <p>Slicing errors by a property of the input. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["{'long': 0.33, 'short': 1.0}", "{'short': 1.0, 'long': 0.33}", "{'long': 0.67, 'short': 1.0}", "{'long': 0.33, 'short': 0.5}"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>worst_slices(df, by, n)</C> for a DataFrame with a 0/1 column <C>correct</C>: group by the column <C>by</C>, compute each group&rsquo;s accuracy and size, keep groups with at least 5 rows, and return the n groups with the lowest accuracy as a list of (group, accuracy, size), worst first.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def worst_slices(df, by, n):
+    return []
+`,
+        solution: `def worst_slices(df, by, n):
+    g = df.groupby(by)['correct'].agg(['mean', 'size'])
+    g = g[g['size'] >= 5].sort_values('mean').head(n)
+    return [(k, float(r['mean']), int(r['size'])) for k, r in g.iterrows()]
+`,
+        tests: [
+          { name: "slices", code: `import pandas as pd
+df = pd.DataFrame({'lang': ['en'] * 10 + ['hi'] * 6 + ['ta'] * 2, 'correct': [1] * 9 + [0] + [1, 0, 0, 1, 0, 0] + [0, 0]})
+assert worst_slices(df, 'lang', 2) == [('hi', 2 / 6, 6), ('en', 0.9, 10)], 'Ignore slices too small to trust, like ta with 2 rows.'` },
+        ],
+      },
     },
     {
       key: "labels",

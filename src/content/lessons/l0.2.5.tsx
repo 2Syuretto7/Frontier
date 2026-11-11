@@ -1,5 +1,6 @@
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { BanditViz } from "@/components/viz/BanditViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -123,6 +124,58 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>A greedy player tries each machine once. A pays, B and C do not. If it now never explores, which machine will it play for ever?</p>,
       answer: { kind: "choice", options: ["A", "B", "C", "It cannot be predicted"], correct: [0] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`values = {"left": 0.2, "right": 0.7, "stay": 0.5}
+eps_greedy = lambda explore: "stay" if explore else max(values, key=values.get)
+print(eps_greedy(False), eps_greedy(True))`}</Code>
+          <p>A decision-making agent mostly exploits, sometimes explores. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["right stay", "stay right", "right right", "left stay"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>bandit(probs, steps, eps, seed)</C>, an ε-greedy agent for a multi-armed bandit. Seed <C>random</C> with <C>seed</C>. Each step, with probability eps pick a random arm, otherwise the arm with the highest average reward so far (untried arms count as average 0, ties to the lowest index); pull it, getting reward 1 with probability <C>probs[arm]</C>. Return the list of pull counts per arm.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def bandit(probs, steps, eps, seed):
+    return [steps] + [0] * (len(probs) - 1)
+`,
+        solution: `import random
+
+def bandit(probs, steps, eps, seed):
+    random.seed(seed)
+    k = len(probs)
+    pulls, wins = [0] * k, [0] * k
+    for _ in range(steps):
+        if random.random() < eps:
+            a = random.randrange(k)
+        else:
+            avg = [wins[i] / pulls[i] if pulls[i] else 0 for i in range(k)]
+            a = max(range(k), key=lambda i: (avg[i], -i))
+        pulls[a] += 1
+        wins[a] += random.random() < probs[a]
+    return pulls
+`,
+        tests: [
+          { name: "finds the best arm", code: `pulls = bandit([0.2, 0.5, 0.8], 3000, 0.1, 0)
+assert sum(pulls) == 3000 and pulls.index(max(pulls)) == 2, 'Exploring lets the agent discover that arm 2 pays best.'` },
+          { name: "explores", code: `pulls = bandit([0.2, 0.5, 0.8], 3000, 0.1, 0)
+assert min(pulls) > 0, 'With eps > 0 every arm gets tried.'` },
+        ],
+      },
     },
     {
       key: "different",

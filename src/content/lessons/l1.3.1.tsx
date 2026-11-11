@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { LogisticViz } from "@/components/viz/LogisticViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -117,6 +118,58 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>A feature has weight 0.8. By what factor does one more unit of it multiply the odds? Give two decimal places.</p>,
       answer: { kind: "numeric", value: 2.23, tolerance: 0.003 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import math
+w, b = 2.0, -1.0
+for x in (0.0, 0.5, 2.0):
+    print(round(1 / (1 + math.exp(-(w * x + b))), 2), end=" ")`}</Code>
+          <p>Logistic regression turns a score into a probability. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["0.27 0.5 0.95 ", "0.0 0.5 1.0 ", "0.27 0.5 0.88 ", "-1.0 0.0 3.0 "], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>fit_logistic(X, y, lr, steps)</C>, logistic regression by gradient descent on the mean log loss, with an intercept: prepend a column of ones, start from zeros, and use the gradient Xᵀ(σ(Xw) − y)/n. Return w (intercept first).
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def fit_logistic(X, y, lr, steps):
+    return np.zeros(X.shape[1] + 1)
+`,
+        solution: `import numpy as np
+
+def fit_logistic(X, y, lr, steps):
+    A = np.column_stack([np.ones(len(X)), X])
+    w = np.zeros(A.shape[1])
+    for _ in range(steps):
+        p = 1 / (1 + np.exp(-(A @ w)))
+        w -= lr * A.T @ (p - y) / len(y)
+    return w
+`,
+        tests: [
+          { name: "matches sklearn", code: `import numpy as np
+from sklearn.linear_model import LogisticRegression
+rng = np.random.default_rng(0)
+X = rng.normal(size=(300, 2)); y = (X @ [1.5, -1] + 0.3 + rng.normal(0, 1, 300) > 0).astype(float)
+w = fit_logistic(X, y, 0.5, 3000)
+m = LogisticRegression(C=1e6).fit(X, y)
+assert np.allclose(w, np.r_[m.intercept_, m.coef_[0]], atol=0.05), 'Gradient descent should reach the same weights as an unregularised solver.'` },
+        ],
+      },
     },
     {
       key: "squared",

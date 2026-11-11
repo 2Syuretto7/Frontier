@@ -1,5 +1,6 @@
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { LabLoopViz } from "@/components/viz/LabLoopViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -118,6 +119,43 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Put these in the order of the lab loop: evaluate, research, deploy, scale. Which comes second?</p>,
       answer: { kind: "choice", options: ["Evaluate", "Research", "Deploy", "Scale"], correct: [3] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`params, tokens = 7e9, 2e12
+print(f"{6 * params * tokens:.1e}")`}</Code>
+          <p>Training compute is about 6 × parameters × tokens FLOPs. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["8.4e+22", "8.4e+21", "1.4e+22", "8.4e+23"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>train_days(params, tokens, gpus, flops_per_gpu, utilisation)</C>, the number of days to train using compute ≈ 6 × params × tokens, given each GPU&rsquo;s peak FLOP/s and the fraction of it actually used.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def train_days(params, tokens, gpus, flops_per_gpu, utilisation):
+    return 6 * params * tokens / (gpus * flops_per_gpu)
+`,
+        solution: `def train_days(params, tokens, gpus, flops_per_gpu, utilisation):
+    seconds = 6 * params * tokens / (gpus * flops_per_gpu * utilisation)
+    return seconds / 86400
+`,
+        tests: [
+          { name: "estimate", code: `d = train_days(7e9, 2e12, 1024, 1e15, 0.4)
+assert abs(d - 6 * 7e9 * 2e12 / (1024 * 1e15 * 0.4) / 86400) < 1e-6 and 2 < d < 3, 'Divide by the effective FLOP/s, then convert seconds to days.'` },
+        ],
+      },
     },
     {
       key: "why-eval",

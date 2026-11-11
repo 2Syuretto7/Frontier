@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { PowerLawViz } from "@/components/viz/PowerLawViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -134,6 +135,59 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>By the rule of about 20 tokens per parameter, how many tokens should a 70-billion-parameter model be trained on? Give the answer in trillions.</p>,
       answer: { kind: "numeric", value: 1.4 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+q = np.array([1.0, 0.0])
+K = np.array([[1.0, 0.0], [0.0, 1.0], [1.0, 1.0]])
+s = K @ q
+w = np.exp(s) / np.exp(s).sum()
+print(np.round(w, 2))`}</Code>
+          <p>Attention turns dot-product scores into weights with a softmax. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[0.42 0.16 0.42]", "[0.33 0.33 0.33]", "[0.5 0.  0.5]", "[1. 0. 1.]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>attention(Q, K, V)</C>, scaled dot-product attention softmax(QKᵀ / √d) V for numpy arrays, where d is the number of columns of Q. Subtract each row&rsquo;s maximum before exponentiating so large scores do not overflow.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def attention(Q, K, V):
+    return V
+`,
+        solution: `import numpy as np
+
+def attention(Q, K, V):
+    s = Q @ K.T / np.sqrt(Q.shape[1])
+    s = s - s.max(axis=1, keepdims=True)
+    w = np.exp(s)
+    w = w / w.sum(axis=1, keepdims=True)
+    return w @ V
+`,
+        tests: [
+          { name: "uniform", code: `import numpy as np
+Q = np.zeros((2, 4)); K = np.ones((3, 4)); V = np.array([[1.0], [2.0], [3.0]])
+assert np.allclose(attention(Q, K, V), [[2.0], [2.0]]), 'Equal scores give the average of the values.'` },
+          { name: "stable", code: `import numpy as np
+Q = np.array([[100.0, 0.0]]); K = np.array([[100.0, 0.0], [0.0, 0.0]]); V = np.array([[1.0, 0.0], [0.0, 1.0]])
+out = attention(Q, K, V)
+assert np.allclose(out, [[1.0, 0.0]]) and not np.isnan(out).any(), 'Subtract the row maximum to avoid overflow.'` },
+        ],
+      },
     },
     {
       key: "straight",

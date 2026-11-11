@@ -1,6 +1,7 @@
 import { M } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { LeakageViz } from "@/components/viz/LeakageViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -127,6 +128,68 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>A benchmark has 500 questions; 60 appear verbatim in a model&rsquo;s training data. It answers 90% of those correctly and 70% of the other 440. What overall percentage does it report?</p>,
       answer: { kind: "numeric", value: 72.4 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LogisticRegression
+rng = np.random.default_rng(0)
+X = rng.normal(size=(100, 2000)); y = rng.integers(0, 2, 100)
+top = np.argsort(-np.abs(X[y == 1].mean(0) - X[y == 0].mean(0)))[:20]
+print(cross_val_score(LogisticRegression(), X[:, top], y, cv=5).mean() > 0.7)`}</Code>
+          <p>Labels are pure noise, but features were chosen using all the labels before cross-validation. Does it report accuracy above 0.7?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True", "False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Fix the leak. Write <C>honest_score(X, y)</C>, which does the same feature selection (the 20 features with the largest gap between class means) <em>inside</em> each of 5 folds, using only that fold&rsquo;s training rows, and returns the mean accuracy of <C>LogisticRegression()</C>. Use <C>KFold(5)</C> without shuffling.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LogisticRegression
+
+def honest_score(X, y):
+    top = np.argsort(-np.abs(X[y == 1].mean(0) - X[y == 0].mean(0)))[:20]
+    return cross_val_score(LogisticRegression(), X[:, top], y, cv=5).mean()
+`,
+        solution: `import numpy as np
+from sklearn.model_selection import KFold
+from sklearn.linear_model import LogisticRegression
+
+def honest_score(X, y):
+    scores = []
+    for tr, te in KFold(5).split(X):
+        Xtr, ytr = X[tr], y[tr]
+        top = np.argsort(-np.abs(Xtr[ytr == 1].mean(0) - Xtr[ytr == 0].mean(0)))[:20]
+        m = LogisticRegression().fit(Xtr[:, top], ytr)
+        scores.append(m.score(X[te][:, top], y[te]))
+    return float(np.mean(scores))
+`,
+        tests: [
+          { name: "no leak", code: `import numpy as np
+rng = np.random.default_rng(0)
+X = rng.normal(size=(100, 2000)); y = rng.integers(0, 2, 100)
+assert honest_score(X, y) < 0.65, 'On pure noise an honest estimate should be near 0.5.'` },
+          { name: "still works", code: `import numpy as np
+rng = np.random.default_rng(1)
+X = rng.normal(size=(200, 500)); y = (X[:, 0] + X[:, 1] > 0).astype(int)
+assert honest_score(X, y) > 0.8, 'With a real signal, selection inside the folds still finds it.'` },
+        ],
+      },
     },
     {
       key: "pipeline",

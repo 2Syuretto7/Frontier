@@ -1,5 +1,6 @@
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { SpamRulesViz } from "@/components/viz/SpamRulesViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -167,6 +168,46 @@ export const lesson: LessonContent = {
           "Neither can cope at all.",
         ],
         correct: [1],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def rule(word):
+    return word.endswith("ing")
+examples = {"running": True, "king": False, "sing": False, "eating": True}
+print(sum(rule(w) == y for w, y in examples.items()))`}</Code>
+          <p>A hand-written rule for 'is a verb in -ing form', tested on labelled examples. How many does it get right?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 2 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Instead of writing a rule, learn one from examples. Write <C>learn_threshold(xs, ys)</C>, which takes numbers and 0/1 labels and returns the threshold t, chosen from the values in xs, for which the rule &ldquo;predict 1 when x ≥ t&rdquo; makes the fewest mistakes. Break ties by the smallest t.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def learn_threshold(xs, ys):
+    return sum(xs) / len(xs)
+`,
+        solution: `def learn_threshold(xs, ys):
+    def errors(t):
+        return sum((x >= t) != bool(y) for x, y in zip(xs, ys))
+    return min(sorted(set(xs)), key=errors)
+`,
+        tests: [
+          { name: "separable", code: `assert learn_threshold([1, 2, 3, 8, 9, 10], [0, 0, 0, 1, 1, 1]) == 8, 'The rule x ≥ 8 makes no mistakes.'` },
+          { name: "noisy", code: `assert learn_threshold([1, 2, 3, 4, 5, 6], [0, 0, 1, 0, 1, 1]) == 3, 'x ≥ 3 makes one mistake, and so does x ≥ 5; take the smaller.'` },
+        ],
       },
     },
     {

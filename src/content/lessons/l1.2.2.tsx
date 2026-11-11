@@ -1,6 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { CoefViz } from "@/components/viz/CoefViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -117,6 +118,59 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: <p>Size is re-measured in hundreds of square metres, and the model refitted. What does the size coefficient of 0.9 become?</p>,
       answer: { kind: "numeric", value: 90 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+rng = np.random.default_rng(0)
+size = rng.uniform(50, 150, 300)
+rooms = np.round(size / 30 + rng.normal(0, 0.3, 300))
+price = 2 * size + rng.normal(0, 5, 300)
+X = np.column_stack([np.ones(300), size, rooms])
+w = np.linalg.lstsq(X, price, rcond=None)[0]
+print(round(w[1]), abs(w[2]) < 5)`}</Code>
+          <p>Price depends on size only; rooms is correlated with size. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2 True", "2 False", "0 True", "60 False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Coefficients depend on units. Write <C>standardised_coefs(X, y)</C>, which standardises each column of X to mean 0 and standard deviation 1, fits least squares with an intercept, and returns the coefficients without the intercept. They then measure the effect of a one-standard-deviation change.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def standardised_coefs(X, y):
+    A = np.column_stack([np.ones(len(X)), X])
+    return np.linalg.lstsq(A, y, rcond=None)[0][1:]
+`,
+        solution: `import numpy as np
+
+def standardised_coefs(X, y):
+    Z = (X - X.mean(axis=0)) / X.std(axis=0)
+    A = np.column_stack([np.ones(len(Z)), Z])
+    return np.linalg.lstsq(A, y, rcond=None)[0][1:]
+`,
+        tests: [
+          { name: "units", code: `import numpy as np
+rng = np.random.default_rng(0)
+X = np.column_stack([rng.normal(0, 1, 200), rng.normal(0, 1000, 200)])
+y = X[:, 0] + X[:, 1] / 1000
+c = standardised_coefs(X, y)
+assert np.allclose(c, [X[:, 0].std(), X[:, 1].std() / 1000], rtol=1e-6) and abs(c[0] / c[1] - 1) < 0.2, 'After standardising, both features have similar effects.'` },
+        ],
+      },
     },
     {
       key: "flip",

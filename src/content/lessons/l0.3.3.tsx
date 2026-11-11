@@ -1,5 +1,6 @@
 import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { TreeSplitViz } from "@/components/viz/TreeSplitViz";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -127,6 +128,63 @@ export const lesson: LessonContent = {
         kind: "choice",
         options: ["Each question compares one feature with a threshold", "Trees are always trained on two features", "The loss function forces it"],
         correct: [0],
+      },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def tree(age, income):
+    if age < 30:
+        return "rent" if income < 50 else "buy"
+    return "buy" if income > 20 else "rent"
+print(tree(25, 60), tree(40, 10), tree(29, 50))`}</Code>
+          <p>A hand-built decision tree. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["buy rent buy", "buy rent rent", "rent rent buy", "buy buy buy"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            A decision stump is a tree with one split. Write <C>gini(labels)</C>, the Gini impurity 1 − Σ pₖ², and <C>best_split(xs, ys)</C>, which returns the threshold t from the values of xs minimising the weighted Gini impurity of the two groups x &lt; t and x ≥ t. Skip thresholds that leave a group empty; break ties by the smallest t.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def gini(labels):
+    return 0.0
+
+def best_split(xs, ys):
+    return xs[0]
+`,
+        solution: `from collections import Counter
+
+def gini(labels):
+    n = len(labels)
+    return 1 - sum((c / n) ** 2 for c in Counter(labels).values())
+
+def best_split(xs, ys):
+    best, best_t = None, None
+    for t in sorted(set(xs)):
+        left = [y for x, y in zip(xs, ys) if x < t]
+        right = [y for x, y in zip(xs, ys) if x >= t]
+        if not left or not right:
+            continue
+        score = (len(left) * gini(left) + len(right) * gini(right)) / len(ys)
+        if best is None or score < best:
+            best, best_t = score, t
+    return best_t
+`,
+        tests: [
+          { name: "gini", code: `assert gini(['a', 'a']) == 0 and abs(gini(['a', 'b']) - 0.5) < 1e-9 and abs(gini(['a', 'b', 'c']) - 2 / 3) < 1e-9, 'A pure group has impurity 0.'` },
+          { name: "split", code: `assert best_split([1, 2, 3, 4, 5, 6], ['n', 'n', 'n', 'y', 'y', 'y']) == 4, 'x < 4 and x ≥ 4 separate the labels perfectly.'` },
+        ],
       },
     },
     {
