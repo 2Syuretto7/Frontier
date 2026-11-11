@@ -126,6 +126,49 @@ Host gpu
       answer: { kind: "numeric", value: 500 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`line = "Host gpu\\n  HostName 10.0.0.7\\n  User arnav\\n  Port 2222"
+cfg = dict(l.split() for l in line.splitlines()[1:])
+print(f"ssh -p {cfg['Port']} {cfg['User']}@{cfg['HostName']}")`}</Code>
+          <p>An ~/.ssh/config entry expanded into a full command. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["ssh -p 2222 arnav@10.0.0.7", "ssh -p 22 arnav@gpu", "ssh arnav@10.0.0.7:2222", "ssh -p 2222 gpu@10.0.0.7"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>parse_target(s)</C>, which splits an SSH or scp target such as <C>"arnav@box:/data/x.csv"</C> into a dict with keys <C>"user"</C>, <C>"host"</C> and <C>"path"</C>. The user defaults to <C>None</C> and the path to <C>""</C> when they are missing.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def parse_target(s):
+    user, rest = s.split('@')
+    host, path = rest.split(':')
+    return {'user': user, 'host': host, 'path': path}
+`,
+        solution: `def parse_target(s):
+    user = None
+    if '@' in s:
+        user, s = s.split('@', 1)
+    host, _, path = s.partition(':')
+    return {'user': user, 'host': host, 'path': path}
+`,
+        tests: [
+          { name: "full", code: `assert parse_target('arnav@box:/data/x.csv') == {'user': 'arnav', 'host': 'box', 'path': '/data/x.csv'}, 'Split at @ and then at the first colon.'` },
+          { name: "host only", code: `assert parse_target('box') == {'user': None, 'host': 'box', 'path': ''}, 'User and path are optional.'` },
+        ],
+      },
+    },
+    {
       key: "why",
       rung: "prove",
       prompt: (

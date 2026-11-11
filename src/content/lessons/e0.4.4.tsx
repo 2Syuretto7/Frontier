@@ -156,6 +156,45 @@ print(hi - lo)
       answer: { kind: "numeric", value: 8 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`a = {1, 2, 3, 4}
+b = {3, 4, 5}
+point = (2, 7)
+x, y = point
+print(a & b, len(a | b), x + y)`}</Code>
+          <p>Set operations and tuple unpacking. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["{3, 4} 5 9", "{3, 4} 7 9", "{1, 2, 5} 5 9", "{3, 4} 5 (2, 7)"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>common_and_unique(a, b)</C> for two lists, returning a tuple (sorted list of items in both, number of distinct items across both), using sets.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def common_and_unique(a, b):
+    return (a, len(a) + len(b))
+`,
+        solution: `def common_and_unique(a, b):
+    A, B = set(a), set(b)
+    return (sorted(A & B), len(A | B))
+`,
+        tests: [
+          { name: "example", code: `assert common_and_unique([1, 2, 2, 3], [2, 3, 4]) == ([2, 3], 4), 'Turn each list into a set; duplicates disappear.'` },
+        ],
+      },
+    },
+    {
       key: "choose",
       rung: "prove",
       prompt: (

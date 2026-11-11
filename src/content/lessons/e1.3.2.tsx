@@ -3,6 +3,7 @@ import { C, Code } from "@/components/lesson/Code";
 import { TraceViz } from "@/components/viz/TraceViz";
 import { code, steps } from "@/content/traces/e1.3.2";
 import type { LessonContent } from "@/lib/types";
+import { Playground } from "@/components/code/Playground";
 
 export const lesson: LessonContent = {
   id: "e1.3.2",
@@ -58,8 +59,8 @@ export const lesson: LessonContent = {
       </Definition>
 
       <Example title="late binding">
-        <Code>{`fs = [lambda: i for i in range(3)]
-print(fs[0](), fs[1](), fs[2]())    # 2 2 2, not 0 1 2`}</Code>
+        <Playground code={`fs = [lambda: i for i in range(3)]
+print(fs[0](), fs[1](), fs[2]())    # 2 2 2, not 0 1 2`} />
         <p>
           All three lambdas close over the same variable <C>i</C>, which is 2 by the time they are called. Bind the current
           value with a default argument, <C>lambda i=i: i</C>, to capture it at definition time.
@@ -129,6 +130,66 @@ fib(10)`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 11 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def counter():
+    n = 0
+    def tick():
+        nonlocal n
+        n += 1
+        return n
+    return tick
+a, b = counter(), counter()
+a(); a()
+print(a(), b())`}</Code>
+          <p>Each closure keeps its own n. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["3 1", "1 1", "3 4", "2 1"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write a decorator <C>memoise</C> that caches a one-argument function&rsquo;s results in a dictionary, and exposes the number of real calls as an attribute <C>calls</C> on the wrapper.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def memoise(f):
+    return f
+`,
+        solution: `import functools
+
+def memoise(f):
+    cache = {}
+    @functools.wraps(f)
+    def wrapper(x):
+        if x not in cache:
+            wrapper.calls += 1
+            cache[x] = f(x)
+        return cache[x]
+    wrapper.calls = 0
+    return wrapper
+`,
+        tests: [
+          { name: "caches", code: `@memoise
+def sq(x):
+    return x * x
+assert [sq(3), sq(3), sq(4)] == [9, 9, 16] and sq.calls == 2, 'The second sq(3) should come from the cache.'` },
+          { name: "recursion", code: `@memoise
+def fib(n):
+    return n if n < 2 else fib(n - 1) + fib(n - 2)
+assert fib(24) == 46368 and fib.calls == 25, 'Recursive calls go through the wrapper too.'` },
+        ],
+      },
     },
     {
       key: "timer",

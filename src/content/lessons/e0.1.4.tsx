@@ -3,6 +3,7 @@ import { C, Code } from "@/components/lesson/Code";
 import { TraceViz } from "@/components/viz/TraceViz";
 import { code, steps } from "@/content/traces/e0.1.4";
 import type { LessonContent } from "@/lib/types";
+import { Playground } from "@/components/code/Playground";
 
 export const lesson: LessonContent = {
   id: "e0.1.4",
@@ -56,11 +57,11 @@ export const lesson: LessonContent = {
           <C>print(a, b, c)</C> writes the values separated by single spaces and then moves to a new line. Two optional
           arguments change this: <C>sep</C> is put between values and <C>end</C> is put after the last one.
         </p>
-        <Code>{`
+        <Playground code={`
 print("a", "b", sep="-")    # a-b
 print("Hi", end="")
 print("there")              # Hithere
-`}</Code>
+`} />
       </Definition>
 
       <Definition title="f-strings">
@@ -146,6 +147,45 @@ print("there")
         </>
       ),
       answer: { kind: "choice", options: ["Hithere", "Hi there", "Hi, then there on the next line"], correct: [0] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`name = "Asha"
+score = 9.5
+print(f"{name} scored {score:.0f}", end="!")
+print(" Done")`}</Code>
+          <p>An f-string, a format and a changed line ending. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["Asha scored 10! Done", "Asha scored 9.5! Done", "Asha scored 10 Done", "Asha scored 9! Done"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Given <C>item</C> and <C>price</C>, print one line of a bill like <C>Tea: Rs 12.50</C>, with the price shown to two decimal places, using an f-string.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `item = "Tea"
+price = 12.5
+print(item, price)
+`,
+        solution: `item = "Tea"
+price = 12.5
+print(f"{item}: Rs {price:.2f}")
+`,
+        tests: [
+          { name: "format", code: `assert printed.strip() == 'Tea: Rs 12.50', 'Use {price:.2f} for two decimal places.'` },
+        ],
+      },
     },
     {
       key: "gst",

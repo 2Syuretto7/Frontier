@@ -138,6 +138,44 @@ seconds = t % 60            # 5
       },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`print(17 // 5, 17 % 5, 2 + 3 * 4 ** 2)`}</Code>
+          <p>Integer division, remainder and precedence. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["3 2 50", "3.4 2 400", "3 2 400", "3 3 50"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            <C>seconds</C> is a whole number of seconds. Use <C>//</C> and <C>%</C> to set <C>hours</C>, <C>minutes</C> and <C>secs</C> so that seconds = 3600 · hours + 60 · minutes + secs, with minutes and secs below 60.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `seconds = 7384
+hours = seconds // 3600
+minutes = 0
+secs = 0
+`,
+        solution: `seconds = 7384
+hours = seconds // 3600
+minutes = seconds % 3600 // 60
+secs = seconds % 60
+`,
+        tests: [
+          { name: "split", code: `assert (hours, minutes, secs) == (2, 3, 4), '7384 seconds is 2 hours, 3 minutes and 4 seconds.'` },
+        ],
+      },
+    },
+    {
       key: "divmod",
       rung: "prove",
       prompt: (

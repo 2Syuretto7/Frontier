@@ -117,6 +117,49 @@ dependencies = [
       answer: { kind: "choice", options: ["It always runs inside the project's own environment", "It installs every package on PyPI", "It disables imports from site-packages"], correct: [0] },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import sys
+print(sys.prefix == sys.base_prefix)`}</Code>
+          <p>Inside a virtual environment sys.prefix points at the environment, not the base Python. Frontier runs Python directly, with no virtual environment. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["True", "False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>which(name, path_dirs, installed)</C>, which models how a shell finds a command: return the first directory in <C>path_dirs</C> whose set in the dict <C>installed</C> contains <C>name</C>, or <C>None</C>. This is why activating an environment, which puts <C>.venv/bin</C> first, changes which <C>python</C> runs.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def which(name, path_dirs, installed):
+    for d in reversed(path_dirs):
+        if name in installed.get(d, set()):
+            return d
+    return None
+`,
+        solution: `def which(name, path_dirs, installed):
+    for d in path_dirs:
+        if name in installed.get(d, set()):
+            return d
+    return None
+`,
+        tests: [
+          { name: "first wins", code: `inst = {'/usr/bin': {'python', 'ls'}, '.venv/bin': {'python', 'pip'}}
+assert which('python', ['.venv/bin', '/usr/bin'], inst) == '.venv/bin' and which('ls', ['.venv/bin', '/usr/bin'], inst) == '/usr/bin', 'The earliest directory on PATH wins.'` },
+          { name: "missing", code: `assert which('uv', ['/usr/bin'], {'/usr/bin': {'ls'}}) is None, 'Return None when no directory has the command.'` },
+        ],
+      },
+    },
+    {
       key: "debug",
       rung: "prove",
       prompt: (

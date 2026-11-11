@@ -132,6 +132,55 @@ print(f"dropped {before - len(df)} rows, {missing} with no amount")`}</Code>
       answer: { kind: "numeric", value: 458.33, tolerance: 0.0001 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import pandas as pd
+import numpy as np
+s = pd.Series(["12", "n/a", "7", None, "7"])
+x = pd.to_numeric(s, errors="coerce")
+print(x.isna().sum(), x.dropna().drop_duplicates().sum())`}</Code>
+          <p>Coercing messy text to numbers. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["2 19.0", "1 26.0", "2 26.0", "An error"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>clean(df)</C> for a DataFrame with text columns <C>name</C> and <C>age</C>: strip whitespace from names and title-case them, convert age to numbers (bad values become missing), drop rows with a missing age, drop duplicate rows, and return the result with a fresh index.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import pandas as pd
+
+def clean(df):
+    return df
+`,
+        solution: `import pandas as pd
+
+def clean(df):
+    d = df.copy()
+    d['name'] = d['name'].str.strip().str.title()
+    d['age'] = pd.to_numeric(d['age'], errors='coerce')
+    d = d.dropna(subset=['age']).drop_duplicates()
+    return d.reset_index(drop=True)
+`,
+        tests: [
+          { name: "clean", code: `import pandas as pd
+raw = pd.DataFrame({'name': [' asha', 'Ravi ', 'ASHA', 'zoya'], 'age': ['31', 'unknown', '31', '27']})
+out = clean(raw)
+assert list(out['name']) == ['Asha', 'Zoya'] and list(out['age']) == [31, 27] and list(out.index) == [0, 1], 'Normalise names before dropping duplicates, and reset the index.'` },
+        ],
+      },
+    },
+    {
       key: "script",
       rung: "prove",
       prompt: (

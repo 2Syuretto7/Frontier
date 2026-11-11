@@ -125,6 +125,63 @@ assert totals_by_category([("food", 10.0), ("food", 5.5), ("rent", 100.0)]) == {
       answer: { kind: "numeric", value: 3 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`tasks = []
+def add(t):
+    tasks.append({"title": t, "done": False})
+def finish(i):
+    tasks[i]["done"] = True
+add("buy milk"); add("write lesson"); add("call home")
+finish(1)
+print([t["title"] for t in tasks if not t["done"]])`}</Code>
+          <p>A small to-do list. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["['buy milk', 'call home']", "['write lesson']", "['buy milk', 'write lesson']", "['call home']"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Build a tiny expense tracker. Write <C>add(log, item, amount)</C>, which appends a (item, amount) pair to the list <C>log</C>, and <C>report(log)</C>, which returns a dictionary with the <C>"total"</C>, the <C>"largest"</C> item name and the <C>"count"</C> of entries.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def add(log, item, amount):
+    pass
+
+def report(log):
+    return {}
+`,
+        solution: `def add(log, item, amount):
+    log.append((item, amount))
+
+def report(log):
+    return {
+        'total': sum(a for _, a in log),
+        'largest': max(log, key=lambda e: e[1])[0],
+        'count': len(log),
+    }
+`,
+        tests: [
+          { name: "add", code: `log = []
+add(log, 'tea', 20)
+assert log == [('tea', 20)], 'add should append an (item, amount) pair.'` },
+          { name: "report", code: `log = []
+for item, a in [('tea', 20), ('books', 450), ('bus', 30)]:
+    add(log, item, a)
+assert report(log) == {'total': 500, 'largest': 'books', 'count': 3}, 'Total 500, the largest is books, three entries.'` },
+        ],
+      },
+    },
+    {
       key: "extend",
       rung: "prove",
       prompt: (

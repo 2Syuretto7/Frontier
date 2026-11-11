@@ -134,6 +134,44 @@ def absolute(x):
       answer: { kind: "choice", options: ["Nothing visible: the program carries on", "It prints True", "It raises an AssertionError"], correct: [0] },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def is_leap(y):
+    return y % 4 == 0 and y % 100 != 0
+cases = {2024: True, 1900: False, 2000: True, 2023: False}
+print([y for y, want in cases.items() if is_leap(y) != want])`}</Code>
+          <p>Hand-picked test cases catch a missing rule. Which year fails?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[2000]", "[1900]", "[]", "[2024, 2000]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>is_leap(y)</C> correctly: divisible by 4, except century years, which must be divisible by 400. The tests include the edge cases a careful tester would choose.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def is_leap(y):
+    return y % 4 == 0 and y % 100 != 0
+`,
+        solution: `def is_leap(y):
+    return y % 4 == 0 and (y % 100 != 0 or y % 400 == 0)
+`,
+        tests: [
+          { name: "ordinary", code: `assert is_leap(2024) and not is_leap(2023), 'Most years: divisible by 4.'` },
+          { name: "centuries", code: `assert not is_leap(1900) and is_leap(2000), 'Century years must be divisible by 400.'` },
+        ],
+      },
+    },
+    {
       key: "design",
       rung: "prove",
       prompt: (

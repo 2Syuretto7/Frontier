@@ -134,6 +134,45 @@ print("Age: " + age)
       answer: { kind: "choice", options: ["The key was misspelt, so the dictionary has no such key", "The dictionary is empty", "A mark is not a number"], correct: [0] },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`try:
+    {"a": 1}["b"]
+except Exception as e:
+    print(type(e).__name__, e)`}</Code>
+          <p>Every error has a type and a message. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["KeyError 'b'", "IndexError b", "KeyError a", "NameError 'b'"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Running this program stops with <C>TypeError: can only concatenate str (not "int") to str</C>. Read the message, find the line, and fix it so it prints <C>Total: 30</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `a = 10
+b = 20
+print("Total: " + a + b)
+`,
+        solution: `a = 10
+b = 20
+print("Total: " + str(a + b))
+`,
+        tests: [
+          { name: "output", code: `assert printed.strip() == 'Total: 30', 'Add the numbers first, then turn the sum into text with str().'` },
+        ],
+      },
+    },
+    {
       key: "procedure",
       rung: "prove",
       prompt: (

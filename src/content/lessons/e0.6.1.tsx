@@ -158,6 +158,52 @@ print(count_evens([2, 4, 5, 6]))
       },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`def average(xs):
+    total = 0
+    for x in xs:
+        total += x
+        print("total so far", total)
+    return total / len(xs)
+average([4, 8])`}</Code>
+          <p>Print statements expose what a loop is doing. What is the last line printed?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["total so far 12", "total so far 8", "6.0", "total so far 4"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            This function should return the middle value of a list after sorting, but it is wrong for lists of even length. Experiment with small inputs to find the bug, then fix it so even-length lists give the mean of the middle two.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def median(xs):
+    s = sorted(xs)
+    return s[len(s) // 2]
+`,
+        solution: `def median(xs):
+    s = sorted(xs)
+    n = len(s)
+    if n % 2:
+        return s[n // 2]
+    return (s[n // 2 - 1] + s[n // 2]) / 2
+`,
+        tests: [
+          { name: "odd", code: `assert median([3, 1, 2]) == 2, 'Odd length: the middle value.'` },
+          { name: "even", code: `assert median([4, 1, 3, 2]) == 2.5, 'Even length: average the two middle values.'` },
+        ],
+      },
+    },
+    {
       key: "method",
       rung: "prove",
       prompt: (

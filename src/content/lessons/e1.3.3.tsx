@@ -3,6 +3,7 @@ import { C, Code } from "@/components/lesson/Code";
 import { TraceViz } from "@/components/viz/TraceViz";
 import { code, steps } from "@/content/traces/e1.3.3";
 import type { LessonContent } from "@/lib/types";
+import { Playground } from "@/components/code/Playground";
 
 export const lesson: LessonContent = {
   id: "e1.3.3",
@@ -62,7 +63,7 @@ export const lesson: LessonContent = {
       </Definition>
 
       <Example title="why you call model(x), not model.forward(x)">
-        <Code>{`class Module:
+        <Playground code={`class Module:
     def __call__(self, *args):
         # run hooks, record what is needed for gradients, then:
         return self.forward(*args)
@@ -74,7 +75,7 @@ class Linear(Module):
         return self.w * x + self.b
 
 layer = Linear(2.0, 1.0)
-print(layer(3.0))   # 7.0`}</Code>
+print(layer(3.0))   # 7.0`} />
         <p>
           <C>Linear</C> <strong>inherits</strong> from <C>Module</C>: it gets <C>__call__</C> for free and supplies its own{" "}
           <C>forward</C>. PyTorch&rsquo;s <C>nn.Module</C> works this way, which is why you define <C>forward</C> but call the
@@ -147,6 +148,62 @@ print(B().f())`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 11 },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`class Money:
+    def __init__(self, paise):
+        self.paise = paise
+    def __add__(self, other):
+        return Money(self.paise + other.paise)
+    def __repr__(self):
+        return f"Rs {self.paise // 100}.{self.paise % 100:02d}"
+print(Money(250) + Money(1075))`}</Code>
+          <p>Special methods make + and printing work. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["Rs 13.25", "Rs 1325", "Rs 13.025", "<Money object>"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write a class <C>Vec</C> for 2D vectors with <C>__init__(self, x, y)</C>, <C>__add__</C>, <C>__mul__</C> by a number, <C>__eq__</C>, <C>__abs__</C> (the length) and <C>__repr__</C> giving <C>Vec(3, 4)</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `class Vec:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+`,
+        solution: `import math
+
+class Vec:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+    def __add__(self, o):
+        return Vec(self.x + o.x, self.y + o.y)
+    def __mul__(self, k):
+        return Vec(self.x * k, self.y * k)
+    def __eq__(self, o):
+        return isinstance(o, Vec) and (self.x, self.y) == (o.x, o.y)
+    def __abs__(self):
+        return math.hypot(self.x, self.y)
+    def __repr__(self):
+        return f'Vec({self.x}, {self.y})'
+`,
+        tests: [
+          { name: "arithmetic", code: `assert Vec(1, 2) + Vec(3, 4) == Vec(4, 6) and Vec(1, 2) * 3 == Vec(3, 6), 'Define __add__, __mul__ and __eq__.'` },
+          { name: "length and repr", code: `assert abs(Vec(3, 4)) == 5 and repr(Vec(3, 4)) == 'Vec(3, 4)', 'abs() calls __abs__; repr() calls __repr__.'` },
+        ],
+      },
     },
     {
       key: "design",

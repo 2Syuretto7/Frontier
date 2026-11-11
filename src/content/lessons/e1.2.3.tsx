@@ -117,6 +117,46 @@ a 2,000-step run now trains smoothly (loss curve attached).`}</Code>
       answer: { kind: "choice", options: ["150 lines adding one feature with its tests", "3,000 lines refactoring and adding two features", "40 lines changed across 25 unrelated files"], correct: [0] },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import difflib
+old = ["def area(r):", "    return 3.14 * r * r"]
+new = ["def area(r):", "    return math.pi * r * r"]
+print(sum(1 for l in difflib.unified_diff(old, new, lineterm="") if l[:1] in "+-" and l[:3] not in ("+++", "---")))`}</Code>
+          <p>A reviewer sees a diff. How many changed lines (+ or −) does it show?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 2 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>review(diff)</C>, which takes a unified diff as a list of lines and returns (added, removed), the counts of lines starting with + and −, not counting the <C>+++</C> and <C>---</C> header lines. Reviewers use these numbers to judge a pull request&rsquo;s size.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def review(diff):
+    return (sum(l.startswith('+') for l in diff), sum(l.startswith('-') for l in diff))
+`,
+        solution: `def review(diff):
+    added = sum(1 for l in diff if l.startswith('+') and not l.startswith('+++'))
+    removed = sum(1 for l in diff if l.startswith('-') and not l.startswith('---'))
+    return (added, removed)
+`,
+        tests: [
+          { name: "counts", code: `d = ['--- a/x.py', '+++ b/x.py', '@@ -1,2 +1,3 @@', ' a', '-b', '+B', '+c']
+assert review(d) == (2, 1), 'Skip the +++ and --- headers.'` },
+        ],
+      },
+    },
+    {
       key: "review",
       rung: "prove",
       prompt: (

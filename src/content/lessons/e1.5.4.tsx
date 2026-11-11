@@ -101,6 +101,62 @@ print(a.sum())      # 15`}</Code>
       answer: { kind: "numeric", value: 28 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+a = np.arange(6)
+v = a[1:4]
+c = a[[1, 2, 3]]
+v[0] = 100
+c[1] = 200
+print(a)`}</Code>
+          <p>Slices are views; fancy indexing copies. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["[  0 100   2   3   4   5]", "[  0 100 200   3   4   5]", "[0 1 2 3 4 5]", "[  0   1 200   3   4   5]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>clip_outliers(x, k)</C>, which returns a <em>new</em> array where values more than k standard deviations from the mean are replaced by the mean, using a Boolean mask. The input must not change.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def clip_outliers(x, k):
+    m, s = x.mean(), x.std()
+    x[np.abs(x - m) > k * s] = m
+    return x
+`,
+        solution: `import numpy as np
+
+def clip_outliers(x, k):
+    m, s = x.mean(), x.std()
+    out = x.copy()
+    out[np.abs(x - m) > k * s] = m
+    return out
+`,
+        tests: [
+          { name: "clips", code: `import numpy as np
+x = np.array([1.0, 2.0, 3.0, 2.0, 100.0])
+y = clip_outliers(x, 1.5)
+assert y[-1] == x.mean() and np.allclose(y[:4], [1, 2, 3, 2]), 'Replace only the values beyond k standard deviations.'` },
+          { name: "copy", code: `import numpy as np
+x = np.array([1.0, 2.0, 3.0, 2.0, 100.0])
+clip_outliers(x, 1.5)
+assert x[-1] == 100.0, 'Work on a copy; the caller’s array must not change.'` },
+        ],
+      },
+    },
+    {
       key: "puzzle",
       rung: "prove",
       prompt: (

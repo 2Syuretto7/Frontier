@@ -132,6 +132,52 @@ with open("totals.csv", "w", newline="") as f:
       answer: { kind: "numeric", value: 4 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import csv, io
+data = io.StringIO("city,temp\\nPune,31\\nLeh,4\\nChennai,35\\n")
+rows = list(csv.DictReader(data))
+print(len(rows), max(rows, key=lambda r: int(r["temp"]))["city"])`}</Code>
+          <p>csv.DictReader turns each line after the header into a dictionary. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["3 Chennai", "4 Chennai", "3 Leh", "3 Pune"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            The file <C>sales.csv</C> has columns <C>region</C> and <C>amount</C>. Write <C>totals(path)</C>, which returns a dictionary from region to the total amount, as floats, using the <C>csv</C> module.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def totals(path):
+    return {}
+`,
+        solution: `import csv
+
+def totals(path):
+    out = {}
+    with open(path, newline='') as f:
+        for row in csv.DictReader(f):
+            out[row['region']] = out.get(row['region'], 0.0) + float(row['amount'])
+    return out
+`,
+        tests: [
+          { name: "totals", code: `assert totals('sales.csv') == {'North': 120.0, 'South': 40.5}, 'Add each amount, as a float, to its region.'` },
+        ],
+        setup: `with open('sales.csv', 'w') as f:
+    f.write('region,amount\\nNorth,100\\nSouth,40.5\\nNorth,20\\n')
+`,
+      },
+    },
+    {
       key: "totals",
       rung: "prove",
       prompt: (

@@ -3,6 +3,7 @@ import { C, Code } from "@/components/lesson/Code";
 import { TraceViz } from "@/components/viz/TraceViz";
 import { code, steps } from "@/content/traces/e0.1.1";
 import type { LessonContent } from "@/lib/types";
+import { Playground } from "@/components/code/Playground";
 
 export const lesson: LessonContent = {
   id: "e0.1.1",
@@ -59,10 +60,9 @@ export const lesson: LessonContent = {
         <p>
           The computer&rsquo;s processor understands only very simple numeric instructions. Python is a{" "}
           <strong>programming language</strong>: a precise notation that people can read. A program called the{" "}
-          <strong>interpreter</strong> reads Python text and carries it out. You save a program in a file such as{" "}
-          <C>total.py</C> and run it by typing <C>python3 total.py</C> at a terminal. You can also start the interpreter
-          on its own and type statements one at a time at its <C>&gt;&gt;&gt;</C> prompt, which is the quickest way to
-          experiment.
+          <strong>interpreter</strong> reads Python text and carries it out. In Frontier the interpreter runs inside your
+          browser: type a program into an editor like the one below and press Run. Every runnable example in these
+          lessons has its own editor, so you can change it and run it again, which is the quickest way to experiment.
         </p>
       </Definition>
 
@@ -70,13 +70,13 @@ export const lesson: LessonContent = {
         <p>
           Anything after a <C>#</C> on a line is a <strong>comment</strong>. Python ignores it; it is a note for people.
         </p>
-        <Code>{`
+        <Playground code={`
 # Work out the cost of three items at 120 rupees each.
 price = 120
 count = 3
 total = price * count   # 360
 print("Total:", total)
-`}</Code>
+`} />
       </Definition>
 
       <Example title="a bug of order">
@@ -164,6 +164,47 @@ print(x)
         </>
       ),
       answer: { kind: "choice", options: ["2 + 3", "5", "Nothing"], correct: [0] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`price = 45
+count = 4
+total = price * count
+price = 50
+print(total)`}</Code>
+          <p>Changing price after total is computed does not change total. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "numeric", value: 180 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write a program that sets <C>rent</C> to 15000 and <C>food</C> to 6500, works out <C>total</C> as their sum, and prints <C>Monthly: 21500</C> using <C>print("Monthly:", total)</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `rent = 15000
+food = 6500
+`,
+        solution: `rent = 15000
+food = 6500
+total = rent + food
+print("Monthly:", total)
+`,
+        tests: [
+          { name: "variable", code: `assert total == 21500, 'total should be rent + food.'` },
+          { name: "output", code: `assert printed.strip() == 'Monthly: 21500', 'Print exactly Monthly: 21500.'` },
+        ],
+      },
     },
     {
       key: "literal",

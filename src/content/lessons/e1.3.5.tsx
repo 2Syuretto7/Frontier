@@ -2,6 +2,7 @@ import { Definition, Example, Remark } from "@/components/lesson/Blocks";
 import { C, Code } from "@/components/lesson/Code";
 import { TypeCheckViz } from "@/components/viz/TypeCheckViz";
 import type { LessonContent } from "@/lib/types";
+import { Playground } from "@/components/code/Playground";
 
 export const lesson: LessonContent = {
   id: "e1.3.5",
@@ -64,7 +65,7 @@ layers: list[int] = [512, 256]`}</Code>
         <p>
           A <strong>dataclass</strong> writes the routine parts of a class from its annotated fields:
         </p>
-        <Code>{`from dataclasses import dataclass, field
+        <Playground code={`from dataclasses import dataclass, field
 
 @dataclass(frozen=True)
 class TrainConfig:
@@ -73,7 +74,7 @@ class TrainConfig:
     layers: tuple[int, ...] = (512, 256)
 
 cfg = TrainConfig(lr=1e-3)
-print(cfg)    # TrainConfig(lr=0.001, batch_size=64, layers=(512, 256))`}</Code>
+print(cfg)    # TrainConfig(lr=0.001, batch_size=64, layers=(512, 256))`} />
         <p>
           It generates <C>__init__</C>, <C>__repr__</C> and <C>__eq__</C>. <C>frozen=True</C> forbids changing fields after
           creation, so a configuration cannot be altered by accident halfway through a run.
@@ -128,6 +129,65 @@ class C:
       rung: "apply",
       prompt: <p><C>cfg = TrainConfig()</C> as defined above, then <C>cfg.lr = 0.1</C>. What happens?</p>,
       answer: { kind: "choice", options: ["An error, because the dataclass is frozen", "lr becomes 0.1", "A new TrainConfig is returned"], correct: [0] },
+    },
+    {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`from dataclasses import dataclass, field
+@dataclass(order=True)
+class Job:
+    priority: int
+    name: str = field(compare=False)
+jobs = [Job(3, "train"), Job(1, "fetch"), Job(2, "clean")]
+print([j.name for j in sorted(jobs)])`}</Code>
+          <p>A dataclass compares by its fields in order. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["['fetch', 'clean', 'train']", "['train', 'clean', 'fetch']", "['clean', 'fetch', 'train']", "An error"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write a frozen dataclass <C>Config</C> with typed fields <C>lr: float</C>, <C>batch_size: int = 32</C> and <C>layers: tuple = (64, 64)</C>, and a method <C>scaled(self, k)</C> that returns a new Config with <C>batch_size</C> multiplied by k and <C>lr</C> multiplied by k.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `class Config:
+    pass
+`,
+        solution: `from dataclasses import dataclass, replace
+
+@dataclass(frozen=True)
+class Config:
+    lr: float
+    batch_size: int = 32
+    layers: tuple = (64, 64)
+
+    def scaled(self, k):
+        return replace(self, lr=self.lr * k, batch_size=self.batch_size * k)
+`,
+        tests: [
+          { name: "defaults", code: `c = Config(0.001)
+assert c.batch_size == 32 and c.layers == (64, 64) and c == Config(0.001, 32, (64, 64)), 'Use @dataclass with defaults.'` },
+          { name: "frozen", code: `import dataclasses
+c = Config(0.1)
+try:
+    c.lr = 1.0
+    ok = False
+except dataclasses.FrozenInstanceError:
+    ok = True
+assert ok, 'Make it frozen=True so fields cannot be changed.'` },
+          { name: "scaled", code: `c = Config(0.1, 32).scaled(4)
+assert c.batch_size == 128 and abs(c.lr - 0.4) < 1e-12, 'Return a new Config with both values scaled.'` },
+        ],
+      },
     },
     {
       key: "factory",

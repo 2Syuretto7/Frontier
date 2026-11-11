@@ -107,6 +107,60 @@ np.ascontiguousarray(t)    # explicit copy into row-major order`}</Code>
       answer: { kind: "numeric", value: 8 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import numpy as np
+a = np.zeros((3, 4), dtype=np.int64)
+print(a.strides, a.T.strides, a.T.flags["C_CONTIGUOUS"])`}</Code>
+          <p>Strides are the bytes to step along each axis. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["(32, 8) (8, 32) False", "(8, 32) (32, 8) False", "(32, 8) (32, 8) True", "(4, 1) (1, 4) False"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>offset(index, strides)</C>, the byte offset of an element from the start of the buffer, and <C>c_strides(shape, itemsize)</C>, the strides of a C-contiguous array of that shape.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def offset(index, strides):
+    return sum(index)
+
+def c_strides(shape, itemsize):
+    return tuple(itemsize for _ in shape)
+`,
+        solution: `def offset(index, strides):
+    return sum(i * s for i, s in zip(index, strides))
+
+def c_strides(shape, itemsize):
+    out, step = [], itemsize
+    for n in reversed(shape):
+        out.append(step)
+        step *= n
+    return tuple(reversed(out))
+`,
+        tests: [
+          { name: "strides", code: `import numpy as np
+a = np.zeros((2, 3, 4), dtype=np.float32)
+assert c_strides((2, 3, 4), 4) == a.strides, 'The last axis steps by one item; each earlier axis by the size of everything after it.'` },
+          { name: "offset", code: `import numpy as np
+a = np.arange(24, dtype=np.int64).reshape(2, 3, 4)
+assert offset((1, 2, 3), a.strides) == a[1, 2, 3] * 8, 'Multiply each index by its stride and add.'` },
+          { name: "transpose", code: `import numpy as np
+a = np.arange(12, dtype=np.int64).reshape(3, 4).T
+assert offset((3, 1), a.strides) // 8 == a[3, 1], 'The same rule works for a transposed view.'` },
+        ],
+      },
+    },
+    {
       key: "speed",
       rung: "prove",
       prompt: (

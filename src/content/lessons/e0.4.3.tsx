@@ -130,6 +130,43 @@ export const lesson: LessonContent = {
       answer: { kind: "choice", options: ["'10/11/2026'", "'/10/11/2026/'", "['10', '11', '2026']", "'10112026'"], correct: [0] },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`s = "Frontier"
+print(s[0], s[-1], s[2:5], s[::-1][:3])`}</Code>
+          <p>Indexing and slicing a string. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["F r ont rei", "F r on rei", "F r ont Fro", "r F ont rei"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>is_palindrome(s)</C>, which ignores case and every character that is not a letter, and says whether s reads the same backwards.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def is_palindrome(s):
+    return s == s[::-1]
+`,
+        solution: `def is_palindrome(s):
+    t = ''.join(ch.lower() for ch in s if ch.isalpha())
+    return t == t[::-1]
+`,
+        tests: [
+          { name: "plain", code: `assert is_palindrome('level') and not is_palindrome('python'), 'Compare the string with its reverse.'` },
+          { name: "messy", code: `assert is_palindrome('Never odd or even.'), 'Drop spaces and punctuation and ignore case.'` },
+        ],
+      },
+    },
+    {
       key: "palindrome",
       rung: "prove",
       prompt: (

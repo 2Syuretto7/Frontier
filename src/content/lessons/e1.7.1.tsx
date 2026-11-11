@@ -127,6 +127,54 @@ df.merge(customers, on="city", how="left")   # every order, with its region if k
       answer: { kind: "numeric", value: 5 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`import pandas as pd
+df = pd.DataFrame({"city": ["Pune", "Pune", "Delhi"], "sales": [10, 30, 25]})
+print(df.groupby("city")["sales"].sum().to_dict())`}</Code>
+          <p>Group by a column and sum. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["{'Delhi': 25, 'Pune': 40}", "{'Pune': 40, 'Delhi': 25}", "{'Delhi': 25, 'Pune': 30}", "{'Pune': 10, 'Delhi': 25}"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>top_products(df, n)</C> for a DataFrame with columns <C>product</C>, <C>qty</C> and <C>price</C>: add a <C>revenue</C> column (qty × price) to a copy, total it by product, and return a Series of the n products with the highest revenue, largest first.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import pandas as pd
+
+def top_products(df, n):
+    return df.head(n)
+`,
+        solution: `import pandas as pd
+
+def top_products(df, n):
+    d = df.assign(revenue=df['qty'] * df['price'])
+    return d.groupby('product')['revenue'].sum().sort_values(ascending=False).head(n)
+`,
+        tests: [
+          { name: "top", code: `import pandas as pd
+df = pd.DataFrame({'product': ['pen', 'book', 'pen', 'bag'], 'qty': [10, 2, 5, 1], 'price': [10, 300, 10, 500]})
+r = top_products(df, 2)
+assert list(r.index) == ['book', 'bag'] and list(r.values) == [600, 500], 'book: 600, bag: 500, pen: 150.'` },
+          { name: "unchanged", code: `import pandas as pd
+df = pd.DataFrame({'product': ['a'], 'qty': [1], 'price': [2]})
+top_products(df, 1)
+assert 'revenue' not in df.columns, 'Do not add columns to the caller’s DataFrame.'` },
+        ],
+      },
+    },
+    {
       key: "hash",
       rung: "prove",
       prompt: (

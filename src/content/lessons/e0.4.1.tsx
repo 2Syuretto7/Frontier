@@ -161,6 +161,52 @@ print(total)
       answer: { kind: "numeric", value: 295 },
     },
     {
+      key: "read",
+      rung: "apply",
+      prompt: (
+        <>
+          <Code>{`xs = [3, 1, 4, 1, 5]
+ys = xs
+ys.append(9)
+print(len(xs), xs[-2], xs[1:3])`}</Code>
+          <p>Two names for one list. What does this print?</p>
+        </>
+      ),
+      answer: { kind: "choice", options: ["6 5 [1, 4]", "5 1 [1, 4]", "6 5 [1, 4, 1]", "6 9 [3, 1]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>running_total(xs)</C>, which returns a new list whose i-th entry is the sum of xs[0] to xs[i]. Do not change xs.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `def running_total(xs):
+    for i in range(1, len(xs)):
+        xs[i] += xs[i - 1]
+    return xs
+`,
+        solution: `def running_total(xs):
+    out, s = [], 0
+    for x in xs:
+        s += x
+        out.append(s)
+    return out
+`,
+        tests: [
+          { name: "values", code: `assert running_total([3, 1, 4]) == [3, 4, 8] and running_total([]) == [], 'Keep a running sum and append it.'` },
+          { name: "unchanged", code: `xs = [1, 2, 3]
+running_total(xs)
+assert xs == [1, 2, 3], 'Build a new list; do not change the one you were given.'` },
+        ],
+      },
+    },
+    {
       key: "copy",
       rung: "prove",
       prompt: (
