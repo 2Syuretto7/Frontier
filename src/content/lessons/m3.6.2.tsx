@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { CofactorViz } from "@/components/viz/CofactorViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -147,6 +147,47 @@ print(round(sum((-1) ** (1 + j) * A[1, j] * np.linalg.det(minor(1, j)) for j in 
         </>
       ),
       answer: { kind: "numeric", value: -59 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>cofactor_det(A)</C>, which computes the determinant recursively by cofactor expansion along the first row.
+            A 1 × 1 matrix is its own determinant.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def cofactor_det(A):
+    A = np.asarray(A, float)
+    return float(A[0, 0])
+`,
+        solution: `import numpy as np
+
+def cofactor_det(A):
+    A = np.asarray(A, float)
+    if len(A) == 1:
+        return float(A[0, 0])
+    total = 0.0
+    for j in range(len(A)):
+        minor = np.delete(A[1:], j, axis=1)
+        total += (-1) ** j * A[0, j] * cofactor_det(minor)
+    return total
+`,
+        tests: [
+          { name: "two by two", code: `assert abs(cofactor_det([[3, 8], [4, 6]]) + 14) < 1e-9, 'ad − bc for [[3, 8], [4, 6]] is −14.'` },
+          { name: "three by three", code: `assert abs(cofactor_det([[2, 1, 3], [0, 4, 1], [5, 2, 0]]) + 59) < 1e-9, 'The visualisation’s matrix has determinant −59. Check the alternating signs.'` },
+          { name: "four by four", code: `import numpy as np
+rng = np.random.default_rng(8)
+A = rng.integers(-3, 4, (4, 4))
+assert abs(cofactor_det(A) - np.linalg.det(A)) < 1e-8, 'Recursion should work for any size.'` },
+        ],
+      },
     },
     {
       key: "proof",

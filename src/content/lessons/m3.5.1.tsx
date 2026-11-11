@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ComplementViz } from "@/components/viz/ComplementViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -137,6 +137,45 @@ print(xr @ xn, xn[0])`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 1 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>split(A, x)</C>, which returns (xr, xn): the part of x in the row space of A and the part in its null space,
+            with xr + xn = x. Use the pseudoinverse <C>np.linalg.pinv(A) @ A</C>, which projects onto the row space.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def split(A, x):
+    x = np.asarray(x, float)
+    return x, np.zeros_like(x)
+`,
+        solution: `import numpy as np
+
+def split(A, x):
+    A, x = np.asarray(A, float), np.asarray(x, float)
+    xr = np.linalg.pinv(A) @ A @ x
+    return xr, x - xr
+`,
+        tests: [
+          { name: "sensor", code: `import numpy as np
+xr, xn = split([[1, 1]], [3, 1])
+assert np.allclose(xr, [2, 2]) and np.allclose(xn, [1, -1]), '(3, 1) splits as (2, 2) + (1, −1).'` },
+          { name: "perpendicular", code: `import numpy as np
+rng = np.random.default_rng(4)
+A = rng.standard_normal((2, 4)); x = rng.standard_normal(4)
+xr, xn = split(A, x)
+assert np.allclose(A @ xn, 0), 'The null space part must satisfy A xn = 0.'
+assert abs(xr @ xn) < 1e-9 and np.allclose(xr + xn, x), 'The two parts must be perpendicular and add up to x.'` },
+        ],
+      },
     },
     {
       key: "proof",

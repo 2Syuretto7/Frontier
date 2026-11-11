@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { IndependenceViz } from "@/components/viz/IndependenceViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -152,6 +152,37 @@ print(np.linalg.matrix_rank(V))`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 2 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>independent(vectors)</C>, which returns <C>True</C> when the vectors are linearly independent.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def independent(vectors):
+    return len(vectors) > 0
+`,
+        solution: `import numpy as np
+
+def independent(vectors):
+    V = np.column_stack([np.asarray(v, float) for v in vectors])
+    return bool(np.linalg.matrix_rank(V) == V.shape[1])
+`,
+        tests: [
+          { name: "dependent triple", code: `assert not independent([[1, 2, 3], [4, 5, 6], [7, 8, 9]]), '(1, 2, 3) − 2(4, 5, 6) + (7, 8, 9) = 0.'` },
+          { name: "independent triple", code: `assert independent([[1, 0, 0], [1, 1, 0], [1, 1, 1]]), 'These three are independent.'` },
+          { name: "too many", code: `assert not independent([[1, 0], [0, 1], [1, 1]]), 'Three vectors in the plane are always dependent.'` },
+          { name: "zero vector", code: `assert not independent([[1, 1, 0], [0, 0, 0]]), 'A set containing 0 is dependent.'` },
+        ],
+      },
     },
     {
       key: "null",

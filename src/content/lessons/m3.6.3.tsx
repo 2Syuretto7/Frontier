@@ -1,7 +1,7 @@
 import { M } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { DetAreaViz } from "@/components/viz/DetAreaViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -148,6 +148,41 @@ print(area)`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 2.5 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>area(points)</C>, which returns the area of a polygon from its corners in order, by the shoelace formula:
+            half the absolute value of the sum of xᵢyᵢ₊₁ − xᵢ₊₁yᵢ, wrapping round at the end.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def area(points):
+    return 0.0
+`,
+        solution: `import numpy as np
+
+def area(points):
+    P = np.asarray(points, float)
+    x, y = P[:, 0], P[:, 1]
+    return 0.5 * abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
+`,
+        tests: [
+          { name: "square", code: `assert abs(area([(0, 0), (1, 0), (1, 1), (0, 1)]) - 1) < 1e-12, 'The unit square has area 1.'` },
+          { name: "triangle", code: `assert abs(area([(0, 0), (4, 1), (1, 3)]) - 5.5) < 1e-12, 'The lesson’s triangle has area 5.5.'` },
+          { name: "scaled by det", code: `import numpy as np
+A = np.array([[2, 1], [0.5, 1.5]])
+sq = np.array([(0, 0), (1, 0), (1, 1), (0, 1)])
+assert abs(area(sq @ A.T) - 2.5) < 1e-12, 'The image of the unit square has area |det A| = 2.5.'` },
+        ],
+      },
     },
     {
       key: "orth",

@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { DotAngleViz } from "@/components/viz/DotAngleViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -140,6 +140,40 @@ print(u @ v / (np.linalg.norm(u) * np.linalg.norm(v)))`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 0.7333, tolerance: 0.0002 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>angle_deg(u, v)</C>, which returns the angle between two non-zero vectors in degrees, using the dot product
+            formula. Clip the cosine to [−1, 1] before taking the arccosine, so rounding never produces an error.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def angle_deg(u, v):
+    u, v = np.asarray(u, float), np.asarray(v, float)
+    return 0.0
+`,
+        solution: `import numpy as np
+
+def angle_deg(u, v):
+    u, v = np.asarray(u, float), np.asarray(v, float)
+    c = u @ v / (np.linalg.norm(u) * np.linalg.norm(v))
+    return float(np.degrees(np.arccos(np.clip(c, -1, 1))))
+`,
+        tests: [
+          { name: "perpendicular", code: `assert abs(angle_deg([1, 0], [0, 3]) - 90) < 1e-9, 'Perpendicular vectors should give 90.'` },
+          { name: "cube diagonal", code: `assert abs(angle_deg([1, 1, 1], [1, 0, 0]) - 54.7356) < 1e-3, 'The cube diagonal and an edge meet at about 54.7 degrees.'` },
+          { name: "parallel", code: `assert abs(angle_deg([1, 2], [2, 4])) < 1e-3, 'Parallel vectors give 0 degrees. Did you clip the cosine?'` },
+          { name: "opposite", code: `assert abs(angle_deg([1, 2], [-3, -6]) - 180) < 1e-3, 'Opposite vectors give 180 degrees.'` },
+        ],
+      },
     },
     {
       key: "triangle",

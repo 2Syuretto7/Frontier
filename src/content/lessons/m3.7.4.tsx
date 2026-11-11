@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { SymEllipseViz } from "@/components/viz/SymEllipseViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -142,6 +142,45 @@ print(lam[-1], round(abs(Q[:, 0] @ Q[:, 1]), 10))`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 3 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>spectral_terms(S)</C>, which returns a list of the rank one matrices λᵢqᵢqᵢᵀ for a symmetric S, using
+            <C>np.linalg.eigh</C>. They should add up to S.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def spectral_terms(S):
+    return [np.asarray(S, float)]
+`,
+        solution: `import numpy as np
+
+def spectral_terms(S):
+    lam, Q = np.linalg.eigh(np.asarray(S, float))
+    return [l * np.outer(Q[:, i], Q[:, i]) for i, l in enumerate(lam)]
+`,
+        tests: [
+          { name: "sum", code: `import numpy as np
+S = np.array([[2, 1], [1, 2]], float)
+assert np.allclose(sum(spectral_terms(S)), S), 'The terms must add up to S.'` },
+          { name: "one per eigenvalue", code: `import numpy as np
+S = np.array([[2, 1, 0], [1, 2, 1], [0, 1, 2]], float)
+T = spectral_terms(S)
+assert len(T) == 3, 'There is one term per eigenvalue.'
+assert all(np.linalg.matrix_rank(t) <= 1 for t in T), 'Each term is rank one: λ q qᵀ.'` },
+          { name: "lesson", code: `import numpy as np
+T = spectral_terms([[2, 1], [1, 2]])
+assert any(np.allclose(t, [[1.5, 1.5], [1.5, 1.5]]) for t in T), 'For [[2, 1], [1, 2]] one term is 3 × (1/2)[[1, 1], [1, 1]].'` },
+        ],
+      },
     },
     {
       key: "proof",

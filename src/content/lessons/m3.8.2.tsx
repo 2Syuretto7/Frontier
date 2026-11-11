@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ChangeBasisViz } from "@/components/viz/ChangeBasisViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -143,6 +143,43 @@ print(np.round(np.linalg.inv(X) @ A @ X, 6))`}</Code>
         </>
       ),
       answer: { kind: "choice", options: ["[[5. 0.] [0. 2.]]", "[[4. 1.] [2. 3.]]", "[[2. 0.] [0. 5.]]", "[[1. 0.] [0. 1.]]"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>in_new_basis(A, B)</C>, which returns the matrix of the map A in the basis given by the columns of B,
+            that is B⁻¹AB.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def in_new_basis(A, B):
+    return np.asarray(A, float)
+`,
+        solution: `import numpy as np
+
+def in_new_basis(A, B):
+    A, B = np.asarray(A, float), np.asarray(B, float)
+    return np.linalg.solve(B, A @ B)
+`,
+        tests: [
+          { name: "eigenbasis", code: `import numpy as np
+assert np.allclose(in_new_basis([[4, 1], [2, 3]], [[1, 1], [1, -2]]), [[5, 0], [0, 2]]), 'In the eigenvector basis the map is diagonal.'` },
+          { name: "shear", code: `import numpy as np
+assert np.allclose(in_new_basis([[1, 1], [0, 1]], [[1, 0], [1, 1]]), [[2, 1], [-1, 0]]), 'Check the order: B⁻¹ A B.'` },
+          { name: "invariants", code: `import numpy as np
+rng = np.random.default_rng(9)
+A = rng.standard_normal((3, 3)); B = rng.standard_normal((3, 3))
+M = in_new_basis(A, B)
+assert abs(np.trace(M) - np.trace(A)) < 1e-8, 'The trace does not depend on the basis.'` },
+        ],
+      },
     },
     {
       key: "sim",

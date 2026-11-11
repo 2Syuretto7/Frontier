@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { MatMulViz } from "@/components/viz/MatMulViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -143,6 +143,48 @@ print(C[1, 0])`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 10 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>matmul(A, B)</C> as a sum of outer products: column k of A times row k of B, added over k. Use
+            <C>np.outer</C> but not <C>@</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def matmul(A, B):
+    A, B = np.asarray(A, float), np.asarray(B, float)
+    C = np.zeros((A.shape[0], B.shape[1]))
+    return C
+`,
+        solution: `import numpy as np
+
+def matmul(A, B):
+    A, B = np.asarray(A, float), np.asarray(B, float)
+    C = np.zeros((A.shape[0], B.shape[1]))
+    for k in range(A.shape[1]):
+        C += np.outer(A[:, k], B[k])
+    return C
+`,
+        tests: [
+          { name: "lesson example", code: `import numpy as np
+assert np.allclose(matmul([[1, 2, 0], [3, -1, 1]], [[2, 1], [0, 1], [4, -2]]), [[2, 3], [10, 0]]), 'The lesson’s A times B is [[2, 3], [10, 0]].'` },
+          { name: "shapes", code: `import numpy as np
+rng = np.random.default_rng(0)
+A = rng.standard_normal((3, 5)); B = rng.standard_normal((5, 2))
+assert np.allclose(matmul(A, B), A @ B), 'A 3 × 5 times a 5 × 2 should be 3 × 2 and match A @ B.'` },
+          { name: "not commutative", code: `import numpy as np
+a = [[0, 1], [0, 0]]; b = [[0, 0], [1, 0]]
+assert np.allclose(matmul(a, b), [[1, 0], [0, 0]]), 'Check the order: column k of the first, row k of the second.'` },
+        ],
+      },
     },
     {
       key: "assoc",

@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { NormalEqViz } from "@/components/viz/NormalEqViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -140,6 +140,42 @@ print(x[0] + x[1])`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 2 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>fit_line(t, y)</C>, which returns (C, D) for the least squares line y = C + Dt. Build A with a column of
+            ones and a column of t, and solve the normal equations.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def fit_line(t, y):
+    return 0.0, 0.0
+`,
+        solution: `import numpy as np
+
+def fit_line(t, y):
+    t, y = np.asarray(t, float), np.asarray(y, float)
+    A = np.column_stack([np.ones_like(t), t])
+    C, D = np.linalg.solve(A.T @ A, A.T @ y)
+    return float(C), float(D)
+`,
+        tests: [
+          { name: "puzzle", code: `C, D = fit_line([0, 1, 2], [6, 0, 0])
+assert abs(C - 5) < 1e-9 and abs(D + 3) < 1e-9, 'The best line through (0, 6), (1, 0), (2, 0) is y = 5 − 3t.'` },
+          { name: "seven points", code: `C, D = fit_line(range(7), [1, 2.2, 2.8, 4.1, 4.9, 6.2, 6.8])
+assert abs(D - 0.98214) < 1e-4, 'The slope for the visualisation data is about 0.982.'` },
+          { name: "exact line", code: `C, D = fit_line([1, 2, 3, 4], [3, 5, 7, 9])
+assert abs(C - 1) < 1e-9 and abs(D - 2) < 1e-9, 'Points on y = 1 + 2t should be fitted exactly.'` },
+        ],
+      },
     },
     {
       key: "min",

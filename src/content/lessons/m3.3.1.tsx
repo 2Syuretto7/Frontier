@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ColumnCombViz } from "@/components/viz/ColumnCombViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -138,6 +138,45 @@ print((x[0] * A[:, 0] + x[1] * A[:, 1] == A @ x).all(), (A @ x)[1])`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 5 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>matvec(A, x)</C>, which computes Ax as a combination of the columns of A: x₁ times column 1, plus x₂ times
+            column 2, and so on. Do not use <C>@</C> or <C>np.dot</C>.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def matvec(A, x):
+    A = np.asarray(A, float)
+    out = np.zeros(A.shape[0])
+    return out
+`,
+        solution: `import numpy as np
+
+def matvec(A, x):
+    A = np.asarray(A, float)
+    out = np.zeros(A.shape[0])
+    for j, xj in enumerate(x):
+        out += xj * A[:, j]
+    return out
+`,
+        tests: [
+          { name: "square", code: `import numpy as np
+assert np.allclose(matvec([[2, -1], [1, 2]], [3, 1]), [5, 5]), 'A = [[2, −1], [1, 2]] times (3, 1) is (5, 5).'` },
+          { name: "rectangular", code: `import numpy as np
+assert np.allclose(matvec([[1, 2, 0], [0, 1, -1], [3, 0, 1], [1, 1, 1]], [2, 1, 3]), [4, -2, 9, 6]), 'The output has one entry per row of A.'` },
+          { name: "columns", code: `import numpy as np
+assert np.allclose(matvec([[1, 2], [3, 4]], [0, 1]), [2, 4]), 'A times e₂ should be column 2 of A.'` },
+        ],
+      },
     },
     {
       key: "pictures",

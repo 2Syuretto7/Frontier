@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { ProjectionViz } from "@/components/viz/ProjectionViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -151,6 +151,43 @@ print(np.allclose(P @ P, P), P[1, 1])`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 0.8 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>project(A, b)</C>, which returns the projection of b onto the column space of A (with independent columns),
+            by solving the normal equations.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def project(A, b):
+    return np.asarray(b, float)
+`,
+        solution: `import numpy as np
+
+def project(A, b):
+    A, b = np.asarray(A, float), np.asarray(b, float)
+    xhat = np.linalg.solve(A.T @ A, A.T @ b)
+    return A @ xhat
+`,
+        tests: [
+          { name: "line", code: `import numpy as np
+assert np.allclose(project([[3], [1]], [2, 3]), [2.7, 0.9]), 'Projecting (2, 3) onto the line through (3, 1) gives (2.7, 0.9).'` },
+          { name: "plane", code: `import numpy as np
+assert np.allclose(project([[1, 0], [1, 1], [1, 2]], [6, 0, 0]), [5, 2, -1]), 'The lesson’s plane example gives p = (5, 2, −1).'` },
+          { name: "error is perpendicular", code: `import numpy as np
+rng = np.random.default_rng(5)
+A = rng.standard_normal((6, 3)); b = rng.standard_normal(6)
+assert np.allclose(A.T @ (b - project(A, b)), 0), 'The error b − p must be perpendicular to every column.'` },
+        ],
+      },
     },
     {
       key: "props",

@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { EigenSearchViz } from "@/components/viz/EigenSearchViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -146,6 +146,51 @@ print(x @ A @ x)`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 5 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>power_iteration(A, steps)</C>: start from x = (1, 1, …, 1), repeatedly set x to Ax divided by its length,
+            and return (λ, x) with λ = xᵀAx.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def power_iteration(A, steps=100):
+    A = np.asarray(A, float)
+    x = np.ones(len(A)) / np.sqrt(len(A))
+    return 0.0, x
+`,
+        solution: `import numpy as np
+
+def power_iteration(A, steps=100):
+    A = np.asarray(A, float)
+    x = np.ones(len(A)) / np.sqrt(len(A))
+    for _ in range(steps):
+        x = A @ x
+        x = x / np.linalg.norm(x)
+    return float(x @ A @ x), x
+`,
+        tests: [
+          { name: "lesson matrix", code: `import numpy as np
+lam, x = power_iteration([[4, 1], [2, 3]])
+assert abs(lam - 5) < 1e-6, 'The largest eigenvalue of [[4, 1], [2, 3]] is 5.'
+assert abs(abs(x @ np.array([1, 1])) / np.sqrt(2) - 1) < 1e-6, 'x should line up with (1, 1).'` },
+          { name: "unit length", code: `import numpy as np
+lam, x = power_iteration([[2, 1], [1, 3]], 50)
+assert abs(np.linalg.norm(x) - 1) < 1e-9, 'Normalise x at every step.'` },
+          { name: "symmetric", code: `import numpy as np
+S = np.array([[2, -1, 0], [-1, 2, -1], [0, -1, 2]], float)
+lam, x = power_iteration(S, 500)
+assert abs(lam - (2 + np.sqrt(2))) < 1e-6, 'For this matrix the top eigenvalue is 2 + √2.'` },
+        ],
+      },
     },
     {
       key: "indep",

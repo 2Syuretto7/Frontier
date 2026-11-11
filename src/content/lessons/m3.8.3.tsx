@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { SvdStepsViz } from "@/components/viz/SvdStepsViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -143,6 +143,42 @@ print(round(s[0] * s[1], 6), round(s[0] ** 2 + s[1] ** 2, 6))`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 65 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>singular_values(A)</C>, which returns the singular values of A in decreasing order, computed as square roots
+            of the eigenvalues of AᵀA (use <C>np.linalg.eigvalsh</C>). Clip tiny negative eigenvalues to 0.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def singular_values(A):
+    return np.sort(np.abs(np.linalg.eigvals(np.asarray(A, float))))[::-1]
+`,
+        solution: `import numpy as np
+
+def singular_values(A):
+    A = np.asarray(A, float)
+    lam = np.linalg.eigvalsh(A.T @ A)
+    return np.sqrt(np.clip(lam, 0, None))[::-1]
+`,
+        tests: [
+          { name: "lesson", code: `import numpy as np
+assert np.allclose(singular_values([[3, 0], [4, 5]]), [np.sqrt(45), np.sqrt(5)]), 'For [[3, 0], [4, 5]] they are √45 and √5.'` },
+          { name: "not eigenvalues", code: `import numpy as np
+assert np.allclose(singular_values([[1, 100], [0, 1]]), np.linalg.svd([[1, 100], [0, 1]], compute_uv=False)), 'Singular values are not the eigenvalues: [[1, 100], [0, 1]] has eigenvalues 1, 1.'` },
+          { name: "rectangular", code: `import numpy as np
+A = np.arange(12.0).reshape(4, 3)
+assert np.allclose(singular_values(A), np.linalg.svd(A, compute_uv=False), atol=1e-6), 'It should work for a 4 × 3 matrix too.'` },
+        ],
+      },
     },
     {
       key: "orth",

@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { QuadFormViz } from "@/components/viz/QuadFormViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -150,6 +150,47 @@ for b in [0.5, 1.5, 2.5]:
         </>
       ),
       answer: { kind: "choice", options: ["yes yes no", "yes no no", "yes yes yes", "no no yes"], correct: [0] },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>is_pos_def(S)</C>, which decides whether a symmetric matrix is positive definite from its pivots: eliminate
+            without row swaps and return <C>False</C> as soon as a pivot is not positive. Do not compute eigenvalues.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def is_pos_def(S):
+    S = np.asarray(S, float)
+    return bool(np.all(np.diag(S) > 0))
+`,
+        solution: `import numpy as np
+
+def is_pos_def(S):
+    U = np.array(S, dtype=float)
+    n = len(U)
+    for c in range(n):
+        if U[c, c] <= 1e-12:
+            return False
+        for r in range(c + 1, n):
+            U[r] -= U[r, c] / U[c, c] * U[c]
+    return True
+`,
+        tests: [
+          { name: "bowl", code: `assert is_pos_def([[2, 1], [1, 2]]), '[[2, 1], [1, 2]] is positive definite.'` },
+          { name: "saddle", code: `assert not is_pos_def([[2, 3], [3, 2]]), '[[2, 3], [3, 2]] is a saddle: its second pivot is negative, though its diagonal is positive.'` },
+          { name: "semidefinite", code: `assert not is_pos_def([[1, 2], [2, 4]]), 'A zero pivot means semidefinite, not definite.'` },
+          { name: "tridiagonal", code: `import numpy as np
+T = 2 * np.eye(5) - np.eye(5, k=1) - np.eye(5, k=-1)
+assert is_pos_def(T), 'The 2, −1 tridiagonal matrix is positive definite.'` },
+        ],
+      },
     },
     {
       key: "ata",

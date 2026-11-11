@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { MarkovViz } from "@/components/viz/MarkovViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -144,6 +144,44 @@ print(round(u[0], 4))`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 0.6667, tolerance: 0.0002 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>steady_state(P)</C>, which returns the steady state of a Markov matrix: the eigenvector for eigenvalue 1,
+            scaled so its entries sum to 1.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def steady_state(P):
+    n = len(P)
+    return np.ones(n) / n
+`,
+        solution: `import numpy as np
+
+def steady_state(P):
+    lam, X = np.linalg.eig(np.asarray(P, float))
+    v = np.real(X[:, np.argmin(np.abs(lam - 1))])
+    return v / v.sum()
+`,
+        tests: [
+          { name: "city", code: `import numpy as np
+assert np.allclose(steady_state([[0.9, 0.2], [0.1, 0.8]]), [2 / 3, 1 / 3]), 'The city and suburbs settle at (2/3, 1/3).'` },
+          { name: "other", code: `import numpy as np
+assert np.allclose(steady_state([[0.8, 0.3], [0.2, 0.7]]), [0.6, 0.4]), 'Scale the eigenvector so its entries add up to 1.'` },
+          { name: "fixed", code: `import numpy as np
+P = np.array([[0.5, 0.2, 0.3], [0.3, 0.6, 0.1], [0.2, 0.2, 0.6]])
+u = steady_state(P)
+assert np.allclose(P @ u, u) and abs(u.sum() - 1) < 1e-9, 'The steady state satisfies Pu = u.'` },
+        ],
+      },
     },
     {
       key: "proof",

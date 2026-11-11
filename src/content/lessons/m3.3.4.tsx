@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { LUViz } from "@/components/viz/LUViz";
-import { Code } from "@/components/lesson/Code";
+import { C, Code } from "@/components/lesson/Code";
 import type { LessonContent } from "@/lib/types";
 
 export const lesson: LessonContent = {
@@ -142,6 +142,50 @@ print(L[2, 1], U[1, 1])`}</Code>
         </>
       ),
       answer: { kind: "numeric", value: 8 },
+    },
+    {
+      key: "write",
+      rung: "apply",
+      prompt: (
+        <>
+          <p>
+            Write <C>lu(A)</C>, which returns (L, U) from elimination without row swaps: L lower triangular with ones on the
+            diagonal holding the multipliers, U upper triangular, and LU = A.
+          </p>
+        </>
+      ),
+      answer: {
+        kind: "code",
+        starter: `import numpy as np
+
+def lu(A):
+    U = np.array(A, dtype=float)
+    L = np.eye(len(U))
+    return L, U
+`,
+        solution: `import numpy as np
+
+def lu(A):
+    U = np.array(A, dtype=float)
+    n = len(U)
+    L = np.eye(n)
+    for c in range(n):
+        for r in range(c + 1, n):
+            L[r, c] = U[r, c] / U[c, c]
+            U[r] -= L[r, c] * U[c]
+    return L, U
+`,
+        tests: [
+          { name: "lesson matrix", code: `import numpy as np
+L, U = lu([[2, 1, 1], [4, -6, 0], [-2, 7, 2]])
+assert np.allclose(L, [[1, 0, 0], [2, 1, 0], [-1, -1, 1]]) and np.allclose(U, [[2, 1, 1], [0, -8, -2], [0, 0, 1]]), 'Record each multiplier in L at the position it cleared.'` },
+          { name: "product", code: `import numpy as np
+rng = np.random.default_rng(2)
+A = rng.standard_normal((5, 5)) + 5 * np.eye(5)
+L, U = lu(A)
+assert np.allclose(L @ U, A) and np.allclose(np.triu(U), U) and np.allclose(np.tril(L), L), 'L must be lower triangular, U upper triangular, and LU must equal A.'` },
+        ],
+      },
     },
     {
       key: "lower",
