@@ -167,8 +167,12 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: (
         <>
-          <Code>{`f = lambda x: x * x
-g = lambda x: f(x - 2) + 1
+          <Code>{`def f(x):
+    return x * x
+
+def g(x):
+    return f(x - 2) + 1
+
 print(min(range(-10, 11), key=g), g(2))`}</Code>
           <p>g is f shifted. Where is the lowest point of g, and its height?</p>
         </>
@@ -180,9 +184,15 @@ print(min(range(-10, 11), key=g), g(2))`}</Code>
       rung: "apply",
       prompt: (
         <>
-          <Code>{`f = lambda x: x * x
-g = lambda x: 2 * f(x - 3) + 1
-h = lambda x: f(2 * x)
+          <Code>{`def f(x):
+    return x * x
+
+def g(x):
+    return 2 * f(x - 3) + 1
+
+def h(x):
+    return f(2 * x)
+
 print(g(3), g(4), h(3))`}</Code>
           <p>g shifts f right 3, stretches it by 2 and lifts it 1; h squeezes it horizontally. What does this print?</p>
         </>
@@ -195,23 +205,25 @@ print(g(3), g(4), h(3))`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>transform(f, h, k, a)</C>, which returns the function x ↦ a · f(x − h) + k: f stretched by a, moved right by h and up by k.
+            Write <C>transform_at(f, h, k, a, x)</C>, the value at x of a · f(x − h) + k: the graph of f stretched by a, moved right by h and up by k.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def transform(f, h, k, a):
-    return lambda x: a * f(x + h) + k
+        starter: `def transform_at(f, h, k, a, x):
+    return a * f(x + h) + k
 `,
-        solution: `def transform(f, h, k, a):
-    return lambda x: a * f(x - h) + k
+        solution: `def transform_at(f, h, k, a, x):
+    return a * f(x - h) + k
 `,
         tests: [
-          { name: "shift", code: `g = transform(lambda x: x * x, 3, -1, 1)
-assert g(3) == -1 and g(4) == 0, 'Moving right by h means feeding x − h into f.'` },
-          { name: "stretch", code: `g = transform(abs, 0, 0, -2)
-assert g(-3) == -6, 'A negative a flips the graph and stretches it.'` },
+          { name: "shift", code: `def f(x):
+    return x * x
+assert transform_at(f, 3, -1, 1, 3) == -1 and transform_at(f, 3, -1, 1, 4) == 0, 'Moving right by h means feeding x − h into f.'` },
+          { name: "stretch", code: `def f(x):
+    return x * x
+assert transform_at(f, 0, 0, -2, -3) == -18 and transform_at(f, 1, 2, 3, 3) == 14, 'a multiplies the output; a negative a flips the graph.'` },
         ],
       },
     },

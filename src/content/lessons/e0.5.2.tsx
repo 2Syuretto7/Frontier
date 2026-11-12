@@ -139,11 +139,11 @@ with open("totals.csv", "w", newline="") as f:
           <Code>{`import csv, io
 data = io.StringIO("city,temp\\nPune,31\\nLeh,4\\nChennai,35\\n")
 rows = list(csv.DictReader(data))
-print(len(rows), max(rows, key=lambda r: int(r["temp"]))["city"])`}</Code>
+print(len(rows), max(int(r["temp"]) for r in rows))`}</Code>
           <p>csv.DictReader turns each line after the header into a dictionary. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["3 Chennai", "4 Chennai", "3 Leh", "3 Pune"], correct: [0] },
+      answer: { kind: "choice", options: ["3 35", "4 35", "3 4", "3 31"], correct: [0] },
     },
     {
       key: "read2",

@@ -210,40 +210,34 @@ assert abs(e_series(15) - math.e) < 1e-10, 'The series reaches e quickly.'` },
       prompt: (
         <>
           <p>
-            Write <C>exp_series(x)</C>, eˣ for any real x, accurately for |x| up to 50. Summing the series directly fails for large negative x because huge terms of alternating sign cancel, so compute e^|x| by adding terms xᵏ/k! (each built from the last) until a term is below 1e−17 of the sum, and use eˣ = 1/e^|x| when x &lt; 0. Do not use <C>math.exp</C> or <C>**</C> with a non-integer exponent.
+            Two ways to reach e. Write <C>compound(n)</C>, the value of (1 + 1/n)ⁿ, and <C>e_series(n)</C>, the sum 1 + 1 + 1/2! + 1/3! + … + 1/n!, building each term from the one before it (divide by k to get 1/k! from 1/(k − 1)!). The tests compare how fast the two approach e.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def exp_series(x):
-    term, total, k = 1.0, 1.0, 0
-    while abs(term) > 1e-17 * abs(total):
-        k += 1
-        term *= x / k
+        starter: `def compound(n):
+    return 1 + 1 / n
+
+def e_series(n):
+    return 1.0
+`,
+        solution: `def compound(n):
+    return (1 + 1 / n) ** n
+
+def e_series(n):
+    term, total = 1.0, 1.0
+    for k in range(1, n + 1):
+        term = term / k
         total += term
     return total
 `,
-        solution: `def exp_series(x):
-    ax = abs(x)
-    term, total, k = 1.0, 1.0, 0
-    while term > 1e-17 * total:
-        k += 1
-        term *= ax / k
-        total += term
-    return total if x >= 0 else 1 / total
-`,
         tests: [
-          { name: "small", code: `import math
-assert all(abs(exp_series(x) - math.exp(x)) <= 1e-14 * math.exp(x) for x in [0, 1, -1, 0.5, 3, -3]), 'The series converges for every x.'` },
-          { name: "large", code: `import math
-assert abs(exp_series(50) - math.exp(50)) <= 1e-13 * math.exp(50), 'Keep adding until the terms are negligible.'` },
-          { name: "negative", code: `import math
-v = exp_series(-30)
-assert abs(v - math.exp(-30)) <= 1e-12 * math.exp(-30), f'Direct summation at −30 gives {v!r}; use 1/e^30.'` },
-          { name: "no exp", code: `import inspect
-src = inspect.getsource(exp_series)
-assert 'exp(' not in src.replace('exp_series(', '') and 'math' not in src, 'Use the series.'` },
+          { name: "compound", code: `assert compound(1) == 2 and compound(2) == 2.25 and abs(compound(1000) - 2.7169239) < 1e-6, '(1 + 1/2)² = 2.25.'` },
+          { name: "series", code: `assert e_series(0) == 1 and e_series(1) == 2 and e_series(2) == 2.5 and abs(e_series(3) - 8 / 3) < 1e-12, '1 + 1 + 1/2 = 2.5.'` },
+          { name: "race", code: `import math
+assert abs(e_series(15) - math.e) < 1e-12, 'Fifteen terms give e to twelve places.'
+assert abs(e_series(10) - math.e) < abs(compound(10 ** 6) - math.e), 'Ten terms of the series beat a million compounding periods.'` },
         ],
       },
     },

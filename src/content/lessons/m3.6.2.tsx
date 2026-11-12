@@ -209,13 +209,16 @@ assert abs(cofactor_det(A) - np.linalg.det(A)) < 1e-8, 'Recursion should work fo
       prompt: (
         <>
           <p>
-            Write <C>adjugate(A)</C>, the transpose of the cofactor matrix, for a square integer matrix, with each cofactor computed exactly (use <C>sympy.Matrix</C> minors or your own exact determinant), returned as a list of lists of ints. Then write <C>inverse_by_cramer(A)</C>, the exact inverse as a list of lists of <C>Fraction</C>, from A⁻¹ = adj(A)/det(A), and <C>cramer_solve(A, b)</C>, the exact solution of Ax = b by Cramer&rsquo;s rule (replace column i by b).
+            The starter gives <C>_det(M)</C>, an exact integer determinant. Write <C>adjugate(A)</C>, the transpose of the cofactor matrix, for a square integer matrix, with each cofactor computed exactly (use <C>sympy.Matrix</C> minors or your own exact determinant), returned as a list of lists of ints. Then write <C>inverse_by_cramer(A)</C>, the exact inverse as a list of lists of <C>Fraction</C>, from A⁻¹ = adj(A)/det(A), and <C>cramer_solve(A, b)</C>, the exact solution of Ax = b by Cramer&rsquo;s rule (replace column i by b).
           </p>
         </>
       ),
       answer: {
         kind: "code",
         starter: `from fractions import Fraction
+
+def _det(M):
+    return int(sp.Matrix(M).det()) if len(M) else 1
 
 def adjugate(A):
     return [list(row) for row in A]

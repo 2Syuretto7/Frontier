@@ -86,6 +86,40 @@ print(total)    # 500500
         </p>
       </Example>
 
+      <Example title="looping over a list">
+        <p>
+          A <C>for</C> loop can walk through a list directly. Two helpers are common: <C>enumerate</C> gives each
+          item with its position, and <C>zip</C> walks two lists side by side.
+        </p>
+        <Code>{`
+marks = [70, 85, 60]
+names = ["Asha", "Ravi", "Meera"]
+for i, m in enumerate(marks):
+    print(i, m)          # 0 70, then 1 85, then 2 60
+for name, m in zip(names, marks):
+    print(name, m)       # Asha 70, then Ravi 85, then Meera 60
+`}</Code>
+      </Example>
+
+      <Definition title="a loop in one line">
+        <p>
+          Building a new list from an old one is so common that Python has a short form for it, the{" "}
+          <strong>list comprehension</strong>. The two programs below build the same list:
+        </p>
+        <Code>{`
+squares = []
+for x in range(5):
+    squares.append(x * x)
+
+squares = [x * x for x in range(5)]       # [0, 1, 4, 9, 16]
+`}</Code>
+        <p>
+          An <C>if</C> at the end keeps only some items: <C>[x for x in marks if x &gt;= 65]</C> is <C>[70, 85]</C>.
+          The same form inside <C>sum</C>, <C>min</C> or <C>max</C> needs no brackets: <C>sum(x * x for x in range(5))</C>{" "}
+          is <C>30</C>.
+        </p>
+      </Definition>
+
       <Remark title="loops that never end">
         <p>
           If a <C>while</C> condition never becomes false, the loop runs forever: for example, forgetting the line that

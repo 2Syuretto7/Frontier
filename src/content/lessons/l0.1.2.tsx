@@ -140,9 +140,10 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: (
         <>
-          <Code>{`ys = [3, 5, 4]
-preds = [2.5, 5.0, 6.0]
-print(sum((y - p) ** 2 for y, p in zip(ys, preds)) / len(ys))`}</Code>
+          <Code>{`y1, y2, y3 = 3, 5, 4          # the true values
+p1, p2, p3 = 2.5, 5.0, 6.0    # the model's predictions
+mse = ((y1 - p1) ** 2 + (y2 - p2) ** 2 + (y3 - p3) ** 2) / 3
+print(mse)`}</Code>
           <p>Mean squared error of three predictions. What does this print?</p>
         </>
       ),
@@ -153,13 +154,15 @@ print(sum((y - p) ** 2 for y, p in zip(ys, preds)) / len(ys))`}</Code>
       rung: "apply",
       prompt: (
         <>
-          <Code>{`ys = [1, 2, 3, 10]
-for c in (3, 4):
-    print(c, sum(abs(y - c) for y in ys), sum((y - c) ** 2 for y in ys))`}</Code>
-          <p>Two constant predictions scored by absolute and squared error. What does this print?</p>
+          <Code>{`y1, y2, y3, y4 = 1, 2, 3, 10
+c = 4    # predict 4 every time
+total_abs = abs(y1 - c) + abs(y2 - c) + abs(y3 - c) + abs(y4 - c)
+total_sq = (y1 - c) ** 2 + (y2 - c) ** 2 + (y3 - c) ** 2 + (y4 - c) ** 2
+print(total_abs, total_sq)`}</Code>
+          <p>A constant prediction scored by absolute and by squared error. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["3 10 54\n4 12 50", "3 10 54\n4 12 54", "3 12 54\n4 10 50", "3 10 50\n4 12 54"], correct: [0] },
+      answer: { kind: "choice", options: ["12 50", "10 54", "12 54", "10 50"], correct: [0] },
     },
     {
       key: "write",
@@ -167,36 +170,27 @@ for c in (3, 4):
       prompt: (
         <>
           <p>
-            Write <C>mse(ys, preds)</C> and <C>mae(ys, preds)</C>, the mean squared and mean absolute errors, and <C>best_constant(ys, loss)</C>, which returns the constant prediction c minimising the given loss over a grid of 1001 values evenly spaced between min(ys) and max(ys).
+            Write <C>mse(y1, y2, y3, p1, p2, p3)</C> and <C>mae(y1, y2, y3, p1, p2, p3)</C>, the mean squared and mean absolute errors of predictions p1, p2, p3 for true values y1, y2, y3.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def mse(ys, preds):
+        starter: `def mse(y1, y2, y3, p1, p2, p3):
     return 0.0
 
-def mae(ys, preds):
+def mae(y1, y2, y3, p1, p2, p3):
     return 0.0
-
-def best_constant(ys, loss):
-    return ys[0]
 `,
-        solution: `def mse(ys, preds):
-    return sum((y - p) ** 2 for y, p in zip(ys, preds)) / len(ys)
+        solution: `def mse(y1, y2, y3, p1, p2, p3):
+    return ((y1 - p1) ** 2 + (y2 - p2) ** 2 + (y3 - p3) ** 2) / 3
 
-def mae(ys, preds):
-    return sum(abs(y - p) for y, p in zip(ys, preds)) / len(ys)
-
-def best_constant(ys, loss):
-    lo, hi = min(ys), max(ys)
-    grid = [lo + (hi - lo) * i / 1000 for i in range(1001)]
-    return min(grid, key=lambda c: loss(ys, [c] * len(ys)))
+def mae(y1, y2, y3, p1, p2, p3):
+    return (abs(y1 - p1) + abs(y2 - p2) + abs(y3 - p3)) / 3
 `,
         tests: [
-          { name: "losses", code: `assert abs(mse([3, 5, 4], [2.5, 5, 6]) - 4.25 / 3) < 1e-9 and abs(mae([3, 5, 4], [2.5, 5, 6]) - 2.5 / 3) < 1e-9, 'Average the squared or absolute errors.'` },
-          { name: "mean and median", code: `ys = [1, 2, 3, 10]
-assert abs(best_constant(ys, mse) - 4) < 0.01 and 2 <= best_constant(ys, mae) <= 3, 'Squared error is minimised by the mean, absolute error by a median.'` },
+          { name: "mse", code: `assert abs(mse(3, 5, 4, 2.5, 5, 6) - 4.25 / 3) < 1e-9 and mse(1, 2, 3, 1, 2, 3) == 0, 'Square each error, then average.'` },
+          { name: "mae", code: `assert abs(mae(3, 5, 4, 2.5, 5, 6) - 2.5 / 3) < 1e-9 and mae(0, 0, 0, -3, 3, 0) == 2, 'Take the size of each error with abs, then average.'` },
         ],
       },
     },
@@ -206,55 +200,28 @@ assert abs(best_constant(ys, mse) - 4) < 0.01 and 2 <= best_constant(ys, mae) <=
       prompt: (
         <>
           <p>
-            The best constant prediction depends on the loss. Write <C>best_constant(ys, loss)</C>, returning the mean for <C>"mse"</C> and the median (<C>statistics.median</C>) for <C>"mae"</C>, and raising <C>ValueError</C> otherwise. Then write <C>huber(ys, c, delta)</C>, the total Huber loss of predicting c: ½r² when |r| ≤ δ and δ(|r| − ½δ) otherwise, for r = y − c, and <C>grid_minimiser(ys, loss_fn, grid)</C>, the grid value c with the smallest <C>loss_fn(ys, c)</C> (the first one on ties).
+            The best constant prediction depends on the loss: squared error is smallest at the mean, absolute error at the median. Write <C>mean3(a, b, c)</C> and <C>median3(a, b, c)</C> for three numbers. For the median, do not sort: it is what is left of the total after taking away the largest and the smallest. For example, for 1, 2 and 9 the mean is 4.0 and the median is 2.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def best_constant(ys, loss):
-    return 0.0
+        starter: `def mean3(a, b, c):
+    return a
 
-def huber(ys, c, delta):
-    return 0.0
-
-def grid_minimiser(ys, loss_fn, grid):
-    return grid[0]
+def median3(a, b, c):
+    return b
 `,
-        solution: `import statistics
+        solution: `def mean3(a, b, c):
+    return (a + b + c) / 3
 
-def best_constant(ys, loss):
-    if loss == 'mse':
-        return sum(ys) / len(ys)
-    if loss == 'mae':
-        return statistics.median(ys)
-    raise ValueError(loss)
-
-def huber(ys, c, delta):
-    total = 0.0
-    for y in ys:
-        r = abs(y - c)
-        total += 0.5 * r * r if r <= delta else delta * (r - 0.5 * delta)
-    return total
-
-def grid_minimiser(ys, loss_fn, grid):
-    return min(grid, key=lambda c: loss_fn(ys, c))
+def median3(a, b, c):
+    return a + b + c - max(a, b, c) - min(a, b, c)
 `,
         tests: [
-          { name: "constants", code: `assert best_constant([1, 2, 3, 10], 'mse') == 4 and best_constant([1, 2, 3, 10], 'mae') == 2.5 and best_constant([5, 1, 9], 'mae') == 5, 'The mean is pulled by the outlier; the median is not.'
-try:
-    best_constant([1], 'hinge')
-    assert False, 'Unknown losses raise ValueError.'
-except ValueError:
-    pass` },
-          { name: "huber", code: `assert huber([0], 0.5, 1) == 0.125 and huber([0], 3, 1) == 2.5 and huber([1, 2, 3, 10], 3, 1) == 1.5 + 0.5 + 0 + 6.5, 'Quadratic near, linear far.'` },
-          { name: "grid", code: `grid = [i / 10 for i in range(0, 101)]
-ys = [1, 2, 3, 10]
-mse = lambda ys, c: sum((y - c) ** 2 for y in ys)
-mae = lambda ys, c: sum(abs(y - c) for y in ys)
-assert grid_minimiser(ys, mse, grid) == 4.0 and grid_minimiser(ys, mae, grid) == 2.0, 'The search agrees with the formulas (for MAE every c in [2, 3] ties; take the first).'
-h = grid_minimiser(ys, lambda ys, c: huber(ys, c, 1), grid)
-assert 2.4 <= h <= 3.1, 'Huber lands between the median and the mean.'` },
+          { name: "mean", code: `assert mean3(1, 2, 9) == 4.0 and mean3(3, 3, 3) == 3.0, 'Add the three and divide by 3.'` },
+          { name: "median", code: `assert median3(1, 2, 9) == 2 and median3(9, 1, 2) == 2 and median3(5, 5, 1) == 5 and median3(-1, 7, 3) == 3, 'Total minus the largest minus the smallest.'` },
+          { name: "outlier", code: `assert mean3(1, 2, 1000) > 300 and median3(1, 2, 1000) == 2, 'One outlier drags the mean but not the median.'` },
         ],
       },
     },

@@ -139,10 +139,11 @@ export const lesson: LessonContent = {
         <>
           <Code>{`import random
 random.seed(0)
-counts = {"a": 4, "b": 1}
-text = "".join(random.choices(list(counts), weights=counts.values(), k=4000))
+letters = ["a", "b"]
+weights = [4, 1]    # learned: 'a' is four times as common as 'b'
+text = random.choices(letters, weights=weights, k=4000)
 print(round(text.count("a") / len(text), 1))`}</Code>
-          <p>A generative model samples from what it learned: 'a' four times as often as 'b'. What fraction of the output is 'a', to one decimal place?</p>
+          <p>A generative model samples from what it learned. What fraction of the output is 'a', to one decimal place?</p>
         </>
       ),
       answer: { kind: "numeric", value: 0.8, tolerance: 0.001 },
@@ -152,18 +153,19 @@ print(round(text.count("a") / len(text), 1))`}</Code>
       rung: "apply",
       prompt: (
         <>
-          <Code>{`probs = {"a": 0.5, "b": 0.3, "c": 0.2}
-def sample(u):
-    acc = 0
-    for ch, p in probs.items():
-        acc += p
-        if u < acc:
-            return ch
-print([sample(u) for u in (0.1, 0.5, 0.79, 0.81, 0.99)])`}</Code>
-          <p>Sampling from a distribution by walking along its cumulative sums. What does this print?</p>
+          <Code>{`letters = ["a", "b", "c"]
+probs = [0.5, 0.3, 0.2]
+u = 0.79    # a random number between 0 and 1
+acc = 0
+for ch, p in zip(letters, probs):
+    acc += p
+    if u < acc:
+        print(ch)
+        break`}</Code>
+          <p>Sampling by walking along the cumulative sums 0.5, 0.8, 1.0 until they pass u. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["['a', 'b', 'b', 'c', 'c']", "['a', 'a', 'b', 'c', 'c']", "['a', 'b', 'c', 'c', 'c']", "['a', 'b', 'b', 'b', 'c']"], correct: [0] },
+      answer: { kind: "choice", options: ["b", "a", "c", "nothing"], correct: [0] },
     },
     {
       key: "write",
@@ -171,34 +173,36 @@ print([sample(u) for u in (0.1, 0.5, 0.79, 0.81, 0.99)])`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>bigram_model(text)</C>, which returns a dict from each character to a dict of counts of the characters that follow it, and <C>most_likely_next(model, ch)</C>, which returns the most frequent follower (ties broken by the alphabetically smallest).
+            A bigram model learns which character tends to follow which. Write <C>count_follows(text, a, b)</C>, the number of times the character b comes straight after a in text, and <C>most_likely_next(text, a, alphabet)</C>, the character of the string alphabet that most often follows a (the earliest in alphabet on ties).
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def bigram_model(text):
-    return {}
+        starter: `def count_follows(text, a, b):
+    return 0
 
-def most_likely_next(model, ch):
-    return ch
+def most_likely_next(text, a, alphabet):
+    return alphabet[0]
 `,
-        solution: `def bigram_model(text):
-    model = {}
-    for a, b in zip(text, text[1:]):
-        model.setdefault(a, {})
-        model[a][b] = model[a].get(b, 0) + 1
-    return model
+        solution: `def count_follows(text, a, b):
+    n = 0
+    for i in range(len(text) - 1):
+        if text[i] == a and text[i + 1] == b:
+            n += 1
+    return n
 
-def most_likely_next(model, ch):
-    follow = model[ch]
-    return min(follow, key=lambda c: (-follow[c], c))
+def most_likely_next(text, a, alphabet):
+    best = alphabet[0]
+    for ch in alphabet:
+        if count_follows(text, a, ch) > count_follows(text, a, best):
+            best = ch
+    return best
 `,
         tests: [
-          { name: "counts", code: `m = bigram_model('abab')
-assert m == {'a': {'b': 2}, 'b': {'a': 1}}, 'Count each pair of neighbouring characters.'` },
-          { name: "next", code: `m = bigram_model('the then there')
-assert most_likely_next(m, 't') == 'h' and most_likely_next(m, 'h') == 'e', 'After t comes h every time.'` },
+          { name: "counts", code: `assert count_follows('abab', 'a', 'b') == 2 and count_follows('abab', 'b', 'a') == 1 and count_follows('abab', 'b', 'b') == 0, 'Look at each pair of neighbouring characters.'` },
+          { name: "next", code: `assert most_likely_next('the then there', 't', 'abcdefghijklmnopqrstuvwxyz ') == 'h' and most_likely_next('the then there', 'e', 'abcdefghijklmnopqrstuvwxyz ') == 'n', 'After t comes h every time; after e, n, r and a space tie, and n comes first.'` },
+          { name: "ties", code: `assert most_likely_next('xaxb', 'x', 'ba') == 'b' and most_likely_next('xaxb', 'x', 'ab') == 'a', 'On a tie keep the earlier character of alphabet.'` },
         ],
       },
     },
@@ -208,64 +212,43 @@ assert most_likely_next(m, 't') == 'h' and most_likely_next(m, 'h') == 'e', 'Aft
       prompt: (
         <>
           <p>
-            Write <C>with_temperature(probs, T)</C>, which turns a dict of probabilities into a new dict proportional to p^(1/T) (T &lt; 1 sharpens, T &gt; 1 flattens). Then write <C>sample(probs, rng)</C>, one draw by inverse CDF using <C>u = rng.random()</C> and the dict&rsquo;s order, and <C>generate(model, start, n, seed)</C> for a character model mapping each character to a dict of next-character probabilities: starting from <C>start</C>, append up to n sampled characters using one <C>random.Random(seed)</C>, stopping early at a character with no entry in the model.
+            Write <C>with_temperature(probs, T)</C>, which turns a list of probabilities into a new list proportional to p<sup>1/T</sup> (T &lt; 1 sharpens, T &gt; 1 flattens), and <C>sample(letters, probs, u)</C>, which picks a letter by walking along the cumulative sums of probs until they pass u (the last letter if rounding leaves u past the end).
           </p>
         </>
       ),
       answer: {
         kind: "code",
         starter: `def with_temperature(probs, T):
-    return dict(probs)
+    return probs
 
-def sample(probs, rng):
-    return next(iter(probs))
-
-def generate(model, start, n, seed):
-    return start
+def sample(letters, probs, u):
+    return letters[0]
 `,
-        solution: `import random
+        solution: `def with_temperature(probs, T):
+    w = [p ** (1 / T) for p in probs]
+    return [x / sum(w) for x in w]
 
-def with_temperature(probs, T):
-    w = {k: p ** (1 / T) for k, p in probs.items()}
-    z = sum(w.values())
-    return {k: v / z for k, v in w.items()}
-
-def sample(probs, rng):
-    u = rng.random()
-    acc = 0.0
-    last = None
-    for k, p in probs.items():
+def sample(letters, probs, u):
+    acc = 0
+    for ch, p in zip(letters, probs):
         acc += p
-        last = k
         if u < acc:
-            return k
-    return last
-
-def generate(model, start, n, seed):
-    rng = random.Random(seed)
-    out = start
-    for _ in range(n):
-        ch = out[-1]
-        if ch not in model:
-            break
-        out += sample(model[ch], rng)
-    return out
+            return ch
+    return letters[-1]
 `,
         tests: [
-          { name: "temperature", code: `t = with_temperature({'a': 0.5, 'b': 0.3, 'c': 0.2}, 1)
-assert all(abs(t[k] - v) < 1e-12 for k, v in {'a': 0.5, 'b': 0.3, 'c': 0.2}.items())
-s = with_temperature({'a': 0.5, 'b': 0.3, 'c': 0.2}, 0.5)
-assert abs(s['a'] - 0.25 / 0.38) < 1e-12 and abs(sum(s.values()) - 1) < 1e-12, 'T = 0.5 squares and renormalises.'
-f = with_temperature({'a': 0.9, 'b': 0.1}, 100)
-assert 0.5 < f['a'] < 0.52, 'High temperature is almost uniform.'` },
+          { name: "temperature", code: `t = with_temperature([0.5, 0.3, 0.2], 1)
+assert all(abs(a - b) < 1e-12 for a, b in zip(t, [0.5, 0.3, 0.2]))
+s = with_temperature([0.5, 0.3, 0.2], 0.5)
+assert abs(s[0] - 0.25 / 0.38) < 1e-12 and abs(sum(s) - 1) < 1e-12, 'T = 0.5 squares and renormalises.'
+f = with_temperature([0.9, 0.1], 100)
+assert 0.5 < f[0] < 0.52, 'High temperature is almost uniform.'` },
+          { name: "sample", code: `L, P = ['a', 'b', 'c'], [0.5, 0.3, 0.2]
+assert [sample(L, P, u) for u in (0.1, 0.5, 0.79, 0.81, 0.99, 1.0)] == ['a', 'b', 'b', 'c', 'c', 'c'], 'Walk the cumulative sums 0.5, 0.8, 1.0.'` },
           { name: "frequencies", code: `import random
 rng = random.Random(0)
-draws = [sample({'x': 0.7, 'y': 0.2, 'z': 0.1}, rng) for _ in range(20000)]
+draws = [sample(['x', 'y', 'z'], [0.7, 0.2, 0.1], rng.random()) for _ in range(20000)]
 assert abs(draws.count('x') / 20000 - 0.7) < 0.02 and abs(draws.count('z') / 20000 - 0.1) < 0.01, 'Frequencies match the probabilities.'` },
-          { name: "generate", code: `model = {'a': {'b': 1.0}, 'b': {'a': 0.5, 'c': 0.5}}
-g = generate(model, 'a', 50, 3)
-assert g[0] == 'a' and all(x + y in ('ab', 'ba', 'bc') for x, y in zip(g, g[1:])) and (len(g) == 51 or g[-1] == 'c'), 'Only allowed transitions; stop at c.'
-assert generate(model, 'a', 50, 3) == g and generate({}, 'q', 5, 0) == 'q', 'Seeded, and stops when there is no entry.'` },
         ],
       },
     },

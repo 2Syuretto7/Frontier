@@ -208,7 +208,7 @@ assert np.allclose(R.T @ R, np.eye(2)) and abs(np.linalg.det(R) - 1) < 1e-12, 'A
       prompt: (
         <>
           <p>
-            Write <C>matrix_of(T, n)</C>, the m × n matrix of a linear map T on ℝⁿ found by applying it to the standard basis vectors, and <C>is_linear(T, n, trials, seed)</C>, a randomised check of T(au + bv) = aT(u) + bT(v) to within 1e−9 relative error. Then write <C>homogeneous(M, t)</C>, the 3 × 3 matrix in homogeneous coordinates of the affine map x ↦ Mx + t on ℝ², and <C>apply_affine(H, points)</C>, which applies it to an array of points of shape (k, 2).
+            Write <C>matrix_of(T, n)</C>, the m × n matrix of a linear map T on ℝⁿ found by applying it to the standard basis vectors. Then write <C>homogeneous(M, t)</C>, the 3 × 3 matrix in homogeneous coordinates of the affine map x ↦ Mx + t on ℝ², and <C>apply_affine(H, points)</C>, which applies it to an array of points of shape (k, 2).
           </p>
         </>
       ),
@@ -218,9 +218,6 @@ assert np.allclose(R.T @ R, np.eye(2)) and abs(np.linalg.det(R) - 1) < 1e-12, 'A
 
 def matrix_of(T, n):
     return np.eye(n)
-
-def is_linear(T, n, trials, seed):
-    return True
 
 def homogeneous(M, t):
     return np.eye(3)
@@ -232,17 +229,6 @@ def apply_affine(H, points):
 
 def matrix_of(T, n):
     return np.column_stack([np.asarray(T(np.eye(n)[i]), float) for i in range(n)])
-
-def is_linear(T, n, trials, seed):
-    rng = np.random.default_rng(seed)
-    for _ in range(trials):
-        u, v = rng.normal(size=n), rng.normal(size=n)
-        a, b = rng.normal(size=2)
-        lhs = np.asarray(T(a * u + b * v), float)
-        rhs = a * np.asarray(T(u), float) + b * np.asarray(T(v), float)
-        if np.linalg.norm(lhs - rhs) > 1e-9 * (1 + np.linalg.norm(rhs)):
-            return False
-    return True
 
 def homogeneous(M, t):
     H = np.eye(3)
@@ -259,8 +245,6 @@ def apply_affine(H, points):
           { name: "matrix", code: `import numpy as np
 T = lambda v: np.array([v[0] + v[1], 2 * v[1], -v[0]])
 assert np.allclose(matrix_of(T, 2), [[1, 1], [0, 2], [-1, 0]]), 'The columns are T(e₁) and T(e₂).'` },
-          { name: "linear", code: `import numpy as np
-assert is_linear(lambda v: np.array([v[0] - 3 * v[1], v[1]]), 2, 50, 0) and not is_linear(lambda v: v + 1, 2, 50, 0) and not is_linear(lambda v: v * np.abs(v), 2, 50, 0), 'Translations and squares are not linear.'` },
           { name: "affine", code: `import numpy as np
 H = homogeneous(np.array([[0.0, -1.0], [1.0, 0.0]]), [2.0, 0.0])
 assert np.allclose(apply_affine(H, [[1, 0], [0, 1]]), [[2, 1], [1, 0]]), 'Rotate by 90°, then shift by (2, 0).'` },

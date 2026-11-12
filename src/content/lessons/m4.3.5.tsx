@@ -224,7 +224,7 @@ assert is_bipartite(even) and not is_bipartite(odd), 'Even cycles are bipartite;
       prompt: (
         <>
           <p>
-            Write <C>two_colouring(n, edges)</C>, which returns a list of colours 0/1 with the ends of every edge different, or <C>None</C> if the graph is not bipartite (it has an odd cycle), by breadth-first search from every uncoloured vertex. Then write <C>chromatic_number(n, edges)</C>, the exact chromatic number of a small graph (n ≤ 10) by backtracking: for k = 1, 2, … try to colour the vertices one at a time (highest degree first) with colours below k, and return the first k that works. Use 0 for the empty graph.
+            Write <C>two_colouring(n, edges)</C>, which returns a list of colours 0/1 with the ends of every edge different, or <C>None</C> if the graph is not bipartite (it has an odd cycle), by breadth-first search from every uncoloured vertex. Then write <C>greedy_colouring(n, edges, order)</C>, which takes the vertices in the given order and gives each the smallest colour 0, 1, 2, … not already used by one of its neighbours. Greedy colouring never needs more than (largest degree + 1) colours, but the order can make a big difference.
           </p>
         </>
       ),
@@ -233,8 +233,8 @@ assert is_bipartite(even) and not is_bipartite(odd), 'Even cycles are bipartite;
         starter: `def two_colouring(n, edges):
     return [0] * n
 
-def chromatic_number(n, edges):
-    return 2
+def greedy_colouring(n, edges, order):
+    return [0] * n
 `,
         solution: `from collections import deque
 
@@ -259,33 +259,19 @@ def two_colouring(n, edges):
                     return None
     return col
 
-def chromatic_number(n, edges):
-    if n == 0:
-        return 0
-    adj = [set() for _ in range(n)]
+def greedy_colouring(n, edges, order):
+    adj = [[] for _ in range(n)]
     for u, v in edges:
-        adj[u].add(v)
-        adj[v].add(u)
-    order = sorted(range(n), key=lambda v: -len(adj[v]))
-    def ok(k):
-        col = {}
-        def bt(i):
-            if i == n:
-                return True
-            v = order[i]
-            used = {col[u] for u in adj[v] if u in col}
-            for c in range(min(k, max(col.values(), default=-1) + 2)):
-                if c not in used:
-                    col[v] = c
-                    if bt(i + 1):
-                        return True
-                    del col[v]
-            return False
-        return bt(0)
-    k = 1
-    while not ok(k):
-        k += 1
-    return k
+        adj[u].append(v)
+        adj[v].append(u)
+    col = [-1] * n
+    for v in order:
+        used = [col[u] for u in adj[v]]
+        c = 0
+        while c in used:
+            c += 1
+        col[v] = c
+    return col
 `,
         tests: [
           { name: "bipartite", code: `C6 = [(i, (i + 1) % 6) for i in range(6)]
@@ -294,13 +280,16 @@ assert c is not None and all(c[u] != c[v] for u, v in C6), 'An even cycle is bip
 assert two_colouring(5, [(i, (i + 1) % 5) for i in range(5)]) is None, 'An odd cycle is not.'
 E = [(0, 1), (2, 3), (3, 4), (4, 2)]
 assert two_colouring(5, E) is None and two_colouring(4, [(0, 1), (2, 3)]) is not None, 'Check every component.'` },
-          { name: "small", code: `from itertools import combinations
-assert chromatic_number(5, list(combinations(range(5), 2))) == 5 and chromatic_number(4, []) == 1 and chromatic_number(0, []) == 0, 'K₅ needs 5; no edges needs 1.'
-assert chromatic_number(7, [(i, (i + 1) % 7) for i in range(7)]) == 3 and chromatic_number(6, [(i, j) for i in range(3) for j in range(3, 6)]) == 2` },
+          { name: "greedy", code: `from itertools import combinations
+K5 = list(combinations(range(5), 2))
+assert sorted(greedy_colouring(5, K5, range(5))) == [0, 1, 2, 3, 4] and greedy_colouring(3, [], [2, 0, 1]) == [0, 0, 0], 'K₅ needs 5 colours; no edges needs 1.'
+C6 = [(i, (i + 1) % 6) for i in range(6)]
+assert greedy_colouring(6, C6, range(6)) == [0, 1, 0, 1, 0, 1], 'Each vertex takes the smallest free colour.'` },
           { name: "petersen", code: `P = [(i, (i + 1) % 5) for i in range(5)] + [(i, i + 5) for i in range(5)] + [(i + 5, (i + 2) % 5 + 5) for i in range(5)]
-assert chromatic_number(10, P) == 3, 'The Petersen graph has chromatic number 3.'` },
-          { name: "wheel", code: `W = [(i, (i + 1) % 5) for i in range(5)] + [(i, 5) for i in range(5)]
-assert chromatic_number(6, W) == 4, 'An odd wheel needs 4 colours.'` },
+c = greedy_colouring(10, P, range(10))
+assert all(c[u] != c[v] for u, v in P) and max(c) <= 3, 'A proper colouring with at most degree + 1 = 4 colours.'` },
+          { name: "order", code: `crown = [(i, j + 4) for i in range(4) for j in range(4) if i != j]
+assert max(greedy_colouring(8, crown, [0, 4, 1, 5, 2, 6, 3, 7])) == 3 and max(greedy_colouring(8, crown, range(8))) == 1, 'A bad order needs 4 colours where 2 will do.'` },
         ],
       },
     },

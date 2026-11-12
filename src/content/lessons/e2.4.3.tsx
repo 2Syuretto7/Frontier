@@ -208,113 +208,77 @@ print(merge([[1, 4, 9], [2, 4], [], [0, 10]]))`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>MinHeap</C> from scratch, keeping the items in the list <C>self.a</C> and comparing them only with{" "}
-            <C>&lt;</C>. Implement <C>push(x)</C>, <C>pop()</C> and <C>peek()</C> (both raising <C>IndexError</C> when empty),{" "}
-            <C>len(h)</C>, and a class method <C>MinHeap.heapify(items)</C> that builds a heap from a list in O(n) by sifting
-            down from the last parent to the root. Sift down by comparing the two children with each other first, then the
-            smaller child with the parent, so heapify makes at most about 2n comparisons.
+            Write a binary min-heap from scratch, as functions on a plain list <C>a</C>, comparing items only with{" "}
+            <C>&lt;</C>. Write <C>sift_down(a, i)</C>, which moves <C>a[i]</C> down until it is no larger than its children:
+            compare the two children with each other first, then the smaller child with the parent. Write <C>push(a, x)</C>,
+            which appends x and moves it up past larger parents, and <C>pop(a)</C>, which removes and returns the smallest item
+            (raising <C>IndexError</C> when empty) by moving the last item to the root and sifting it down. The
+            starter&rsquo;s <C>heapify(a)</C> uses your <C>sift_down</C> to build a heap in O(n).
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `class MinHeap:
-    def __init__(self):
-        self.a = []
+        starter: `def sift_down(a, i):
+    pass
 
-    def push(self, x):
-        self.a.append(x)
-        self.a.sort()
+def push(a, x):
+    a.append(x)
+    a.sort()
 
-    def pop(self):
-        return self.a.pop(0)
+def pop(a):
+    return a.pop(0)
 
-    def peek(self):
-        return self.a[0]
-
-    def __len__(self):
-        return len(self.a)
-
-    @classmethod
-    def heapify(cls, items):
-        h = cls()
-        for x in items:
-            h.push(x)
-        return h
+def heapify(a):
+    for i in range(len(a) // 2 - 1, -1, -1):
+        sift_down(a, i)
 `,
-        solution: `class MinHeap:
-    def __init__(self):
-        self.a = []
+        solution: `def sift_down(a, i):
+    n = len(a)
+    while 2 * i + 1 < n:
+        c = 2 * i + 1
+        if c + 1 < n and a[c + 1] < a[c]:
+            c += 1
+        if not a[c] < a[i]:
+            return
+        a[i], a[c] = a[c], a[i]
+        i = c
 
-    def _up(self, i):
-        a = self.a
-        while i > 0:
-            p = (i - 1) // 2
-            if a[i] < a[p]:
-                a[i], a[p] = a[p], a[i]
-                i = p
-            else:
-                break
+def push(a, x):
+    a.append(x)
+    i = len(a) - 1
+    while i > 0 and a[i] < a[(i - 1) // 2]:
+        p = (i - 1) // 2
+        a[i], a[p] = a[p], a[i]
+        i = p
 
-    def _down(self, i):
-        a, n = self.a, len(self.a)
-        while True:
-            l = 2 * i + 1
-            if l >= n:
-                return
-            c = l
-            if l + 1 < n and a[l + 1] < a[l]:
-                c = l + 1
-            if a[c] < a[i]:
-                a[i], a[c] = a[c], a[i]
-                i = c
-            else:
-                return
+def pop(a):
+    if not a:
+        raise IndexError('pop from empty heap')
+    top, last = a[0], a.pop()
+    if a:
+        a[0] = last
+        sift_down(a, 0)
+    return top
 
-    def push(self, x):
-        self.a.append(x)
-        self._up(len(self.a) - 1)
-
-    def pop(self):
-        if not self.a:
-            raise IndexError('pop from empty heap')
-        top, last = self.a[0], self.a.pop()
-        if self.a:
-            self.a[0] = last
-            self._down(0)
-        return top
-
-    def peek(self):
-        if not self.a:
-            raise IndexError('peek at empty heap')
-        return self.a[0]
-
-    def __len__(self):
-        return len(self.a)
-
-    @classmethod
-    def heapify(cls, items):
-        h = cls()
-        h.a = list(items)
-        for i in range(len(h.a) // 2 - 1, -1, -1):
-            h._down(i)
-        return h
+def heapify(a):
+    for i in range(len(a) // 2 - 1, -1, -1):
+        sift_down(a, i)
 `,
         tests: [
           { name: "heap order", code: `import random
 rng = random.Random(1)
-h = MinHeap()
+a = []
 xs = [rng.randint(0, 100) for _ in range(300)]
 for x in xs:
-    h.push(x)
-    assert all(not h.a[i] < h.a[(i - 1) // 2] for i in range(1, len(h.a))), 'Every item must be at least its parent.'
-assert h.peek() == min(xs) and [h.pop() for _ in range(300)] == sorted(xs)
-for f in (h.pop, h.peek):
-    try:
-        f()
-        assert False, 'Empty heap raises IndexError.'
-    except IndexError:
-        pass` },
+    push(a, x)
+    assert all(not a[i] < a[(i - 1) // 2] for i in range(1, len(a))), 'Every item must be at least its parent.'
+assert a[0] == min(xs) and [pop(a) for _ in range(300)] == sorted(xs)
+try:
+    pop(a)
+    assert False, 'An empty heap raises IndexError.'
+except IndexError:
+    pass` },
           { name: "heapify", code: `import random
 class Counted:
     count = 0
@@ -325,23 +289,22 @@ class Counted:
 rng = random.Random(2)
 n = 2 ** 14 - 1
 vals = [rng.random() for _ in range(n)]
-h = MinHeap.heapify([Counted(v) for v in vals])
+a = [Counted(v) for v in vals]
+heapify(a)
 assert Counted.count <= 2 * n, f'{Counted.count} comparisons is not linear.'
-assert all(not h.a[i] < h.a[(i - 1) // 2] for i in range(1, n))
-Counted.count = 0
-out = [h.pop().v for _ in range(100)]
-assert out == sorted(vals)[:100]` },
+assert all(not a[i] < a[(i - 1) // 2] for i in range(1, n))
+assert [pop(a).v for _ in range(100)] == sorted(vals)[:100]` },
           { name: "mixed", code: `import random, heapq
 rng = random.Random(3)
-h, ref = MinHeap.heapify([5, 1, 4]), [5, 1, 4]
-heapq.heapify(ref)
+a, ref = [5, 1, 4], [5, 1, 4]
+heapify(a); heapq.heapify(ref)
 for _ in range(5000):
     if ref and rng.random() < 0.45:
-        assert h.pop() == heapq.heappop(ref)
+        assert pop(a) == heapq.heappop(ref)
     else:
         x = rng.randint(-50, 50)
-        h.push(x); heapq.heappush(ref, x)
-    assert len(h) == len(ref) and (not ref or h.peek() == ref[0])` },
+        push(a, x); heapq.heappush(ref, x)
+    assert len(a) == len(ref) and (not ref or a[0] == ref[0])` },
         ],
       },
     },

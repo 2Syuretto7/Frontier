@@ -173,14 +173,13 @@ print(y)`}</Code>
       rung: "apply",
       prompt: (
         <>
-          <Code>{`def f(x):
-    return 2 * x ** 2 - 3 * x + 1
-vals = [f(x) for x in range(-1, 3)]
-print(vals, -3 ** 2)`}</Code>
+          <Code>{`x = 2
+y = 2 * x ** 2 - 3 * x + 1
+print(y, -3 ** 2, (-3) ** 2)`}</Code>
           <p>Precedence: ** binds tighter than unary minus. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["[6, 1, 0, 3] -9", "[6, 1, 0, 3] 9", "[0, 1, 0, 3] -9", "[6, 1, 1, 3] -9"], correct: [0] },
+      answer: { kind: "choice", options: ["3 -9 9", "3 9 9", "-3 -9 9", "3 -9 -9"], correct: [0] },
     },
     {
       key: "write",
@@ -188,7 +187,7 @@ print(vals, -3 ** 2)`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>evaluate(coeffs, x)</C>, which evaluates a₀ + a₁x + a₂x² + … where <C>coeffs</C> is the list [a₀, a₁, a₂, …].
+            Write <C>evaluate(coeffs, x)</C>, which evaluates a₀ + a₁x + a₂x² where <C>coeffs</C> is the list [a₀, a₁, a₂]. For example, <C>evaluate([1, -4, 2], 3)</C> is 1 − 12 + 18 = 7.
           </p>
         </>
       ),
@@ -198,11 +197,11 @@ print(vals, -3 ** 2)`}</Code>
     return sum(coeffs)
 `,
         solution: `def evaluate(coeffs, x):
-    return sum(a * x ** i for i, a in enumerate(coeffs))
+    return coeffs[0] + coeffs[1] * x + coeffs[2] * x ** 2
 `,
         tests: [
           { name: "quadratic", code: `assert evaluate([1, -4, 2], 3) == 7, '1 − 4·3 + 2·9 = 7.'` },
-          { name: "constant", code: `assert evaluate([5], 100) == 5 and evaluate([0, 1], -2) == -2, 'The constant term is multiplied by x⁰ = 1.'` },
+          { name: "constant", code: `assert evaluate([5, 0, 0], 100) == 5 and evaluate([0, 1, 0], -2) == -2 and evaluate([0, 0, 1], -3) == 9, 'coeffs[0] is the constant term; coeffs[2] multiplies x².'` },
         ],
       },
     },
@@ -212,30 +211,26 @@ print(vals, -3 ** 2)`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>horner(coeffs, x)</C>, which evaluates a₀ + a₁x + … + aₙxⁿ (coefficients lowest power first) with only n multiplications by Horner&rsquo;s rule, and <C>derivative(coeffs)</C>, the coefficient list of the derivative (use <C>[0]</C> for a constant).
+            For a cubic a₀ + a₁x + a₂x² + a₃x³ with <C>coeffs</C> = [a₀, a₁, a₂, a₃], write <C>horner(coeffs, x)</C>, which evaluates it with only three multiplications by Horner&rsquo;s rule, ((a₃x + a₂)x + a₁)x + a₀, and <C>slope(coeffs, x)</C>, the value of its derivative a₁ + 2a₂x + 3a₃x² at x.
           </p>
         </>
       ),
       answer: {
         kind: "code",
         starter: `def horner(coeffs, x):
-    return sum(c * x ** k for k, c in enumerate(coeffs))
+    return coeffs[0] + coeffs[1] * x + coeffs[2] * x ** 2 + coeffs[3] * x ** 3
 
-def derivative(coeffs):
-    return coeffs[1:]
+def slope(coeffs, x):
+    return coeffs[1]
 `,
         solution: `def horner(coeffs, x):
-    r = 0
-    for c in reversed(coeffs):
-        r = r * x + c
-    return r
+    return ((coeffs[3] * x + coeffs[2]) * x + coeffs[1]) * x + coeffs[0]
 
-def derivative(coeffs):
-    d = [k * c for k, c in enumerate(coeffs)][1:]
-    return d or [0]
+def slope(coeffs, x):
+    return coeffs[1] + 2 * coeffs[2] * x + 3 * coeffs[3] * x ** 2
 `,
         tests: [
-          { name: "values", code: `assert horner([1, -3, 2], 2) == 3 and horner([5], 10) == 5 and horner([0, 0, 1], -4) == 16, '1 − 3x + 2x² at 2 is 3.'` },
+          { name: "values", code: `assert horner([1, -3, 2, 0], 2) == 3 and horner([5, 0, 0, 0], 10) == 5 and horner([0, 0, 0, 1], -4) == -64, '1 − 3x + 2x² at 2 is 3.'` },
           { name: "counts", code: `class N(float):
     count = 0
     def __mul__(self, o):
@@ -245,10 +240,13 @@ def derivative(coeffs):
     def __add__(self, o):
         return N(float(self) + float(o))
     __radd__ = __add__
+    def __pow__(self, o):
+        N.count += 10
+        return N(float(self) ** float(o))
 N.count = 0
-horner([1, 2, 3, 4, 5], N(2.0))
-assert N.count <= 5, f'Horner uses one multiplication per coefficient, you used {N.count}.'` },
-          { name: "derivative", code: `assert derivative([1, -3, 2]) == [-3, 4] and derivative([7]) == [0] and derivative([0, 0, 0, 5]) == [0, 0, 15], 'The derivative of aₖxᵏ is k·aₖxᵏ⁻¹.'` },
+horner([1, 2, 3, 4], N(2.0))
+assert N.count <= 3, f'Horner needs only three multiplications by x; you used more.'` },
+          { name: "slope", code: `assert slope([1, -3, 2, 0], 1) == 1 and slope([7, 0, 0, 0], 5) == 0 and slope([0, 0, 0, 5], 2) == 60, 'The derivative of aₖxᵏ is k·aₖxᵏ⁻¹.'` },
         ],
       },
     },

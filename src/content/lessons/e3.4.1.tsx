@@ -219,9 +219,8 @@ int main(void) {
         self.next_pid = 2
 
     def state(self, pid):
-        if pid not in self.parent:
-            return None
-        return 'zombie' if pid in self.status else 'running'
+        if pid in self.parent:
+            return 'zombie' if pid in self.status else 'running'
 
     def children(self, pid):
         return sorted(c for c, p in self.parent.items() if p == pid)
@@ -229,8 +228,7 @@ int main(void) {
     def spawn(self, parent):
         if self.state(parent) != 'running':
             raise ValueError(f'process {parent} is not running')
-        pid = self.next_pid
-        self.next_pid += 1
+        pid, self.next_pid = self.next_pid, self.next_pid + 1
         self.parent[pid] = parent
         return pid
 
@@ -253,10 +251,8 @@ int main(void) {
         kids = self.children(parent)
         if not kids:
             raise ChildProcessError(f'process {parent} has no children')
-        for c in kids:
-            if c in self.status:
-                return self._reap(c)
-        return None
+        zombies = [c for c in kids if c in self.status]
+        return self._reap(zombies[0]) if zombies else None
 `,
         tests: [
           { name: "zombies and wait", code: `pt = ProcessTable()

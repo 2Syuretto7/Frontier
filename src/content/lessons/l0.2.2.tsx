@@ -159,10 +159,11 @@ print(slope, ys[0] - slope * xs[0], slope * 10 + ys[0] - slope * xs[0])`}</Code>
         <>
           <Code>{`xs = [0, 1, 2, 3]
 ys = [1, 3, 5, 7]
-mx, my = sum(xs) / 4, sum(ys) / 4
-m = sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sum((x - mx) ** 2 for x in xs)
-print(m, my - m * mx)`}</Code>
-          <p>The least-squares slope and intercept from centred sums. What does this print?</p>
+slope = (ys[3] - ys[0]) / (xs[3] - xs[0])
+mx = sum(xs) / len(xs)
+my = sum(ys) / len(ys)
+print(slope, my - slope * mx)`}</Code>
+          <p>The slope from the end points, and the intercept that makes the line pass through the point of means. What does this print?</p>
         </>
       ),
       answer: { kind: "choice", options: ["2.0 1.0", "2.0 4.0", "1.0 2.0", "2.0 0.0"], correct: [0] },
@@ -173,28 +174,27 @@ print(m, my - m * mx)`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>fit_line(xs, ys)</C>, which returns the least-squares slope and intercept using the formulas slope = Σ(x − x̄)(y − ȳ) / Σ(x − x̄)² and intercept = ȳ − slope · x̄.
+            Write <C>slope(x1, y1, x2, y2)</C> and <C>intercept(x1, y1, x2, y2)</C> for the straight line y = mx + c through two points with x1 ≠ x2. For example, the line through (1, 3) and (4, 9) has slope 2.0 and intercept 1.0.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def fit_line(xs, ys):
-    return (ys[-1] - ys[0]) / (xs[-1] - xs[0]), ys[0]
+        starter: `def slope(x1, y1, x2, y2):
+    return y2 - y1
+
+def intercept(x1, y1, x2, y2):
+    return y1
 `,
-        solution: `def fit_line(xs, ys):
-    n = len(xs)
-    mx, my = sum(xs) / n, sum(ys) / n
-    sxy = sum((x - mx) * (y - my) for x, y in zip(xs, ys))
-    sxx = sum((x - mx) ** 2 for x in xs)
-    m = sxy / sxx
-    return m, my - m * mx
+        solution: `def slope(x1, y1, x2, y2):
+    return (y2 - y1) / (x2 - x1)
+
+def intercept(x1, y1, x2, y2):
+    return y1 - slope(x1, y1, x2, y2) * x1
 `,
         tests: [
-          { name: "exact", code: `m, c = fit_line([1, 2, 3, 4], [3, 5, 7, 9])
-assert abs(m - 2) < 1e-9 and abs(c - 1) < 1e-9, 'Points on y = 2x + 1.'` },
-          { name: "noisy", code: `m, c = fit_line([0, 1, 2, 3], [1, 2, 2, 5])
-assert abs(m - 1.2) < 1e-9 and abs(c - 0.7) < 1e-9, 'Least squares uses every point, not just the ends.'` },
+          { name: "slope", code: `assert slope(1, 3, 4, 9) == 2.0 and slope(4, 9, 1, 3) == 2.0 and slope(0, 5, 2, 1) == -2.0, 'Rise over run.'` },
+          { name: "intercept", code: `assert intercept(1, 3, 4, 9) == 1.0 and intercept(0, 5, 2, 1) == 5.0 and intercept(2, 0, 4, 1) == -1.0, 'Solve y1 = m·x1 + c for c.'` },
         ],
       },
     },
@@ -204,50 +204,32 @@ assert abs(m - 1.2) < 1e-9 and abs(c - 0.7) < 1e-9, 'Least squares uses every po
       prompt: (
         <>
           <p>
-            Write <C>r_squared(ys, preds)</C>, 1 − (sum of squared residuals)/(sum of squared deviations from the mean of ys). Then write <C>fit_quadratic(xs, ys)</C>, the least-squares (a, b, c) for y ≈ a + bx + cx², by forming the 3 × 3 normal equations (sums of powers of x up to x⁴, and of xᵏy) and solving them with your own Gaussian elimination with partial pivoting, without NumPy.
+            Score a line y = mx + c on three points given as lists <C>xs</C> and <C>ys</C> of length 3. Write <C>sse(m, c, xs, ys)</C>, the sum of squared residuals yᵢ − (mxᵢ + c), and <C>r_squared(m, c, xs, ys)</C>, which is 1 − sse / (the sum of squared deviations of ys from their mean). A perfect fit has R² = 1; predicting the mean has R² = 0.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def r_squared(ys, preds):
+        starter: `def sse(m, c, xs, ys):
     return 0.0
 
-def fit_quadratic(xs, ys):
-    return (0.0, 0.0, 0.0)
+def r_squared(m, c, xs, ys):
+    return 1.0
 `,
-        solution: `def r_squared(ys, preds):
-    my = sum(ys) / len(ys)
-    ss_res = sum((y - p) ** 2 for y, p in zip(ys, preds))
-    ss_tot = sum((y - my) ** 2 for y in ys)
-    return 1 - ss_res / ss_tot
+        solution: `def sse(m, c, xs, ys):
+    r0 = ys[0] - (m * xs[0] + c)
+    r1 = ys[1] - (m * xs[1] + c)
+    r2 = ys[2] - (m * xs[2] + c)
+    return r0 ** 2 + r1 ** 2 + r2 ** 2
 
-def fit_quadratic(xs, ys):
-    S = [sum(x ** k for x in xs) for k in range(5)]
-    T = [sum(y * x ** k for x, y in zip(xs, ys)) for k in range(3)]
-    A = [[S[i + j] for j in range(3)] + [T[i]] for i in range(3)]
-    for c in range(3):
-        r = max(range(c, 3), key=lambda i: abs(A[i][c]))
-        A[c], A[r] = A[r], A[c]
-        for i in range(c + 1, 3):
-            f = A[i][c] / A[c][c]
-            A[i] = [a - f * b for a, b in zip(A[i], A[c])]
-    sol = [0.0] * 3
-    for i in range(2, -1, -1):
-        sol[i] = (A[i][3] - sum(A[i][j] * sol[j] for j in range(i + 1, 3))) / A[i][i]
-    return tuple(sol)
+def r_squared(m, c, xs, ys):
+    my = sum(ys) / 3
+    sst = (ys[0] - my) ** 2 + (ys[1] - my) ** 2 + (ys[2] - my) ** 2
+    return 1 - sse(m, c, xs, ys) / sst
 `,
         tests: [
-          { name: "r2", code: `assert r_squared([1, 2, 3], [1, 2, 3]) == 1 and r_squared([1, 2, 3], [2, 2, 2]) == 0 and abs(r_squared([1, 2, 3, 4], [1, 3, 2, 4]) - 0.6) < 1e-12, 'Perfect is 1; predicting the mean is 0.'` },
-          { name: "exact", code: `a, b, c = fit_quadratic([-2, -1, 0, 1, 2, 3], [2 - 3 * x + 0.5 * x * x for x in [-2, -1, 0, 1, 2, 3]])
-assert abs(a - 2) < 1e-9 and abs(b + 3) < 1e-9 and abs(c - 0.5) < 1e-9, 'Recover y = 2 − 3x + 0.5x².'` },
-          { name: "noisy", code: `import numpy as np
-rng = np.random.default_rng(0)
-xs = list(rng.uniform(-3, 3, 40)); ys = [1 + x - 2 * x * x + rng.normal() for x in xs]
-want = np.polyfit(xs, ys, 2)[::-1]
-assert np.allclose(fit_quadratic(xs, ys), want, atol=1e-8), 'Agree with numpy.polyfit.'` },
-          { name: "pivot", code: `a, b, c = fit_quadratic([10, 11, 12, 13], [5, 7, 9, 11])
-assert abs(b - 2) < 1e-6 and abs(c) < 1e-7 and abs(a + 15) < 1e-5, 'A straight line away from 0: the x² coefficient must come out as 0.'` },
+          { name: "sse", code: `assert sse(2, 1, [0, 1, 2], [1, 3, 5]) == 0 and sse(0, 0, [0, 1, 2], [1, 2, 3]) == 14 and sse(1, 0, [0, 1, 2], [1, 1, 1]) == 2, 'Square each residual and add.'` },
+          { name: "r2", code: `assert r_squared(2, 1, [0, 1, 2], [1, 3, 5]) == 1 and r_squared(0, 3, [0, 1, 2], [1, 3, 5]) == 0 and abs(r_squared(1, 1, [0, 1, 2], [1, 3, 5]) - 0.375) < 1e-12, 'Perfect is 1; the flat line at the mean is 0.'` },
         ],
       },
     },

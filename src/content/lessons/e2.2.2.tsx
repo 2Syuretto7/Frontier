@@ -217,7 +217,7 @@ print(c.misses, list(c.d))`}</Code>
         <>
           <p>
             Write <C>LRUCache(capacity)</C> from scratch, without <C>OrderedDict</C>: a dict from key to node, and a doubly
-            linked list of nodes (each with <C>key</C>, <C>value</C>, <C>prev</C>, <C>next</C>) between two sentinel nodes{" "}
+            linked list of the starter&rsquo;s <C>_Node</C> objects (each with <C>key</C>, <C>value</C>, <C>prev</C>, <C>next</C>) between two sentinel nodes{" "}
             <C>self.head</C> and <C>self.tail</C>, most recently used first. Implement <C>get(key, default=None)</C> (a hit
             makes the key most recently used), <C>put(key, value)</C> (insert or update, making it most recent, then evict the
             least recently used if over capacity), <C>__len__</C> and <C>keys()</C> (most recent first). Every operation must be
@@ -227,7 +227,14 @@ print(c.misses, list(c.d))`}</Code>
       ),
       answer: {
         kind: "code",
-        starter: `class LRUCache:
+        starter: `class _Node:
+    __slots__ = ('key', 'value', 'prev', 'next')
+
+    def __init__(self, key=None, value=None):
+        self.key, self.value = key, value
+        self.prev = self.next = None
+
+class LRUCache:
     def __init__(self, capacity):
         self.capacity = capacity
         self.d = {}
@@ -264,25 +271,19 @@ class LRUCache:
 
     def _push_front(self, node):
         node.prev, node.next = self.head, self.head.next
-        self.head.next.prev = node
-        self.head.next = node
+        self.head.next.prev = self.head.next = node
 
     def get(self, key, default=None):
-        node = self.map.get(key)
-        if node is None:
+        if key not in self.map:
             return default
-        self._unlink(node)
-        self._push_front(node)
-        return node.value
+        value = self.map[key].value
+        self.put(key, value)
+        return value
 
     def put(self, key, value):
-        node = self.map.get(key)
-        if node is not None:
-            node.value = value
-            self._unlink(node)
-        else:
-            node = _Node(key, value)
-            self.map[key] = node
+        if key in self.map:
+            self._unlink(self.map[key])
+        node = self.map[key] = _Node(key, value)
         self._push_front(node)
         if len(self.map) > self.capacity:
             lru = self.tail.prev

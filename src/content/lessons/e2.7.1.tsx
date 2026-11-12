@@ -268,18 +268,12 @@ assert max_subarray(a) == best` },
       rung: "apply",
       prompt: (
         <>
-          <p>Two harder merges:</p>
-          <ul>
-            <li>
-              <C>closest_pair(points)</C>: the smallest distance between two of the given <C>(x, y)</C> points (0 if two
-              coincide), in O(n log n) with the strip argument; <C>ValueError</C> for fewer than two points. 20,000 random
-              points must be quick.
-            </li>
-            <li>
-              <C>count_smaller_after(a)</C>: a list whose i-th entry is the number of j &gt; i with a[j] &lt; a[i], in O(n log
-              n). Merge sort the positions, not the values, so you know whose count to increase.
-            </li>
-          </ul>
+          <p>
+            Write <C>closest_pair(points)</C>, the smallest distance between two of the given <C>(x, y)</C> points (0 if two
+            coincide), in O(n log n) with the strip argument; <C>ValueError</C> for fewer than two points. Have the recursive
+            step return the points of its half sorted by y as well, merging the two halves as merge sort does, so that the strip
+            needs no sorting. 20,000 random points must be quick.
+          </p>
         </>
       ),
       answer: {
@@ -289,9 +283,6 @@ assert max_subarray(a) == best` },
 def closest_pair(points):
     p = sorted(points)
     return min(math.dist(p[i], p[i + 1]) for i in range(len(p) - 1))
-
-def count_smaller_after(a):
-    return [0] * len(a)
 `,
         solution: `import math
 
@@ -324,28 +315,9 @@ def closest_pair(points):
                 d = min(d, math.dist(strip[i], strip[j]))
         return d, merged
     return go(px)[0]
-
-def count_smaller_after(a):
-    n = len(a)
-    counts = [0] * n
-    def go(idx):                             # idx: positions, returned sorted by value
-        if len(idx) <= 1:
-            return idx
-        mid = len(idx) // 2
-        left, right = go(idx[:mid]), go(idx[mid:])
-        merged, j = [], 0
-        for i in left:
-            while j < len(right) and a[right[j]] < a[i]:
-                merged.append(right[j]); j += 1
-            counts[i] += j
-            merged.append(i)
-        merged += right[j:]
-        return merged
-    go(list(range(n)))
-    return counts
 `,
         tests: [
-          { name: "closest pair", code: `import math, random, time
+          { name: "small cases", code: `import math, random
 assert closest_pair([(0, 0), (3, 4), (10, 0)]) == 5.0
 assert closest_pair([(0, 0), (5, 1), (0, 10), (5.5, 9), (1, 4)]) == math.dist((0, 0), (1, 4))
 assert closest_pair([(0, 0), (1, 100), (2, 0)]) == 2.0, 'Neighbours in x are not always closest.'
@@ -359,7 +331,9 @@ rng = random.Random(25)
 for _ in range(200):
     pts = [(rng.randint(0, 30), rng.randint(0, 30)) for _ in range(rng.randint(2, 25))]
     want = min(math.dist(pts[i], pts[j]) for i in range(len(pts)) for j in range(i + 1, len(pts)))
-    assert math.isclose(closest_pair(pts), want, abs_tol=1e-12), pts
+    assert math.isclose(closest_pair(pts), want, abs_tol=1e-12), pts` },
+          { name: "fast", code: `import math, random, time
+rng = random.Random(26)
 pts = [(rng.random(), rng.random()) for _ in range(20000)]
 start = time.perf_counter()
 got = closest_pair(pts)
@@ -376,18 +350,6 @@ for (gx, gy), cell in grid.items():
                     if p != q:
                         best = min(best, math.dist(p, q))
 assert math.isclose(got, best), (got, best)` },
-          { name: "smaller after", code: `assert count_smaller_after([5, 2, 6, 1]) == [2, 1, 1, 0]
-assert count_smaller_after([]) == [] and count_smaller_after([3, 3, 3]) == [0, 0, 0]
-import random, time
-rng = random.Random(26)
-for _ in range(300):
-    a = [rng.randint(0, 9) for _ in range(rng.randint(0, 20))]
-    assert count_smaller_after(a) == [sum(a[j] < a[i] for j in range(i + 1, len(a))) for i in range(len(a))], a
-a = [rng.randint(0, 10 ** 6) for _ in range(50000)]
-start = time.perf_counter()
-c = count_smaller_after(a)
-assert time.perf_counter() - start < 15, 'Too slow: count while merging.'
-assert c[-1] == 0 and c[0] == sum(x < a[0] for x in a[1:]) and c[25000] == sum(x < a[25000] for x in a[25001:])` },
         ],
       },
     },

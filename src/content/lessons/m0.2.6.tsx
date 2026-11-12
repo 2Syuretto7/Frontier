@@ -171,27 +171,29 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: (
         <>
-          <Code>{`import numpy as np
-print(np.polymul([1, 2], [1, -3]))`}</Code>
-          <p>numpy stores a polynomial by its coefficients, highest power first. What does (x + 2)(x − 3) give?</p>
+          <Code>{`p = [1, 2]      # x + 2, highest power first
+q = [1, -3]     # x - 3
+print([p[0] * q[0], p[0] * q[1] + p[1] * q[0], p[1] * q[1]])`}</Code>
+          <p>A polynomial stored by its coefficients, highest power first. What does (x + 2)(x − 3) give?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["[ 1 -1 -6]", "[ 1  5 -6]", "[ 1 -1  6]", "[ 1 -6]"], correct: [0] },
+      answer: { kind: "choice", options: ["[1, -1, -6]", "[1, 5, -6]", "[1, -1, 6]", "[1, -6]"], correct: [0] },
     },
     {
       key: "read2",
       rung: "apply",
       prompt: (
         <>
-          <Code>{`import numpy as np
-p = np.poly1d([1, -5, 6])
-q = np.poly1d([1, -2])
-quot, rem = np.polydiv(p.coeffs, q.coeffs)
-print(quot, rem)`}</Code>
-          <p>Dividing x² − 5x + 6 by x − 2. What does this print?</p>
+          <Code>{`a2, a1, a0 = 1, -5, 6    # x² − 5x + 6
+r = 2                    # divide by x − 2
+b1 = a2
+b0 = b1 * r + a1
+rem = b0 * r + a0
+print(b1, b0, rem)`}</Code>
+          <p>Synthetic division of x² − 5x + 6 by x − 2: the quotient is b₁x + b₀. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["[ 1. -3.] [0.]", "[ 1. 3.] [0.]", "[ 1. -3.] [6.]", "[-3. 1.] [0.]"], correct: [0] },
+      answer: { kind: "choice", options: ["1 -3 0", "1 3 0", "1 -3 6", "-3 1 0"], correct: [0] },
     },
     {
       key: "write",

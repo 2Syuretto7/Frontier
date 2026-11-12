@@ -199,7 +199,7 @@ assert abs(C - 1) < 1e-9 and abs(D - 2) < 1e-9, 'Points on y = 1 + 2t should be 
       prompt: (
         <>
           <p>
-            Write <C>polyfit_ls(t, y, deg)</C>, the least-squares polynomial coefficients (lowest power first) found by solving with a QR factorisation of the Vandermonde matrix (<C>np.linalg.qr</C>, then a triangular solve), not the normal equations, and <C>weighted_ls(A, b, w)</C>, the solution of the weighted problem minimising Σ wᵢ(Ax − b)ᵢ². Then write <C>ridge(A, b, lam)</C>, the minimiser of ‖Ax − b‖² + λ‖x‖², by stacking √λ·I under A.
+            Write <C>polyfit_ls(t, y, deg)</C>, the least-squares polynomial coefficients (lowest power first) found by solving with a QR factorisation of the Vandermonde matrix (<C>np.linalg.qr</C>, then a triangular solve), not the normal equations. Then write <C>weighted_ls(A, b, w)</C>, the solution of the weighted problem minimising Σ wᵢ(Ax − b)ᵢ², by scaling each row of A and b by √wᵢ. A helper <C>_qr_solve(A, b)</C> used by both keeps the code short.
           </p>
         </>
       ),
@@ -212,9 +212,6 @@ def polyfit_ls(t, y, deg):
     return np.linalg.solve(A.T @ A, A.T @ np.asarray(y, float))
 
 def weighted_ls(A, b, w):
-    return np.linalg.lstsq(A, b, rcond=None)[0]
-
-def ridge(A, b, lam):
     return np.linalg.lstsq(A, b, rcond=None)[0]
 `,
         solution: `import numpy as np
@@ -235,11 +232,6 @@ def polyfit_ls(t, y, deg):
 def weighted_ls(A, b, w):
     sw = np.sqrt(np.asarray(w, float))
     return _qr_solve(np.asarray(A, float) * sw[:, None], np.asarray(b, float) * sw)
-
-def ridge(A, b, lam):
-    A, b = np.asarray(A, float), np.asarray(b, float)
-    n = A.shape[1]
-    return _qr_solve(np.vstack([A, np.sqrt(lam) * np.eye(n)]), np.concatenate([b, np.zeros(n)]))
 `,
         tests: [
           { name: "line", code: `import numpy as np
@@ -254,11 +246,6 @@ A = np.column_stack([np.ones(4), [0, 1, 2, 3]])
 b = np.array([1.0, 2.0, 2.0, 10.0])
 x = weighted_ls(A, b, [1, 1, 1, 1e-12])
 assert np.allclose(x, np.polyfit([0, 1, 2], [1, 2, 2], 1)[::-1], atol=1e-5), 'A tiny weight ignores the outlier.'` },
-          { name: "ridge", code: `import numpy as np
-rng = np.random.default_rng(15)
-A, b = rng.normal(size=(20, 5)), rng.normal(size=20)
-x = ridge(A, b, 2.0)
-assert np.allclose(x, np.linalg.solve(A.T @ A + 2 * np.eye(5), A.T @ b)) and np.linalg.norm(ridge(A, b, 100.0)) < np.linalg.norm(x), 'A larger λ shrinks x.'` },
         ],
       },
     },

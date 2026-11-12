@@ -192,10 +192,9 @@ print(round((1 / b) ** (1 / r), 3))`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>shingles(text, k)</C> (the set of tuples of k consecutive lower-cased words; empty if there are fewer than
-            k words), <C>jaccard(a, b)</C> (1.0 for two empty sets), <C>signature(sh, num_perm, seed=0)</C> and{" "}
-            <C>estimate(s1, s2)</C>. For the signature, hash each shingle to a 64-bit integer with{" "}
-            <C>{`hashlib.blake2b(" ".join(sh).encode(), digest_size=8)`}</C>, draw <C>num_perm</C> pairs (a, b) with{" "}
+            The starter gives <C>shingles(text, k)</C> (the set of tuples of k consecutive lower-cased words), <C>jaccard(a, b)</C>{" "}
+            and <C>_h64(sh)</C>, which hashes a shingle to a 64-bit integer. Write the MinHash <C>signature(sh, num_perm, seed=0)</C>{" "}
+            and <C>estimate(s1, s2)</C>, the fraction of positions where two signatures agree. For the signature, draw <C>num_perm</C> pairs (a, b) with{" "}
             <C>random.Random(seed)</C>, a from [1, P) and b from [0, P) with P = 2⁶¹ − 1, and record the minimum of{" "}
             <C>(a * x + b) % P</C> over the shingle hashes x for each pair. Raise <C>ValueError</C> for an empty set.
           </p>
@@ -203,11 +202,21 @@ print(round((1 / b) ** (1 / r), 3))`}</Code>
       ),
       answer: {
         kind: "code",
-        starter: `def shingles(text, k):
-    return set(text.split())
+        starter: `import hashlib
+import random
+
+P = (1 << 61) - 1
+
+def _h64(sh):
+    return int.from_bytes(hashlib.blake2b(' '.join(sh).encode(), digest_size=8).digest(), 'big')
+
+def shingles(text, k):
+    w = text.lower().split()
+    return {tuple(w[i:i + k]) for i in range(len(w) - k + 1)}
 
 def jaccard(a, b):
-    return 0.0
+    u = a | b
+    return len(a & b) / len(u) if u else 1.0
 
 def signature(sh, num_perm, seed=0):
     return [0] * num_perm

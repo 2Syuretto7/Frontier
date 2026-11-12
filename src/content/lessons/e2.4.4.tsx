@@ -222,161 +222,122 @@ print(tokenize("unhappiness", vocab), tokenize("unzip", vocab))`}</Code>
       prompt: (
         <>
           <p>
-            Write a <C>Trie</C> for a set of words with <C>self.root</C>, whose nodes have <C>kids</C> (a dict),{" "}
-            <C>end</C> (bool) and <C>count</C> (words ending in that node&rsquo;s subtree, including at it). Implement{" "}
-            <C>insert(w)</C> (a word already present changes nothing), <C>w in t</C>, <C>len(t)</C>,{" "}
-            <C>count_prefix(p)</C> in O(|p|), <C>delete(w)</C> (raising <C>KeyError</C> if absent, and removing nodes that no
-            longer lead to any word), <C>complete(p, k)</C> (the first k words with prefix p in alphabetical order, visiting only
-            the subtree below p and stopping once k are found), and <C>longest_prefix_of(text)</C> (the longest stored word that
-            is a prefix of text, or <C>""</C>).
+            The starter gives <C>TrieNode</C>, whose nodes have <C>kids</C> (a dict from letter to node), <C>end</C> (whether a
+            word ends here) and <C>count</C> (the number of words ending in that node&rsquo;s subtree, including at it), and{" "}
+            <C>insert(root, w)</C>. Write <C>count_prefix(root, p)</C>, the number of stored words starting with p, in O(|p|);{" "}
+            <C>complete(root, p, k)</C>, the first k words with prefix p in alphabetical order, visiting only the subtree below
+            p and stopping once k are found; and <C>longest_prefix_of(root, text)</C>, the longest stored word that is a prefix
+            of text, or <C>""</C>.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `class Trie:
-    def __init__(self):
-        self.words = set()
-
-    def insert(self, w):
-        self.words.add(w)
-
-    def __contains__(self, w):
-        return w in self.words
-
-    def __len__(self):
-        return len(self.words)
-
-    def count_prefix(self, p):
-        return 0
-
-    def delete(self, w):
-        self.words.remove(w)
-
-    def complete(self, p, k):
-        return []
-
-    def longest_prefix_of(self, text):
-        return ""
-`,
-        solution: `class _Node:
-    __slots__ = ('kids', 'end', 'count')
-
+        starter: `class TrieNode:
     def __init__(self):
         self.kids, self.end, self.count = {}, False, 0
 
-class Trie:
-    def __init__(self):
-        self.root = _Node()
-
-    def _find(self, s):
-        node = self.root
-        for ch in s:
-            node = node.kids.get(ch)
-            if node is None:
-                return None
-        return node
-
-    def insert(self, w):
-        if w in self:
-            return
-        node = self.root
+def insert(root, w):
+    node = root
+    for ch in w:
+        node = node.kids.get(ch)
+        if node is None:
+            break
+    if node is not None and node.end:
+        return
+    node = root
+    node.count += 1
+    for ch in w:
+        node = node.kids.setdefault(ch, TrieNode())
         node.count += 1
-        for ch in w:
-            node = node.kids.setdefault(ch, _Node())
-            node.count += 1
-        node.end = True
+    node.end = True
 
-    def __contains__(self, w):
-        node = self._find(w)
-        return node is not None and node.end
+def count_prefix(root, p):
+    return 0
 
-    def __len__(self):
-        return self.root.count
+def complete(root, p, k):
+    return []
 
-    def count_prefix(self, p):
-        node = self._find(p)
-        return node.count if node else 0
+def longest_prefix_of(root, text):
+    return ""
+`,
+        solution: `class TrieNode:
+    def __init__(self):
+        self.kids, self.end, self.count = {}, False, 0
 
-    def delete(self, w):
-        if w not in self:
-            raise KeyError(w)
-        node = self.root
-        node.count -= 1
-        for ch in w:
-            child = node.kids[ch]
-            child.count -= 1
-            if child.count == 0:
-                del node.kids[ch]
-                return
-            node = child
-        node.end = False
+def insert(root, w):
+    node = root
+    for ch in w:
+        node = node.kids.get(ch)
+        if node is None:
+            break
+    if node is not None and node.end:
+        return
+    node = root
+    node.count += 1
+    for ch in w:
+        node = node.kids.setdefault(ch, TrieNode())
+        node.count += 1
+    node.end = True
 
-    def complete(self, p, k):
-        node = self._find(p)
-        out = []
-        if node is None or k <= 0:
-            return out
-        stack = [(node, p)]
-        while stack and len(out) < k:
-            n, s = stack.pop()
-            if n.end:
-                out.append(s)
-            for ch in sorted(n.kids, reverse=True):
-                stack.append((n.kids[ch], s + ch))
-        return out
+def count_prefix(root, p):
+    node = root
+    for ch in p:
+        node = node.kids.get(ch)
+        if node is None:
+            return 0
+    return node.count
 
-    def longest_prefix_of(self, text):
-        node, best = self.root, 0
-        for i, ch in enumerate(text):
-            node = node.kids.get(ch)
-            if node is None:
-                break
-            if node.end:
-                best = i + 1
-        return text[:best]
+def complete(root, p, k):
+    node = root
+    for ch in p:
+        node = node.kids.get(ch)
+        if node is None:
+            return []
+    out, stack = [], [(node, p)]
+    while stack and len(out) < k:
+        n, s = stack.pop()
+        if n.end:
+            out.append(s)
+        for ch in sorted(n.kids, reverse=True):
+            stack.append((n.kids[ch], s + ch))
+    return out
+
+def longest_prefix_of(root, text):
+    node, best = root, 0
+    for i, ch in enumerate(text):
+        node = node.kids.get(ch)
+        if node is None:
+            break
+        if node.end:
+            best = i + 1
+    return text[:best]
 `,
         tests: [
-          { name: "basics", code: `t = Trie()
+          { name: "basics", code: `t = TrieNode()
 for w in ["tea", "ten", "tent", "to", "toe", "in", "inn", "ink", "ten"]:
-    t.insert(w)
-assert len(t) == 8 and "ten" in t and "te" not in t and "tents" not in t
-assert t.count_prefix("te") == 3 and t.count_prefix("") == 8 and t.count_prefix("x") == 0
-assert t.complete("t", 3) == ["tea", "ten", "tent"] and t.complete("in", 10) == ["in", "ink", "inn"] and t.complete("q", 2) == []
-assert t.longest_prefix_of("tentacle") == "tent" and t.longest_prefix_of("inner") == "inn" and t.longest_prefix_of("xyz") == ""` },
-          { name: "delete", code: `t = Trie()
-for w in ["a", "ab", "abc", "b"]:
-    t.insert(w)
-t.delete("ab")
-assert "ab" not in t and "abc" in t and t.count_prefix("ab") == 1
-t.delete("abc")
-assert t.root.kids["a"].kids == {}, 'Remove nodes that no longer lead to a word.'
-try:
-    t.delete("zz")
-    assert False, 'Deleting a missing word raises KeyError.'
-except KeyError:
-    pass
-t.delete("a"); t.delete("b")
-assert t.root.kids == {} and len(t) == 0` },
+    insert(t, w)
+assert count_prefix(t, "te") == 3 and count_prefix(t, "") == 8 and count_prefix(t, "x") == 0 and count_prefix(t, "tents") == 0
+assert complete(t, "t", 3) == ["tea", "ten", "tent"] and complete(t, "in", 10) == ["in", "ink", "inn"] and complete(t, "q", 2) == []
+assert longest_prefix_of(t, "tentacle") == "tent" and longest_prefix_of(t, "inner") == "inn" and longest_prefix_of(t, "xyz") == ""` },
           { name: "random", code: `import random
 rng = random.Random(1)
-t, ref = Trie(), set()
-for _ in range(3000):
+t, ref = TrieNode(), set()
+for _ in range(2000):
     w = ''.join(rng.choice('abc') for _ in range(rng.randint(0, 4)))
-    if rng.random() < 0.6:
-        t.insert(w); ref.add(w)
-    elif w in ref:
-        t.delete(w); ref.discard(w)
+    insert(t, w); ref.add(w)
     p = ''.join(rng.choice('abc') for _ in range(rng.randint(0, 2)))
-    assert t.count_prefix(p) == sum(x.startswith(p) for x in ref) and len(t) == len(ref)
-    assert t.complete(p, 3) == sorted(x for x in ref if x.startswith(p))[:3]` },
-          { name: "lazy completion", code: `t = Trie()
+    assert count_prefix(t, p) == sum(x.startswith(p) for x in ref)
+    assert complete(t, p, 3) == sorted(x for x in ref if x.startswith(p))[:3]
+    q = ''.join(rng.choice('abc') for _ in range(6))
+    assert longest_prefix_of(t, q) == max((x for x in ref if q.startswith(x)), key=len, default='')` },
+          { name: "lazy completion", code: `t = TrieNode()
 for i in range(20000):
-    t.insert("w" + str(i))
+    insert(t, "w" + str(i))
 import time
 s = time.time()
 for _ in range(2000):
-    assert t.complete("w", 2) == ["w0", "w1"]
+    assert complete(t, "w", 2) == ["w0", "w1"]
 assert time.time() - s < 2, 'Stop as soon as k words are found.'` },
         ],
       },

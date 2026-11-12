@@ -152,7 +152,7 @@ print(tree(25, 60), tree(40, 10), tree(29, 50))`}</Code>
         <>
           <Code>{`def gini(ls):
     n = len(ls)
-    return 1 - sum((ls.count(c) / n) ** 2 for c in set(ls))
+    return 1 - sum((ls.count(c) / n) ** 2 for c in ["a", "b"])
 left, right = ["a", "a", "b"], ["b", "b", "b", "a"]
 w = (len(left) * gini(left) + len(right) * gini(right)) / 7
 print(round(gini(left), 4), round(gini(right), 4), round(w, 4))`}</Code>
@@ -179,15 +179,14 @@ print(round(gini(left), 4), round(gini(right), 4), round(w, 4))`}</Code>
 def best_split(xs, ys):
     return xs[0]
 `,
-        solution: `from collections import Counter
-
-def gini(labels):
+        solution: `def gini(labels):
     n = len(labels)
-    return 1 - sum((c / n) ** 2 for c in Counter(labels).values())
+    classes = [c for i, c in enumerate(labels) if c not in labels[:i]]
+    return 1 - sum((labels.count(c) / n) ** 2 for c in classes)
 
 def best_split(xs, ys):
     best, best_t = None, None
-    for t in sorted(set(xs)):
+    for t in sorted(xs):
         left = [y for x, y in zip(xs, ys) if x < t]
         right = [y for x, y in zip(xs, ys) if x >= t]
         if not left or not right:
@@ -209,72 +208,36 @@ def best_split(xs, ys):
       prompt: (
         <>
           <p>
-            Grow a whole tree. Write <C>build_tree(X, y, max_depth)</C> for rows of numbers X and labels y. A leaf is a label (the majority, the smallest label on ties); an internal node is a tuple (feature, threshold, left, right) where rows with x[feature] ≤ threshold go left. Make a leaf when the labels are pure, the depth limit is reached, or no split lowers the weighted Gini impurity; otherwise use the split with the lowest weighted Gini, trying thresholds at midpoints between consecutive distinct values (lowest feature, then lowest threshold, on ties). Then write <C>predict(tree, x)</C>.
+            Each leaf of a decision tree predicts the most common label of the training rows that reach it. Write <C>majority(labels)</C>, the most common label of a non-empty list (the smallest label on ties), and <C>stump_labels(xs, ys, t)</C>, the pair (left label, right label) a stump with threshold t predicts: the majority of ys where x &lt; t, and where x ≥ t. Assume both sides are non-empty.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def build_tree(X, y, max_depth):
-    return y[0]
+        starter: `def majority(labels):
+    return labels[0]
 
-def predict(tree, x):
-    return tree
+def stump_labels(xs, ys, t):
+    return (ys[0], ys[-1])
 `,
-        solution: `def _gini(ls):
-    n = len(ls)
-    return 1 - sum((ls.count(c) / n) ** 2 for c in set(ls))
+        solution: `def majority(labels):
+    best = None
+    for c in sorted(labels):
+        if best is None or labels.count(c) > labels.count(best):
+            best = c
+    return best
 
-def _majority(y):
-    return min(set(y), key=lambda c: (-y.count(c), c))
-
-def build_tree(X, y, max_depth):
-    if len(set(y)) == 1 or max_depth == 0:
-        return _majority(y)
-    best, here = None, _gini(y)
-    for f in range(len(X[0])):
-        vals = sorted(set(r[f] for r in X))
-        for a, b in zip(vals, vals[1:]):
-            t = (a + b) / 2
-            L = [lab for r, lab in zip(X, y) if r[f] <= t]
-            Rr = [lab for r, lab in zip(X, y) if r[f] > t]
-            g = (len(L) * _gini(L) + len(Rr) * _gini(Rr)) / len(y)
-            if g < here - 1e-12 and (best is None or g < best[0] - 1e-12):
-                best = (g, f, t)
-    if best is None:
-        return _majority(y)
-    _, f, t = best
-    li = [i for i, r in enumerate(X) if r[f] <= t]
-    ri = [i for i, r in enumerate(X) if r[f] > t]
-    return (f, t, build_tree([X[i] for i in li], [y[i] for i in li], max_depth - 1), build_tree([X[i] for i in ri], [y[i] for i in ri], max_depth - 1))
-
-def predict(tree, x):
-    while isinstance(tree, tuple):
-        f, t, L, Rr = tree
-        tree = L if x[f] <= t else Rr
-    return tree
+def stump_labels(xs, ys, t):
+    left = [y for x, y in zip(xs, ys) if x < t]
+    right = [y for x, y in zip(xs, ys) if x >= t]
+    return (majority(left), majority(right))
 `,
         tests: [
-          { name: "stump", code: `X = [[1], [2], [3], [10], [11]]
-y = ['a', 'a', 'a', 'b', 'b']
-t = build_tree(X, y, 3)
-assert t == (0, 6.5, 'a', 'b') and predict(t, [5]) == 'a' and predict(t, [7]) == 'b', 'One split at the midpoint 6.5 separates them.'` },
-          { name: "depth zero", code: `assert build_tree([[0], [1], [2]], ['b', 'a', 'b'], 0) == 'b' and build_tree([[0], [1]], ['b', 'a'], 0) == 'a', 'Majority, smallest label on ties.'` },
-          { name: "xor", code: `X = [[0, 0], [0, 1], [1, 0], [1, 1]] * 3
-y = [0, 1, 1, 0] * 3
-t = build_tree(X, y, 2)
-assert t == 0, 'Balanced XOR: no single split lowers the impurity, so the greedy tree stops at a leaf (0 wins the tie).'
-X2 = [[0, 0], [0, 1], [1, 0], [1, 1], [1, 1]]
-y2 = [0, 1, 1, 0, 0]
-t2 = build_tree(X2, y2, 2)
-assert all(predict(t2, x) == lab for x, lab in zip(X2, y2)), 'A slight imbalance lets the greedy tree find XOR in two levels.'` },
-          { name: "fit", code: `import random
-random.seed(3)
-X = [[random.uniform(0, 10), random.uniform(0, 10)] for _ in range(200)]
-y = [int(a > 4) + int(b > 6) for a, b in X]
-t = build_tree(X, y, 4)
-acc = sum(predict(t, x) == lab for x, lab in zip(X, y)) / len(y)
-assert acc == 1.0, f'Axis-aligned regions are learned exactly; training accuracy {acc}.'` },
+          { name: "majority", code: `assert majority(['b', 'a', 'b']) == 'b' and majority(['b', 'a']) == 'a' and majority([3, 1, 3, 1, 2]) == 1, 'Count each label; on a tie take the smallest.'` },
+          { name: "stump", code: `xs = [1, 2, 3, 10, 11]
+ys = ['a', 'a', 'b', 'b', 'b']
+assert stump_labels(xs, ys, 6) == ('a', 'b') and stump_labels(xs, ys, 3) == ('a', 'b') and stump_labels(xs, ys, 2) == ('a', 'b') and stump_labels(xs, ys, 11) == ('a', 'b'), 'Each side predicts its own majority.'
+assert stump_labels([1, 2, 3, 4], ['y', 'n', 'n', 'y'], 3) == ('n', 'n'), 'Ties go to the smallest label.'` },
         ],
       },
     },

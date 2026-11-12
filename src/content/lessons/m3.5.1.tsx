@@ -197,13 +197,18 @@ assert abs(xr @ xn) < 1e-9 and np.allclose(xr + xn, x), 'The two parts must be p
       prompt: (
         <>
           <p>
-            Write <C>orthogonal_complement(V, tol=1e-10)</C>, an orthonormal basis (as columns) of the orthogonal complement of the span of the columns of V in ℝⁿ, via the SVD of V. Then write <C>decompose(V, x)</C>, which splits x into (p, q) with p in the span of V and q in its complement, and <C>angle_between_subspaces(V, W)</C>, the smallest principal angle in degrees between two subspaces given by bases: the arccosine of the largest singular value of QᵥᵀQ_W, where Qᵥ and Q_W are orthonormal bases.
+            The starter gives <C>_basis(V, tol)</C>, which returns orthonormal bases (as columns) of the span of V and of its orthogonal complement, from the SVD. Write <C>orthogonal_complement(V, tol=1e-10)</C>, an orthonormal basis (as columns) of the orthogonal complement of the span of the columns of V in ℝⁿ, via the SVD of V. Then write <C>decompose(V, x)</C>, which splits x into (p, q) with p in the span of V and q in its complement, and <C>angle_between_subspaces(V, W)</C>, the smallest principal angle in degrees between two subspaces given by bases: the arccosine of the largest singular value of QᵥᵀQ_W, where Qᵥ and Q_W are orthonormal bases.
           </p>
         </>
       ),
       answer: {
         kind: "code",
         starter: `import numpy as np
+
+def _basis(V, tol=1e-10):
+    U, s, _ = np.linalg.svd(np.asarray(V, float))
+    r = int(np.sum(s > tol * s[0])) if s.size and s[0] > 0 else 0
+    return U[:, :r], U[:, r:]
 
 def orthogonal_complement(V, tol=1e-10):
     return np.zeros((np.asarray(V).shape[0], 0))

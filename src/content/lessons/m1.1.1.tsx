@@ -163,7 +163,7 @@ print(rows, rows == [p != q for p in (True, False) for q in (True, False)])`}</C
       prompt: (
         <>
           <p>
-            Every connective can be built from NAND alone. Write <C>nand(p, q)</C>, and then <C>NOT(p)</C>, <C>AND(p, q)</C>, <C>OR(p, q)</C>, <C>IMPLIES(p, q)</C> and <C>XOR(p, q)</C>, each using only calls to <C>nand</C> (no <C>not</C>, <C>and</C>, <C>or</C>, <C>if</C> or comparisons in them).
+            Every connective can be built from NAND alone. The starter gives <C>nand(p, q)</C>, and builds <C>NOT</C> and <C>AND</C> from it. Write <C>OR(p, q)</C>, <C>IMPLIES(p, q)</C> and <C>XOR(p, q)</C> the same way, using only calls to <C>nand</C>, <C>NOT</C> and <C>AND</C> (no <C>not</C>, <C>and</C>, <C>or</C>, <C>if</C> or comparisons in them).
           </p>
         </>
       ),
@@ -173,10 +173,10 @@ print(rows, rows == [p != q for p in (True, False) for q in (True, False)])`}</C
     return not (p and q)
 
 def NOT(p):
-    return not p
+    return nand(p, p)
 
 def AND(p, q):
-    return p and q
+    return nand(nand(p, q), nand(p, q))
 
 def OR(p, q):
     return p or q

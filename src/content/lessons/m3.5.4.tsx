@@ -216,7 +216,7 @@ assert np.allclose(Q @ R, A) and np.allclose(np.tril(R, -1), 0), 'A should equal
       prompt: (
         <>
           <p>
-            Classical Gram–Schmidt loses orthogonality on nearly dependent columns. Write <C>cgs(A)</C> (classical: each projection coefficient uses the original column) and <C>mgs(A)</C> (modified: subtract each projection from the running vector immediately), both returning (Q, R). Then write <C>householder_qr(A)</C>, QR by Householder reflections returning a full m × m orthogonal Q and m × n upper triangular R. The tests measure ‖QᵀQ − I‖ on a nearly singular matrix, where MGS beats CGS and Householder beats both.
+            Classical Gram–Schmidt loses orthogonality on nearly dependent columns. The starter gives <C>cgs(A)</C>, classical Gram–Schmidt returning (Q, R), where each projection coefficient uses the original column. Write <C>mgs(A)</C>, modified Gram–Schmidt, which instead subtracts each projection from the running vector immediately. Then write <C>householder_qr(A)</C>, QR by Householder reflections returning a full m × m orthogonal Q and m × n upper triangular R. The tests measure ‖QᵀQ − I‖ on a nearly singular matrix, where MGS beats CGS and Householder beats both.
           </p>
         </>
       ),
@@ -225,7 +225,17 @@ assert np.allclose(Q @ R, A) and np.allclose(np.tril(R, -1), 0), 'A should equal
         starter: `import numpy as np
 
 def cgs(A):
-    return np.linalg.qr(A)
+    A = np.asarray(A, float)
+    m, n = A.shape
+    Q, R = np.zeros((m, n)), np.zeros((n, n))
+    for j in range(n):
+        v = A[:, j].copy()
+        for i in range(j):
+            R[i, j] = Q[:, i] @ A[:, j]
+            v -= R[i, j] * Q[:, i]
+        R[j, j] = np.linalg.norm(v)
+        Q[:, j] = v / R[j, j]
+    return Q, R
 
 def mgs(A):
     return np.linalg.qr(A)

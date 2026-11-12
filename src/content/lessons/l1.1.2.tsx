@@ -130,31 +130,40 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: (
         <>
-          <Code>{`import numpy as np
-from sklearn.tree import DecisionTreeRegressor
-rng = np.random.default_rng(0)
-X = rng.uniform(0, 1, (200, 1)); y = np.sin(6 * X[:, 0]) + rng.normal(0, 0.3, 200)
-m = DecisionTreeRegressor().fit(X[:100], y[:100])
-print(m.score(X[:100], y[:100]) == 1.0, m.score(X[100:], y[100:]) < 0.9)`}</Code>
-          <p>An unlimited tree on noisy data: R² on its training half, and on the held-out half. What does this print?</p>
+          <Code>{`train = [(1, 2.1), (2, 3.9), (3, 6.2), (4, 7.8)]
+test = [(1.4, 2.8), (2.6, 5.2), (3.5, 7.0)]
+
+def predict(x):
+    best = train[0]
+    for p in train:
+        if abs(p[0] - x) < abs(best[0] - x):
+            best = p
+    return best[1]
+
+def mse(data):
+    return sum((predict(x) - y) ** 2 for x, y in data) / len(data)
+
+print(mse(train), round(mse(test), 2))`}</Code>
+          <p>A model that memorises its training points and answers with the nearest one. What are its training and test errors?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["True True", "True False", "False True", "False False"], correct: [0] },
+      answer: { kind: "choice", options: ["0.0 0.71", "0.71 0.0", "0.0 2.13", "0.0 0.0"], correct: [0] },
     },
     {
       key: "read2",
       rung: "apply",
       prompt: (
         <>
-          <Code>{`import numpy as np
-x = np.array([0.0, 1, 2, 3, 4, 5])
-y = x ** 2
-c = np.polyfit(x[:4], y[:4], 1)
-print(np.round(c, 2), np.round(np.polyval(c, x[4:]), 2))`}</Code>
-          <p>A line fitted to the first four points of y = x², then used on the last two. What does this print?</p>
+          <Code>{`xs = [0, 1, 2, 3]
+ys = [x ** 2 for x in xs]
+mx, my = sum(xs) / 4, sum(ys) / 4
+m = sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sum((x - mx) ** 2 for x in xs)
+c = my - m * mx
+print(m, c, [m * x + c for x in (4, 5)])`}</Code>
+          <p>The least-squares line through the first four points of y = x², then used at x = 4 and 5, where the true values are 16 and 25. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["[ 3. -1.] [11. 14.]", "[ 3. -1.] [16. 25.]", "[3. 1.] [13. 16.]", "[ 2.  0.] [ 8. 10.]"], correct: [0] },
+      answer: { kind: "choice", options: ["3.0 -1.0 [11.0, 14.0]", "3.0 -1.0 [16.0, 25.0]", "3.0 1.0 [13.0, 16.0]", "2.0 0.0 [8.0, 10.0]"], correct: [0] },
     },
     {
       key: "write",
@@ -199,37 +208,39 @@ assert tr == 0 and te == 4, 'The mean of the first two targets is 0, which is of
       prompt: (
         <>
           <p>
-            For least squares with p features and n training rows, the expected training error is σ²(1 − p/n) and the expected test error is about σ²(1 + p/n). Check it by simulation. Write <C>simulate_ols_errors(n, p, sigma, trials, seed)</C>: with one <C>np.random.default_rng(seed)</C>, in each trial draw X (n × p) and a test set X′ (1000 × p) from the standard normal, set y = X·1 + noise and y′ = X′·1 + noise (noise with standard deviation σ), fit by <C>np.linalg.lstsq</C> without an intercept, and record both mean squared errors. Return (mean train MSE, mean test MSE).
+            Fit a line through the origin, y ≈ wx, to n noisy points. The training error comes out below the noise level σ², about σ²(1 − 1/n), while the test error comes out above it. Check this by simulation. Write <C>simulate_errors(n, sigma, trials, seed)</C>: with one <C>random.Random(seed)</C>, in each trial draw n values of x from <C>rng.gauss(0, 1)</C> and set each y = 2x + <C>rng.gauss(0, sigma)</C>; fit w = Σxy / Σx²; then draw 500 test points the same way. Record both mean squared errors, and return (mean training error, mean test error) over the trials.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `import numpy as np
+        starter: `import random
 
-def simulate_ols_errors(n, p, sigma, trials, seed):
+def simulate_errors(n, sigma, trials, seed):
     return sigma ** 2, sigma ** 2
 `,
-        solution: `import numpy as np
+        solution: `import random
 
-def simulate_ols_errors(n, p, sigma, trials, seed):
-    rng = np.random.default_rng(seed)
-    tr, te = [], []
-    beta = np.ones(p)
+def simulate_errors(n, sigma, trials, seed):
+    rng = random.Random(seed)
+    train, test = [], []
     for _ in range(trials):
-        X = rng.normal(size=(n, p)); y = X @ beta + rng.normal(0, sigma, n)
-        Xt = rng.normal(size=(1000, p)); yt = Xt @ beta + rng.normal(0, sigma, 1000)
-        w = np.linalg.lstsq(X, y, rcond=None)[0]
-        tr.append(np.mean((X @ w - y) ** 2)); te.append(np.mean((Xt @ w - yt) ** 2))
-    return float(np.mean(tr)), float(np.mean(te))
+        xs = [rng.gauss(0, 1) for _ in range(n)]
+        ys = [2 * x + rng.gauss(0, sigma) for x in xs]
+        w = sum(x * y for x, y in zip(xs, ys)) / sum(x * x for x in xs)
+        train.append(sum((w * x - y) ** 2 for x, y in zip(xs, ys)) / n)
+        xt = [rng.gauss(0, 1) for _ in range(500)]
+        yt = [2 * x + rng.gauss(0, sigma) for x in xt]
+        test.append(sum((w * x - y) ** 2 for x, y in zip(xt, yt)) / 500)
+    return sum(train) / trials, sum(test) / trials
 `,
         tests: [
-          { name: "theory", code: `tr, te = simulate_ols_errors(50, 10, 1.0, 400, 0)
-assert abs(tr - 0.8) < 0.03, f'Training error {tr:.3f} should be close to 1 − 10/50 = 0.8.'
-assert 1.15 < te < 1.35, f'Test error {te:.3f} should be close to 1.2 or a little above.'` },
-          { name: "interpolate", code: `tr, te = simulate_ols_errors(20, 20, 1.0, 50, 1)
-assert tr < 1e-20 and te > 5, 'With p = n the model fits the noise exactly and fails on new data.'` },
-          { name: "seeded", code: `assert simulate_ols_errors(30, 3, 2.0, 20, 5) == simulate_ols_errors(30, 3, 2.0, 20, 5)` },
+          { name: "theory", code: `tr, te = simulate_errors(5, 1.0, 400, 0)
+assert abs(tr - 0.8) < 0.06, f'Training error {tr:.3f} should be close to 1 − 1/5 = 0.8.'
+assert 1.15 < te < 1.5, f'Test error {te:.3f} should be clearly above the noise level 1.'` },
+          { name: "one point", code: `tr, te = simulate_errors(1, 1.0, 50, 1)
+assert tr < 1e-20 and te > 5, 'With one point the line fits the noise exactly and fails on new data.'` },
+          { name: "seeded", code: `assert simulate_errors(10, 2.0, 20, 5) == simulate_errors(10, 2.0, 20, 5)` },
         ],
       },
     },

@@ -206,30 +206,28 @@ print(f"{item}: Rs {price:.2f}")
       prompt: (
         <>
           <p>
-            Write <C>receipt(items)</C> for a list of (name, quantity, unit price) tuples. Return one string made of lines joined by <C>"\n"</C>: one line per item formatted as <C>{`f"{name:<10}{qty:>3}{qty * price:>8.2f}"`}</C>, then a final line <C>{`f"{'TOTAL':<13}{total:>8.2f}"`}</C>. Names longer than 10 characters are cut to 10.
+            Format a receipt with f-strings. Write <C>item_line(name, qty, price)</C>, the line <C>{`f"{name:<10}{qty:>3}{qty * price:>8.2f}"`}</C> with the name cut to its first 10 characters (<C>name[:10]</C>), and <C>total_line(total)</C>, the line <C>{`f"{'TOTAL':<13}{total:>8.2f}"`}</C>. Every line is then 21 characters wide.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def receipt(items):
-    return ''
+        starter: `def item_line(name, qty, price):
+    return name
+
+def total_line(total):
+    return 'TOTAL'
 `,
-        solution: `def receipt(items):
-    lines, total = [], 0
-    for name, qty, price in items:
-        lines.append(f'{name[:10]:<10}{qty:>3}{qty * price:>8.2f}')
-        total += qty * price
-    lines.append(f"{'TOTAL':<13}{total:>8.2f}")
-    return '\\n'.join(lines)
+        solution: `def item_line(name, qty, price):
+    return f'{name[:10]:<10}{qty:>3}{qty * price:>8.2f}'
+
+def total_line(total):
+    return f"{'TOTAL':<13}{total:>8.2f}"
 `,
         tests: [
-          { name: "basic", code: `r = receipt([('Tea', 2, 12.5), ('Samosa', 3, 15)])
-assert r == 'Tea         2   25.00\\nSamosa      3   45.00\\nTOTAL           70.00', 'Columns of width 10, 3 and 8.'` },
-          { name: "widths", code: `r = receipt([('Masala dosa extra', 1, 120)])
-lines = r.split('\\n')
-assert lines[0] == 'Masala dos  1  120.00' and all(len(l) == 21 for l in lines), 'Every line is 21 characters wide.'` },
-          { name: "empty", code: `assert receipt([]) == 'TOTAL            0.00'` },
+          { name: "item", code: `assert item_line('Tea', 2, 12.5) == 'Tea         2   25.00' and item_line('Samosa', 3, 15) == 'Samosa      3   45.00', 'Columns of width 10, 3 and 8.'` },
+          { name: "long name", code: `assert item_line('Masala dosa extra', 1, 120) == 'Masala dos  1  120.00', 'Cut the name to 10 characters.'` },
+          { name: "total", code: `assert total_line(70) == 'TOTAL           70.00' and total_line(0) == 'TOTAL            0.00' and len(total_line(1234.5)) == 21, 'TOTAL in 13 columns, then the amount in 8.'` },
         ],
       },
     },

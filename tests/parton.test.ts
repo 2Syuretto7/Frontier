@@ -48,14 +48,15 @@ test("protected answers are described for the reviewing pass", () => {
   assert.match(describeAnswer({ kind: "written", rubric: ["One", "Two"] }), /1\. One\n2\. Two/);
 });
 
-test("written work is marked leniently", () => {
+test("written work is read leniently but only complete answers are accepted", () => {
   const crit = (...met: boolean[]) => met.map((m, i) => ({ criterion: `c${i}`, met: m }));
-  assert.equal(acceptWritten({ criteria: crit(true, true, true, true), accepted: false }, 4), true);
-  assert.equal(acceptWritten({ criteria: crit(true, false, true, true), accepted: false }, 4), true, "one missed criterion is still accepted");
-  assert.equal(acceptWritten({ criteria: crit(true, false, false, true), accepted: false }, 4), false);
-  assert.equal(acceptWritten({ criteria: crit(false, false, false, false), accepted: true }, 4), true, "Parton's judgement that the central idea is right is enough");
-  assert.equal(acceptWritten({ criteria: crit(true, false), accepted: false }, 2), true);
-  assert.equal(acceptWritten({ criteria: crit(false), accepted: false }, 1), false);
+  assert.equal(acceptWritten({ criteria: crit(true, true, true, true), accepted: false }, 4), true, "a complete argument is accepted");
+  assert.equal(acceptWritten({ criteria: crit(true, false, true, true), accepted: false }, 4), false, "one missed criterion makes it partial");
+  assert.equal(acceptWritten({ criteria: crit(true, false, true, true), accepted: true }, 4), false, "a partial argument is rejected even if judged accepted");
+  assert.equal(acceptWritten({ criteria: crit(true, true), accepted: true }, 3), false, "every criterion must be judged");
+  assert.equal(acceptWritten({ criteria: crit(true), accepted: true }, 1), true);
+  assert.equal(acceptWritten({ criteria: crit(false), accepted: true }, 1), false);
+  assert.match(MARK_RULES, /reject partial ones/);
   assert.match(MARK_RULES, /fair, friendly and lenient/);
   assert.doesNotMatch(MARK_RULES, /Be rigorous/);
 });

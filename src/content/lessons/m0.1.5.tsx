@@ -208,12 +208,12 @@ print(sorted(xs)[1], max(xs) - min(xs))`}</Code>
       prompt: (
         <>
           <Code>{`import math
-xs = [3.7, -3.7, 3.0, -0.5]
-print([math.floor(x) for x in xs], [math.ceil(x) for x in xs])`}</Code>
-          <p>floor moves left on the number line, ceil moves right. What does this print?</p>
+x = -3.7
+print(math.floor(x), math.ceil(x), int(x))`}</Code>
+          <p>floor moves left on the number line, ceil moves right, and int drops the decimal part. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["[3, -4, 3, -1] [4, -3, 3, 0]", "[3, -3, 3, 0] [4, -4, 3, -1]", "[3, -4, 3, 0] [4, -3, 3, -1]", "[4, -3, 3, 0] [3, -4, 3, -1]"], correct: [0] },
+      answer: { kind: "choice", options: ["-4 -3 -3", "-3 -4 -4", "-4 -3 -4", "-3 -3 -3"], correct: [0] },
     },
     {
       key: "write",
@@ -221,23 +221,27 @@ print([math.floor(x) for x in xs], [math.ceil(x) for x in xs])`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>in_interval(x, a, b, closed)</C>, which says whether x lies in [a, b] when <C>closed</C> is true and in (a, b) when it is false.
+            Write <C>in_closed(x, a, b)</C>, which says whether x lies in the closed interval [a, b], and <C>in_open(x, a, b)</C>, which says whether it lies in the open interval (a, b).
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def in_interval(x, a, b, closed):
+        starter: `def in_closed(x, a, b):
     return a < x < b
+
+def in_open(x, a, b):
+    return a < x
 `,
-        solution: `def in_interval(x, a, b, closed):
-    if closed:
-        return a <= x <= b
+        solution: `def in_closed(x, a, b):
+    return a <= x <= b
+
+def in_open(x, a, b):
     return a < x < b
 `,
         tests: [
-          { name: "open", code: `assert in_interval(1, 0, 2, False) and not in_interval(0, 0, 2, False), 'An open interval leaves out its ends.'` },
-          { name: "closed", code: `assert in_interval(0, 0, 2, True) and in_interval(2, 0, 2, True) and not in_interval(2.1, 0, 2, True), 'A closed interval includes its ends.'` },
+          { name: "open", code: `assert in_open(1, 0, 2) and not in_open(0, 0, 2) and not in_open(2, 0, 2), 'An open interval leaves out its ends.'` },
+          { name: "closed", code: `assert in_closed(0, 0, 2) and in_closed(2, 0, 2) and not in_closed(2.1, 0, 2) and not in_closed(-0.1, 0, 2), 'A closed interval includes its ends.'` },
         ],
       },
     },
@@ -247,29 +251,27 @@ print([math.floor(x) for x in xs], [math.ceil(x) for x in xs])`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>merge(intervals)</C>, which takes a list of closed intervals (a, b) with a ≤ b on the real line, in any order, and returns their union as a sorted list of disjoint closed intervals. Intervals that touch, like (1, 2) and (2, 3), merge into one.
+            Write <C>overlap(a, b, c, d)</C>, the length of the part of the line shared by the intervals [a, b] and [c, d], and <C>gap(a, b, c, d)</C>, the distance between them, which is 0 when they meet. The shared part runs from the larger left end to the smaller right end. For example, [1, 5] and [3, 9] share [3, 5], so <C>overlap(1, 5, 3, 9)</C> is 2, and [1, 2] and [6, 7] have <C>gap</C> 4.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def merge(intervals):
-    return sorted(intervals)
+        starter: `def overlap(a, b, c, d):
+    return b - c
+
+def gap(a, b, c, d):
+    return c - b
 `,
-        solution: `def merge(intervals):
-    out = []
-    for a, b in sorted(intervals):
-        if out and a <= out[-1][1]:
-            out[-1] = (out[-1][0], max(out[-1][1], b))
-        else:
-            out.append((a, b))
-    return out
+        solution: `def overlap(a, b, c, d):
+    return max(0, min(b, d) - max(a, c))
+
+def gap(a, b, c, d):
+    return max(0, max(a, c) - min(b, d))
 `,
         tests: [
-          { name: "disjoint", code: `assert merge([(5, 6), (1, 2)]) == [(1, 2), (5, 6)] and merge([]) == [], 'Sort by left end first.'` },
-          { name: "overlap", code: `assert merge([(1, 4), (2, 3), (3, 8)]) == [(1, 8)], 'An interval inside another adds nothing.'` },
-          { name: "touching", code: `assert merge([(2, 3), (1, 2), (-1, 0.5)]) == [(-1, 0.5), (1, 3)], 'Closed intervals sharing an endpoint join.'` },
-          { name: "contained", code: `assert merge([(0, 10), (1, 2), (3, 4), (11, 12)]) == [(0, 10), (11, 12)], 'Keep the larger right end.'` },
+          { name: "overlap", code: `assert overlap(1, 5, 3, 9) == 2 and overlap(3, 9, 1, 5) == 2 and overlap(0, 10, 2, 3) == 1 and overlap(1, 2, 6, 7) == 0, 'From max of the left ends to min of the right ends, but never negative.'` },
+          { name: "gap", code: `assert gap(1, 2, 6, 7) == 4 and gap(6, 7, 1, 2) == 4 and gap(1, 5, 3, 9) == 0 and gap(-3, -1, 1, 4) == 2, 'The gap is the same distance taken the other way round.'` },
         ],
       },
     },

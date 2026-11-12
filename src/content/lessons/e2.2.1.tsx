@@ -193,8 +193,8 @@ print(a[:n], shifts, a[n:])`}</Code>
             Implement <C>insert(s)</C> (type the characters of s at the cursor, which ends up after them),{" "}
             <C>backspace()</C> (delete the character before the cursor; nothing at position 0), <C>move(i)</C> (put the cursor
             before character i, 0 ≤ i ≤ len, by moving characters across the gap one at a time, adding 1 to{" "}
-            <C>self.moved</C> for each), <C>cursor()</C>, <C>text()</C> and <C>__len__</C>. When the gap is empty, double the
-            buffer.
+            <C>self.moved</C> for each), <C>cursor()</C>, <C>text()</C> and <C>__len__</C>. Never let the gap
+            become empty: as soon as it does, double the buffer by inserting that many empty slots at the gap.
           </p>
         </>
       ),
@@ -232,19 +232,16 @@ print(a[:n], shifts, a[n:])`}</Code>
         self.moved = 0
 
     def _grow(self):
-        cap = len(self.buf)
-        new = [None] * (2 * cap)
-        tail = cap - self.hi
-        new[:self.lo] = self.buf[:self.lo]
-        new[2 * cap - tail:] = self.buf[self.hi:]
-        self.buf, self.hi = new, 2 * cap - tail
+        n = len(self.buf)
+        self.buf[self.lo:self.lo] = [None] * n
+        self.hi += n
 
     def insert(self, s):
         for ch in s:
-            if self.lo == self.hi:
-                self._grow()
             self.buf[self.lo] = ch
             self.lo += 1
+            if self.lo == self.hi:
+                self._grow()
 
     def backspace(self):
         if self.lo > 0:
@@ -252,21 +249,13 @@ print(a[:n], shifts, a[n:])`}</Code>
             self.buf[self.lo] = None
 
     def move(self, i):
-        if not 0 <= i <= len(self):
-            raise IndexError('cursor out of range')
         while self.lo > i:
-            self.lo -= 1
-            self.hi -= 1
-            if self.lo != self.hi:
-                self.buf[self.hi] = self.buf[self.lo]
-                self.buf[self.lo] = None
+            self.lo, self.hi = self.lo - 1, self.hi - 1
+            self.buf[self.hi], self.buf[self.lo] = self.buf[self.lo], None
             self.moved += 1
         while self.lo < i:
-            if self.lo != self.hi:
-                self.buf[self.lo] = self.buf[self.hi]
-                self.buf[self.hi] = None
-            self.lo += 1
-            self.hi += 1
+            self.buf[self.lo], self.buf[self.hi] = self.buf[self.hi], None
+            self.lo, self.hi = self.lo + 1, self.hi + 1
             self.moved += 1
 
     def cursor(self):

@@ -208,13 +208,32 @@ assert o is not None and sorted(o) == list(range(12)) and all(o.index(u) < o.ind
       prompt: (
         <>
           <p>
-            Scheduling with a DAG. Write <C>longest_path(n, edges)</C> for a directed graph on 0 … n − 1 with edges (u, v, w) and positive weights: find a topological order with Kahn&rsquo;s algorithm (raise <C>ValueError</C> if there is a cycle), relax the edges in that order to get the heaviest path ending at each vertex (a path may start anywhere), and return (length, path) for the heaviest path overall. Then write <C>count_paths(n, edges, s, t)</C>, the number of directed paths from s to t, for edges given as pairs (u, v), by dynamic programming in topological order.
+            Scheduling with a DAG. Write <C>longest_path(n, edges)</C> for a directed graph on 0 … n − 1 with edges (u, v, w) and positive weights: the starter&rsquo;s <C>_order(n, pairs)</C> gives a topological order by Kahn&rsquo;s algorithm (raising <C>ValueError</C> on a cycle) and the adjacency lists; relax the edges in that order to get the heaviest path ending at each vertex (a path may start anywhere), and return (length, path) for the heaviest path overall. Then write <C>count_paths(n, edges, s, t)</C>, the number of directed paths from s to t, for edges given as pairs (u, v), by dynamic programming in topological order.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def longest_path(n, edges):
+        starter: `def _order(n, pairs):
+    adj = [[] for _ in range(n)]
+    indeg = [0] * n
+    for u, v in pairs:
+        adj[u].append(v)
+        indeg[v] += 1
+    q = deque(v for v in range(n) if indeg[v] == 0)
+    order = []
+    while q:
+        u = q.popleft()
+        order.append(u)
+        for v in adj[u]:
+            indeg[v] -= 1
+            if indeg[v] == 0:
+                q.append(v)
+    if len(order) < n:
+        raise ValueError('cycle')
+    return order, adj
+
+def longest_path(n, edges):
     return 0, []
 
 def count_paths(n, edges, s, t):

@@ -366,12 +366,9 @@ def find_cycle(graph):
 def nearest_exit(grid):
     rows, cols = len(grid), len(grid[0])
     dist = [[-1] * cols for _ in range(rows)]
-    q = deque()
-    for r in range(rows):
-        for c in range(cols):
-            if grid[r][c] == 'E':
-                dist[r][c] = 0
-                q.append((r, c))
+    q = deque((r, c) for r in range(rows) for c in range(cols) if grid[r][c] == 'E')
+    for r, c in q:
+        dist[r][c] = 0
     while q:
         r, c = q.popleft()
         for nr, nc in ((r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1)):

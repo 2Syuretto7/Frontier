@@ -230,20 +230,17 @@ def loo_residuals_brute(X, y):
 `,
         solution: `import numpy as np
 
-def _A(X):
-    return np.column_stack([np.ones(len(X)), X])
-
 def hat_diagonal(X):
-    Q, _ = np.linalg.qr(_A(X))
+    Q, _ = np.linalg.qr(np.column_stack([np.ones(len(X)), X]))
     return (Q ** 2).sum(1)
 
 def loo_residuals(X, y):
-    A = _A(X)
+    A = np.column_stack([np.ones(len(X)), X])
     w = np.linalg.lstsq(A, y, rcond=None)[0]
     return (y - A @ w) / (1 - hat_diagonal(X))
 
 def loo_residuals_brute(X, y):
-    A = _A(X)
+    A = np.column_stack([np.ones(len(X)), X])
     out = np.empty(len(X))
     for i in range(len(X)):
         m = np.arange(len(X)) != i

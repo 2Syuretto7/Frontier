@@ -187,26 +187,27 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: (
         <>
-          <Code>{`f = {1: 'a', 2: 'b', 3: 'a'}
-print(len(f), len(set(f.values())))`}</Code>
-          <p>A dictionary is a function from its keys to its values. What does this print?</p>
+          <Code>{`def f(x):
+    return x * x - 2 * x
+
+print(f(0), f(2), f(3))`}</Code>
+          <p>Two different inputs may share an output; f is still a function. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["3 2", "3 3", "2 3", "2 2"], correct: [0] },
+      answer: { kind: "choice", options: ["0 0 3", "0 4 3", "0 0 9", "-2 0 3"], correct: [0] },
     },
     {
       key: "read2",
       rung: "apply",
       prompt: (
         <>
-          <Code>{`f = {1: 'a', 2: 'b', 3: 'a'}
-image = set(f.values())
-pre = [x for x in f if f[x] == 'a']
-print(len(image), pre, len(set(f)) == len(image))`}</Code>
-          <p>A dict is a function from its keys to its values. What does this print?</p>
+          <Code>{`xs = [-2, -1, 0, 1, 2]
+ys = [x * x for x in xs]
+print(ys, min(ys), max(ys))`}</Code>
+          <p>The outputs of x ↦ x² on a small domain. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["2 [1, 3] False", "3 [1, 3] True", "2 [1] False", "2 [1, 3] True"], correct: [0] },
+      answer: { kind: "choice", options: ["[4, 1, 0, 1, 4] 0 4", "[-4, -1, 0, 1, 4] -4 4", "[4, 1, 0, 1, 4] 1 4", "[0, 1, 4] 0 4"], correct: [0] },
     },
     {
       key: "write",
@@ -224,11 +225,10 @@ print(len(image), pre, len(set(f)) == len(image))`}</Code>
     return True
 `,
         solution: `def is_function(pairs):
-    seen = {}
     for x, y in pairs:
-        if x in seen and seen[x] != y:
-            return False
-        seen[x] = y
+        for u, v in pairs:
+            if x == u and y != v:
+                return False
     return True
 `,
         tests: [
@@ -243,42 +243,35 @@ print(len(image), pre, len(set(f)) == len(image))`}</Code>
       prompt: (
         <>
           <p>
-            A function f from a finite set A to a set B is given as a dict. Write <C>kind(f, B)</C>, which returns a set containing <C>"injective"</C> if no two inputs share an output, and <C>"surjective"</C> if every element of B is an output (so a bijection gives both). Also write <C>inverse(f)</C>, the inverse dict of an injective f, raising <C>ValueError</C> if f is not injective.
+            A function f from A = {"{"}0, 1, …, n − 1{"}"} to B = {"{"}0, 1, …, m − 1{"}"} can be stored as the list <C>outputs</C> with <C>outputs[i]</C> = f(i). Write <C>is_injective(outputs)</C>, True when no two inputs share an output, and <C>is_surjective(outputs, m)</C>, True when every element of B is an output. For example, [1, 0, 1] is not injective, and it is surjective onto {"{"}0, 1{"}"}.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def kind(f, B):
-    return {'injective', 'surjective'}
+        starter: `def is_injective(outputs):
+    return True
 
-def inverse(f):
-    return {v: k for k, v in f.items()}
+def is_surjective(outputs, m):
+    return True
 `,
-        solution: `def kind(f, B):
-    out = set()
-    if len(set(f.values())) == len(f):
-        out.add('injective')
-    if set(f.values()) >= set(B):
-        out.add('surjective')
-    return out
+        solution: `def is_injective(outputs):
+    for i in range(len(outputs)):
+        for j in range(i + 1, len(outputs)):
+            if outputs[i] == outputs[j]:
+                return False
+    return True
 
-def inverse(f):
-    if len(set(f.values())) != len(f):
-        raise ValueError('not injective')
-    return {v: k for k, v in f.items()}
+def is_surjective(outputs, m):
+    for b in range(m):
+        if b not in outputs:
+            return False
+    return True
 `,
         tests: [
-          { name: "bijection", code: `assert kind({1: 'a', 2: 'b'}, {'a', 'b'}) == {'injective', 'surjective'}, 'Both properties hold.'` },
-          { name: "neither", code: `assert kind({1: 'a', 2: 'a'}, {'a', 'b'}) == set(), '1 and 2 share an output and b is missed.'` },
-          { name: "one each", code: `assert kind({1: 'a', 2: 'b'}, {'a', 'b', 'c'}) == {'injective'} and kind({1: 'a', 2: 'a', 3: 'b'}, {'a', 'b'}) == {'surjective'}, 'Check each property separately.'` },
-          { name: "inverse", code: `assert inverse({1: 'x', 2: 'y'}) == {'x': 1, 'y': 2}, 'Swap inputs and outputs.'` },
-          { name: "not injective", code: `try:
-    inverse({1: 'x', 2: 'x'})
-    ok = False
-except ValueError:
-    ok = True
-assert ok, 'Only an injective function has an inverse.'` },
+          { name: "bijection", code: `assert is_injective([1, 0, 2]) and is_surjective([1, 0, 2], 3), 'A bijection is both.'` },
+          { name: "neither", code: `assert not is_injective([0, 0]) and not is_surjective([0, 0], 2), '0 and 1 share an output and 1 is missed.'` },
+          { name: "one each", code: `assert is_injective([2, 0]) and not is_surjective([2, 0], 3) and not is_injective([1, 0, 1]) and is_surjective([1, 0, 1], 2), 'Check each property separately.'` },
         ],
       },
     },

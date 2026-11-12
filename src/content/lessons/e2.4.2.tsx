@@ -261,189 +261,118 @@ for n in (7, 15, 100):
       prompt: (
         <>
           <p>
-            Write a class <C>AVL</C> with <C>insert(k)</C> (ignoring duplicates), <C>delete(k)</C> (raising <C>KeyError</C> if
-            absent; a node with two children takes its successor&rsquo;s key), <C>k in t</C>, <C>len(t)</C>, iteration in
-            order and <C>height()</C> (−1 when empty). Keep the root in <C>self.root</C>, with nodes having <C>key</C>,{" "}
-            <C>left</C> and <C>right</C>, and count rotations in <C>self.rotations</C> (a double rotation counts as two). After
-            every operation every node must satisfy the AVL condition.
+            Build AVL insertion. The starter gives <C>Node</C> (with <C>key</C>, <C>left</C>, <C>right</C> and{" "}
+            <C>height</C>, which is 0 for a leaf), <C>h(n)</C> (the height, −1 for <C>None</C>) and <C>update(n)</C>, which
+            recomputes a node&rsquo;s height from its children. Write <C>rotate_right(y)</C> and <C>rotate_left(x)</C>, which
+            return the new root of the rotated subtree with heights updated, and <C>insert(n, k)</C>, which inserts k into the
+            subtree rooted at n (ignoring duplicates), rebalances on the way back up with a single or double rotation wherever
+            the two children&rsquo;s heights differ by 2, and returns the new subtree root.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `class AVL:
-    def __init__(self):
-        self.root = None
-        self.rotations = 0
-        self.keys = set()
-
-    def insert(self, k):
-        self.keys.add(k)
-
-    def delete(self, k):
-        self.keys.remove(k)
-
-    def __contains__(self, k):
-        return k in self.keys
-
-    def __len__(self):
-        return len(self.keys)
-
-    def __iter__(self):
-        return iter(sorted(self.keys))
-
-    def height(self):
-        return -1
-`,
-        solution: `class _N:
-    __slots__ = ('key', 'left', 'right', 'h')
-
+        starter: `class Node:
     def __init__(self, key):
-        self.key, self.left, self.right, self.h = key, None, None, 1
+        self.key, self.left, self.right, self.height = key, None, None, 0
 
-def _h(t):
-    return t.h if t else 0
+def h(n):
+    return n.height if n else -1
 
-class AVL:
-    def __init__(self):
-        self.root = None
-        self.rotations = 0
-        self.n = 0
+def update(n):
+    n.height = 1 + max(h(n.left), h(n.right))
 
-    def _fix(self, t):
-        t.h = 1 + max(_h(t.left), _h(t.right))
-        return t
+def rotate_right(y):
+    return y
 
-    def _rot_right(self, t):
-        self.rotations += 1
-        l = t.left
-        t.left, l.right = l.right, t
-        self._fix(t)
-        return self._fix(l)
+def rotate_left(x):
+    return x
 
-    def _rot_left(self, t):
-        self.rotations += 1
-        r = t.right
-        t.right, r.left = r.left, t
-        self._fix(t)
-        return self._fix(r)
+def insert(n, k):
+    if n is None:
+        return Node(k)
+    if k < n.key:
+        n.left = insert(n.left, k)
+    elif k > n.key:
+        n.right = insert(n.right, k)
+    update(n)
+    return n
+`,
+        solution: `class Node:
+    def __init__(self, key):
+        self.key, self.left, self.right, self.height = key, None, None, 0
 
-    def _balance(self, t):
-        self._fix(t)
-        b = _h(t.left) - _h(t.right)
-        if b > 1:
-            if _h(t.left.left) < _h(t.left.right):
-                t.left = self._rot_left(t.left)
-            return self._rot_right(t)
-        if b < -1:
-            if _h(t.right.right) < _h(t.right.left):
-                t.right = self._rot_right(t.right)
-            return self._rot_left(t)
-        return t
+def h(n):
+    return n.height if n else -1
 
-    def _insert(self, t, k):
-        if t is None:
-            self.n += 1
-            return _N(k)
-        if k < t.key:
-            t.left = self._insert(t.left, k)
-        elif k > t.key:
-            t.right = self._insert(t.right, k)
-        else:
-            return t
-        return self._balance(t)
+def update(n):
+    n.height = 1 + max(h(n.left), h(n.right))
 
-    def _delete(self, t, k):
-        if t is None:
-            raise KeyError(k)
-        if k < t.key:
-            t.left = self._delete(t.left, k)
-        elif k > t.key:
-            t.right = self._delete(t.right, k)
-        elif t.left is None or t.right is None:
-            self.n -= 1
-            return t.left if t.left is not None else t.right
-        else:
-            s = t.right
-            while s.left is not None:
-                s = s.left
-            t.key = s.key
-            t.right = self._delete(t.right, s.key)
-        return self._balance(t)
+def rotate_right(y):
+    x = y.left
+    y.left, x.right = x.right, y
+    update(y)
+    update(x)
+    return x
 
-    def insert(self, k):
-        self.root = self._insert(self.root, k)
+def rotate_left(x):
+    y = x.right
+    x.right, y.left = y.left, x
+    update(x)
+    update(y)
+    return y
 
-    def delete(self, k):
-        self.root = self._delete(self.root, k)
-
-    def __contains__(self, k):
-        t = self.root
-        while t is not None and t.key != k:
-            t = t.left if k < t.key else t.right
-        return t is not None
-
-    def __len__(self):
-        return self.n
-
-    def __iter__(self):
-        stack, t = [], self.root
-        while stack or t is not None:
-            while t is not None:
-                stack.append(t)
-                t = t.left
-            t = stack.pop()
-            yield t.key
-            t = t.right
-
-    def height(self):
-        return _h(self.root) - 1
+def insert(n, k):
+    if n is None:
+        return Node(k)
+    if k < n.key:
+        n.left = insert(n.left, k)
+    elif k > n.key:
+        n.right = insert(n.right, k)
+    else:
+        return n
+    update(n)
+    if h(n.left) - h(n.right) > 1:
+        if k > n.left.key:
+            n.left = rotate_left(n.left)
+        return rotate_right(n)
+    if h(n.right) - h(n.left) > 1:
+        if k < n.right.key:
+            n.right = rotate_right(n.right)
+        return rotate_left(n)
+    return n
 `,
         tests: [
-          { name: "sorted", code: `import math
-t = AVL()
-for k in range(1, 101):
-    t.insert(k)
-assert list(t) == list(range(1, 101)) and len(t) == 100 and t.rotations == 93 and t.height() == 6
-t2 = AVL()
-for k in [10, 20, 30, 40, 50, 25]:
-    t2.insert(k)
-assert t2.root.key == 30 and t2.root.left.key == 20 and t2.root.right.key == 40 and t2.rotations == 4` },
-          { name: "invariant", code: `import random, math
-def check(node, lo=None, hi=None):
-    if node is None:
+          { name: "rotate", code: `a, b, c = Node(1), Node(2), Node(3)
+c.left, b.left = b, a
+update(b); update(c)
+r = rotate_right(c)
+assert r is b and r.left is a and r.right is c and r.height == 1 and c.height == 0, 'The left child comes up; heights are recomputed.'
+r2 = rotate_left(r)
+assert r2 is c and c.left is b and b.left is a and c.height == 2, 'rotate_left undoes rotate_right.'` },
+          { name: "cases", code: `def keys(n):
+    return [] if n is None else keys(n.left) + [n.key] + keys(n.right)
+for order in ([1, 2, 3], [3, 2, 1], [1, 3, 2], [3, 1, 2]):
+    t = None
+    for k in order:
+        t = insert(t, k)
+    assert t.key == 2 and t.height == 1 and keys(t) == [1, 2, 3], f'{order}: every case ends balanced with 2 at the root.'` },
+          { name: "balanced", code: `import math, random
+def check(n):
+    if n is None:
         return -1
-    assert (lo is None or node.key > lo) and (hi is None or node.key < hi), 'BST order broken.'
-    a, b = check(node.left, lo, node.key), check(node.right, node.key, hi)
-    assert abs(a - b) <= 1, f'AVL condition broken at {node.key}'
-    return 1 + max(a, b)
-rng = random.Random(1)
-t, ref = AVL(), set()
-for i in range(3000):
-    k = rng.randrange(400)
-    if rng.random() < 0.55:
-        t.insert(k); ref.add(k)
-    elif k in ref:
-        t.delete(k); ref.discard(k)
-    else:
-        try:
-            t.delete(k)
-            assert False, 'Deleting a missing key raises KeyError.'
-        except KeyError:
-            pass
-    if i % 50 == 0:
-        h = check(t.root)
-        assert h == t.height() and list(t) == sorted(ref) and len(t) == len(ref)
-        assert h <= 1.45 * math.log2(len(ref) + 2)` },
-          { name: "large", code: `import time, math
-t = AVL()
-start = time.time()
-for k in range(20000):
-    t.insert(k)
-for k in range(0, 20000, 2):
-    t.delete(k)
-assert len(t) == 10000 and t.height() <= 1.45 * math.log2(10002) and 19999 in t and 0 not in t
-assert time.time() - start < 6` },
+    l, r = check(n.left), check(n.right)
+    assert abs(l - r) <= 1 and n.height == 1 + max(l, r), 'Every node is balanced and knows its height.'
+    return n.height
+t = None
+for k in range(2000):
+    t = insert(t, k)
+assert check(t) <= 1.45 * math.log2(2001), 'Sorted insertions still give a short tree.'
+rng = random.Random(3)
+t = None
+for _ in range(2000):
+    t = insert(t, rng.randrange(1000))
+check(t)` },
         ],
       },
     },
@@ -453,68 +382,33 @@ assert time.time() - start < 6` },
       prompt: (
         <>
           <p>
-            Write a <C>Treap(seed=0)</C>: each node has a key, a priority drawn from <C>random.Random(seed).random()</C>, and the
-            size of its subtree; keys obey the BST order and priorities a max-heap order. Write module-level{" "}
-            <C>split(t, k)</C>, returning the treaps of keys less than k and of keys at least k, and <C>merge(a, b)</C> for
-            treaps with every key of a below every key of b. Build <C>insert(k)</C> (ignoring duplicates), <C>delete(k)</C>{" "}
-            (<C>KeyError</C> if absent), <C>k in t</C>, <C>len(t)</C>, <C>kth(i)</C> (the i-th smallest from 0, using sizes;{" "}
-            <C>IndexError</C> if out of range), <C>rank(k)</C> (how many keys are below k) and <C>height()</C> from them. Keep
-            the root in <C>self.root</C> with node fields <C>key</C>, <C>prio</C>, <C>left</C>, <C>right</C>, <C>size</C>.
+            Build a treap from two operations. The starter&rsquo;s <C>TNode(key, prio)</C> has <C>key</C>, <C>prio</C>,{" "}
+            <C>left</C> and <C>right</C>; keys follow the BST order and priorities a max-heap order (a parent&rsquo;s priority
+            is larger than its children&rsquo;s). Write <C>split(t, k)</C>, which returns two treaps (a, b): the keys less than
+            k and the keys at least k. Write <C>merge(a, b)</C> for treaps where every key of a is below every key of b: the
+            root with the larger priority stays on top. Then write <C>insert(t, node)</C> for a new key, by splitting at its key
+            and merging the three pieces.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `import random
+        starter: `class TNode:
+    def __init__(self, key, prio):
+        self.key, self.prio, self.left, self.right = key, prio, None, None
 
 def split(t, k):
-    return t, None
+    return None, t
 
 def merge(a, b):
     return a or b
 
-class Treap:
-    def __init__(self, seed=0):
-        self.root = None
-        self.keys = []
-
-    def insert(self, k):
-        self.keys.append(k)
-
-    def delete(self, k):
-        self.keys.remove(k)
-
-    def __contains__(self, k):
-        return k in self.keys
-
-    def __len__(self):
-        return len(self.keys)
-
-    def kth(self, i):
-        return self.keys[i]
-
-    def rank(self, k):
-        return 0
-
-    def height(self):
-        return -1
-`,
-        solution: `import random
-
-class _T:
-    __slots__ = ('key', 'prio', 'left', 'right', 'size')
-
-    def __init__(self, key, prio):
-        self.key, self.prio = key, prio
-        self.left = self.right = None
-        self.size = 1
-
-def _size(t):
-    return t.size if t else 0
-
-def _upd(t):
-    t.size = 1 + _size(t.left) + _size(t.right)
+def insert(t, node):
     return t
+`,
+        solution: `class TNode:
+    def __init__(self, key, prio):
+        self.key, self.prio, self.left, self.right = key, prio, None, None
 
 def split(t, k):
     if t is None:
@@ -522,136 +416,53 @@ def split(t, k):
     if t.key < k:
         a, b = split(t.right, k)
         t.right = a
-        return _upd(t), b
+        return t, b
     a, b = split(t.left, k)
     t.left = b
-    return a, _upd(t)
+    return a, t
 
 def merge(a, b):
-    if a is None:
-        return b
-    if b is None:
-        return a
+    if a is None or b is None:
+        return a or b
     if a.prio > b.prio:
         a.right = merge(a.right, b)
-        return _upd(a)
+        return a
     b.left = merge(a, b.left)
-    return _upd(b)
+    return b
 
-class Treap:
-    def __init__(self, seed=0):
-        self.rng = random.Random(seed)
-        self.root = None
-
-    def __contains__(self, k):
-        t = self.root
-        while t is not None and t.key != k:
-            t = t.left if k < t.key else t.right
-        return t is not None
-
-    def insert(self, k):
-        if k in self:
-            return
-        a, b = split(self.root, k)
-        self.root = merge(merge(a, _T(k, self.rng.random())), b)
-
-    def delete(self, k):
-        if k not in self:
-            raise KeyError(k)
-        a, b = split(self.root, k)
-        self.root = merge(a, self._drop_min(b))
-
-    def _drop_min(self, t):
-        if t.left is None:
-            return t.right
-        t.left = self._drop_min(t.left)
-        return _upd(t)
-
-    def __len__(self):
-        return _size(self.root)
-
-    def kth(self, i):
-        if not 0 <= i < len(self):
-            raise IndexError(i)
-        t = self.root
-        while True:
-            ls = _size(t.left)
-            if i < ls:
-                t = t.left
-            elif i == ls:
-                return t.key
-            else:
-                i -= ls + 1
-                t = t.right
-
-    def rank(self, k):
-        r, t = 0, self.root
-        while t is not None:
-            if t.key < k:
-                r += _size(t.left) + 1
-                t = t.right
-            else:
-                t = t.left
-        return r
-
-    def height(self):
-        if self.root is None:
-            return -1
-        h, level = -1, [self.root]
-        while level:
-            h += 1
-            level = [c for t in level for c in (t.left, t.right) if c is not None]
-        return h
+def insert(t, node):
+    a, b = split(t, node.key)
+    return merge(merge(a, node), b)
 `,
         tests: [
-          { name: "split and merge", code: `t = Treap(1)
-for k in [5, 1, 9, 3, 7]:
-    t.insert(k)
-a, b = split(t.root, 6)
-def keys(x):
-    return [] if x is None else keys(x.left) + [x.key] + keys(x.right)
-assert keys(a) == [1, 3, 5] and keys(b) == [7, 9] and a.size == 3 and b.size == 2
-t.root = merge(a, b)
-assert keys(t.root) == [1, 3, 5, 7, 9] and t.root.size == 5` },
-          { name: "order statistics", code: `import random, bisect
-rng = random.Random(3)
-t, ref = Treap(7), []
-for _ in range(3000):
-    k = rng.randrange(500)
-    i = bisect.bisect_left(ref, k)
-    present = i < len(ref) and ref[i] == k
-    if rng.random() < 0.6:
-        t.insert(k)
-        if not present:
-            ref.insert(i, k)
-    elif present:
-        t.delete(k); ref.pop(i)
-    assert len(t) == len(ref) and t.rank(k) == bisect.bisect_left(ref, k)
-    if ref:
-        j = rng.randrange(len(ref))
-        assert t.kth(j) == ref[j]
-try:
-    t.kth(len(ref))
-    assert False, 'kth out of range raises IndexError.'
-except IndexError:
-    pass` },
-          { name: "heap and shape", code: `import math
-def check(x, lo=None, hi=None):
-    if x is None:
+          { name: "split", code: `def keys(n):
+    return [] if n is None else keys(n.left) + [n.key] + keys(n.right)
+t = None
+for k, p in [(5, 0.9), (2, 0.5), (8, 0.7), (1, 0.1), (3, 0.3), (9, 0.2)]:
+    t = insert(t, TNode(k, p))
+assert t.key == 5 and keys(t) == [1, 2, 3, 5, 8, 9], 'The highest priority is the root.'
+a, b = split(t, 4)
+assert keys(a) == [1, 2, 3] and keys(b) == [5, 8, 9], 'Keys below 4, and keys from 4 up.'
+a, b = split(merge(a, b), 5)
+assert keys(a) == [1, 2, 3] and keys(b) == [5, 8, 9], 'A key equal to k goes right.'` },
+          { name: "heap order", code: `import random
+def check(n):
+    if n is None:
         return 0
-    assert (lo is None or x.key > lo) and (hi is None or x.key < hi)
-    for c in (x.left, x.right):
-        assert c is None or c.prio <= x.prio, 'Priorities must form a max-heap.'
-    s = 1 + check(x.left, lo, x.key) + check(x.right, x.key, hi)
-    assert s == x.size, 'Sizes must be maintained.'
-    return s
-t = Treap(0)
-for k in range(20000):
-    t.insert(k)
-assert check(t.root) == 20000 and t.height() <= 3 * math.log2(20000), f'height {t.height()}'
-for k in range(0, 20000, 3):
-    t.delete(k)
-assert check(t.root) == len(t) == 13333` },
+    for c in (n.left, n.right):
+        assert c is None or c.prio < n.prio, 'Parents have larger priorities.'
+    assert n.left is None or n.left.key < n.key
+    assert n.right is None or n.right.key > n.key
+    return 1 + max(check(n.left), check(n.right))
+rng = random.Random(1)
+t = None
+for k in rng.sample(range(10000), 3000):
+    t = insert(t, TNode(k, rng.random()))
+assert check(t) < 60
+t = None
+for k in range(3000):
+    t = insert(t, TNode(k, rng.random()))
+assert check(t) < 60, 'Random priorities keep even sorted insertions shallow.'` },
         ],
       },
     },

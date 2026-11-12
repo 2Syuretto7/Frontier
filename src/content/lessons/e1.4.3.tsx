@@ -202,12 +202,10 @@ def satisfies(version, spec):
     if not spec:
         return True
     for clause in spec.split(','):
-        for op in ('==', '>=', '<=', '>', '<'):
-            if clause.startswith(op):
-                a, b = _v(version), _v(clause[len(op):])
-                if not {'==': a == b, '>=': a >= b, '<=': a <= b, '>': a > b, '<': a < b}[op]:
-                    return False
-                break
+        op = clause[:2] if clause[:2] in ('==', '>=', '<=') else clause[:1]
+        a, b = _v(version), _v(clause[len(op):])
+        if not {'==': a == b, '>=': a >= b, '<=': a <= b, '>': a > b, '<': a < b}[op]:
+            return False
     return True
 
 def resolve(index, requirements):
@@ -220,12 +218,10 @@ def satisfies(version, spec):
     if not spec:
         return True
     for clause in spec.split(','):
-        for op in ('==', '>=', '<=', '>', '<'):
-            if clause.startswith(op):
-                a, b = _v(version), _v(clause[len(op):])
-                if not {'==': a == b, '>=': a >= b, '<=': a <= b, '>': a > b, '<': a < b}[op]:
-                    return False
-                break
+        op = clause[:2] if clause[:2] in ('==', '>=', '<=') else clause[:1]
+        a, b = _v(version), _v(clause[len(op):])
+        if not {'==': a == b, '>=': a >= b, '<=': a <= b, '>': a > b, '<': a < b}[op]:
+            return False
     return True
 
 def resolve(index, requirements):

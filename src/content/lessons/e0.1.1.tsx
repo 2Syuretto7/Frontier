@@ -227,37 +227,27 @@ print("Monthly:", total)
       prompt: (
         <>
           <p>
-            Write <C>convert(value, unit)</C>, which converts a temperature: if unit is <C>"C"</C> the value is in Celsius and you return Fahrenheit (F = C × 9/5 + 32); if unit is <C>"F"</C> you return Celsius. Round the result to one decimal place with <C>round</C>. For any other unit, raise <C>ValueError</C>. Then write <C>table(start, stop, step)</C>, a list of strings like <C>"20 C = 68.0 F"</C> for Celsius values start, start + step, … below stop.
+            Write <C>to_fahrenheit(c)</C>, which converts a Celsius temperature to Fahrenheit with F = C × 9/5 + 32, and <C>to_celsius(f)</C>, which converts back with C = (F − 32) × 5/9. Round each result to one decimal place with <C>round(x, 1)</C>.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def convert(value, unit):
-    return value
+        starter: `def to_fahrenheit(c):
+    return c
 
-def table(start, stop, step):
-    return []
+def to_celsius(f):
+    return f
 `,
-        solution: `def convert(value, unit):
-    if unit == 'C':
-        return round(value * 9 / 5 + 32, 1)
-    if unit == 'F':
-        return round((value - 32) * 5 / 9, 1)
-    raise ValueError('unit must be C or F')
+        solution: `def to_fahrenheit(c):
+    return round(c * 9 / 5 + 32, 1)
 
-def table(start, stop, step):
-    return [f'{c} C = {convert(c, "C")} F' for c in range(start, stop, step)]
+def to_celsius(f):
+    return round((f - 32) * 5 / 9, 1)
 `,
         tests: [
-          { name: "convert", code: `assert convert(100, 'C') == 212.0 and convert(37.5, 'C') == 99.5 and convert(-40, 'C') == -40.0, 'F = C × 9/5 + 32.'
-assert convert(212, 'F') == 100.0 and convert(98.6, 'F') == 37.0 and convert(0, 'F') == -17.8, 'C = (F − 32) × 5/9, rounded to one place.'` },
-          { name: "bad unit", code: `try:
-    convert(10, 'K')
-    assert False, 'An unknown unit must raise ValueError.'
-except ValueError:
-    pass` },
-          { name: "table", code: `assert table(0, 30, 10) == ['0 C = 32.0 F', '10 C = 50.0 F', '20 C = 68.0 F'] and table(5, 5, 1) == [], 'Stop is not included.'` },
+          { name: "to F", code: `assert to_fahrenheit(100) == 212.0 and to_fahrenheit(37.5) == 99.5 and to_fahrenheit(-40) == -40.0, 'F = C × 9/5 + 32.'` },
+          { name: "to C", code: `assert to_celsius(212) == 100.0 and to_celsius(98.6) == 37.0 and to_celsius(0) == -17.8, 'C = (F − 32) × 5/9, rounded to one place.'` },
         ],
       },
     },

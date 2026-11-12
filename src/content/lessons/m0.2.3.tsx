@@ -199,15 +199,15 @@ print(det, (e * d - b * f) / det, (a * f - e * c) / det)`}</Code>
       rung: "apply",
       prompt: (
         <>
-          <Code>{`import numpy as np
-A = np.array([[2, 1], [1, 3]])
-b = np.array([5, 10])
-x = np.linalg.solve(A, b)
-print(np.round(x, 6), np.linalg.det(A).round(6))`}</Code>
-          <p>This solves 2x + y = 5 and x + 3y = 10. What does it print?</p>
+          <Code>{`# 2x + y = 5 and x + 3y = 10
+# take twice the second equation away from the first: x drops out
+y = (5 - 2 * 10) / (1 - 2 * 3)
+x = 10 - 3 * y
+print(y, x)`}</Code>
+          <p>Elimination on 2x + y = 5 and x + 3y = 10. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["[1. 3.] 5.0", "[3. 1.] 5.0", "[1. 3.] 7.0", "[1. 3.] -5.0"], correct: [0] },
+      answer: { kind: "choice", options: ["3.0 1.0", "1.0 3.0", "-3.0 19.0", "3.0 -1.0"], correct: [0] },
     },
     {
       key: "write",

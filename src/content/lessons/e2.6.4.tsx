@@ -351,15 +351,21 @@ for _ in range(60):
             </li>
             <li>
               <C>single_linkage(points, k)</C>: points are <C>(x, y)</C> pairs. Merge the closest pairs, Kruskal-style, until k
-              clusters remain, and return them as sorted lists of indices, sorted. Raise <C>ValueError</C> unless 1 ≤ k ≤ the
-              number of points.
+              clusters remain, (1 ≤ k ≤ the number of points), and return them as sorted lists of indices, sorted. The
+              starter&rsquo;s <C>find(parent, x)</C> is the union–find lookup.
             </li>
           </ul>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def prim(graph):
+        starter: `def find(parent, x):
+    while parent[x] != x:
+        parent[x] = parent[parent[x]]
+        x = parent[x]
+    return x
+
+def prim(graph):
     return sum(min(w for _, w in nbrs) for nbrs in graph.values() if nbrs)
 
 def single_linkage(points, k):
@@ -367,14 +373,16 @@ def single_linkage(points, k):
 `,
         solution: `import heapq
 
+def find(parent, x):
+    while parent[x] != x:
+        parent[x] = parent[parent[x]]
+        x = parent[x]
+    return x
+
 def prim(graph):
-    if not graph:
-        return 0
-    start = next(iter(graph))
-    seen, total = {start}, 0
-    heap = [(w, v) for v, w in graph[start]]
-    heapq.heapify(heap)
-    while heap and len(seen) < len(graph):
+    seen, total = set(), 0
+    heap = [(0, next(iter(graph)))] if graph else []
+    while heap:
         w, v = heapq.heappop(heap)
         if v in seen:
             continue
@@ -389,27 +397,20 @@ def prim(graph):
 
 def single_linkage(points, k):
     n = len(points)
-    if not 1 <= k <= n:
-        raise ValueError('need 1 <= k <= len(points)')
     parent = list(range(n))
-    def find(x):
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
     pairs = sorted(((points[i][0] - points[j][0]) ** 2 + (points[i][1] - points[j][1]) ** 2, i, j)
                    for i in range(n) for j in range(i + 1, n))
     groups = n
     for _, i, j in pairs:
         if groups == k:
             break
-        ri, rj = find(i), find(j)
+        ri, rj = find(parent, i), find(parent, j)
         if ri != rj:
             parent[ri] = rj
             groups -= 1
     clusters = {}
     for i in range(n):
-        clusters.setdefault(find(i), []).append(i)
+        clusters.setdefault(find(parent, i), []).append(i)
     return sorted(clusters.values())
 `,
         tests: [
@@ -455,12 +456,7 @@ assert single_linkage(pts, 3) == [[0, 1, 2], [3, 4], [5]]
 assert single_linkage(pts, 2) == [[0, 1, 2, 3, 4], [5]]
 assert single_linkage(pts, 6) == [[0], [1], [2], [3], [4], [5]] and single_linkage(pts, 1) == [[0, 1, 2, 3, 4, 5]]
 chain = [(i, 0) for i in range(5)] + [(10, 0)]
-assert single_linkage(chain, 2) == [[0, 1, 2, 3, 4], [5]], 'Single linkage follows chains of close points.'
-try:
-    single_linkage(pts, 0)
-    assert False, 'k must be between 1 and the number of points.'
-except ValueError:
-    pass` },
+assert single_linkage(chain, 2) == [[0, 1, 2, 3, 4], [5]], 'Single linkage follows chains of close points.'` },
         ],
       },
     },

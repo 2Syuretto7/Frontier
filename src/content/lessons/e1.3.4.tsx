@@ -213,7 +213,7 @@ assert isinstance(b, types.GeneratorType) and next(b) == [0, 1] and next(b) == [
       prompt: (
         <>
           <p>
-            Write a generator <C>windows(iterable, n)</C> that yields tuples of n consecutive items, holding only n items at a time (use <C>collections.deque(maxlen=n)</C>); a class <C>Peekable</C> that wraps any iterator, supports <C>for</C> loops and <C>next</C>, and has <C>peek(default)</C>, which returns the next item without consuming it (or default when exhausted); and a generator <C>interleave(*iterables)</C> that takes one item from each in turn, skipping those that have run out.
+            Write a generator <C>windows(iterable, n)</C> that yields tuples of n consecutive items, holding only n items at a time (use <C>collections.deque(maxlen=n)</C>); and a class <C>Peekable</C> that wraps any iterator, supports <C>for</C> loops and <C>next</C>, and has <C>peek(default)</C>, which returns the next item without consuming it (or default when exhausted).
           </p>
         </>
       ),
@@ -231,10 +231,6 @@ class Peekable:
         return next(self.it)
     def peek(self, default=None):
         return default
-
-def interleave(*iterables):
-    for it in iterables:
-        yield from it
 `,
         solution: `from collections import deque
 
@@ -264,17 +260,6 @@ class Peekable:
             except StopIteration:
                 return default
         return self.buf
-
-def interleave(*iterables):
-    its = deque(iter(i) for i in iterables)
-    while its:
-        it = its.popleft()
-        try:
-            x = next(it)
-        except StopIteration:
-            continue
-        yield x
-        its.append(it)
 `,
         tests: [
           { name: "windows", code: `import itertools
@@ -284,9 +269,6 @@ assert list(itertools.islice(windows(itertools.count(), 3), 2)) == [(0, 1, 2), (
 assert p.peek() == 1 and p.peek() == 1 and next(p) == 1 and list(p) == [2, 3] and p.peek('end') == 'end'
 q = Peekable([None, 5])
 assert q.peek(7) is None and next(q) is None and q.peek(7) == 5, 'None is a real item, not a missing one.'` },
-          { name: "interleave", code: `import itertools
-assert list(interleave('abc', [1], (True, False))) == ['a', 1, True, 'b', False, 'c']
-assert list(itertools.islice(interleave(itertools.count(), 'xy'), 6)) == [0, 'x', 1, 'y', 2, 3] and list(interleave()) == []` },
         ],
       },
     },

@@ -183,33 +183,44 @@ print(s1, s2, round(s3, 2))`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>power_sum(p, n)</C>, the exact value of 1ᵖ + 2ᵖ + … + nᵖ for p ≥ 0 and n up to 10¹², without looping to n. Use the recurrence from the binomial theorem: (n+1)^(p+1) − 1 = Σⱼ₌₀ᵖ C(p+1, j)·S_j(n), so S_p(n) = ((n+1)^(p+1) − 1 − Σⱼ&lt;ₚ C(p+1, j)·S_j(n)) / (p + 1). Work in integers (the division is exact).
+            Write <C>sum_squares(n)</C> and <C>sum_cubes(n)</C>, the exact values of 1² + 2² + … + n² and 1³ + 2³ + … + n³ from the standard formulas n(n + 1)(2n + 1)/6 and (n(n + 1)/2)², in integers, so that they are instant even for n = 10¹². Then write <C>telescope(n)</C>, which adds 1/(k(k + 1)) for k from 1 to n as exact <C>Fraction</C>s, one term at a time. The tests check it against the telescoped answer 1 − 1/(n + 1).
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def power_sum(p, n):
-    return n ** (p + 1) // (p + 1)
-`,
-        solution: `from math import comb
+        starter: `from fractions import Fraction
 
-def power_sum(p, n):
-    S = []
-    for q in range(p + 1):
-        t = (n + 1) ** (q + 1) - 1 - sum(comb(q + 1, j) * S[j] for j in range(q))
-        S.append(t // (q + 1))
-    return S[p]
+def sum_squares(n):
+    return n * n
+
+def sum_cubes(n):
+    return n ** 3
+
+def telescope(n):
+    return Fraction(0)
+`,
+        solution: `from fractions import Fraction
+
+def sum_squares(n):
+    return n * (n + 1) * (2 * n + 1) // 6
+
+def sum_cubes(n):
+    return (n * (n + 1) // 2) ** 2
+
+def telescope(n):
+    total = Fraction(0)
+    for k in range(1, n + 1):
+        total += Fraction(1, k * (k + 1))
+    return total
 `,
         tests: [
-          { name: "known", code: `assert power_sum(0, 10) == 10 and power_sum(1, 10) == 55 and power_sum(2, 10) == 385 and power_sum(3, 10) == 3025, 'Sums of 1, k, k², k³ up to 10.'` },
-          { name: "brute", code: `assert all(power_sum(p, n) == sum(k ** p for k in range(1, n + 1)) for p in range(8) for n in range(0, 30)), 'Check against direct sums.'` },
-          { name: "huge", code: `n = 10 ** 12
-assert power_sum(1, n) == n * (n + 1) // 2 and power_sum(3, n) == (n * (n + 1) // 2) ** 2, 'The sum of cubes is the square of the sum.'` },
-          { name: "fast", code: `import time
-t = time.time()
-power_sum(10, 10 ** 15)
-assert time.time() - t < 1, 'Do not loop to n.'` },
+          { name: "known", code: `assert sum_squares(10) == 385 and sum_cubes(10) == 3025 and sum_squares(0) == 0 and sum_cubes(1) == 1, 'Up to 10: 385 and 3025.'` },
+          { name: "brute", code: `assert all(sum_squares(n) == sum(k * k for k in range(1, n + 1)) and sum_cubes(n) == sum(k ** 3 for k in range(1, n + 1)) for n in range(50)), 'Check against direct sums.'
+n = 10 ** 12
+assert sum_cubes(n) == (n * (n + 1) // 2) ** 2 and isinstance(sum_squares(n), int), 'Use whole-number division so the answer stays exact.'` },
+          { name: "telescope", code: `from fractions import Fraction
+assert telescope(1) == Fraction(1, 2) and telescope(3) == Fraction(3, 4) and all(telescope(n) == 1 - Fraction(1, n + 1) for n in range(1, 40)), 'Each term is 1/k − 1/(k + 1).'` },
         ],
       },
     },

@@ -188,7 +188,7 @@ print(done_at("report"), finish["split"], len(finish))`}</Code>
         <>
           <p>
             A graph is a dict from each vertex to a list of the vertices that must come after it; a vertex may appear only as a
-            target. Write <C>topo_sort(graph)</C>, returning any valid order of all vertices, and{" "}
+            target. The starter&rsquo;s <C>_indegrees(graph)</C> counts the edges into every vertex. Write <C>topo_sort(graph)</C>, returning any valid order of all vertices, and{" "}
             <C>smallest_order(graph)</C>, the lexicographically smallest valid order. Both raise <C>ValueError</C> if there is
             a cycle and must handle a chain of 100,000 vertices.
           </p>
@@ -196,7 +196,15 @@ print(done_at("report"), finish["split"], len(finish))`}</Code>
       ),
       answer: {
         kind: "code",
-        starter: `def topo_sort(graph):
+        starter: `def _indegrees(graph):
+    indeg = {}
+    for u, vs in graph.items():
+        indeg.setdefault(u, 0)
+        for v in vs:
+            indeg[v] = indeg.get(v, 0) + 1
+    return indeg
+
+def topo_sort(graph):
     return list(graph)
 
 def smallest_order(graph):
@@ -312,7 +320,7 @@ except ValueError:
             <li>
               <C>critical_path(time, deps)</C>: <C>time[t]</C> is a task&rsquo;s duration and <C>deps[t]</C> the tasks it
               needs first. Return <C>(T, path)</C>, the least total time with unlimited workers and a chain of tasks, from one
-              with no dependencies, whose durations add to T. Raise <C>ValueError</C> on a cycle; no recursion.
+              with no dependencies, whose durations add to T. The starter&rsquo;s <C>_order(deps)</C> lists the tasks so that each comes after everything it needs (raising <C>ValueError</C> on a cycle).
             </li>
             <li>
               <C>rounds(graph)</C>: with edges as in <C>topo_sort</C>, the list of rounds when each round runs every task whose
@@ -323,15 +331,10 @@ except ValueError:
       ),
       answer: {
         kind: "code",
-        starter: `def critical_path(time, deps):
-    return sum(time.values()), list(time)
-
-def rounds(graph):
-    return [sorted(graph)]
-`,
-        solution: `def critical_path(time, deps):
+        starter: `def _order(deps):
+    # The tasks, each after all the tasks it needs; ValueError on a cycle.
     order, state = [], {}
-    for start in time:
+    for start in deps:
         if start in state:
             continue
         state[start] = 1
@@ -348,8 +351,39 @@ def rounds(graph):
             elif d not in state:
                 state[d] = 1
                 stack.append((d, iter(deps[d])))
+    return order
+
+def critical_path(time, deps):
+    return sum(time.values()), list(time)
+
+def rounds(graph):
+    return [sorted(graph)]
+`,
+        solution: `def _order(deps):
+    # The tasks, each after all the tasks it needs; ValueError on a cycle.
+    order, state = [], {}
+    for start in deps:
+        if start in state:
+            continue
+        state[start] = 1
+        stack = [(start, iter(deps[start]))]
+        while stack:
+            u, it = stack[-1]
+            d = next(it, None)
+            if d is None:
+                state[u] = 2
+                order.append(u)
+                stack.pop()
+            elif state.get(d) == 1:
+                raise ValueError('dependencies form a cycle')
+            elif d not in state:
+                state[d] = 1
+                stack.append((d, iter(deps[d])))
+    return order
+
+def critical_path(time, deps):
     finish, via = {}, {}
-    for u in order:                       # every dependency comes earlier
+    for u in _order(deps):
         best = max(deps[u], key=lambda d: finish[d], default=None)
         via[u] = best
         finish[u] = (finish[best] if best is not None else 0) + time[u]

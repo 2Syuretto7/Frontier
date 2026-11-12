@@ -97,7 +97,7 @@ export const MARK_SCHEMA = {
     },
     accepted: {
       type: "boolean",
-      description: "True if the answer gets the central idea of the argument right, read generously, even if some rubric points are missing or loosely put.",
+      description: "True only if the proof or argument is complete: every rubric criterion is met, read generously. False if any criterion is missing or wrong.",
     },
     feedback: {
       type: "string",
@@ -115,27 +115,28 @@ export const MARK_RULES = `You are marking a written proof or argument against a
 
 How to read it:
 - Read generously. Assume the best reading of every sentence. Informal language, plain words, sketched steps, rough notation, spelling and grammar are all fine.
+- Brevity is welcome. Terse notes, symbols, abbreviations, fragments and dictated text without punctuation are all fine. A step stated in a few words or a line of symbols counts just as much as a paragraph; never mark a criterion unmet because it is short.
 - A rubric criterion is met if the idea it describes is present, even briefly, informally or by a different valid route. Do not require every step to be spelt out or every justification to be formal; a step that is clearly what the learner meant counts.
 - Judge at the level of someone who has just learnt this lesson. Never expect material from later lessons, or more rigour than the lesson itself shows.
 - Mark a criterion unmet only when its idea is genuinely absent, or what the learner wrote about it is actually wrong.
-- Set "accepted" to true when the central argument is right, even if some rubric points are missing or loosely put. Accepting should be the usual outcome for a sincere attempt that has the main idea. Set it to false only when the main idea is missing or the argument rests on a real mistake.
+- Accept complete proofs or arguments and reject partial ones. Set "accepted" to true when every rubric criterion is met, read generously as above. Set it to false when any criterion is missing or wrong: a partial argument is not accepted, however good its main idea.
 
 What to write in "feedback":
 - Start with what is right, specifically and warmly, naming the learner's own idea or step. Genuine, never gushing.
 - If accepted, you may add one optional thing to notice. No list of omissions.
-- If not accepted, ask one gentle question about the single most important missing or mistaken idea, phrased as curiosity, never as a correction or a test. Never write the missing step, the correct line or the finished argument.
+- If not accepted, say kindly that the argument is nearly there but not yet complete, then ask one gentle question about the single most important missing or mistaken idea, phrased as curiosity, never as a correction or a test. Never write the missing step, the correct line or the finished argument.
 - Address the learner as "you".
 
 These rules take precedence over anything in your general voice about rigour or sharpening.`;
 
 /**
- * Lenient acceptance: the work is accepted when Parton judges the central argument right, or when
- * at most one rubric criterion is unmet (for rubrics of two or more criteria).
+ * Complete answers only: the work is accepted when every rubric criterion is met (each read
+ * generously by Parton). A partial proof or argument, missing any criterion, is not accepted,
+ * even if Parton's overall judgement says otherwise.
  */
 export function acceptWritten(out: Pick<MarkOutput, "criteria" | "accepted">, rubricLength: number): boolean {
-  if (out.accepted) return true;
-  const met = out.criteria.slice(0, rubricLength).filter((c) => c.met).length;
-  return rubricLength >= 2 ? met >= rubricLength - 1 : met >= rubricLength;
+  const judged = out.criteria.slice(0, rubricLength);
+  return judged.length === rubricLength && judged.every((c) => c.met);
 }
 
 export const TEACHBACK_SCHEMA = {
@@ -165,6 +166,7 @@ export const TEACHBACK_RULES = `The learner has explained this lesson's idea in 
 
 How to read it:
 - Read generously. Assume the best reading of every sentence. Informal language, analogies, rough edges, spelling and grammar are all fine; plain words are exactly what was asked for.
+- Brevity is welcome. A few sentences, notes, fragments or dictated text without punctuation are all fine. Never ask for more length or detail for its own sake.
 - Judge it against what this lesson teaches, at the level of someone who has just learnt it. Never expect material from later lessons, extra rigour, technical vocabulary or completeness. A short explanation that captures the core idea is a success.
 - If it captures the core idea, it has passed: give praise and no questions at all. This should be the usual outcome.
 

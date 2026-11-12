@@ -130,29 +130,33 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: (
         <>
-          <Code>{`values = {"left": 0.2, "right": 0.7, "stay": 0.5}
-eps_greedy = lambda explore: "stay" if explore else max(values, key=values.get)
-print(eps_greedy(False), eps_greedy(True))`}</Code>
-          <p>A decision-making agent mostly exploits, sometimes explores. What does this print?</p>
+          <Code>{`actions = ["left", "right", "stay"]
+values = [0.2, 0.7, 0.5]    # the reward each action has earned on average
+explore = False
+if explore:
+    print("stay")
+else:
+    print(actions[values.index(max(values))])`}</Code>
+          <p>When it is not exploring, a decision-making agent exploits: it takes the action with the best value so far. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["right stay", "stay right", "right right", "left stay"], correct: [0] },
+      answer: { kind: "choice", options: ["right", "stay", "left", "0.7"], correct: [0] },
     },
     {
       key: "read2",
       rung: "apply",
       prompt: (
         <>
-          <Code>{`Q = {"left": 0.0, "right": 0.0}
-N = {"left": 0, "right": 0}
-for a, r in [("left", 1), ("right", 0), ("left", 0), ("right", 1), ("right", 1)]:
+          <Code>{`Q = [0.0, 0.0]    # average reward of action 0 and of action 1
+N = [0, 0]        # how often each action was taken
+for a, r in [(0, 1), (1, 0), (0, 0), (1, 1), (1, 1)]:
     N[a] += 1
     Q[a] += (r - Q[a]) / N[a]
-print(Q, max(Q, key=Q.get))`}</Code>
+print(Q)`}</Code>
           <p>Running averages of reward for two actions. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["{'left': 0.5, 'right': 0.6666666666666666} right", "{'left': 0.5, 'right': 0.5} left", "{'left': 1.0, 'right': 0.6666666666666666} left", "{'left': 0.5, 'right': 1.0} right"], correct: [0] },
+      answer: { kind: "choice", options: ["[0.5, 0.6666666666666666]", "[0.5, 0.5]", "[1.0, 0.6666666666666666]", "[0.5, 1.0]"], correct: [0] },
     },
     {
       key: "write",
@@ -180,7 +184,7 @@ def bandit(probs, steps, eps, seed):
             a = random.randrange(k)
         else:
             avg = [wins[i] / pulls[i] if pulls[i] else 0 for i in range(k)]
-            a = max(range(k), key=lambda i: (avg[i], -i))
+            a = avg.index(max(avg))
         pulls[a] += 1
         wins[a] += random.random() < probs[a]
     return pulls

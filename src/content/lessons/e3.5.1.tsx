@@ -188,7 +188,12 @@ print(run('AAABBB'), run('ABABAB'), run('AABBBA'), run('BBBAAA'))`}</Code>
             Build a tiny model checker. Each thread is a list of steps on a shared x (starting at 0) and its own register r
             (starting at 0): <C>(&apos;load&apos;,)</C> sets r = x, <C>(&apos;add&apos;, k)</C> sets r = r + k,{" "}
             <C>(&apos;store&apos;,)</C> sets x = r, <C>(&apos;lock&apos;, name)</C> and <C>(&apos;unlock&apos;, name)</C>.
-            Define an exception <C>Blocked</C>.
+            The starter defines the exception <C>Blocked</C>, <C>_start(programs)</C>, the initial state{" "}
+            <C>(x, regs, pcs, owners)</C>, and <C>_step(programs, state, t)</C>, which runs thread t&rsquo;s next step and returns
+            the new state, raising <C>Blocked</C> if the lock is held by another thread and <C>ValueError</C> if thread t has
+            finished. Write <C>run(programs, schedule)</C>, the final x after running the threads in the order the schedule
+            lists them, and <C>outcomes(programs)</C>, the set of final values of x over every possible interleaving, including{" "}
+            <C>'deadlock'</C> if some interleaving reaches a state where unfinished threads are all blocked.
           </p>
           <ul>
             <li>
@@ -206,7 +211,36 @@ print(run('AAABBB'), run('ABABAB'), run('AABBBA'), run('BBBAAA'))`}</Code>
       ),
       answer: {
         kind: "code",
-        starter: `class Blocked(Exception):
+        starter: `def _start(programs):
+    n = len(programs)
+    return 0, (0,) * n, (0,) * n, {}
+
+
+def _step(programs, state, t):
+    x, regs, pcs, owner = state
+    if pcs[t] == len(programs[t]):
+        raise ValueError(f'thread {t} has finished')
+    op = programs[t][pcs[t]]
+    regs, pcs, owner = list(regs), list(pcs), dict(owner)
+    if op[0] == 'load':
+        regs[t] = x
+    elif op[0] == 'add':
+        regs[t] += op[1]
+    elif op[0] == 'store':
+        x = regs[t]
+    elif op[0] == 'lock':
+        if owner.get(op[1], t) != t:
+            raise Blocked(op[1])
+        owner[op[1]] = t
+    elif op[0] == 'unlock':
+        owner.pop(op[1], None)
+    else:
+        raise ValueError(f'unknown step {op!r}')
+    pcs[t] += 1
+    return x, tuple(regs), tuple(pcs), owner
+
+
+class Blocked(Exception):
     pass
 
 

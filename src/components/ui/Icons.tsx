@@ -21,3 +21,4 @@ export const Stop = ({ size = 16 }: P) => <svg {...base(size)}><rect x="4" y="4"
 export const Undo = ({ size = 16 }: P) => <svg {...base(size)}><path d="M3 6.5h6.5a3.5 3.5 0 0 1 0 7H6M3 6.5 6 3.5M3 6.5l3 3" /></svg>;
 export const Expand = ({ size = 16 }: P) => <svg {...base(size)}><path d="M9.5 2.5h4v4M6.5 13.5h-4v-4M13.5 2.5 9 7M2.5 13.5 7 9" /></svg>;
 export const Shrink = ({ size = 16 }: P) => <svg {...base(size)}><path d="M13 7H9V3M3 9h4v4M9 7l4.5-4.5M7 9l-4.5 4.5" /></svg>;
+export const Mic = ({ size = 16 }: P) => <svg {...base(size)}><rect x="6" y="2" width="4" height="7.5" rx="2" /><path d="M3.75 7.5a4.25 4.25 0 0 0 8.5 0M8 11.75V14" /></svg>;

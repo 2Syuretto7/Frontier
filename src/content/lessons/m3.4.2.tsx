@@ -204,13 +204,16 @@ assert np.linalg.matrix_rank(N) == 2, 'The basis vectors must be independent.'` 
       prompt: (
         <>
           <p>
-            Write <C>null_space_svd(A, tol=1e-10)</C>, an orthonormal basis of the null space of A as the columns of a matrix, taken from the rows of Vᵀ in the SVD whose singular values are below tol times the largest (or beyond the number of singular values). Then write <C>col_space_basis(A, tol=1e-10)</C>, an orthonormal basis of the column space from the columns of U, and <C>in_col_space(A, b)</C>, whether b lies in the column space (the residual after projecting onto that basis is below 1e−9 times ‖b‖ + 1).
+            The starter gives <C>_rank(s, tol)</C>, the number of singular values in s above tol times the largest. Write <C>null_space_svd(A, tol=1e-10)</C>, an orthonormal basis of the null space of A as the columns of a matrix, taken from the rows of Vᵀ in the SVD whose singular values are below tol times the largest (or beyond the number of singular values). Then write <C>col_space_basis(A, tol=1e-10)</C>, an orthonormal basis of the column space from the columns of U, and <C>in_col_space(A, b)</C>, whether b lies in the column space (the residual after projecting onto that basis is below 1e−9 times ‖b‖ + 1).
           </p>
         </>
       ),
       answer: {
         kind: "code",
         starter: `import numpy as np
+
+def _rank(s, tol):
+    return int(np.sum(s > tol * s[0])) if s.size and s[0] > 0 else 0
 
 def null_space_svd(A, tol=1e-10):
     return np.zeros((np.asarray(A).shape[1], 0))

@@ -216,14 +216,23 @@ def is_prime(n):
       prompt: (
         <>
           <p>
-            Write <C>factorise(n)</C> for n ≥ 1, a dict mapping each prime factor to its exponent, by trial division up to √n (1 gives the empty dict). From the factorisation, write <C>num_divisors(n)</C> = Π (eᵢ + 1), <C>sigma(n)</C>, the sum of the divisors, Π (pᵢ^(eᵢ+1) − 1)/(pᵢ − 1), and <C>divisors(n)</C>, the sorted list of all divisors built by combining prime powers (do not test every number up to n).
+            The starter gives <C>factorise(n)</C> for n ≥ 1, a dict mapping each prime factor to its exponent, found by trial division up to √n (1 gives the empty dict). From the factorisation, write <C>num_divisors(n)</C> = Π (eᵢ + 1), <C>sigma(n)</C>, the sum of the divisors, Π (pᵢ^(eᵢ+1) − 1)/(pᵢ − 1), and <C>divisors(n)</C>, the sorted list of all divisors built by combining prime powers (do not test every number up to n).
           </p>
         </>
       ),
       answer: {
         kind: "code",
         starter: `def factorise(n):
-    return {n: 1}
+    f = {}
+    q = 2
+    while q * q <= n:
+        while n % q == 0:
+            f[q] = f.get(q, 0) + 1
+            n //= q
+        q += 1 if q == 2 else 2
+    if n > 1:
+        f[n] = f.get(n, 0) + 1
+    return f
 
 def num_divisors(n):
     return 2

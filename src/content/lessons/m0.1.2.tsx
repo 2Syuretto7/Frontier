@@ -241,16 +241,13 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: (
         <>
-          <Code>{`xs = [5, -3, 8, -10, 2]
-total, low = 0, 0
-for x in xs:
-    total += x
-    low = min(low, total)
-print(total, low)`}</Code>
-          <p>A running balance starts at 0. What are the final balance and the lowest balance reached?</p>
+          <Code>{`a = -7
+b = 3
+print(a - b, b - a, a * -b)`}</Code>
+          <p>Subtracting in the other order flips the sign, and two minus signs multiply to a plus. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["2 0", "2 -10", "2 -5", "-2 0"], correct: [0] },
+      answer: { kind: "choice", options: ["-10 10 21", "-10 -10 21", "-4 10 -21", "10 -10 -21"], correct: [0] },
     },
     {
       key: "write",
@@ -258,31 +255,27 @@ print(total, low)`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>sign(x)</C>, which returns 1 for a positive number, −1 for a negative one and 0 for zero, and <C>distance(a, b)</C>, the distance between two integers on the number line.
+            Write <C>distance(a, b)</C>, the distance between two integers on the number line, and <C>between(a, b)</C>, how many integers lie strictly between them. For example, 2, 3 and 4 lie strictly between 1 and 5, so <C>between(1, 5)</C> is 3.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def sign(x):
-    return 1
-
-def distance(a, b):
+        starter: `def distance(a, b):
     return a - b
-`,
-        solution: `def sign(x):
-    if x > 0:
-        return 1
-    if x < 0:
-        return -1
-    return 0
 
-def distance(a, b):
+def between(a, b):
+    return b - a
+`,
+        solution: `def distance(a, b):
     return abs(a - b)
+
+def between(a, b):
+    return max(abs(a - b) - 1, 0)
 `,
         tests: [
-          { name: "sign", code: `assert [sign(-5), sign(0), sign(3)] == [-1, 0, 1], 'Three cases: negative, zero, positive.'` },
-          { name: "distance", code: `assert distance(-3, 4) == 7 and distance(4, -3) == 7, 'Distance never depends on the order: use abs.'` },
+          { name: "distance", code: `assert distance(-3, 4) == 7 and distance(4, -3) == 7 and distance(-2, -2) == 0, 'Distance never depends on the order: use abs.'` },
+          { name: "between", code: `assert between(1, 5) == 3 and between(5, 1) == 3 and between(-2, 2) == 3 and between(4, 5) == 0 and between(3, 3) == 0, 'One fewer than the distance, but never below 0.'` },
         ],
       },
     },
@@ -292,32 +285,28 @@ def distance(a, b):
       prompt: (
         <>
           <p>
-            Python&rsquo;s <C>//</C> rounds towards minus infinity, but many languages truncate towards zero. Write <C>trunc_div(a, b)</C>, which rounds the quotient towards zero, and <C>trunc_mod(a, b)</C>, the remainder that goes with it, so that <C>a == b * trunc_div(a, b) + trunc_mod(a, b)</C>. Use integer arithmetic only, not floats or <C>math.trunc</C>.
+            Python&rsquo;s <C>//</C> rounds the quotient down, towards minus infinity. Write <C>ceil_div(a, b)</C>, the quotient rounded <em>up</em> for b &gt; 0, using <C>//</C> and a minus sign but no floats, and <C>multiple_below(a, b)</C>, the largest multiple of b that is at most a, for b &gt; 0. Both must work for negative a: <C>ceil_div(-7, 2)</C> is −3 and <C>multiple_below(-7, 3)</C> is −9.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def trunc_div(a, b):
+        starter: `def ceil_div(a, b):
     return a // b
 
-def trunc_mod(a, b):
-    return a % b
+def multiple_below(a, b):
+    return a
 `,
-        solution: `def trunc_div(a, b):
-    q = abs(a) // abs(b)
-    return q if (a < 0) == (b < 0) else -q
+        solution: `def ceil_div(a, b):
+    return -(-a // b)
 
-def trunc_mod(a, b):
-    return a - b * trunc_div(a, b)
+def multiple_below(a, b):
+    return a - a % b
 `,
         tests: [
-          { name: "positive", code: `assert trunc_div(7, 2) == 3 and trunc_mod(7, 2) == 1, 'For positive numbers both conventions agree.'` },
-          { name: "negative", code: `assert trunc_div(-7, 2) == -3 and trunc_mod(-7, 2) == -1 and trunc_div(7, -2) == -3 and trunc_mod(7, -2) == 1, 'Truncation drops the fraction: −3.5 becomes −3.'` },
-          { name: "both negative", code: `assert trunc_div(-7, -2) == 3 and trunc_mod(-7, -2) == -1, 'Two negatives give a positive quotient.'` },
-          { name: "identity", code: `assert all(a == b * trunc_div(a, b) + trunc_mod(a, b) and abs(trunc_mod(a, b)) < abs(b) for a in range(-30, 31) for b in list(range(-7, 0)) + list(range(1, 8))), 'The remainder takes the sign of a and is smaller than |b|.'` },
-          { name: "huge", code: `a = -10 ** 30 - 1
-assert trunc_div(a, 10) == -10 ** 29, 'Floats lose precision here; stay with integers.'` },
+          { name: "ceil", code: `assert ceil_div(7, 2) == 4 and ceil_div(6, 3) == 2 and ceil_div(-7, 2) == -3 and ceil_div(0, 5) == 0, 'Rounding −a down and negating rounds a up.'` },
+          { name: "below", code: `assert multiple_below(7, 3) == 6 and multiple_below(9, 3) == 9 and multiple_below(-7, 3) == -9 and multiple_below(-1, 4) == -4, 'a % b is how far a sits above the multiple below it.'` },
+          { name: "agree", code: `assert all(ceil_div(a, b) * b >= a > (ceil_div(a, b) - 1) * b and multiple_below(a, b) <= a < multiple_below(a, b) + b for a in range(-40, 41) for b in range(1, 9)), 'Check the definitions on negative numbers too.'` },
         ],
       },
     },

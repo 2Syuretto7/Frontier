@@ -235,26 +235,26 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: (
         <>
-          <Code>{`from fractions import Fraction
-print(Fraction(1, 3) + Fraction(1, 6))`}</Code>
-          <p>Fractions add over a common denominator, then reduce. What does this print?</p>
+          <Code>{`a, b = 1, 3      # the fraction 1/3
+c, d = 1, 6      # the fraction 1/6
+print(a * d + c * b, b * d)`}</Code>
+          <p>This adds 1/3 and 1/6 over the common denominator 3 × 6, without reducing. What does it print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["1/2", "2/9", "3/6", "1/9"], correct: [0] },
+      answer: { kind: "choice", options: ["9 18", "2 9", "1 2", "3 18"], correct: [0] },
     },
     {
       key: "read2",
       rung: "apply",
       prompt: (
         <>
-          <Code>{`from fractions import Fraction
-x = Fraction(1, 3) + Fraction(1, 6)
-y = x * 4 - Fraction(1, 2)
-print(x, y)`}</Code>
-          <p>Fraction keeps exact rational numbers in lowest terms. What does this print?</p>
+          <Code>{`price = 80
+discount = price * 25 // 100
+print(discount, price - discount, price * 3 // 4)`}</Code>
+          <p>A 25% discount, and three quarters of the price. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["1/2 3/2", "3/6 3/2", "1/2 1.5", "0.5 1.5"], correct: [0] },
+      answer: { kind: "choice", options: ["20 60 60", "25 55 60", "20 60 53", "20 55 60"], correct: [0] },
     },
     {
       key: "write",
@@ -262,31 +262,27 @@ print(x, y)`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>add(a, b, c, d)</C>, which returns a/b + c/d in lowest terms as a tuple (numerator, denominator) with a positive denominator. Use <C>math.gcd</C> and not the <C>fractions</C> module.
+            Write <C>percent(part, whole)</C>, the part as a percentage of the whole, and <C>share(total, a, b)</C>, the first person&rsquo;s share when total is split in the ratio a : b. For example, <C>percent(3, 12)</C> is 25.0 and <C>share(100, 3, 2)</C> is 60.0.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `import math
+        starter: `def percent(part, whole):
+    return part / whole
 
-def add(a, b, c, d):
-    return (a + c, b + d)
+def share(total, a, b):
+    return total / a
 `,
-        solution: `import math
+        solution: `def percent(part, whole):
+    return part / whole * 100
 
-def add(a, b, c, d):
-    n, m = a * d + c * b, b * d
-    g = math.gcd(n, m)
-    n, m = n // g, m // g
-    if m < 0:
-        n, m = -n, -m
-    return (n, m)
+def share(total, a, b):
+    return total * a / (a + b)
 `,
         tests: [
-          { name: "halves", code: `assert add(1, 2, 1, 3) == (5, 6), '1/2 + 1/3 = 3/6 + 2/6 = 5/6.'` },
-          { name: "reduce", code: `assert add(1, 3, 1, 6) == (1, 2), 'Reduce by the greatest common divisor.'` },
-          { name: "signs", code: `assert add(1, -4, 0, 1) == (-1, 4), 'Keep the denominator positive.'` },
+          { name: "percent", code: `assert percent(3, 12) == 25.0 and percent(1, 8) == 12.5 and percent(5, 5) == 100.0, 'Divide part by whole, then multiply by 100.'` },
+          { name: "share", code: `assert share(100, 3, 2) == 60.0 and share(90, 1, 2) == 30.0 and share(10, 1, 1) == 5.0, 'In the ratio a : b, the first share is a out of every a + b parts.'` },
         ],
       },
     },
@@ -296,32 +292,28 @@ def add(a, b, c, d):
       prompt: (
         <>
           <p>
-            Write <C>egyptian(p, q)</C>, which writes a fraction 0 &lt; p/q &lt; 1 as a sum of distinct unit fractions by the greedy rule: repeatedly take the largest 1/n not exceeding what is left, and subtract it. Return the list of denominators in increasing order. Work with integers only.
+            Two fractions a/b and c/d with positive denominators are equal exactly when a·d = c·b. Write <C>same_value(a, b, c, d)</C>, which tests this by cross-multiplying, with no division, and <C>larger(a, b, c, d)</C>, which is True when a/b &gt; c/d. For example, <C>same_value(2, 4, 3, 6)</C> is True and <C>larger(2, 3, 3, 5)</C> is True.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def egyptian(p, q):
-    return [q]
+        starter: `def same_value(a, b, c, d):
+    return a == c
+
+def larger(a, b, c, d):
+    return a > c
 `,
-        solution: `def egyptian(p, q):
-    out = []
-    while p > 0:
-        n = -(-q // p)
-        out.append(n)
-        p, q = p * n - q, q * n
-    return out
+        solution: `def same_value(a, b, c, d):
+    return a * d == c * b
+
+def larger(a, b, c, d):
+    return a * d > c * b
 `,
         tests: [
-          { name: "simple", code: `assert egyptian(1, 7) == [7] and egyptian(2, 3) == [2, 6] and egyptian(3, 4) == [2, 4], '2/3 = 1/2 + 1/6.'` },
-          { name: "classic", code: `assert egyptian(4, 13) == [4, 18, 468] and egyptian(5, 6) == [2, 3], 'The largest 1/n not above p/q has n = ⌈q/p⌉.'` },
-          { name: "exact", code: `from fractions import Fraction
-for p, q in [(7, 15), (5, 121), (11, 12), (3, 7)]:
-    ds = egyptian(p, q)
-    assert sum(Fraction(1, d) for d in ds) == Fraction(p, q) and len(set(ds)) == len(ds) and ds == sorted(ds), (p, q)` },
-          { name: "long", code: `ds = egyptian(5, 121)
-assert ds[:3] == [25, 757, 763309] and len(ds) == 5, 'Integer arithmetic keeps the huge denominators exact.'` },
+          { name: "equal", code: `assert same_value(2, 4, 3, 6) and same_value(-1, 2, -3, 6) and not same_value(1, 3, 2, 5), 'Multiply each numerator by the other denominator.'` },
+          { name: "larger", code: `assert larger(2, 3, 3, 5) and not larger(3, 5, 2, 3) and not larger(1, 2, 2, 4) and larger(-1, 3, -1, 2), 'a/b > c/d exactly when a·d > c·b, since b and d are positive.'` },
+          { name: "exact", code: `assert same_value(10 ** 20 + 1, 3 * 10 ** 20, 2 * 10 ** 20 + 2, 6 * 10 ** 20), 'Integers stay exact where floats would round.'` },
         ],
       },
     },

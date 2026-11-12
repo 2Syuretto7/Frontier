@@ -255,202 +255,89 @@ print(a, pre(root))`}</Code>
       prompt: (
         <>
           <p>
-            Write a class <C>BST</C> whose operations are all loops, not recursion, so that degenerate trees thousands of nodes
-            deep work. Implement <C>insert(k)</C> (ignoring duplicates), <C>k in t</C>, <C>delete(k)</C> (raising{" "}
-            <C>KeyError</C> if absent; two children take the successor), <C>len(t)</C>, iteration in increasing order,{" "}
-            <C>floor(k)</C> and <C>ceil(k)</C> (the largest key ≤ k and the smallest key ≥ k, or <C>None</C>),{" "}
-            <C>range(lo, hi)</C> (a list of keys in [lo, hi] in order, in O(h + output)) and <C>height()</C> (−1 when empty).
+            Write binary search tree functions using loops, not recursion, so that degenerate trees thousands of nodes deep
+            work. Nodes are the starter&rsquo;s <C>Node</C> objects, with <C>key</C>, <C>left</C> and <C>right</C>. Write{" "}
+            <C>insert(root, k)</C>, which adds k (ignoring duplicates) and returns the root, a new node if the tree was empty;{" "}
+            <C>floor(root, k)</C>, the largest key ≤ k or <C>None</C>, in O(h); and <C>in_order(root)</C>, the list of keys in
+            increasing order, using your own stack.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `class BST:
-    def __init__(self):
-        self.keys = []
-
-    def insert(self, k):
-        pass
-
-    def __contains__(self, k):
-        return False
-
-    def delete(self, k):
-        raise KeyError(k)
-
-    def __len__(self):
-        return 0
-
-    def __iter__(self):
-        return iter([])
-
-    def floor(self, k):
-        return None
-
-    def ceil(self, k):
-        return None
-
-    def range(self, lo, hi):
-        return []
-
-    def height(self):
-        return -1
-`,
-        solution: `class _Node:
-    __slots__ = ('key', 'left', 'right')
-
+        starter: `class Node:
     def __init__(self, key):
         self.key, self.left, self.right = key, None, None
 
-class BST:
-    def __init__(self):
-        self.root, self.n = None, 0
+def insert(root, k):
+    return root
 
-    def insert(self, k):
-        if self.root is None:
-            self.root, self.n = _Node(k), 1
-            return
-        t = self.root
-        while True:
-            if k == t.key:
-                return
-            side = 'left' if k < t.key else 'right'
-            nxt = getattr(t, side)
-            if nxt is None:
-                setattr(t, side, _Node(k))
-                self.n += 1
-                return
-            t = nxt
+def floor(root, k):
+    return None
 
-    def __contains__(self, k):
-        t = self.root
-        while t is not None and t.key != k:
-            t = t.left if k < t.key else t.right
-        return t is not None
+def in_order(root):
+    return []
+`,
+        solution: `class Node:
+    def __init__(self, key):
+        self.key, self.left, self.right = key, None, None
 
-    def delete(self, k):
-        parent, t = None, self.root
-        while t is not None and t.key != k:
-            parent, t = t, (t.left if k < t.key else t.right)
-        if t is None:
-            raise KeyError(k)
-        if t.left is not None and t.right is not None:
-            sp, s = t, t.right
-            while s.left is not None:
-                sp, s = s, s.left
-            t.key = s.key
-            parent, t = sp, s
-        child = t.left if t.left is not None else t.right
-        if parent is None:
-            self.root = child
-        elif parent.left is t:
-            parent.left = child
+def insert(root, k):
+    if root is None:
+        return Node(k)
+    n = root
+    while n.key != k:
+        if k < n.key:
+            if n.left is None:
+                n.left = Node(k)
+            n = n.left
         else:
-            parent.right = child
-        self.n -= 1
+            if n.right is None:
+                n.right = Node(k)
+            n = n.right
+    return root
 
-    def __len__(self):
-        return self.n
+def floor(root, k):
+    best, n = None, root
+    while n is not None:
+        if n.key <= k:
+            best, n = n.key, n.right
+        else:
+            n = n.left
+    return best
 
-    def __iter__(self):
-        stack, node = [], self.root
-        while stack or node is not None:
-            while node is not None:
-                stack.append(node)
-                node = node.left
-            node = stack.pop()
-            yield node.key
-            node = node.right
-
-    def floor(self, k):
-        best, t = None, self.root
-        while t is not None:
-            if t.key == k:
-                return k
-            if t.key < k:
-                best, t = t.key, t.right
-            else:
-                t = t.left
-        return best
-
-    def ceil(self, k):
-        best, t = None, self.root
-        while t is not None:
-            if t.key == k:
-                return k
-            if t.key > k:
-                best, t = t.key, t.left
-            else:
-                t = t.right
-        return best
-
-    def range(self, lo, hi):
-        out, stack, node = [], [], self.root
-        while stack or node is not None:
-            while node is not None:
-                stack.append(node)
-                node = node.left if node.key > lo else None
-            node = stack.pop()
-            if lo <= node.key <= hi:
-                out.append(node.key)
-            node = node.right if node.key < hi else None
-        return out
-
-    def height(self):
-        if self.root is None:
-            return -1
-        h, level = -1, [self.root]
-        while level:
-            h += 1
-            level = [c for t in level for c in (t.left, t.right) if c is not None]
-        return h
+def in_order(root):
+    out, stack, n = [], [], root
+    while stack or n is not None:
+        while n is not None:
+            stack.append(n)
+            n = n.left
+        n = stack.pop()
+        out.append(n.key)
+        n = n.right
+    return out
 `,
         tests: [
-          { name: "basics", code: `t = BST()
-for k in [50, 30, 70, 20, 40, 60, 80, 35]:
-    t.insert(k)
-t.insert(40)
-assert len(t) == 8 and list(t) == [20, 30, 35, 40, 50, 60, 70, 80] and t.height() == 3
-assert 35 in t and 36 not in t
-assert (t.floor(36), t.ceil(36), t.floor(19), t.ceil(81), t.floor(50)) == (35, 40, None, None, 50)
-assert t.range(33, 65) == [35, 40, 50, 60] and t.range(90, 99) == []` },
-          { name: "delete", code: `t = BST()
-for k in [50, 30, 70, 20, 40, 60, 80, 35, 65]:
-    t.insert(k)
-t.delete(30); t.delete(50); t.delete(20)
-assert list(t) == [35, 40, 60, 65, 70, 80] and len(t) == 6
-try:
-    t.delete(30)
-    assert False, 'Deleting a missing key raises KeyError.'
-except KeyError:
-    pass
-for k in list(t):
-    t.delete(k)
-assert len(t) == 0 and list(t) == [] and t.height() == -1` },
+          { name: "basics", code: `t = None
+for k in [50, 30, 70, 20, 40, 60, 80, 35, 40]:
+    t = insert(t, k)
+assert t.key == 50 and t.left.right.left.key == 35, 'Each key goes left if smaller, right if larger.'
+assert in_order(t) == [20, 30, 35, 40, 50, 60, 70, 80] and in_order(None) == [], 'Duplicates are ignored.'
+assert (floor(t, 36), floor(t, 19), floor(t, 50), floor(t, 999), floor(None, 5)) == (35, None, 50, 80, None)` },
           { name: "random", code: `import random
 rng = random.Random(5)
-t, ref = BST(), set()
-for _ in range(4000):
-    k = rng.randrange(200)
-    if rng.random() < 0.6:
-        t.insert(k); ref.add(k)
-    elif k in ref:
-        t.delete(k); ref.discard(k)
-    if rng.random() < 0.05:
-        s = sorted(ref)
-        assert list(t) == s and len(t) == len(s)
-        lo, hi = sorted((rng.randrange(200), rng.randrange(200)))
-        assert t.range(lo, hi) == [x for x in s if lo <= x <= hi]
-        q = rng.randrange(-5, 205)
-        assert t.floor(q) == max((x for x in s if x <= q), default=None)
-        assert t.ceil(q) == min((x for x in s if x >= q), default=None)` },
-          { name: "deep", code: `t = BST()
+t, ref = None, set()
+for _ in range(2000):
+    k = rng.randrange(500)
+    t = insert(t, k); ref.add(k)
+s = sorted(ref)
+assert in_order(t) == s
+for q in range(-3, 503, 7):
+    assert floor(t, q) == max((x for x in s if x <= q), default=None), q` },
+          { name: "deep", code: `t = None
 for k in range(3000):
-    t.insert(k)
-assert t.height() == 2999 and 2999 in t and t.floor(10**9) == 2999
-assert t.range(1000, 1004) == [1000, 1001, 1002, 1003, 1004]
-t.delete(0)
-assert sum(1 for _ in t) == 2999, 'A path 3000 deep must not hit the recursion limit.'` },
+    t = insert(t, k)
+assert floor(t, 10 ** 9) == 2999 and in_order(t) == list(range(3000)), 'A path 3000 deep must not hit the recursion limit.'` },
         ],
       },
     },

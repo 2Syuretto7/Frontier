@@ -214,7 +214,7 @@ assert np.allclose(sigmoid_grad(x), (sigmoid(x + h) - sigmoid(x - h)) / (2 * h),
       prompt: (
         <>
           <p>
-            Write numerically stable versions for NumPy arrays: <C>log_sigmoid(x)</C> = log σ(x) = −log(1 + e⁻ˣ), computed as −<C>np.logaddexp(0, -x)</C> or an equivalent piecewise formula; <C>softplus(x)</C> = log(1 + eˣ); and <C>bce(logits, y)</C>, the mean binary cross-entropy −[y log σ(z) + (1 − y) log(1 − σ(z))] computed from logits without ever forming σ(z), which must be finite at z = ±1000. Also write <C>bce_grad(logits, y)</C>, the derivative of the mean loss with respect to each logit, (σ(z) − y)/n.
+            The starter gives stable <C>sigmoid(x)</C> and <C>softplus(x)</C> = log(1 + eˣ) for NumPy arrays. Write numerically stable <C>log_sigmoid(x)</C> = log σ(x) = −log(1 + e⁻ˣ), computed as −<C>np.logaddexp(0, -x)</C> or through softplus, and <C>bce(logits, y)</C>, the mean binary cross-entropy −[y log σ(z) + (1 − y) log(1 − σ(z))] computed from logits without ever forming σ(z), which must be finite at z = ±1000. Also write <C>bce_grad(logits, y)</C>, the derivative of the mean loss with respect to each logit, (σ(z) − y)/n.
           </p>
         </>
       ),
@@ -223,13 +223,13 @@ assert np.allclose(sigmoid_grad(x), (sigmoid(x + h) - sigmoid(x - h)) / (2 * h),
         starter: `import numpy as np
 
 def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+    return np.where(x >= 0, 1 / (1 + np.exp(-np.abs(x))), np.exp(-np.abs(x)) / (1 + np.exp(-np.abs(x))))
 
 def log_sigmoid(x):
     return np.log(sigmoid(x))
 
 def softplus(x):
-    return np.log(1 + np.exp(x))
+    return np.logaddexp(0, x)
 
 def bce(z, y):
     s = sigmoid(z)

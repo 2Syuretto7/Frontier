@@ -171,7 +171,10 @@ export const lesson: LessonContent = {
         <>
           <Code>{`import math
 a, b = 3, 2
-f = lambda x: a * b ** x
+
+def f(x):
+    return a * b ** x
+
 print(f(0), f(3), f(-1), round(f(1) / f(0), 3) == round(f(5) / f(4), 3))`}</Code>
           <p>An exponential multiplies by the same factor at every step. What does this print?</p>
         </>
