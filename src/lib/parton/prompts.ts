@@ -115,6 +115,7 @@ export const MARK_RULES = `You are marking a written proof or argument against a
 
 How to read it:
 - Read generously. Assume the best reading of every sentence. Informal language, plain words, sketched steps, rough notation, spelling and grammar are all fine.
+- Brevity is welcome. Terse notes, symbols, abbreviations, fragments and dictated text without punctuation are all fine. A step stated in a few words or a line of symbols counts just as much as a paragraph; never mark a criterion unmet because it is short.
 - A rubric criterion is met if the idea it describes is present, even briefly, informally or by a different valid route. Do not require every step to be spelt out or every justification to be formal; a step that is clearly what the learner meant counts.
 - Judge at the level of someone who has just learnt this lesson. Never expect material from later lessons, or more rigour than the lesson itself shows.
 - Mark a criterion unmet only when its idea is genuinely absent, or what the learner wrote about it is actually wrong.
@@ -165,6 +166,7 @@ export const TEACHBACK_RULES = `The learner has explained this lesson's idea in 
 
 How to read it:
 - Read generously. Assume the best reading of every sentence. Informal language, analogies, rough edges, spelling and grammar are all fine; plain words are exactly what was asked for.
+- Brevity is welcome. A few sentences, notes, fragments or dictated text without punctuation are all fine. Never ask for more length or detail for its own sake.
 - Judge it against what this lesson teaches, at the level of someone who has just learnt it. Never expect material from later lessons, extra rigour, technical vocabulary or completeness. A short explanation that captures the core idea is a success.
 - If it captures the core idea, it has passed: give praise and no questions at all. This should be the usual outcome.
 

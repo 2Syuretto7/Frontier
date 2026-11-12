@@ -3,6 +3,7 @@
 import { useState, useTransition, type ReactNode } from "react";
 import { checkExerciseAction, codeTestsAction } from "@/app/actions";
 import { CodeRunner, type RunnerApi } from "@/components/code/CodeRunner";
+import { AnswerBox, clearDraft } from "@/components/lesson/AnswerBox";
 import { Pill } from "@/components/ui/Pill";
 import { Check, Close, Spark } from "@/components/ui/Icons";
 
@@ -64,6 +65,7 @@ export function ExerciseCard({ view, context, children, index }: {
       const res = await checkExerciseAction(view.id, input, context, attempt);
       if (res.message && !res.correct) { setStatus({ tone: "info", text: res.message }); return; }
       setTries(attempt);
+      if (view.kind === "written" && context === "lesson") clearDraft(`frontier:written:${view.id}`);
       if (res.verdict) {
         setSolved((s) => s || res.correct);
         setStatus(WRITTEN_STATUS[res.verdict]);
@@ -170,8 +172,10 @@ export function ExerciseCard({ view, context, children, index }: {
             aria-label="Your answer" />
         )}
         {view.kind === "written" && (
-          <textarea className="input textarea" value={value} onChange={(e) => setValue(e.target.value)} rows={7}
-            placeholder="Write your answer in full sentences. Show every step." aria-label="Your answer" />
+          <AnswerBox value={value} onChange={setValue} rows={6} label="Your answer"
+            draftKey={context === "lesson" ? `frontier:written:${view.id}` : undefined}
+            onSubmit={() => { if (!pending && value.trim()) submit(); }}
+            placeholder="Brief is fine: the key steps in your own words, with symbols or notes. Or tap Dictate and say it." />
         )}
         {!locked && (
           <div className="exercise-actions">
