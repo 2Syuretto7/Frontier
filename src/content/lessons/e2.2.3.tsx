@@ -315,19 +315,37 @@ for i in range(4000):
       prompt: (
         <>
           <p>
-            Write a calculator. <C>tokenize(s)</C> turns a string into numbers (as floats) and the strings{" "}
-            <C>+ - * / ^ ( )</C>, skipping spaces and raising <C>ValueError</C> on anything else. <C>to_rpn(tokens)</C> converts
+            Write a calculator. The starter&rsquo;s <C>tokenize(s)</C> turns a string into numbers (as floats) and the strings{" "}
+            <C>+ - * / ^ ( )</C>, and <C>PREC</C> gives each operator&rsquo;s precedence. Write <C>to_rpn(tokens)</C>, which converts
             infix to postfix with the shunting-yard algorithm: <C>^</C> binds tightest and is right-associative, then <C>*</C>{" "}
             and <C>/</C>, then <C>+</C> and <C>-</C>, all left-associative; raise <C>ValueError</C> on unbalanced brackets.{" "}
-            <C>eval_rpn(rpn)</C> evaluates postfix with a stack, raising <C>ValueError</C> if the expression is malformed. And{" "}
-            <C>evaluate(s)</C> chains the three. There is no unary minus.
+            Then write <C>eval_rpn(rpn)</C>, which evaluates postfix with a stack, raising <C>ValueError</C> if the expression is
+            malformed. The starter&rsquo;s <C>evaluate(s)</C> chains the three. There is no unary minus.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def tokenize(s):
-    return s.split()
+        starter: `PREC = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}
+
+def tokenize(s):
+    out, i = [], 0
+    while i < len(s):
+        c = s[i]
+        if c.isspace():
+            i += 1
+        elif c.isdigit() or c == '.':
+            j = i
+            while j < len(s) and (s[j].isdigit() or s[j] == '.'):
+                j += 1
+            out.append(float(s[i:j]))
+            i = j
+        elif c in PREC or c in '()':
+            out.append(c)
+            i += 1
+        else:
+            raise ValueError(f'unexpected {c!r}')
+    return out
 
 def to_rpn(tokens):
     return tokens

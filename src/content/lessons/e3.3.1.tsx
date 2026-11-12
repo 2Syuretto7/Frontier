@@ -297,7 +297,6 @@ def classify_misses(trace, num_sets, ways, line_size):
 
 
 def classify_misses(trace, num_sets, ways, line_size):
-    capacity_lines = num_sets * ways
     seen = set()
     sets = [[] for _ in range(num_sets)]
     full = []                       # a fully associative LRU cache of the same size
@@ -314,7 +313,7 @@ def classify_misses(trace, num_sets, ways, line_size):
         full_hit = ln in full
         if full_hit:
             full.remove(ln)
-        elif len(full) == capacity_lines:
+        elif len(full) == num_sets * ways:
             full.pop(0)
         full.append(ln)
         if hit:

@@ -245,10 +245,9 @@ for _ in range(3000):
               <C>ValueError</C> if there is no zero byte.
             </li>
             <li>
-              <C>mini_printf(fmt, *args)</C>: return the formatted string for conversions <C>%d %i %u %x %s %c %%</C>, with an
-              optional <C>-</C> (left-justify) or <C>0</C> (zero-pad numbers, after any minus sign) flag and a minimum width.{" "}
-              <C>%u</C> and <C>%x</C> print the 32-bit unsigned pattern. Raise <C>ValueError</C> for an unknown conversion or
-              leftover arguments.
+              <C>mini_printf(fmt, *args)</C>: return the formatted string for the conversions <C>%d %s %x %%</C>, each with an
+              optional <C>-</C> flag (left-justify) and a minimum width, as in <C>%-5d</C>. <C>%x</C> prints the 32-bit unsigned
+              pattern, so −1 gives <C>ffffffff</C>. Raise <C>ValueError</C> for an unknown conversion or leftover arguments.
             </li>
           </ul>
         </>
@@ -270,50 +269,29 @@ def mini_printf(fmt, *args):
 def mini_printf(fmt, *args):
     out, i, k = [], 0, 0
     while i < len(fmt):
-        ch = fmt[i]
-        if ch != '%':
-            out.append(ch)
+        if fmt[i] != '%':
+            out.append(fmt[i])
             i += 1
             continue
         i += 1
-        if fmt[i] == '%':
-            out.append('%')
-            i += 1
-            continue
         left = fmt[i] == '-'
         if left:
             i += 1
-        zero = fmt[i] == '0' and not left
         width = 0
         while fmt[i].isdigit():
             width = width * 10 + int(fmt[i])
             i += 1
         conv = fmt[i]
         i += 1
-        arg = args[k]
-        k += 1
-        if conv in 'di':
-            text = str(arg)
-        elif conv == 'u':
-            text = str(arg % (1 << 32))
+        if conv == '%':
+            text = '%'
+        elif conv in 'ds':
+            text, k = str(args[k]), k + 1
         elif conv == 'x':
-            text = format(arg % (1 << 32), 'x')
-        elif conv == 's':
-            text = str(arg)
-        elif conv == 'c':
-            text = chr(arg)
+            text, k = format(args[k] % (1 << 32), 'x'), k + 1
         else:
             raise ValueError('unsupported conversion %' + conv)
-        if len(text) < width:
-            pad = width - len(text)
-            if left:
-                text += ' ' * pad
-            elif zero and conv in 'diux':
-                sign = '-' if text.startswith('-') else ''
-                text = sign + '0' * pad + text[len(sign):]
-            else:
-                text = ' ' * pad + text
-        out.append(text)
+        out.append(text.ljust(width) if left else text.rjust(width))
     if k != len(args):
         raise ValueError('too many arguments')
     return ''.join(out)
@@ -327,9 +305,9 @@ try:
 except ValueError:
     pass` },
           { name: "printf", code: `assert mini_printf('%d + %d = %d', 2, 3, 5) == '2 + 3 = 5'
-assert mini_printf('[%5d] [%-5d] [%05d] [%05d]', 42, 42, 42, -42) == '[   42] [42   ] [00042] [-0042]'
-assert mini_printf('%u %x %u', -1, 255, 7) == '4294967295 ff 7', '%u and %x read the 32-bit pattern.'
-assert mini_printf('%s=%c, 100%%', 'k', 65) == 'k=A, 100%'
+assert mini_printf('[%5d] [%-5d] [%3d]', 42, 42, -42) == '[   42] [42   ] [-42]'
+assert mini_printf('%x %x %d', -1, 255, -1) == 'ffffffff ff -1', '%x reads the 32-bit pattern.'
+assert mini_printf('%s=%d, 100%%', 'k', 65) == 'k=65, 100%'
 assert mini_printf('[%8s][%-3s]', 'hi', 'abcd') == '[      hi][abcd]', 'Width is a minimum, not a maximum.'
 assert mini_printf('no args') == 'no args'
 for bad in [('%d', 1, 2), ('%q', 1)]:

@@ -191,8 +191,8 @@ print(bisect_left(xs, 3), bisect_right(xs, 3), bisect_left(xs, 4), bisect_right(
       prompt: (
         <>
           <p>
-            Write <C>bisect_left(a, x, key=None)</C> and <C>bisect_right(a, x, key=None)</C>, matching Python&rsquo;s{" "}
-            <C>bisect</C> module (with key applied to the items of a, not to x). Then write <C>search_rotated(a, x)</C>: a is a
+            The starter gives <C>bisect_left(a, x, key=None)</C>, matching Python&rsquo;s <C>bisect</C> module (with key applied to
+            the items of a, not to x). Write <C>bisect_right(a, x, key=None)</C> to match it. Then write <C>search_rotated(a, x)</C>: a is a
             sorted list of distinct items rotated by an unknown amount, such as <C>[6, 8, 9, 1, 3, 4]</C>; return the index of x
             or −1, in O(log n) comparisons.
           </p>
@@ -201,7 +201,15 @@ print(bisect_left(xs, 3), bisect_right(xs, 3), bisect_left(xs, 4), bisect_right(
       answer: {
         kind: "code",
         starter: `def bisect_left(a, x, key=None):
-    return a.index(x) if x in a else len(a)
+    k = key or (lambda v: v)
+    lo, hi = 0, len(a)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if k(a[mid]) < x:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
 
 def bisect_right(a, x, key=None):
     return bisect_left(a, x, key) + 1
@@ -298,7 +306,7 @@ assert K.count <= 6 * 17 * 2, f'{K.count} comparisons is not logarithmic.'` },
             <li><C>isqrt(n)</C>, the largest r with r² ≤ n, for integers up to 10¹⁰⁰, without floats or <C>math.isqrt</C> (<C>ValueError</C> if n &lt; 0);</li>
             <li>
               <C>min_capacity(weights, days)</C>, the least capacity with which packages, shipped in the given order, fit into at
-              most <C>days</C> loads, each day taking as many next packages as fit (<C>ValueError</C> if days &lt; 1);
+              most <C>days</C> loads, each day taking as many next packages as fit (<C>ValueError</C> if days &lt; 1); the starter&rsquo;s <C>_days_needed(weights, cap)</C> counts the loads for a given capacity;
             </li>
             <li>
               <C>largest_true(pred, lo)</C>, the largest b ≥ lo with pred(b) true, given that pred(lo) is true and pred is true
@@ -310,7 +318,15 @@ assert K.count <= 6 * 17 * 2, f'{K.count} comparisons is not logarithmic.'` },
       ),
       answer: {
         kind: "code",
-        starter: `def isqrt(n):
+        starter: `def _days_needed(weights, cap):
+    days, load = 1, 0
+    for w in weights:
+        if load + w > cap:
+            days, load = days + 1, 0
+        load += w
+    return days
+
+def isqrt(n):
     return int(n ** 0.5)
 
 def min_capacity(weights, days):
@@ -359,8 +375,6 @@ def largest_true(pred, lo):
     while pred(lo + step):
         step *= 2
     good, bad = lo + step // 2, lo + step
-    if step == 1:
-        good = lo
     while bad - good > 1:
         mid = (good + bad) // 2
         if pred(mid):

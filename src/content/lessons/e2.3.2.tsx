@@ -222,18 +222,32 @@ print(find(a, 17), find(b, 17), b.index(24), find(b, 3))`}</Code>
         <>
           <p>
             Write <C>OpenMap</C>, a hash map with linear probing. Keep <C>self.slots</C>, a list whose length is a power of two
-            (8 to start), each entry <C>None</C>, the module-level object <C>TOMBSTONE</C>, or a <C>(key, value)</C> tuple; the
-            home slot is <C>hash(key) &amp; (len(self.slots) - 1)</C>. Support <C>m[k] = v</C>, <C>m[k]</C> (raising{" "}
-            <C>KeyError</C>), <C>del m[k]</C> (leaving a tombstone; <C>KeyError</C> if absent), <C>k in m</C> and{" "}
-            <C>len(m)</C>. Insertion reuses the first tombstone on the probe path if the key is not already present. Before an
-            insertion that would make live keys plus tombstones exceed two-thirds of the slots, rebuild into the smallest power
-            of two that is at least 8 and at least 3 × (live keys + 1), without tombstones.
+            (8 to start), each entry <C>None</C>, the module-level object <C>TOMBSTONE</C>, or a <C>(key, value)</C> tuple. The
+            starter&rsquo;s <C>_probe(slots, k)</C> walks from the home slot and returns where k is, and where it would go (the
+            first tombstone on the path, if any). Support <C>m[k] = v</C>, <C>m[k]</C> (raising <C>KeyError</C>),{" "}
+            <C>del m[k]</C> (leaving a tombstone; <C>KeyError</C> if absent), <C>k in m</C> and <C>len(m)</C>. Before an
+            insertion into an empty slot that would make live keys plus tombstones exceed two-thirds of the slots, rebuild
+            without tombstones, doubling the number of slots if live keys + 1 would be more than a third of them.
           </p>
         </>
       ),
       answer: {
         kind: "code",
         starter: `TOMBSTONE = object()
+
+def _probe(slots, k):
+    # Returns (the index holding k, or None; the slot where k would be inserted).
+    mask = len(slots) - 1
+    i = hash(k) & mask
+    first_dead = None
+    while slots[i] is not None:
+        if slots[i] is TOMBSTONE:
+            if first_dead is None:
+                first_dead = i
+        elif slots[i][0] == k:
+            return i, None
+        i = (i + 1) & mask
+    return None, (first_dead if first_dead is not None else i)
 
 class OpenMap:
     def __init__(self):
@@ -257,69 +271,58 @@ class OpenMap:
 `,
         solution: `TOMBSTONE = object()
 
+def _probe(slots, k):
+    # Returns (the index holding k, or None; the slot where k would be inserted).
+    mask = len(slots) - 1
+    i = hash(k) & mask
+    first_dead = None
+    while slots[i] is not None:
+        if slots[i] is TOMBSTONE:
+            if first_dead is None:
+                first_dead = i
+        elif slots[i][0] == k:
+            return i, None
+        i = (i + 1) & mask
+    return None, (first_dead if first_dead is not None else i)
+
 class OpenMap:
-    def __init__(self):
-        self.slots = [None] * 8
-        self.live = 0
-        self.dead = 0
-
-    def _find(self, k):
-        mask = len(self.slots) - 1
-        i = hash(k) & mask
-        first_dead = None
-        while True:
-            s = self.slots[i]
-            if s is None:
-                return None, (first_dead if first_dead is not None else i)
-            if s is TOMBSTONE:
-                if first_dead is None:
-                    first_dead = i
-            elif s[0] == k:
-                return i, None
-            i = (i + 1) & mask
-
-    def _rebuild(self):
-        size = 8
-        while size < 3 * (self.live + 1):
-            size *= 2
-        old = self.slots
+    def __init__(self, size=8):
         self.slots = [None] * size
         self.live = self.dead = 0
+
+    def _rebuild(self):
+        old = self.slots
+        self.__init__(len(old) * (2 if 3 * (self.live + 1) > len(old) else 1))
         for s in old:
-            if s is not None and s is not TOMBSTONE:
+            if isinstance(s, tuple):
                 self[s[0]] = s[1]
 
     def __setitem__(self, k, v):
-        at, free = self._find(k)
-        if at is not None:
-            self.slots[at] = (k, v)
-            return
-        reuse = self.slots[free] is TOMBSTONE
-        if not reuse and 3 * (self.live + self.dead + 1) > 2 * len(self.slots):
+        at, free = _probe(self.slots, k)
+        if at is None and self.slots[free] is None and 3 * (self.live + self.dead + 1) > 2 * len(self.slots):
             self._rebuild()
-            at, free = self._find(k)
-            reuse = False
-        self.slots[free] = (k, v)
-        self.live += 1
-        if reuse:
-            self.dead -= 1
+            at, free = _probe(self.slots, k)
+        if at is None:
+            self.live += 1
+            if self.slots[free] is TOMBSTONE:
+                self.dead -= 1
+        self.slots[free if at is None else at] = (k, v)
 
     def __getitem__(self, k):
-        at, _ = self._find(k)
+        at = _probe(self.slots, k)[0]
         if at is None:
             raise KeyError(k)
         return self.slots[at][1]
 
     def __delitem__(self, k):
-        at, _ = self._find(k)
+        at = _probe(self.slots, k)[0]
         if at is None:
             raise KeyError(k)
         self.slots[at] = TOMBSTONE
-        self.live -= 1
-        self.dead += 1
+        self.live, self.dead = self.live - 1, self.dead + 1
 
     def __contains__(self, k):
-        return self._find(k)[0] is not None
+        return _probe(self.slots, k)[0] is not None
 
     def __len__(self):
         return self.live

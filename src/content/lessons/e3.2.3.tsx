@@ -167,25 +167,21 @@ twice:  push r1
       prompt: (
         <>
           <p>
-            Write <C>run(source, regs=None, max_steps=100000)</C>, an interpreter for the toy instruction set in the theory. It
-            returns the dict of all eight registers <C>{"{'r0': ..., 'r7': ...}"}</C> after the program halts, starting from 0
-            except for any given in <C>regs</C>. Raise <C>ValueError</C> for an unknown instruction or an unknown or duplicate
-            label, and <C>RuntimeError</C> if more than <C>max_steps</C> instructions run.
+            Write <C>run(source, regs=None, max_steps=100000)</C>, an interpreter for the toy instruction set in the theory. The
+            starter&rsquo;s <C>parse(source)</C> turns the source into a list of <C>(op, operands)</C> pairs and a dict from
+            label to instruction index, raising <C>ValueError</C> for an unknown instruction or an unknown or duplicate label.{" "}
+            <C>run</C> returns the dict of all eight registers <C>{"{'r0': ..., 'r7': ...}"}</C> after the program halts, starting
+            from 0 except for any given in <C>regs</C>, and raises <C>RuntimeError</C> if more than <C>max_steps</C> instructions
+            run.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def run(source, regs=None, max_steps=100000):
-    r = {f'r{i}': 0 for i in range(8)}
-    r.update(regs or {})
-    for line in source.splitlines():
-        parts = line.split(';')[0].replace(',', ' ').split()
-        if parts and parts[0] == 'li':
-            r[parts[1]] = int(parts[2])
-    return r
-`,
-        solution: `def run(source, regs=None, max_steps=100000):
+        starter: `OPS = {'li', 'mov', 'add', 'sub', 'mul', 'addi', 'beq', 'bne', 'blt', 'j', 'push', 'pop', 'call', 'ret', 'halt'}
+
+def parse(source):
+    # Returns (program, labels): a list of (op, operands) and a dict from label to index.
     program, labels = [], {}
     for line in source.splitlines():
         line = line.split(';')[0].strip()
@@ -198,15 +194,51 @@ twice:  push r1
             line = line.strip()
         if line:
             op, _, rest = line.partition(' ')
+            if op not in OPS:
+                raise ValueError(f'unknown instruction {op}')
             program.append((op, [a.strip() for a in rest.split(',')] if rest.strip() else []))
-    r = {f'r{i}': 0 for i in range(8)}
-    r.update(regs or {})
-
-    def target(name):
-        if name not in labels:
+    for op, a in program:
+        name = a[2] if op in ('beq', 'bne', 'blt') else a[0] if op in ('j', 'call') else None
+        if name is not None and name not in labels:
             raise ValueError(f'unknown label {name}')
-        return labels[name]
+    return program, labels
 
+def run(source, regs=None, max_steps=100000):
+    program, labels = parse(source)
+    r = {f'r{i}': 0 for i in range(8)} | (regs or {})
+    for op, a in program:
+        if op == 'li':
+            r[a[0]] = int(a[1])
+    return r
+`,
+        solution: `OPS = {'li', 'mov', 'add', 'sub', 'mul', 'addi', 'beq', 'bne', 'blt', 'j', 'push', 'pop', 'call', 'ret', 'halt'}
+
+def parse(source):
+    # Returns (program, labels): a list of (op, operands) and a dict from label to index.
+    program, labels = [], {}
+    for line in source.splitlines():
+        line = line.split(';')[0].strip()
+        while ':' in line:
+            label, line = line.split(':', 1)
+            label = label.strip()
+            if label in labels:
+                raise ValueError(f'duplicate label {label}')
+            labels[label] = len(program)
+            line = line.strip()
+        if line:
+            op, _, rest = line.partition(' ')
+            if op not in OPS:
+                raise ValueError(f'unknown instruction {op}')
+            program.append((op, [a.strip() for a in rest.split(',')] if rest.strip() else []))
+    for op, a in program:
+        name = a[2] if op in ('beq', 'bne', 'blt') else a[0] if op in ('j', 'call') else None
+        if name is not None and name not in labels:
+            raise ValueError(f'unknown label {name}')
+    return program, labels
+
+def run(source, regs=None, max_steps=100000):
+    program, labels = parse(source)
+    r = {f'r{i}': 0 for i in range(8)} | (regs or {})
     stack, pc, steps = [], 0, 0
     while pc < len(program):
         steps += 1
@@ -218,30 +250,25 @@ twice:  push r1
             r[a[0]] = int(a[1])
         elif op == 'mov':
             r[a[0]] = r[a[1]]
-        elif op in ('add', 'sub', 'mul'):
-            x, y = r[a[1]], r[a[2]]
-            r[a[0]] = x + y if op == 'add' else x - y if op == 'sub' else x * y
-        elif op == 'addi':
-            r[a[0]] = r[a[1]] + int(a[2])
+        elif op in ('add', 'sub', 'mul', 'addi'):
+            x, y = r[a[1]], (int(a[2]) if op == 'addi' else r[a[2]])
+            r[a[0]] = x - y if op == 'sub' else x * y if op == 'mul' else x + y
         elif op in ('beq', 'bne', 'blt'):
             x, y = r[a[0]], r[a[1]]
             if (x == y) if op == 'beq' else (x != y) if op == 'bne' else (x < y):
-                pc = target(a[2])
-        elif op == 'j':
-            pc = target(a[0])
+                pc = labels[a[2]]
+        elif op in ('j', 'call'):
+            if op == 'call':
+                stack.append(pc)
+            pc = labels[a[0]]
         elif op == 'push':
             stack.append(r[a[0]])
         elif op == 'pop':
             r[a[0]] = stack.pop()
-        elif op == 'call':
-            stack.append(pc)
-            pc = target(a[0])
         elif op == 'ret':
             pc = stack.pop()
         elif op == 'halt':
             break
-        else:
-            raise ValueError(f'unknown instruction {op}')
     return r
 `,
         tests: [

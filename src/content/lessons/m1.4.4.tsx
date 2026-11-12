@@ -201,14 +201,17 @@ assert big_intersection(F) == set(), 'The sets {n, …, 2n} for n = 1 to 4 have 
       prompt: (
         <>
           <p>
-            Write <C>limsup(family)</C> and <C>liminf(family)</C> for a finite list of sets A₁, …, Aₙ, treating it as one period of an infinitely repeating sequence: the lim sup is the set of points in infinitely many Aₖ (here: in at least one), and the lim inf is the set of points in all but finitely many (here: in all). Then write <C>tail_union(family, m)</C> and <C>tail_intersection(family, m)</C>, the union and intersection of Aₘ, Aₘ₊₁, …, Aₙ (1-based), and check in the tests that the lim inf ⊆ lim sup.
+            Write <C>limsup(family)</C> and <C>liminf(family)</C> for a finite list of sets A₁, …, Aₙ, treating it as one period of an infinitely repeating sequence: the lim sup is the set of points in infinitely many Aₖ (here: in at least one), and the lim inf is the set of points in all but finitely many (here: in all). The starter gives <C>tail_union(family, m)</C>, the union of Aₘ, Aₘ₊₁, …, Aₙ (1-based); write <C>tail_intersection(family, m)</C>, their intersection, and use the two for the limits. Do not change the sets you are given. The tests also check that the lim inf ⊆ lim sup.
           </p>
         </>
       ),
       answer: {
         kind: "code",
         starter: `def tail_union(family, m):
-    return set()
+    out = set()
+    for A in family[m - 1:]:
+        out |= A
+    return out
 
 def tail_intersection(family, m):
     return set()

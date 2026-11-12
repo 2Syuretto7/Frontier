@@ -151,12 +151,11 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: (
         <>
-          <Code>{`from sklearn.dummy import DummyClassifier
-import numpy as np
-X = np.zeros((10, 1)); y = np.array([1] * 7 + [0] * 3)
-m = DummyClassifier(strategy="most_frequent").fit(X, y)
-print(m.score(X, y))`}</Code>
-          <p>Task, experience and performance: a model that ignores its input. What accuracy does it score?</p>
+          <Code>{`y = [1, 1, 0, 1, 1, 1, 0, 1, 0, 1]
+guess = 1 if y.count(1) > y.count(0) else 0
+right = sum(1 for label in y if label == guess)
+print(right / len(y))`}</Code>
+          <p>Task, experience and performance: a model that ignores its input and always gives the commonest label. What accuracy does it score?</p>
         </>
       ),
       answer: { kind: "numeric", value: 0.7, tolerance: 1e-09 },
@@ -166,11 +165,11 @@ print(m.score(X, y))`}</Code>
       rung: "apply",
       prompt: (
         <>
-          <Code>{`import numpy as np
-y = np.array([1, 0, 1, 1, 0, 1, 1, 1])
+          <Code>{`y = [1, 0, 1, 1, 0, 1, 1, 1]
 for n in (2, 4, 8):
-    p = y[:n].mean()
-    print(n, p, np.mean((p > 0.5) == y))`}</Code>
+    p = sum(y[:n]) / n
+    guess = 1 if p > 0.5 else 0
+    print(n, p, sum(1 for label in y if label == guess) / len(y))`}</Code>
           <p>A majority-vote predictor trained on the first n labels, scored on all eight. What does this print?</p>
         </>
       ),
@@ -219,51 +218,52 @@ assert all(abs(a - b) < 1e-12 for a, b in zip(accs, [5.1004, 50.1004, 300.1004])
       prompt: (
         <>
           <p>
-            One learning curve from one split is noisy. Write <C>learning_curve_repeat(model_fn, X, y, sizes, repeats, seed)</C>: the test set is the last 20% of rows (the first int(0.8·n) rows form the pool); with one <C>np.random.default_rng(seed)</C>, for each size in order and each repeat in order, draw that many pool rows with <C>rng.choice(pool_size, size, replace=False)</C>, fit a fresh <C>model_fn()</C> on them and score it on the test set. Return (means, stds) as NumPy arrays, one entry per size.
+            One learning curve from one split is noisy. Write <C>learning_curve_repeat(model_fn, X, y, sizes, repeats, seed)</C> for lists X and y. The test set is the last 20% of rows, and the first <C>int(0.8 * len(X))</C> rows form the pool. With one <C>random.Random(seed)</C>, for each size in order and each repeat in order, pick that many pool rows with <C>rng.sample(range(pool_size), size)</C>, fit a fresh <C>model_fn()</C> on them and score it on the test set. Return (means, spreads), two lists with one entry per size, using <C>statistics.mean</C> and <C>statistics.pstdev</C>.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `import numpy as np
+        starter: `import random, statistics
 
 def learning_curve_repeat(model_fn, X, y, sizes, repeats, seed):
-    return np.zeros(len(sizes)), np.zeros(len(sizes))
+    return [0.0] * len(sizes), [0.0] * len(sizes)
 `,
-        solution: `import numpy as np
+        solution: `import random, statistics
 
 def learning_curve_repeat(model_fn, X, y, sizes, repeats, seed):
-    rng = np.random.default_rng(seed)
+    rng = random.Random(seed)
     a = int(0.8 * len(X))
     Xte, yte = X[a:], y[a:]
-    means, stds = [], []
+    means, spreads = [], []
     for n in sizes:
-        s = []
+        scores = []
         for _ in range(repeats):
-            idx = rng.choice(a, n, replace=False)
-            s.append(model_fn().fit(X[idx], y[idx]).score(Xte, yte))
-        means.append(np.mean(s))
-        stds.append(np.std(s))
-    return np.array(means), np.array(stds)
+            idx = rng.sample(range(a), n)
+            m = model_fn().fit([X[i] for i in idx], [y[i] for i in idx])
+            scores.append(m.score(Xte, yte))
+        means.append(statistics.mean(scores))
+        spreads.append(statistics.pstdev(scores))
+    return means, spreads
 `,
         tests: [
-          { name: "sampling", code: `import numpy as np
+          { name: "sampling", code: `import random, statistics
 class M:
     def fit(self, X, y):
-        self.s = float(np.sum(X))
+        self.s = sum(row[0] for row in X)
         return self
     def score(self, X, y):
         return self.s + len(X) / 1000
-X = np.arange(50.0)[:, None]; y = np.zeros(50)
+X = [[float(i)] for i in range(50)]; y = [0] * 50
 m, s = learning_curve_repeat(M, X, y, [3, 5], 2, 7)
-rng = np.random.default_rng(7)
-want = [[float(np.sum(rng.choice(40, n, replace=False))) + 0.01 for _ in range(2)] for n in [3, 5]]
-assert np.allclose(m, [np.mean(w) for w in want]) and np.allclose(s, [np.std(w) for w in want]), 'One generator, sizes in order, repeats in order; test on the last 10 rows.'` },
+rng = random.Random(7)
+want = [[sum(rng.sample(range(40), n)) + 0.01 for _ in range(2)] for n in [3, 5]]
+assert all(abs(a - statistics.mean(w)) < 1e-9 for a, w in zip(m, want)) and all(abs(a - statistics.pstdev(w)) < 1e-9 for a, w in zip(s, want)), 'One generator, sizes in order, repeats in order; test on the last 10 rows.'` },
           { name: "improves", code: `import numpy as np
 from sklearn.linear_model import LogisticRegression
 rng = np.random.default_rng(0)
 X = rng.normal(size=(1000, 10)); y = (X @ rng.normal(size=10) + rng.normal(size=1000) > 0).astype(int)
-m, s = learning_curve_repeat(lambda: LogisticRegression(), X, y, [20, 100, 600], 8, 1)
+m, s = learning_curve_repeat(LogisticRegression, X.tolist(), y.tolist(), [20, 100, 600], 8, 1)
 assert m[0] < m[1] < m[2] and s[0] > s[2], 'More data: higher accuracy and less spread between repeats.'` },
         ],
       },

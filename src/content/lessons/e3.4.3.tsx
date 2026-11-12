@@ -282,12 +282,13 @@ for bad in [-1, 12 + 1024 + 1024 ** 2]:
       prompt: (
         <>
           <p>
-            Write an in-memory file system <C>FS</C> with inodes. Paths are absolute; repeated slashes are ignored. Methods:{" "}
-            <C>mkdir(path)</C>, <C>write(path, data)</C> (create or replace a file), <C>read(path)</C>, <C>ls(path)</C> (sorted
-            names), <C>link(src, dst)</C> (a hard link to a file), <C>unlink(path)</C> (remove a file name, freeing the inode
-            when no names remain), <C>nlink(path)</C> and <C>inode_count()</C> (including the root directory). Raise{" "}
-            <C>FileNotFoundError</C>, <C>FileExistsError</C>, <C>IsADirectoryError</C> or <C>NotADirectoryError</C> as the
-            operating system would.
+            An in-memory file system with inodes. The starter gives <C>FS</C>, whose <C>inodes</C> map each inode number to a
+            dict (a directory, from name to inode number) or to bytes (a file), and whose <C>links</C> count the names of each
+            inode; <C>lookup(fs, path)</C>, the inode number at a path; <C>parent(fs, path)</C>, the directory holding the last
+            name and that name; and <C>mkdir(fs, path)</C>. Write <C>write(fs, path, data)</C>, which creates a file or replaces
+            its contents; <C>link(fs, src, dst)</C>, a hard link: a second name for the same file inode; and{" "}
+            <C>unlink(fs, path)</C>, which removes a file&rsquo;s name and frees its inode when no names remain. Raise{" "}
+            <C>FileExistsError</C> or <C>IsADirectoryError</C> as the operating system would.
           </p>
         </>
       ),
@@ -295,181 +296,151 @@ for bad in [-1, 12 + 1024 + 1024 ** 2]:
         kind: "code",
         starter: `class FS:
     def __init__(self):
-        self.files = {}
+        self.inodes = {0: {}}            # inode number -> dict (directory) or bytes (file)
+        self.links = {0: 1}              # inode number -> how many names it has
+        self.next = 1
 
-    def mkdir(self, path):
-        pass
+def lookup(fs, path):
+    # The inode number at an absolute path.
+    ino = 0
+    for name in [p for p in path.split('/') if p]:
+        node = fs.inodes[ino]
+        if not isinstance(node, dict):
+            raise NotADirectoryError(name)
+        if name not in node:
+            raise FileNotFoundError(name)
+        ino = node[name]
+    return ino
 
-    def write(self, path, data):
-        self.files[path] = bytes(data)
+def parent(fs, path):
+    # The directory (a dict) that holds the last name in path, and that name.
+    *dirs, name = [p for p in path.split('/') if p]
+    d = fs.inodes[lookup(fs, '/' + '/'.join(dirs))]
+    if not isinstance(d, dict):
+        raise NotADirectoryError(path)
+    return d, name
 
-    def read(self, path):
-        return self.files[path]
+def mkdir(fs, path):
+    d, name = parent(fs, path)
+    if name in d:
+        raise FileExistsError(path)
+    d[name] = fs.next
+    fs.inodes[fs.next], fs.links[fs.next] = {}, 1
+    fs.next += 1
 
-    def ls(self, path):
-        return []
+def write(fs, path, data):
+    pass
 
-    def link(self, src, dst):
-        self.files[dst] = self.files[src]
+def link(fs, src, dst):
+    pass
 
-    def unlink(self, path):
-        del self.files[path]
-
-    def nlink(self, path):
-        return 1
-
-    def inode_count(self):
-        return len(self.files) + 1
+def unlink(fs, path):
+    pass
 `,
         solution: `class FS:
     def __init__(self):
         self.inodes = {0: {}}            # inode number -> dict (directory) or bytes (file)
-        self.links = {0: 1}
+        self.links = {0: 1}              # inode number -> how many names it has
         self.next = 1
 
-    def _parts(self, path):
-        if not path.startswith('/'):
-            raise ValueError('paths are absolute')
-        return [p for p in path.split('/') if p]
-
-    def _lookup(self, parts):
-        ino = 0
-        for name in parts:
-            node = self.inodes[ino]
-            if not isinstance(node, dict):
-                raise NotADirectoryError(name)
-            if name not in node:
-                raise FileNotFoundError(name)
-            ino = node[name]
-        return ino
-
-    def _parent(self, path):
-        parts = self._parts(path)
-        if not parts:
-            raise FileExistsError('/')
-        d = self._lookup(parts[:-1])
-        if not isinstance(self.inodes[d], dict):
-            raise NotADirectoryError(path)
-        return self.inodes[d], parts[-1]
-
-    def _new(self, content):
-        ino = self.next
-        self.next += 1
-        self.inodes[ino] = content
-        self.links[ino] = 0
-        return ino
-
-    def mkdir(self, path):
-        d, name = self._parent(path)
-        if name in d:
-            raise FileExistsError(path)
-        d[name] = self._new({})
-        self.links[d[name]] = 1
-
-    def write(self, path, data):
-        d, name = self._parent(path)
-        if name in d:
-            if isinstance(self.inodes[d[name]], dict):
-                raise IsADirectoryError(path)
-            self.inodes[d[name]] = bytes(data)
-        else:
-            d[name] = self._new(bytes(data))
-            self.links[d[name]] = 1
-
-    def read(self, path):
-        node = self.inodes[self._lookup(self._parts(path))]
-        if isinstance(node, dict):
-            raise IsADirectoryError(path)
-        return node
-
-    def ls(self, path):
-        node = self.inodes[self._lookup(self._parts(path))]
+def lookup(fs, path):
+    # The inode number at an absolute path.
+    ino = 0
+    for name in [p for p in path.split('/') if p]:
+        node = fs.inodes[ino]
         if not isinstance(node, dict):
-            raise NotADirectoryError(path)
-        return sorted(node)
+            raise NotADirectoryError(name)
+        if name not in node:
+            raise FileNotFoundError(name)
+        ino = node[name]
+    return ino
 
-    def link(self, src, dst):
-        ino = self._lookup(self._parts(src))
-        if isinstance(self.inodes[ino], dict):
-            raise IsADirectoryError(src)
-        d, name = self._parent(dst)
-        if name in d:
-            raise FileExistsError(dst)
-        d[name] = ino
-        self.links[ino] += 1
+def parent(fs, path):
+    # The directory (a dict) that holds the last name in path, and that name.
+    *dirs, name = [p for p in path.split('/') if p]
+    d = fs.inodes[lookup(fs, '/' + '/'.join(dirs))]
+    if not isinstance(d, dict):
+        raise NotADirectoryError(path)
+    return d, name
 
-    def unlink(self, path):
-        d, name = self._parent(path)
-        if name not in d:
-            raise FileNotFoundError(path)
-        ino = d[name]
-        if isinstance(self.inodes[ino], dict):
+def mkdir(fs, path):
+    d, name = parent(fs, path)
+    if name in d:
+        raise FileExistsError(path)
+    d[name] = fs.next
+    fs.inodes[fs.next], fs.links[fs.next] = {}, 1
+    fs.next += 1
+
+def write(fs, path, data):
+    d, name = parent(fs, path)
+    if name in d:
+        if isinstance(fs.inodes[d[name]], dict):
             raise IsADirectoryError(path)
-        del d[name]
-        self.links[ino] -= 1
-        if self.links[ino] == 0:
-            del self.inodes[ino], self.links[ino]
+        fs.inodes[d[name]] = bytes(data)
+    else:
+        d[name] = fs.next
+        fs.inodes[fs.next], fs.links[fs.next] = bytes(data), 1
+        fs.next += 1
 
-    def nlink(self, path):
-        return self.links[self._lookup(self._parts(path))]
+def link(fs, src, dst):
+    ino = lookup(fs, src)
+    if isinstance(fs.inodes[ino], dict):
+        raise IsADirectoryError(src)
+    d, name = parent(fs, dst)
+    if name in d:
+        raise FileExistsError(dst)
+    d[name] = ino
+    fs.links[ino] += 1
 
-    def inode_count(self):
-        return len(self.inodes)
+def unlink(fs, path):
+    d, name = parent(fs, path)
+    if name not in d:
+        raise FileNotFoundError(path)
+    ino = d[name]
+    if isinstance(fs.inodes[ino], dict):
+        raise IsADirectoryError(path)
+    del d[name]
+    fs.links[ino] -= 1
+    if fs.links[ino] == 0:
+        del fs.inodes[ino], fs.links[ino]
 `,
         tests: [
-          { name: "paths and directories", code: `fs = FS()
-fs.mkdir('/data')
-fs.mkdir('/data/train')
-fs.write('/data/train/a.bin', b'abc')
-fs.write('/data/readme', b'hi')
-assert fs.read('/data/train/a.bin') == b'abc'
-assert fs.ls('/') == ['data'] and fs.ls('/data') == ['readme', 'train']
-fs.write('/data/readme', b'hello')
-assert fs.read('/data/readme') == b'hello', 'Writing an existing file replaces its contents.'
-assert fs.read('//data///readme') == b'hello', 'Repeated slashes are harmless.'
-cases = [
-    (lambda: fs.read('/data/nope'), FileNotFoundError),
-    (lambda: fs.mkdir('/missing/x'), FileNotFoundError),
-    (lambda: fs.mkdir('/data'), FileExistsError),
-    (lambda: fs.read('/data'), IsADirectoryError),
-    (lambda: fs.write('/data/train', b''), IsADirectoryError),
-    (lambda: fs.read('/data/readme/x'), NotADirectoryError),
-    (lambda: fs.ls('/data/readme'), NotADirectoryError),
-    (lambda: fs.write('/data/readme/x', b''), NotADirectoryError),
-]
-for f, err in cases:
+          { name: "write", code: `fs = FS()
+mkdir(fs, '/data')
+write(fs, '/data/a.bin', b'abc')
+write(fs, '/data/readme', b'hi')
+assert fs.inodes[lookup(fs, '/data/a.bin')] == b'abc' and sorted(fs.inodes[lookup(fs, '/data')]) == ['a.bin', 'readme']
+n = len(fs.inodes)
+write(fs, '//data///readme', b'hello')
+assert fs.inodes[lookup(fs, '/data/readme')] == b'hello' and len(fs.inodes) == n, 'Writing an existing file replaces its contents in the same inode.'
+for f, err in [(lambda: write(fs, '/data', b''), IsADirectoryError), (lambda: write(fs, '/data/readme/x', b''), NotADirectoryError), (lambda: write(fs, '/nope/x', b''), FileNotFoundError)]:
     try:
         f()
         assert False, f'Expected {err.__name__}.'
     except err:
         pass` },
           { name: "hard links", code: `fs = FS()
-fs.mkdir('/a')
-fs.write('/a/x', b'one')
-n = fs.inode_count()
-fs.link('/a/x', '/y')
-assert fs.inode_count() == n, 'A hard link is a new name, not a new inode.'
-assert fs.nlink('/y') == 2 and fs.nlink('/a/x') == 2
-fs.write('/y', b'two')
-assert fs.read('/a/x') == b'two', 'Both names reach the same data.'
-fs.unlink('/a/x')
-assert fs.ls('/a') == [] and fs.read('/y') == b'two', 'The data lives on while a name remains.'
-assert fs.nlink('/y') == 1
-fs.unlink('/y')
-assert fs.inode_count() == n - 1, 'Removing the last name frees the inode.'
-for f, err in [(lambda: fs.unlink('/y'), FileNotFoundError), (lambda: fs.link('/a', '/b'), IsADirectoryError), (lambda: fs.unlink('/a'), IsADirectoryError)]:
+mkdir(fs, '/a')
+write(fs, '/a/x', b'one')
+n = len(fs.inodes)
+link(fs, '/a/x', '/y')
+assert len(fs.inodes) == n, 'A hard link is a new name, not a new inode.'
+assert lookup(fs, '/y') == lookup(fs, '/a/x') and fs.links[lookup(fs, '/y')] == 2
+write(fs, '/y', b'two')
+assert fs.inodes[lookup(fs, '/a/x')] == b'two', 'Both names reach the same data.'
+unlink(fs, '/a/x')
+assert fs.inodes[lookup(fs, '/a')] == {} and fs.inodes[lookup(fs, '/y')] == b'two', 'The data lives on while a name remains.'
+assert fs.links[lookup(fs, '/y')] == 1
+unlink(fs, '/y')
+assert len(fs.inodes) == n - 1, 'Removing the last name frees the inode.'
+write(fs, '/p', b'')
+write(fs, '/q', b'')
+for f, err in [(lambda: unlink(fs, '/y'), FileNotFoundError), (lambda: link(fs, '/a', '/b'), IsADirectoryError), (lambda: unlink(fs, '/a'), IsADirectoryError), (lambda: link(fs, '/p', '/q'), FileExistsError)]:
     try:
         f()
         assert False, f'Expected {err.__name__}.'
     except err:
-        pass
-fs.write('/p', b'')
-fs.write('/q', b'')
-try:
-    fs.link('/p', '/q')
-    assert False, 'Linking onto an existing name is FileExistsError.'
-except FileExistsError:
-    pass` },
+        pass` },
         ],
       },
     },

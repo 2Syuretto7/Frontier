@@ -135,10 +135,7 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: (
         <>
-          <Code>{`import itertools
-import math
-
-xs = [1e16, 1.0, -1e16, 1.0]
+          <Code>{`xs = [1e16, 1.0, -1e16, 1.0]
 
 def total(order):
     s = 0.0
@@ -146,14 +143,16 @@ def total(order):
         s += xs[i]
     return s
 
-outs = sorted({total(p) for p in itertools.permutations(range(4))})
-print(outs, math.fsum(xs), sum(sorted(xs, key=abs)))`}</Code>
-          <p>Summing the same four numbers in every order. What does this print?</p>
+print(total([0, 1, 2, 3]), total([0, 2, 1, 3]), total([1, 0, 3, 2]))`}</Code>
+          <p>
+            Four threads each add one number into a shared total with an atomic add, and they can finish in any order. Near
+            10¹⁶, floats are 2 apart, and a tie rounds to the even neighbour. What does this print for these three orders?
+          </p>
         </>
       ),
       answer: {
         kind: "choice",
-        options: ["[0.0, 1.0, 2.0] 2.0 2.0", "[2.0] 2.0 2.0", "[0.0, 2.0] 2.0 0.0", "[0.0, 1.0, 2.0] 2.0 0.0"],
+        options: ["1.0 2.0 0.0", "2.0 2.0 2.0", "1.0 2.0 1.0", "0.0 2.0 0.0"],
         correct: [0],
       },
     },

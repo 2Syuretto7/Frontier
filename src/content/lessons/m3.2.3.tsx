@@ -199,13 +199,17 @@ def count_solutions(A, b):
       prompt: (
         <>
           <p>
-            Write <C>classify_system(A, b, tol=1e-10)</C>, which uses the singular values of A and of [A | b] to return <C>("none", r)</C>, <C>("one", r)</C> or <C>("infinite", r)</C> where r is the rank of A (the number of singular values above tol times the largest). Then write <C>nearest_consistent(A, b)</C>, the vector b′ in the column space of A closest to b (via <C>np.linalg.lstsq</C>), and <C>sensitivity(A)</C>, the 2-norm condition number σ_max/σ_min of a square matrix (infinity if singular).
+            The starter gives <C>rank(M, tol)</C>, which counts the singular values above tol times the largest. Write <C>classify_system(A, b, tol=1e-10)</C>, which uses the ranks of A and of [A | b] to return <C>("none", r)</C>, <C>("one", r)</C> or <C>("infinite", r)</C> where r is the rank of A (the number of singular values above tol times the largest). Then write <C>nearest_consistent(A, b)</C>, the vector b′ in the column space of A closest to b (via <C>np.linalg.lstsq</C>), and <C>sensitivity(A)</C>, the 2-norm condition number σ_max/σ_min of a square matrix (infinity if singular).
           </p>
         </>
       ),
       answer: {
         kind: "code",
         starter: `import numpy as np
+
+def rank(M, tol):
+    s = np.linalg.svd(np.asarray(M, float), compute_uv=False)
+    return int(np.sum(s > tol * s[0])) if s.size and s[0] > 0 else 0
 
 def classify_system(A, b, tol=1e-10):
     return ('one', np.asarray(A).shape[1])

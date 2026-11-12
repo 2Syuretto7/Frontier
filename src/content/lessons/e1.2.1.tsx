@@ -194,71 +194,46 @@ assert commit_id('t2', 'abc', 'fix') == hashlib.sha1(b'tree t2\\nparent abc\\n\\
       prompt: (
         <>
           <p>
-            Build a tiny content-addressed repository. Write a class <C>Repo</C> with <C>add(path, text)</C>, which stages a file; <C>commit(message)</C>, which stores the staged snapshot and returns the commit id; <C>log()</C>, the messages from newest to oldest; and <C>checkout(commit_id)</C>, a dict of path to text at that commit. Ids are SHA-1 hex digests: a blob id hashes <C>"blob " + text</C>, a tree id hashes the sorted lines <C>{`f"{path} {blob_id}"`}</C> joined by newlines, and a commit id hashes <C>{`f"tree {tree}\\nparent {parent}\\n\\n{message}"`}</C> (parent is <C>"none"</C> for the first). Staged files carry over to the next commit.
+            Git names every object by the SHA-1 hex digest of its contents. Write <C>blob_id(text)</C>, the digest of <C>&quot;blob &quot; + text</C>; <C>tree_id(files)</C>, for a dict from path to text, the digest of the sorted lines <C>{`f"{path} {blob_id(text)}"`}</C> joined by newlines; and <C>commit_id(files, parent, message)</C>, the digest of <C>{`f"tree {tree_id(files)}\\nparent {parent}\\n\\n{message}"`}</C>, where parent is <C>&quot;none&quot;</C> for a first commit.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `class Repo:
-    def add(self, path, text):
-        pass
-    def commit(self, message):
-        return ''
-    def log(self):
-        return []
-    def checkout(self, commit_id):
-        return {}
+        starter: `import hashlib
+
+def blob_id(text):
+    return ''
+
+def tree_id(files):
+    return ''
+
+def commit_id(files, parent, message):
+    return ''
 `,
         solution: `import hashlib
 
-def _h(s):
-    return hashlib.sha1(s.encode()).hexdigest()
+def blob_id(text):
+    return hashlib.sha1(('blob ' + text).encode()).hexdigest()
 
-class Repo:
-    def __init__(self):
-        self.objects = {}
-        self.index = {}
-        self.head = None
-    def add(self, path, text):
-        bid = _h('blob ' + text)
-        self.objects[bid] = text
-        self.index[path] = bid
-    def commit(self, message):
-        lines = '\\n'.join(f'{p} {b}' for p, b in sorted(self.index.items()))
-        tree = _h(lines)
-        self.objects[tree] = dict(self.index)
-        parent = self.head or 'none'
-        cid = _h(f'tree {tree}\\nparent {parent}\\n\\n{message}')
-        self.objects[cid] = (tree, self.head, message)
-        self.head = cid
-        return cid
-    def log(self):
-        out, c = [], self.head
-        while c is not None:
-            tree, parent, msg = self.objects[c]
-            out.append(msg)
-            c = parent
-        return out
-    def checkout(self, commit_id):
-        tree = self.objects[commit_id][0]
-        return {p: self.objects[b] for p, b in self.objects[tree].items()}
+def tree_id(files):
+    lines = sorted(f'{path} {blob_id(text)}' for path, text in files.items())
+    return hashlib.sha1('\\n'.join(lines).encode()).hexdigest()
+
+def commit_id(files, parent, message):
+    s = f'tree {tree_id(files)}\\nparent {parent}\\n\\n{message}'
+    return hashlib.sha1(s.encode()).hexdigest()
 `,
         tests: [
-          { name: "history", code: `r = Repo()
-r.add('a.txt', 'one'); c1 = r.commit('first')
-r.add('b.txt', 'two'); r.add('a.txt', 'ONE'); c2 = r.commit('second')
-assert r.log() == ['second', 'first'] and r.checkout(c1) == {'a.txt': 'one'} and r.checkout(c2) == {'a.txt': 'ONE', 'b.txt': 'two'}, 'Each commit is a full snapshot.'` },
-          { name: "ids", code: `import hashlib
-h = lambda s: hashlib.sha1(s.encode()).hexdigest()
-r = Repo(); r.add('x', 'hi'); c = r.commit('m')
-tree = h('x ' + h('blob hi'))
-assert c == h(f'tree {tree}\\nparent none\\n\\nm'), 'Follow the hashing recipe exactly.'
-r2 = Repo(); r2.add('x', 'hi'); assert r2.commit('m') == c, 'Same content, same id.'` },
-          { name: "parent", code: `a, b = Repo(), Repo()
-a.add('f', '1'); a.commit('base'); a.add('f', '2'); ca = a.commit('same')
-b.add('f', '2'); cb = b.commit('same')
-assert ca != cb, 'Same tree and message but a different parent gives a different id.'` },
+          { name: "blob", code: `import hashlib
+assert blob_id('hi') == hashlib.sha1(b'blob hi').hexdigest() and blob_id('hi') != blob_id('hi!'), 'Hash "blob " followed by the text.'` },
+          { name: "tree", code: `import hashlib
+want = hashlib.sha1(('a.txt ' + blob_id('one') + '\\nb.txt ' + blob_id('two')).encode()).hexdigest()
+assert tree_id({'b.txt': 'two', 'a.txt': 'one'}) == want, 'Sort the lines, so the order of the dict does not matter.'` },
+          { name: "commit", code: `import hashlib
+c1 = commit_id({'x': 'hi'}, 'none', 'm')
+assert c1 == hashlib.sha1(f'tree {tree_id({"x": "hi"})}\\nparent none\\n\\nm'.encode()).hexdigest(), 'Follow the recipe exactly.'
+assert commit_id({'x': 'hi'}, c1, 'm') != c1, 'Same files and message but a different parent gives a different id.'` },
         ],
       },
     },

@@ -198,17 +198,20 @@ assert all(g[f[a]] == a for a in range(6)), 'The inverse undoes f.'` },
       prompt: (
         <>
           <p>
-            A permutation of {"{0, …, n − 1}"} is a list p with p[i] the image of i. Write <C>compose(p, q)</C> (p ∘ q, so i ↦ p[q[i]]), <C>inverse(p)</C>, <C>cycles(p)</C> (its cycles as tuples, each starting at its smallest element, sorted by that element, including fixed points), <C>order(p)</C> (the least k ≥ 1 with pᵏ the identity, the lcm of the cycle lengths) and <C>power(p, k)</C> by repeated squaring.
+            A permutation of {"{0, …, n − 1}"} is a list p with p[i] the image of i. The starter gives <C>compose(p, q)</C> (p ∘ q, so i ↦ p[q[i]]) and <C>inverse(p)</C>. Write <C>cycles(p)</C> (its cycles as tuples, each starting at its smallest element, sorted by that element, including fixed points), <C>order(p)</C> (the least k ≥ 1 with pᵏ the identity, the lcm of the cycle lengths) and <C>power(p, k)</C> by repeated squaring.
           </p>
         </>
       ),
       answer: {
         kind: "code",
         starter: `def compose(p, q):
-    return p
+    return [p[q[i]] for i in range(len(p))]
 
 def inverse(p):
-    return p
+    inv = [0] * len(p)
+    for i, x in enumerate(p):
+        inv[x] = i
+    return inv
 
 def cycles(p):
     return []

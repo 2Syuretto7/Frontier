@@ -211,7 +211,7 @@ assert C(3) is False and C(6) is True, 'n > 2 → n > 5 fails at n = 3, and so m
       prompt: (
         <>
           <p>
-            Write <C>contrapositive_holds(P, Q, D)</C> and <C>implication_holds(P, Q, D)</C> over a finite domain, and <C>first_counter(P, Q, D)</C>, the first x with P(x) and not Q(x) or <C>None</C>. Then use them in <C>sqrt_irrational_witness(N)</C>: the claim &ldquo;if n² is divisible by 3 then n is divisible by 3&rdquo; is proved by contrapositive; return the list of n in 1 … N with n not divisible by 3 for which n² <em>is</em> divisible by 3 (which should be empty) together with the number of n in range for which the contrapositive was checked.
+            The starter gives <C>first_counter(P, Q, D)</C>, the first x in a finite domain D with P(x) and not Q(x), or <C>None</C>. Use it to write <C>implication_holds(P, Q, D)</C> and <C>contrapositive_holds(P, Q, D)</C>, which checks ¬Q → ¬P itself. Then use them in <C>sqrt_irrational_witness(N)</C>: the claim &ldquo;if n² is divisible by 3 then n is divisible by 3&rdquo; is proved by contrapositive; return the list of n in 1 … N with n not divisible by 3 for which n² <em>is</em> divisible by 3 (which should be empty) together with the number of n in range for which the contrapositive was checked.
           </p>
         </>
       ),
@@ -224,6 +224,9 @@ def contrapositive_holds(P, Q, D):
     return True
 
 def first_counter(P, Q, D):
+    for x in D:
+        if P(x) and not Q(x):
+            return x
     return None
 
 def sqrt_irrational_witness(N):

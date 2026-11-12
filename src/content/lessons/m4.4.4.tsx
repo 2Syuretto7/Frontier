@@ -237,7 +237,7 @@ assert t.longest_chain() == 24 and u.longest_chain() <= 3, 'Integers hash to the
       prompt: (
         <>
           <p>
-            Write <C>find_all(text, pattern)</C>, every start index where the pattern occurs (overlaps allowed), by Rabin–Karp: compare a rolling polynomial hash modulo the prime 2⁶¹ − 1 and confirm each hash match by comparing the strings, so collisions can never give a wrong answer. An empty pattern occurs at every index 0 … len(text). Then write <C>longest_repeated(s)</C>, returning (L, t), where t is a substring of length L occurring at least twice (overlaps allowed) and L is as large as possible: binary search on L, testing each length with rolling hashes in a dict.
+            Write <C>find_all(text, pattern)</C>, every start index where the pattern occurs (overlaps allowed), by Rabin–Karp: compare a rolling polynomial hash modulo the prime 2⁶¹ − 1 and confirm each hash match by comparing the strings, so collisions can never give a wrong answer. An empty pattern occurs at every index 0 … len(text). Use base 257, and update the hash in constant time as the window slides one place.
           </p>
         </>
       ),
@@ -245,9 +245,6 @@ assert t.longest_chain() == 24 and u.longest_chain() <= 3, 'Integers hash to the
         kind: "code",
         starter: `def find_all(text, pattern):
     return []
-
-def longest_repeated(s):
-    return 0, ''
 `,
         solution: `M = (1 << 61) - 1
 B = 257
@@ -270,31 +267,6 @@ def find_all(text, pattern):
         if i + m < n:
             ht = ((ht - ord(text[i]) * top) * B + ord(text[i + m])) % M
     return out
-
-def _repeat(s, L):
-    h = 0
-    for i in range(L):
-        h = (h * B + ord(s[i])) % M
-    top = pow(B, L - 1, M)
-    seen = {h: [0]}
-    for i in range(1, len(s) - L + 1):
-        h = ((h - ord(s[i - 1]) * top) * B + ord(s[i + L - 1])) % M
-        for j in seen.get(h, ()):
-            if s[j:j + L] == s[i:i + L]:
-                return j
-        seen.setdefault(h, []).append(i)
-    return None
-
-def longest_repeated(s):
-    lo, hi, pos = 0, max(len(s) - 1, 0), 0
-    while lo < hi:
-        mid = (lo + hi + 1) // 2
-        j = _repeat(s, mid)
-        if j is not None:
-            lo, pos = mid, j
-        else:
-            hi = mid - 1
-    return lo, s[pos:pos + lo]
 `,
         tests: [
           { name: "find", code: `assert find_all('abababa', 'aba') == [0, 2, 4] and find_all('abc', 'd') == [] and find_all('ab', '') == [0, 1, 2] and find_all('a', 'aa') == [], 'Overlapping matches count.'` },
@@ -304,20 +276,11 @@ for _ in range(200):
     t = ''.join(random.choice('ab') for _ in range(random.randint(0, 40)))
     q = ''.join(random.choice('ab') for _ in range(random.randint(1, 4)))
     assert find_all(t, q) == [i for i in range(len(t) - len(q) + 1) if t[i:i + len(q)] == q]` },
-          { name: "repeated", code: `assert longest_repeated('banana') == (3, 'ana') and longest_repeated('abcd') == (0, '') and longest_repeated('aaaa') == (3, 'aaa') and longest_repeated('') == (0, ''), 'Overlaps are allowed: ana occurs at 1 and 3.'` },
-          { name: "brute repeated", code: `import random
-random.seed(16)
-for _ in range(100):
-    s = ''.join(random.choice('abc') for _ in range(random.randint(1, 30)))
-    want = max([L for L in range(len(s)) if len({s[i:i + L] for i in range(len(s) - L + 1)}) < len(s) - L + 1], default=0)
-    L, t = longest_repeated(s)
-    assert L == want and len(t) == L and len(find_all(s, t)) >= 2, f'For {s!r}'` },
           { name: "fast", code: `import random
 random.seed(17)
-s = ''.join(random.choice('acgt') for _ in range(20000))
-s = s[:5000] + s[9000:9100] + s[5000:]
-L, t = longest_repeated(s)
-assert L >= 100 and len(find_all(s, t)) >= 2, 'A planted repeat of length 100 in 20000 letters.'` },
+s = ''.join(random.choice('acgt') for _ in range(200000))
+q = s[123456:123476]
+assert 123456 in find_all(s, q) and find_all(s, 'acgtacgtacgtacgtacgt') == [i for i in range(len(s) - 19) if s.startswith('acgtacgtacgtacgtacgt', i)], 'One pass over the text.'` },
         ],
       },
     },

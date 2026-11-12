@@ -202,63 +202,46 @@ assert add_item('y', mine) is mine and mine == ['x', 'y'], 'A basket that is pas
       prompt: (
         <>
           <p>
-            Write a class <C>Interval</C> for closed integer intervals with <C>__init__(self, lo, hi)</C> (raise <C>ValueError</C> if lo &gt; hi), <C>__contains__</C> (for <C>x in iv</C>), <C>__len__</C> (the number of integers in it), <C>__eq__</C> and <C>__hash__</C> (so intervals work in sets and as dict keys), <C>__lt__</C> (by lo, then hi, so sorted works), <C>__and__</C> (the intersection, or <C>None</C>) and <C>__repr__</C> giving <C>Interval(1, 3)</C>. Then write <C>merge_all(intervals)</C>, which merges overlapping or touching intervals (such as [1, 3] and [4, 6]) into a sorted list.
+            Avoid the shared-row trap. Write <C>make_grid(rows, cols, fill)</C>, a list of <C>rows</C> lists that are separate objects. Write <C>with_cell(grid, r, c, value)</C>, which returns a new grid with one cell changed and leaves <C>grid</C> exactly as it was. Then write <C>deep_copy(x)</C> for lists nested to any depth, without the <C>copy</C> module: a new list for every list inside, with the other values kept as they are.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `class Interval:
-    def __init__(self, lo, hi):
-        self.lo, self.hi = lo, hi
+        starter: `def make_grid(rows, cols, fill):
+    return [[fill] * cols] * rows
 
-def merge_all(intervals):
-    return list(intervals)
+def with_cell(grid, r, c, value):
+    grid[r][c] = value
+    return grid
+
+def deep_copy(x):
+    return x
 `,
-        solution: `class Interval:
-    def __init__(self, lo, hi):
-        if lo > hi:
-            raise ValueError('lo > hi')
-        self.lo, self.hi = lo, hi
-    def __contains__(self, x):
-        return self.lo <= x <= self.hi
-    def __len__(self):
-        return self.hi - self.lo + 1
-    def __eq__(self, other):
-        return isinstance(other, Interval) and (self.lo, self.hi) == (other.lo, other.hi)
-    def __hash__(self):
-        return hash((self.lo, self.hi))
-    def __lt__(self, other):
-        return (self.lo, self.hi) < (other.lo, other.hi)
-    def __and__(self, other):
-        lo, hi = max(self.lo, other.lo), min(self.hi, other.hi)
-        return Interval(lo, hi) if lo <= hi else None
-    def __repr__(self):
-        return f'Interval({self.lo}, {self.hi})'
+        solution: `def make_grid(rows, cols, fill):
+    return [[fill] * cols for _ in range(rows)]
 
-def merge_all(intervals):
-    out = []
-    for iv in sorted(intervals):
-        if out and iv.lo <= out[-1].hi + 1:
-            out[-1] = Interval(out[-1].lo, max(out[-1].hi, iv.hi))
-        else:
-            out.append(iv)
-    return out
+def with_cell(grid, r, c, value):
+    new = [list(row) for row in grid]
+    new[r][c] = value
+    return new
+
+def deep_copy(x):
+    if isinstance(x, list):
+        return [deep_copy(item) for item in x]
+    return x
 `,
         tests: [
-          { name: "basics", code: `iv = Interval(2, 5)
-assert 2 in iv and 5 in iv and 6 not in iv and len(iv) == 4 and repr(iv) == 'Interval(2, 5)'
-try:
-    Interval(3, 1)
-    assert False
-except ValueError:
-    pass` },
-          { name: "hashing", code: `s = {Interval(1, 2), Interval(1, 2), Interval(2, 3)}
-d = {Interval(0, 0): 'zero'}
-assert len(s) == 2 and d[Interval(0, 0)] == 'zero' and Interval(1, 2) != (1, 2), 'Equal intervals hash equally.'` },
-          { name: "order and intersection", code: `assert sorted([Interval(3, 4), Interval(1, 9), Interval(1, 2)]) == [Interval(1, 2), Interval(1, 9), Interval(3, 4)]
-assert (Interval(1, 5) & Interval(4, 9)) == Interval(4, 5) and (Interval(1, 2) & Interval(3, 4)) is None and (Interval(1, 3) & Interval(3, 3)) == Interval(3, 3)` },
-          { name: "merge", code: `assert merge_all([Interval(8, 10), Interval(1, 3), Interval(4, 6), Interval(2, 2), Interval(12, 12)]) == [Interval(1, 6), Interval(8, 10), Interval(12, 12)] and merge_all([]) == [], 'Touching integer intervals merge.'` },
+          { name: "grid", code: `g = make_grid(2, 3, 0)
+g[0][0] = 5
+assert g == [[5, 0, 0], [0, 0, 0]], 'Each row must be its own list.'` },
+          { name: "unchanged", code: `g = [[1, 2], [3, 4]]
+h = with_cell(g, 1, 0, 9)
+assert h == [[1, 2], [9, 4]] and g == [[1, 2], [3, 4]], 'Change a copy, not the grid you were given.'` },
+          { name: "deep", code: `a = [1, [2, [3, 4]], 'x']
+b = deep_copy(a)
+b[1][1].append(5)
+assert a == [1, [2, [3, 4]], 'x'] and b == [1, [2, [3, 4, 5]], 'x'] and b is not a and b[1] is not a[1], 'Copy every list, however deep.'` },
         ],
       },
     },

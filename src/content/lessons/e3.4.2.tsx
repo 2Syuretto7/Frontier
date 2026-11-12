@@ -257,7 +257,7 @@ assert metrics([('Q', 3, 2)], [('Q', 4, 6)]) == {'Q': (3, 1, 1)}` },
       rung: "apply",
       prompt: (
         <>
-          <p>Now the preemptive policies, returning timelines in the same form, with adjacent segments of the same job merged.</p>
+          <p>Now the preemptive policies, returning timelines in the same form, with adjacent segments of the same job merged by the starter&rsquo;s <C>_merge(segs)</C>. Times are whole numbers.</p>
           <ul>
             <li>
               <C>round_robin(jobs, quantum)</C>: a FIFO queue in order of arrival (ties by list position); the job at the front
@@ -272,21 +272,10 @@ assert metrics([('Q', 3, 2)], [('Q', 4, 6)]) == {'Q': (3, 1, 1)}` },
       ),
       answer: {
         kind: "code",
-        starter: `def round_robin(jobs, quantum):
-    t, segs = 0, []
-    for name, arrival, burst in jobs:
-        segs.append((name, t, t + burst))
-        t += burst
-    return segs
-
-
-def srtf(jobs):
-    return round_robin(jobs, 1)
-`,
-        solution: `from collections import deque
-
+        starter: `from collections import deque
 
 def _merge(segs):
+    # Joins adjacent segments of the same job.
     out = []
     for name, s, e in segs:
         if out and out[-1][0] == name and out[-1][2] == s:
@@ -295,49 +284,60 @@ def _merge(segs):
             out.append((name, s, e))
     return out
 
+def round_robin(jobs, quantum):
+    t, segs = 0, []
+    for name, arrival, burst in jobs:
+        segs.append((name, t, t + burst))
+        t += burst
+    return segs
+
+def srtf(jobs):
+    return round_robin(jobs, 1)
+`,
+        solution: `from collections import deque
+
+def _merge(segs):
+    # Joins adjacent segments of the same job.
+    out = []
+    for name, s, e in segs:
+        if out and out[-1][0] == name and out[-1][2] == s:
+            out[-1] = (name, out[-1][1], e)
+        else:
+            out.append((name, s, e))
+    return out
 
 def round_robin(jobs, quantum):
     order = sorted(range(len(jobs)), key=lambda k: (jobs[k][1], k))
-    left = {k: jobs[k][2] for k in order}
-    queue, segs, t, nxt = deque(), [], 0, 0
-
-    def admit(upto):
-        nonlocal nxt
-        while nxt < len(order) and jobs[order[nxt]][1] <= upto:
+    left = [b for _, _, b in jobs]
+    queue, segs, t, nxt, back = deque(), [], 0, 0, None
+    while nxt < len(order) or queue or back is not None:
+        while nxt < len(order) and jobs[order[nxt]][1] <= t:
             queue.append(order[nxt])
             nxt += 1
-
-    while nxt < len(order) or queue:
-        admit(t)
+        if back is not None:         # the preempted job queues after arrivals up to now
+            queue.append(back)
+            back = None
         if not queue:
             t = jobs[order[nxt]][1]
             continue
         k = queue.popleft()
         run = min(quantum, left[k])
         segs.append((jobs[k][0], t, t + run))
-        t += run
-        left[k] -= run
-        admit(t)                     # arrivals up to now queue before the preempted job
+        t, left[k] = t + run, left[k] - run
         if left[k]:
-            queue.append(k)
+            back = k
     return _merge(segs)
-
 
 def srtf(jobs):
     left = [b for _, _, b in jobs]
     segs, t = [], 0
     while any(left):
         ready = [k for k in range(len(jobs)) if left[k] and jobs[k][1] <= t]
-        if not ready:
-            t = min(jobs[k][1] for k in range(len(jobs)) if left[k])
-            continue
-        k = min(ready, key=lambda k: (left[k], jobs[k][1], k))
-        # run until it finishes or the next arrival, whichever is first
-        later = [jobs[m][1] for m in range(len(jobs)) if left[m] and jobs[m][1] > t]
-        run = min([left[k]] + [a - t for a in later])
-        segs.append((jobs[k][0], t, t + run))
-        t += run
-        left[k] -= run
+        if ready:
+            k = min(ready, key=lambda k: (left[k], jobs[k][1], k))
+            segs.append((jobs[k][0], t, t + 1))
+            left[k] -= 1
+        t += 1
     return _merge(segs)
 `,
         tests: [

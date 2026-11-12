@@ -217,14 +217,21 @@ assert xs == [3, 1, 2], 'Sort a copy, not the caller’s list.'` },
       prompt: (
         <>
           <p>
-            Write your own <C>bisect_left(xs, t)</C> and <C>bisect_right(xs, t)</C> for a sorted list (the first index whose value is ≥ t, and &gt; t), and <C>count_in_range(xs, lo, hi)</C>, how many values lie in [lo, hi], with two binary searches. Then write <C>first_true(pred, lo, hi)</C>: for a predicate that is False and then True on the integers lo … hi, return the first integer where it is True (hi + 1 if none), calling <C>pred</C> only O(log(hi − lo)) times. Do not import <C>bisect</C>.
+            The starter gives <C>bisect_left(xs, t)</C>, the first index of a sorted list whose value is ≥ t. Write <C>bisect_right(xs, t)</C>, the first index whose value is &gt; t, and <C>count_in_range(xs, lo, hi)</C>, how many values lie in [lo, hi], with two binary searches. Then write <C>first_true(pred, lo, hi)</C>: for a predicate that is False and then True on the integers lo … hi, return the first integer where it is True (hi + 1 if none), calling <C>pred</C> only O(log(hi − lo)) times. Do not import <C>bisect</C>.
           </p>
         </>
       ),
       answer: {
         kind: "code",
         starter: `def bisect_left(xs, t):
-    return 0
+    lo, hi = 0, len(xs)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if xs[mid] < t:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
 
 def bisect_right(xs, t):
     return len(xs)

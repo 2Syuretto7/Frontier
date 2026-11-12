@@ -200,7 +200,7 @@ print(round(s, 6), round(math.pi ** 2 / 6 - s, 6), round(1 / 1000, 6))`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>zeta_sum(s, N)</C>, Σₖ₌₁ᴺ 1/kˢ for s &gt; 1, and <C>zeta_tail_corrected(s, N)</C>, the same sum plus an Euler–Maclaurin estimate of the tail: N^(1−s)/(s − 1) − N^(−s)/2 + s·N^(−s−1)/12. Also write <C>ratio_test(a, n)</C>, |a(n + 1)/a(n)| for a term function a, and <C>root_test(a, n)</C>, |a(n)|^(1/n), computed through logarithms so that terms like n!/nⁿ do not overflow (a returns the logarithm of |aₙ|: the argument is <C>log_a</C>).
+            The starter gives <C>zeta_sum(s, N)</C>, Σₖ₌₁ᴺ 1/kˢ for s &gt; 1. Write <C>zeta_tail_corrected(s, N)</C>, the same sum plus an Euler–Maclaurin estimate of the tail: N^(1−s)/(s − 1) − N^(−s)/2 + s·N^(−s−1)/12. Also write <C>ratio_test(a, n)</C>, |a(n + 1)/a(n)| for a term function a, and <C>root_test(a, n)</C>, |a(n)|^(1/n), computed through logarithms so that terms like n!/nⁿ do not overflow (a returns the logarithm of |aₙ|: the argument is <C>log_a</C>).
           </p>
         </>
       ),
@@ -209,7 +209,7 @@ print(round(s, 6), round(math.pi ** 2 / 6 - s, 6), round(1 / 1000, 6))`}</Code>
         starter: `import math
 
 def zeta_sum(s, N):
-    return 1.0
+    return math.fsum(1 / k ** s for k in range(1, N + 1))
 
 def zeta_tail_corrected(s, N):
     return zeta_sum(s, N)

@@ -249,8 +249,8 @@ for _ in range(3000):
       prompt: (
         <>
           <p>
-            Work with float64 bit patterns through <C>struct.pack(&quot;&lt;d&quot;, x)</C> and{" "}
-            <C>struct.unpack(&quot;&lt;q&quot;, ...)</C>. Write <C>next_up(x)</C>, the smallest float greater than x
+            Work with float64 bit patterns: the starter&rsquo;s <C>_bits(x)</C> and <C>_float(b)</C> convert between a float and
+            its 64-bit pattern read as a signed integer, through <C>struct</C>. Write <C>next_up(x)</C>, the smallest float greater than x
             (∞ stays ∞, NaN stays NaN, and both zeros go to 5e-324), without <C>math.nextafter</C>; and{" "}
             <C>ulp_distance(a, b)</C>, how many representable floats you step through from a to b, with +0 and −0 the same
             point and <C>ValueError</C> for NaN.
@@ -259,7 +259,15 @@ for _ in range(3000):
       ),
       answer: {
         kind: "code",
-        starter: `def next_up(x):
+        starter: `import math, struct
+
+def _bits(x):
+    return struct.unpack('<q', struct.pack('<d', x))[0]
+
+def _float(b):
+    return struct.unpack('<d', struct.pack('<q', b))[0]
+
+def next_up(x):
     return x + 1e-16
 
 def ulp_distance(a, b):

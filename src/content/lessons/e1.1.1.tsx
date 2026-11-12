@@ -201,7 +201,7 @@ print(len(parts), parts[2], parts[-1])`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>glob_match(pattern, name)</C>, the shell&rsquo;s wildcard matching without <C>fnmatch</C> or <C>re</C>: <C>*</C> matches any run of characters (including none), <C>?</C> any one character, <C>[abc]</C> or <C>[a-z]</C> one character from a set or range, and <C>[!x]</C> one character not in it. Use recursion or dynamic programming. Then write <C>expand(pattern, names)</C>, the sorted names that match, where (as in a shell) a name starting with <C>.</C> only matches if the pattern also starts with <C>.</C>.
+            Write <C>glob_match(pattern, name)</C>, the shell&rsquo;s wildcard matching without <C>fnmatch</C> or <C>re</C>: <C>*</C> matches any run of characters (including none) and <C>?</C> any one character. A quick way is to keep a list saying, for each prefix of the name, whether the pattern so far matches it, and update the list one pattern character at a time. Then write <C>expand(pattern, names)</C>, the sorted names that match, where (as in a shell) a name starting with <C>.</C> only matches if the pattern also starts with <C>.</C>.
           </p>
         </>
       ),
@@ -213,59 +213,34 @@ print(len(parts), parts[2], parts[-1])`}</Code>
 def expand(pattern, names):
     return sorted(n for n in names if glob_match(pattern, n))
 `,
-        solution: `from functools import lru_cache
-
-def _class(pattern, i, ch):
-    j = i + 1
-    neg = j < len(pattern) and pattern[j] == '!'
-    if neg:
-        j += 1
-    ok = False
-    first = True
-    while j < len(pattern) and (pattern[j] != ']' or first):
-        first = False
-        if j + 2 < len(pattern) and pattern[j + 1] == '-' and pattern[j + 2] != ']':
-            ok = ok or pattern[j] <= ch <= pattern[j + 2]
-            j += 3
-        else:
-            ok = ok or pattern[j] == ch
-            j += 1
-    return (ok != neg), j + 1
-
-def glob_match(pattern, name):
-    @lru_cache(None)
-    def m(i, k):
-        if i == len(pattern):
-            return k == len(name)
-        c = pattern[i]
+        solution: `def glob_match(pattern, name):
+    ok = [True] + [False] * len(name)
+    for c in pattern:
         if c == '*':
-            return m(i + 1, k) or (k < len(name) and m(i, k + 1))
-        if k == len(name):
-            return False
-        if c == '?':
-            return m(i + 1, k + 1)
-        if c == '[' and ']' in pattern[i + 2:]:
-            ok, nxt = _class(pattern, i, name[k])
-            return ok and m(nxt, k + 1)
-        return c == name[k] and m(i + 1, k + 1)
-    return m(0, 0)
+            new = [ok[0]]
+            for j in range(1, len(name) + 1):
+                new.append(new[j - 1] or ok[j])
+        else:
+            new = [False]
+            for j in range(1, len(name) + 1):
+                new.append(ok[j - 1] and (c == '?' or c == name[j - 1]))
+        ok = new
+    return ok[-1]
 
 def expand(pattern, names):
     return sorted(n for n in names if glob_match(pattern, n) and (not n.startswith('.') or pattern.startswith('.')))
 `,
         tests: [
           { name: "basic", code: `assert glob_match('*.py', 'main.py') and not glob_match('*.py', 'main.pyc') and glob_match('data_??.csv', 'data_07.csv') and not glob_match('data_??.csv', 'data_7.csv') and glob_match('*', '') and glob_match('a*b*c', 'aXXbYYc')` },
-          { name: "classes", code: `assert glob_match('file[0-9].txt', 'file3.txt') and not glob_match('file[0-9].txt', 'filex.txt') and glob_match('[!a]*', 'banana') and not glob_match('[!a]*', 'apple') and glob_match('[abc]?', 'cz')` },
           { name: "fnmatch", code: `import fnmatch, random
 random.seed(1)
-alpha = 'ab.'
 for _ in range(3000):
-    pat = ''.join(random.choice(['a', 'b', '.', '*', '?', '[ab]', '[!a]']) for _ in range(random.randint(0, 5)))
-    name = ''.join(random.choice(alpha) for _ in range(random.randint(0, 6)))
+    pat = ''.join(random.choice(['a', 'b', '.', '*', '?']) for _ in range(random.randint(0, 5)))
+    name = ''.join(random.choice('ab.') for _ in range(random.randint(0, 6)))
     assert glob_match(pat, name) == fnmatch.fnmatchcase(name, pat), f'{pat!r} on {name!r}'` },
           { name: "dotfiles", code: `names = ['.env', 'a.py', 'b.py', '.hidden.py', 'notes']
 assert expand('*.py', names) == ['a.py', 'b.py'] and expand('.*', names) == ['.env', '.hidden.py'] and expand('*', names) == ['a.py', 'b.py', 'notes'], 'A leading dot must be matched explicitly.'` },
-          { name: "fast", code: `assert not glob_match('*a*a*a*a*a*a*b', 'a' * 60) and glob_match('*a*a*a*a*a*a*', 'a' * 60), 'Memoise, or this takes forever.'` },
+          { name: "fast", code: `assert not glob_match('*a*a*a*a*a*a*b', 'a' * 60) and glob_match('*a*a*a*a*a*a*', 'a' * 60), 'Plain recursion tries too many ways here; keep track of prefixes instead.'` },
         ],
       },
     },

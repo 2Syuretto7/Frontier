@@ -242,8 +242,6 @@ def rref_exact(A):
                 M[i] = [x - f * y for x, y in zip(M[i], M[r])]
         piv.append(c)
         r += 1
-        if r == rows:
-            break
     return (M, tuple(piv))
 
 def solution_set(A, b):

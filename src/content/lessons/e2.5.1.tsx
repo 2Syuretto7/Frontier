@@ -288,8 +288,9 @@ assert [k.v for k in a] == sorted(vals)` },
       prompt: (
         <>
           <p>
-            Write <C>merge_sort(xs, key=None)</C>, a stable, bottom-up (non-recursive) merge sort returning a new list: start with
-            runs of length 1 and merge neighbouring runs of width 1, 2, 4, …, taking from the left run on ties. Then write{" "}
+            The starter&rsquo;s <C>_merge_pass(src, width, key)</C> merges each pair of neighbouring runs of the given width, taking
+            from the left run on ties. Use it to write <C>merge_sort(xs, key=None)</C>, a stable, bottom-up (non-recursive) merge
+            sort returning a new list: start with runs of length 1 and merge runs of width 1, 2, 4, …. Then write{" "}
             <C>count_inversions(xs)</C>, the number of pairs i &lt; j with xs[i] &gt; xs[j], in O(n log n) by counting, during each
             merge, how many items of the left run each item of the right run jumps over.
           </p>
@@ -297,7 +298,21 @@ assert [k.v for k in a] == sorted(vals)` },
       ),
       answer: {
         kind: "code",
-        starter: `def merge_sort(xs, key=None):
+        starter: `def _merge_pass(src, width, key):
+    out, n = [], len(src)
+    for lo in range(0, n, 2 * width):
+        mid, hi = min(lo + width, n), min(lo + 2 * width, n)
+        i, j = lo, mid
+        while i < mid and j < hi:
+            if key(src[j]) < key(src[i]):
+                out.append(src[j]); j += 1
+            else:
+                out.append(src[i]); i += 1
+        out.extend(src[i:mid])
+        out.extend(src[j:hi])
+    return out
+
+def merge_sort(xs, key=None):
     return list(xs)
 
 def count_inversions(xs):

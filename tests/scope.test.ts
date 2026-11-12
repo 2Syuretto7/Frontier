@@ -92,8 +92,11 @@ items.forEach((item, i) => {
   });
   if (item.write) {
     test(`${item.id} is a reasonable size`, () => {
-      const lines = item.source.split("\n").filter((s) => s.trim() && !s.trim().startsWith("#")).length;
-      const functions = (item.source.match(/^(def|class) /gm) ?? []).length;
+      // A top-level block the starter already contains word for word is given, not asked for.
+      const blocks = item.source.split(/\n(?=\S)/).filter((b) => !item.given.includes(b.trim()));
+      const asked = blocks.join("\n");
+      const lines = asked.split("\n").filter((s) => s.trim() && !s.trim().startsWith("#")).length;
+      const functions = (asked.match(/^(def|class) /gm) ?? []).length;
       assert.ok(lines <= MAX_LINES, `the reference solution has ${lines} lines; keep it to ${MAX_LINES}`);
       assert.ok(functions <= MAX_FUNCTIONS, `asks for ${functions} functions or classes; keep it to ${MAX_FUNCTIONS}`);
     });

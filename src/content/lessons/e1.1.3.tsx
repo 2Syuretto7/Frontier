@@ -159,8 +159,11 @@ print(len(uniq))`}</Code>
       rung: "apply",
       prompt: (
         <>
-          <Code>{`lines = ["b 3", "a 10", "c 2", "a 1"]
-out = sorted(lines, key=lambda l: int(l.split()[1]), reverse=True)[:2]
+          <Code>{`def count(line):
+    return int(line.split()[1])
+
+lines = ["b 3", "a 10", "c 2", "a 1"]
+out = sorted(lines, key=count, reverse=True)[:2]
 print(out, sorted(lines)[0])`}</Code>
           <p>The Python version of sort -k2 -n -r | head -2, and of plain sort. What does this print?</p>
         </>
@@ -173,36 +176,35 @@ print(out, sorted(lines)[0])`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>pipeline(text, *stages)</C>, which feeds text through each stage function in turn, like a shell pipe. Then write <C>grep(word)</C>, which returns a stage keeping only the lines containing <C>word</C>, and <C>wc_l(text)</C>, which counts lines.
+            Write the Python versions of three shell commands, each taking and returning text. <C>grep(text, word)</C> keeps only the lines containing <C>word</C>, newlines included. <C>sort_lines(text)</C> puts the lines in order, like <C>sort</C>. <C>wc_l(text)</C> counts the lines, like <C>wc -l</C>. Then <C>wc_l(grep(log, &quot;ERROR&quot;))</C> does what <C>grep ERROR | wc -l</C> does.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def pipeline(text, *stages):
+        starter: `def grep(text, word):
     return text
 
-def grep(word):
-    return lambda text: text
+def sort_lines(text):
+    return text
 
 def wc_l(text):
     return 0
 `,
-        solution: `def pipeline(text, *stages):
-    for stage in stages:
-        text = stage(text)
-    return text
+        solution: `def grep(text, word):
+    return ''.join(line for line in text.splitlines(keepends=True) if word in line)
 
-def grep(word):
-    return lambda text: ''.join(l for l in text.splitlines(keepends=True) if word in l)
+def sort_lines(text):
+    return ''.join(sorted(text.splitlines(keepends=True)))
 
 def wc_l(text):
     return text.count('\\n')
 `,
         tests: [
-          { name: "grep", code: `assert grep('err')('ok\\nerror 1\\nerr 2\\n') == 'error 1\\nerr 2\\n', 'Keep whole lines, newlines included.'` },
+          { name: "grep", code: `assert grep('ok\\nerror 1\\nerr 2\\n', 'err') == 'error 1\\nerr 2\\n', 'Keep whole lines, newlines included.'` },
+          { name: "sort", code: `assert sort_lines('pear\\napple\\nfig\\n') == 'apple\\nfig\\npear\\n', 'Sort the lines, keeping each newline.'` },
           { name: "pipe", code: `log = 'INFO a\\nERROR b\\nINFO c\\nERROR d\\n'
-assert pipeline(log, grep('ERROR'), wc_l) == 2, 'Each stage receives the previous stage’s output.'` },
+assert wc_l(grep(log, 'ERROR')) == 2 and wc_l('') == 0, 'Count the lines that grep keeps.'` },
         ],
       },
     },
