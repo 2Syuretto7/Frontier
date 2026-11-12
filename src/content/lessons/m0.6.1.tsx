@@ -156,7 +156,11 @@ print([(x > 0) - (x < 0) + 2 * ((y > 0) - (y < 0)) for x, y in pts])`}</Code>
       prompt: (
         <>
           <Code>{`pts = [(3, 4), (-1, 2), (0, -5), (-2, -2)]
-far = max(pts, key=lambda p: p[0] ** 2 + p[1] ** 2)
+
+def dist2(p):
+    return p[0] ** 2 + p[1] ** 2
+
+far = max(pts, key=dist2)
 mid = (sum(x for x, _ in pts) / 4, sum(y for _, y in pts) / 4)
 print(far, mid)`}</Code>
           <p>The point farthest from the origin, and the centroid. What does this print?</p>
@@ -215,21 +219,19 @@ def lattice_points(pts):
 `,
         solution: `import math
 
-def _twice(pts):
+def orientation(pts):
     n = len(pts)
-    return sum(pts[i][0] * pts[(i + 1) % n][1] - pts[(i + 1) % n][0] * pts[i][1] for i in range(n))
+    s = sum(pts[i][0] * pts[(i + 1) % n][1] - pts[(i + 1) % n][0] * pts[i][1] for i in range(n))
+    return 'anticlockwise' if s > 0 else 'clockwise'
 
 def polygon_area(pts):
-    return abs(_twice(pts)) / 2
-
-def orientation(pts):
-    return 'anticlockwise' if _twice(pts) > 0 else 'clockwise'
+    n = len(pts)
+    return abs(sum(pts[i][0] * pts[(i + 1) % n][1] - pts[(i + 1) % n][0] * pts[i][1] for i in range(n))) / 2
 
 def lattice_points(pts):
     n = len(pts)
     B = sum(math.gcd(abs(pts[(i + 1) % n][0] - pts[i][0]), abs(pts[(i + 1) % n][1] - pts[i][1])) for i in range(n))
-    A2 = abs(_twice(pts))
-    return (A2 - B + 2) // 2
+    return round(polygon_area(pts) - B / 2 + 1)
 `,
         tests: [
           { name: "square", code: `assert polygon_area([(0, 0), (4, 0), (4, 3), (0, 3)]) == 12 and polygon_area([(0, 3), (4, 3), (4, 0), (0, 0)]) == 12, 'Either direction gives the same area.'` },

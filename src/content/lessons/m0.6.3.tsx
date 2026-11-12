@@ -148,28 +148,29 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: (
         <>
-          <Code>{`import numpy as np
-u, v = np.array([3, 4]), np.array([-4, 3])
-print(np.linalg.norm(u), u @ v, u + v)`}</Code>
+          <Code>{`import math
+u = (3, 4)
+v = (-4, 3)
+print(math.hypot(u[0], u[1]), u[0] * v[0] + u[1] * v[1], (u[0] + v[0], u[1] + v[1]))`}</Code>
           <p>Length, dot product and sum of two vectors. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["5.0 0 [-1  7]", "7.0 0 [-1  7]", "5.0 24 [-1  7]", "5.0 0 [7 -1]"], correct: [0] },
+      answer: { kind: "choice", options: ["5.0 0 (-1, 7)", "7.0 0 (-1, 7)", "5.0 24 (-1, 7)", "5.0 0 (7, -1)"], correct: [0] },
     },
     {
       key: "read2",
       rung: "apply",
       prompt: (
         <>
-          <Code>{`import numpy as np
-u = np.array([3, 4])
-v = np.array([4, -3])
-w = u + 2 * v
-print(u @ v, np.linalg.norm(w), w)`}</Code>
+          <Code>{`import math
+u = (3, 4)
+v = (4, -3)
+w = (u[0] + 2 * v[0], u[1] + 2 * v[1])
+print(u[0] * v[0] + u[1] * v[1], math.hypot(w[0], w[1]), w)`}</Code>
           <p>Dot product, length and a linear combination. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["0 11.180339887498949 [11 -2]", "0 125.0 [11 -2]", "24 11.180339887498949 [11 -2]", "0 11.180339887498949 [7 1]"], correct: [0] },
+      answer: { kind: "choice", options: ["0 11.180339887498949 (11, -2)", "0 125.0 (11, -2)", "24 11.180339887498949 (11, -2)", "0 11.180339887498949 (7, 1)"], correct: [0] },
     },
     {
       key: "write",
@@ -226,11 +227,8 @@ def gram_schmidt(vs):
 `,
         solution: `import math
 
-def dot(a, b):
-    return sum(x * y for x, y in zip(a, b))
-
 def project(u, v):
-    k = dot(u, v) / dot(v, v)
+    k = sum(a * b for a, b in zip(u, v)) / sum(b * b for b in v)
     return tuple(k * x for x in v)
 
 def reflect(u, n):
@@ -242,9 +240,9 @@ def gram_schmidt(vs):
     for v in vs:
         w = list(v)
         for e in out:
-            d = dot(w, e)
+            d = sum(a * b for a, b in zip(w, e))
             w = [a - d * b for a, b in zip(w, e)]
-        norm = math.sqrt(dot(w, w))
+        norm = math.sqrt(sum(a * a for a in w))
         out.append(tuple(a / norm for a in w))
     return out
 `,

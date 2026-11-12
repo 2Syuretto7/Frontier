@@ -184,7 +184,7 @@ def report(log):
 def report(log):
     return {
         'total': sum(a for _, a in log),
-        'largest': max(log, key=lambda e: e[1])[0],
+        'largest': max((a, item) for item, a in log)[1],
         'count': len(log),
     }
 `,
@@ -205,31 +205,25 @@ assert report(log) == {'total': 500, 'largest': 'books', 'count': 3}, 'Total 500
       prompt: (
         <>
           <p>
-            A small to-do manager. The state is a dict <C>{`{"next": 1, "tasks": {}}`}</C> made by <C>new_list()</C>. Write <C>add_task(todo, title, due)</C> (due is an ISO date string like <C>"2026-11-20"</C>), which stores the task under the next id, increments it, and returns the id; <C>complete(todo, task_id)</C>, which marks it done and raises <C>KeyError</C> for an unknown id; <C>pending(todo)</C>, the titles of tasks not done, sorted by due date then id; and <C>overdue(todo, today)</C>, the pending titles with a due date before today, in the same order.
+            A small to-do manager. The state is a dict <C>{`{"next": 1, "tasks": {}}`}</C> made by <C>new_list()</C>. Write <C>add_task(todo, title, due)</C> (due is an ISO date string like <C>"2026-11-20"</C>), which stores the task under the next id, increments it, and returns the id; <C>complete(todo, task_id)</C>, which marks it done and raises <C>KeyError</C> for an unknown id; and <C>pending(todo, today)</C>, the titles of tasks not done whose due date is before <C>today</C>, sorted by due date then id. <C>new_list</C> is already defined for you.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def new_list():
+        setup: `def new_list():
     return {'next': 1, 'tasks': {}}
-
-def add_task(todo, title, due):
+`,
+        starter: `def add_task(todo, title, due):
     return 1
 
 def complete(todo, task_id):
     pass
 
-def pending(todo):
-    return []
-
-def overdue(todo, today):
+def pending(todo, today):
     return []
 `,
-        solution: `def new_list():
-    return {'next': 1, 'tasks': {}}
-
-def add_task(todo, title, due):
+        solution: `def add_task(todo, title, due):
     i = todo['next']
     todo['tasks'][i] = {'title': title, 'due': due, 'done': False}
     todo['next'] += 1
@@ -240,14 +234,9 @@ def complete(todo, task_id):
         raise KeyError(task_id)
     todo['tasks'][task_id]['done'] = True
 
-def _open(todo):
-    return sorted((t['due'], i, t['title']) for i, t in todo['tasks'].items() if not t['done'])
-
-def pending(todo):
-    return [title for _, _, title in _open(todo)]
-
-def overdue(todo, today):
-    return [title for due, _, title in _open(todo) if due < today]
+def pending(todo, today):
+    rows = sorted((t['due'], i, t['title']) for i, t in todo['tasks'].items() if not t['done'] and t['due'] < today)
+    return [title for _, _, title in rows]
 `,
         tests: [
           { name: "ids", code: `t = new_list()
@@ -255,7 +244,7 @@ assert [add_task(t, 'a', '2026-11-20'), add_task(t, 'b', '2026-11-18')] == [1, 2
           { name: "pending", code: `t = new_list()
 add_task(t, 'pay rent', '2026-12-01'); add_task(t, 'buy milk', '2026-11-12'); add_task(t, 'call Ravi', '2026-11-12'); add_task(t, 'file taxes', '2026-11-30')
 complete(t, 4)
-assert pending(t) == ['buy milk', 'call Ravi', 'pay rent'] and overdue(t, '2026-11-15') == ['buy milk', 'call Ravi'] and overdue(t, '2026-11-12') == [], 'Sort by due date, then id; due today is not overdue.'` },
+assert pending(t, '2026-12-31') == ['buy milk', 'call Ravi', 'pay rent'] and pending(t, '2026-11-15') == ['buy milk', 'call Ravi'] and pending(t, '2026-11-12') == [], 'Sort by due date, then id; due today does not count.'` },
           { name: "unknown", code: `t = new_list()
 try:
     complete(t, 7)

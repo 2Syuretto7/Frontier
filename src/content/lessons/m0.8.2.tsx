@@ -162,28 +162,31 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: (
         <>
-          <Code>{`import numpy as np
-xs = [1, 2, 2, 3, 3, 3, 7, 8, 9, 10]
-counts, edges = np.histogram(xs, bins=3, range=(1, 10))
-print(counts)`}</Code>
-          <p>Ten values in three bins of equal width over [1, 10]. What does this print?</p>
+          <Code>{`xs = [1, 2, 2, 3, 3, 3, 7, 8, 9, 10]
+low = len([x for x in xs if x < 4])
+mid = len([x for x in xs if 4 <= x < 7])
+high = len([x for x in xs if x >= 7])
+print(low, mid, high)`}</Code>
+          <p>Ten values counted in three bins of equal width over [1, 10]. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["[6 0 4]", "[3 3 4]", "[6 1 3]", "[4 2 4]"], correct: [0] },
+      answer: { kind: "choice", options: ["6 0 4", "3 3 4", "6 1 3", "4 2 4"], correct: [0] },
     },
     {
       key: "read2",
       rung: "apply",
       prompt: (
         <>
-          <Code>{`import numpy as np
-xs = [1, 2, 2, 3, 3, 3, 4, 9]
-counts, edges = np.histogram(xs, bins=4, range=(1, 9))
-print(counts, edges)`}</Code>
+          <Code>{`xs = [1, 2, 2, 3, 3, 3, 4, 9]
+counts = [0, 0, 0, 0]
+for x in xs:
+    b = min((x - 1) // 2, 3)    # bins [1, 3), [3, 5), [5, 7), [7, 9]
+    counts[b] += 1
+print(counts)`}</Code>
           <p>Four equal bins over [1, 9]. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["[3 4 0 1] [1. 3. 5. 7. 9.]", "[6 1 0 1] [1. 3. 5. 7. 9.]", "[3 3 1 1] [1. 3. 5. 7. 9.]", "[3 4 0 1] [1. 2. 3. 4. 5.]"], correct: [0] },
+      answer: { kind: "choice", options: ["[3, 4, 0, 1]", "[6, 1, 0, 1]", "[3, 3, 1, 1]", "[2, 5, 0, 1]"], correct: [0] },
     },
     {
       key: "write",

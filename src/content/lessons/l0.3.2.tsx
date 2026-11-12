@@ -135,12 +135,12 @@ export const lesson: LessonContent = {
         <>
           <Code>{`train = [((1, 1), "red"), ((2, 1), "red"), ((5, 5), "blue"), ((6, 5), "blue"), ((3, 3), "blue")]
 q = (2, 2)
-d = sorted(train, key=lambda t: (t[0][0] - q[0]) ** 2 + (t[0][1] - q[1]) ** 2)
+d = sorted([((x - q[0]) ** 2 + (y - q[1]) ** 2, lab) for (x, y), lab in train])
 print(d[0][1], [lab for _, lab in d[:3]])`}</Code>
-          <p>The nearest neighbours of (2, 2). What does this print?</p>
+          <p>The nearest neighbours of (2, 2), sorted by squared distance (and by label when distances tie). What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["red ['red', 'red', 'blue']", "red ['red', 'blue', 'red']", "blue ['blue', 'red', 'red']", "red ['red', 'red', 'red']"], correct: [0] },
+      answer: { kind: "choice", options: ["red ['red', 'blue', 'red']", "red ['red', 'red', 'blue']", "blue ['blue', 'red', 'red']", "red ['red', 'red', 'red']"], correct: [0] },
     },
     {
       key: "read2",
@@ -151,11 +151,11 @@ print(d[0][1], [lab for _, lab in d[:3]])`}</Code>
 q = (1, 1)
 d = sorted((abs(x - q[0]) + abs(y - q[1]), lab) for (x, y), lab in train)
 top = [l for _, l in d[:3]]
-print(d[:3], max(set(top), key=top.count))`}</Code>
+print(d[:3], top.count("red"))`}</Code>
           <p>Three nearest neighbours under Manhattan distance. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["[(1, 'blue'), (1, 'red'), (2, 'red')] red", "[(1, 'red'), (1, 'blue'), (2, 'red')] red", "[(1, 'blue'), (1, 'red'), (2, 'red')] blue", "[(1, 'red'), (2, 'red'), (8, 'blue')] red"], correct: [0] },
+      answer: { kind: "choice", options: ["[(1, 'blue'), (1, 'red'), (2, 'red')] 2", "[(1, 'red'), (1, 'blue'), (2, 'red')] 2", "[(1, 'blue'), (1, 'red'), (2, 'red')] 1", "[(1, 'red'), (2, 'red'), (8, 'blue')] 2"], correct: [0] },
     },
     {
       key: "write",
@@ -172,15 +172,12 @@ print(d[:3], max(set(top), key=top.count))`}</Code>
         starter: `def knn(train, q, k):
     return train[0][1]
 `,
-        solution: `from collections import Counter
-
-def knn(train, q, k):
-    d = sorted(train, key=lambda t: (t[0][0] - q[0]) ** 2 + (t[0][1] - q[1]) ** 2)
-    votes = Counter(lab for _, lab in d[:k])
-    best = max(votes.values())
-    tied = {lab for lab, v in votes.items() if v == best}
-    for _, lab in d:
-        if lab in tied:
+        solution: `def knn(train, q, k):
+    d = sorted([((x - q[0]) ** 2 + (y - q[1]) ** 2, i) for i, ((x, y), lab) in enumerate(train)])
+    labels = [train[i][1] for _, i in d[:k]]
+    best = max(labels.count(lab) for lab in labels)
+    for lab in labels:
+        if labels.count(lab) == best:
             return lab
 `,
         tests: [
@@ -215,8 +212,8 @@ def best_k(train, ks):
         solution: `import math
 
 def knn_regress(train, q, k):
-    order = sorted(range(len(train)), key=lambda i: (math.dist(train[i][0], q), i))
-    return sum(train[i][1] for i in order[:k]) / k
+    order = sorted([(math.dist(train[i][0], q), i) for i in range(len(train))])
+    return sum(train[i][1] for _, i in order[:k]) / k
 
 def loo_mse(train, k):
     err = 0.0
@@ -226,7 +223,11 @@ def loo_mse(train, k):
     return err / len(train)
 
 def best_k(train, ks):
-    return min(ks, key=lambda k: (loo_mse(train, k), k))
+    best = ks[0]
+    for k in ks:
+        if loo_mse(train, k) < loo_mse(train, best) or (loo_mse(train, k) == loo_mse(train, best) and k < best):
+            best = k
+    return best
 `,
         tests: [
           { name: "regress", code: `train = [((0,), 0), ((1,), 10), ((2,), 20), ((10,), 100)]

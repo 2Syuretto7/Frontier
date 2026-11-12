@@ -175,27 +175,28 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: (
         <>
-          <Code>{`def rule(word):
-    return word.endswith("ing")
-examples = {"running": True, "king": False, "sing": False, "eating": True}
-print(sum(rule(w) == y for w, y in examples.items()))`}</Code>
-          <p>A hand-written rule for 'is a verb in -ing form', tested on labelled examples. How many does it get right?</p>
+          <Code>{`temp = 37.5
+rule = temp >= 38.0      # a hand-written rule: fever at 38 °C or more
+label = True             # the doctor's diagnosis for this patient
+print(rule, rule == label)`}</Code>
+          <p>A hand-written rule checked against one labelled example. What does this print?</p>
         </>
       ),
-      answer: { kind: "numeric", value: 2 },
+      answer: { kind: "choice", options: ["False False", "True True", "False True", "True False"], correct: [0] },
     },
     {
       key: "read2",
       rung: "apply",
       prompt: (
         <>
-          <Code>{`emails = [("win money now", 1), ("meeting at noon", 0), ("win a prize", 1), ("lunch money", 0)]
-rule = lambda t: "win" in t or "money" in t
-print(sum(rule(t) == bool(y) for t, y in emails), [t for t, y in emails if rule(t) != bool(y)])`}</Code>
-          <p>A hand-written spam rule checked against labelled emails. What does this print?</p>
+          <Code>{`healthy = 36.8    # a patient without fever
+sick = 38.6       # a patient with fever
+t = (healthy + sick) / 2    # a threshold learned from the two examples
+print(t, 37.5 >= t)`}</Code>
+          <p>Instead of writing the rule, take it from examples: put the threshold halfway between them. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["3 ['lunch money']", "4 []", "3 ['meeting at noon']", "2 ['lunch money', 'win a prize']"], correct: [0] },
+      answer: { kind: "choice", options: ["37.7 False", "37.7 True", "38.0 False", "37.5 True"], correct: [0] },
     },
     {
       key: "write",
@@ -203,23 +204,27 @@ print(sum(rule(t) == bool(y) for t, y in emails), [t for t, y in emails if rule(
       prompt: (
         <>
           <p>
-            Instead of writing a rule, learn one from examples. Write <C>learn_threshold(xs, ys)</C>, which takes numbers and 0/1 labels and returns the threshold t, chosen from the values in xs, for which the rule &ldquo;predict 1 when x ≥ t&rdquo; makes the fewest mistakes. Break ties by the smallest t.
+            Instead of writing a rule, learn one from examples. Write <C>learn_threshold(no, yes)</C>, the threshold halfway between a negative example <C>no</C> and a positive example <C>yes</C>, and <C>predict(x, t)</C>, which returns True when x ≥ t. For example, <C>learn_threshold(2, 8)</C> is 5.0 and <C>predict(6, 5.0)</C> is True.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def learn_threshold(xs, ys):
-    return sum(xs) / len(xs)
+        starter: `def learn_threshold(no, yes):
+    return yes
+
+def predict(x, t):
+    return False
 `,
-        solution: `def learn_threshold(xs, ys):
-    def errors(t):
-        return sum((x >= t) != bool(y) for x, y in zip(xs, ys))
-    return min(sorted(set(xs)), key=errors)
+        solution: `def learn_threshold(no, yes):
+    return (no + yes) / 2
+
+def predict(x, t):
+    return x >= t
 `,
         tests: [
-          { name: "separable", code: `assert learn_threshold([1, 2, 3, 8, 9, 10], [0, 0, 0, 1, 1, 1]) == 8, 'The rule x ≥ 8 makes no mistakes.'` },
-          { name: "noisy", code: `assert learn_threshold([1, 2, 3, 4, 5, 6], [0, 0, 1, 0, 1, 1]) == 3, 'x ≥ 3 makes one mistake, and so does x ≥ 5; take the smaller.'` },
+          { name: "learn", code: `assert learn_threshold(2, 8) == 5.0 and learn_threshold(36.5, 38.5) == 37.5, 'Halfway between the two examples is their average.'` },
+          { name: "predict", code: `assert predict(6, 5.0) is True and predict(5.0, 5.0) is True and predict(4.9, 5.0) is False, 'Predict yes when x is at least the threshold.'` },
         ],
       },
     },
@@ -229,41 +234,27 @@ print(sum(rule(t) == bool(y) for t, y in emails), [t for t, y in emails if rule(
       prompt: (
         <>
           <p>
-            Learn the spam rule from examples instead. Write <C>learn_keywords(emails, k)</C> for a list of (text, label) pairs with label 1 for spam: split each text into lower-case words, count each word once per email, score each word by (spam emails containing it) − (normal emails containing it), and return the k highest-scoring words, breaking ties alphabetically. Then write <C>classify(text, words)</C>, which returns 1 if any word of the text is in <C>words</C>, else 0, and <C>accuracy(emails, words)</C>.
+            A learned rule is judged by its mistakes on labelled examples. Write <C>mistakes(t, x1, y1, x2, y2, x3, y3)</C>, the number of the three examples (xᵢ, yᵢ), with yᵢ True or False, on which the rule &ldquo;predict True when x ≥ t&rdquo; is wrong, and <C>accuracy(t, x1, y1, x2, y2, x3, y3)</C>, the fraction it gets right. <C>int(True)</C> is 1 and <C>int(False)</C> is 0. For example, with t = 5 and examples (2, False), (6, True), (7, False), the rule makes 1 mistake.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def learn_keywords(emails, k):
-    return []
-
-def classify(text, words):
+        starter: `def mistakes(t, x1, y1, x2, y2, x3, y3):
     return 0
 
-def accuracy(emails, words):
-    return 0.0
+def accuracy(t, x1, y1, x2, y2, x3, y3):
+    return 1.0
 `,
-        solution: `def learn_keywords(emails, k):
-    score = {}
-    for text, y in emails:
-        for w in set(text.lower().split()):
-            score[w] = score.get(w, 0) + (1 if y == 1 else -1)
-    return sorted(score, key=lambda w: (-score[w], w))[:k]
+        solution: `def mistakes(t, x1, y1, x2, y2, x3, y3):
+    return int((x1 >= t) != y1) + int((x2 >= t) != y2) + int((x3 >= t) != y3)
 
-def classify(text, words):
-    return int(any(w in words for w in text.lower().split()))
-
-def accuracy(emails, words):
-    return sum(classify(t, words) == y for t, y in emails) / len(emails)
+def accuracy(t, x1, y1, x2, y2, x3, y3):
+    return 1 - mistakes(t, x1, y1, x2, y2, x3, y3) / 3
 `,
         tests: [
-          { name: "learn", code: `emails = [("Win money now", 1), ("meeting at noon", 0), ("win a prize", 1), ("lunch money", 0), ("free prize inside", 1)]
-assert learn_keywords(emails, 2) == ['prize', 'win'], 'prize and win each score 2; ties go alphabetically.'` },
-          { name: "once per email", code: `assert learn_keywords([("buy buy buy", 1), ("buy now", 0), ("cheap", 1)], 1) == ['cheap'], 'buy scores 1 − 1 = 0 because repeats in one email count once.'` },
-          { name: "classify", code: `assert classify("WIN big", ["win"]) == 1 and classify("winner", ["win"]) == 0 and classify("", ["win"]) == 0, 'Match whole lower-case words.'` },
-          { name: "accuracy", code: `emails = [("Win money now", 1), ("meeting at noon", 0), ("win a prize", 1), ("lunch money", 0), ("free prize inside", 1)]
-assert accuracy(emails, learn_keywords(emails, 2)) == 1.0 and accuracy(emails, ['money']) == 0.4, 'The learned words separate this data.'` },
+          { name: "mistakes", code: `assert mistakes(5, 2, False, 6, True, 7, False) == 1 and mistakes(5, 2, False, 6, True, 9, True) == 0 and mistakes(10, 2, True, 6, True, 7, True) == 3, 'Count the examples where (x >= t) differs from the label.'` },
+          { name: "accuracy", code: `assert abs(accuracy(5, 2, False, 6, True, 7, False) - 2 / 3) < 1e-12 and accuracy(5, 2, False, 6, True, 9, True) == 1.0, 'Accuracy is the fraction right: 1 minus mistakes over 3.'` },
         ],
       },
     },

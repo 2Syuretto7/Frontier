@@ -133,9 +133,16 @@ export const lesson: LessonContent = {
       prompt: (
         <>
           <Code>{`import math
-relu = lambda z: max(0.0, z)
-sig = lambda z: 1 / (1 + math.exp(-z))
-d = lambda f, z: (f(z + 1e-6) - f(z - 1e-6)) / 2e-6
+
+def relu(z):
+    return max(0.0, z)
+
+def sig(z):
+    return 1 / (1 + math.exp(-z))
+
+def d(f, z):
+    return (f(z + 1e-6) - f(z - 1e-6)) / 2e-6
+
 print(round(d(sig, 6), 4), round(d(relu, 6), 4))`}</Code>
           <p>Gradients of sigmoid and ReLU at z = 6. Why did ReLU help deep networks train?</p>
         </>
@@ -148,7 +155,10 @@ print(round(d(sig, 6), 4), round(d(relu, 6), 4))`}</Code>
       prompt: (
         <>
           <Code>{`import math
-s = lambda z: 1 / (1 + math.exp(-z))
+
+def s(z):
+    return 1 / (1 + math.exp(-z))
+
 g = 1.0
 for _ in range(10):
     g *= s(0) * (1 - s(0))

@@ -226,7 +226,7 @@ print(x, a * x + b == c * x + d)`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>solve_bisect(f, lo, hi)</C>, which finds a root of a continuous function f on [lo, hi] with f(lo) and f(hi) of opposite signs, by halving the interval until it is shorter than 1e−10. Return the midpoint of the last interval. Raise <C>ValueError</C> if the signs at the ends agree.
+            Write <C>solve_bisect(f, lo, hi)</C>, which finds a root of a continuous function f on [lo, hi] with f(lo) and f(hi) of opposite signs, by halving the interval until it is shorter than 1e−10. Return the midpoint of the last interval.
           </p>
         </>
       ),
@@ -237,8 +237,6 @@ print(x, a * x + b == c * x + d)`}</Code>
 `,
         solution: `def solve_bisect(f, lo, hi):
     flo = f(lo)
-    if flo * f(hi) > 0:
-        raise ValueError('no sign change')
     while hi - lo > 1e-10:
         mid = (lo + hi) / 2
         fm = f(mid)
@@ -254,12 +252,6 @@ print(x, a * x + b == c * x + d)`}</Code>
           { name: "linear", code: `assert abs(solve_bisect(lambda x: 3 * x - 4 - (x + 6), -100, 100) - 5) < 1e-8, '3x − 4 = x + 6 at x = 5.'` },
           { name: "sqrt2", code: `assert abs(solve_bisect(lambda x: x * x - 2, 0, 2) - 2 ** 0.5) < 1e-9, 'Keep the half where the sign changes.'` },
           { name: "decreasing", code: `assert abs(solve_bisect(lambda x: 10 - x ** 3, 0, 5) - 10 ** (1 / 3)) < 1e-9, 'It must also work when f goes from positive to negative.'` },
-          { name: "no change", code: `try:
-    solve_bisect(lambda x: x * x + 1, -1, 1)
-    ok = False
-except ValueError:
-    ok = True
-assert ok, 'Raise ValueError when f(lo) and f(hi) have the same sign.'` },
         ],
       },
     },

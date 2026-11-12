@@ -313,33 +313,28 @@ assert e == 3 and abs(m + 5) < 1e-9, 'Take the logarithm of |x| and keep the sig
       prompt: (
         <>
           <p>
-            A rational number has a decimal expansion that ends or repeats. Write <C>decimal(p, q)</C> for 0 ≤ p &lt; q, which returns a pair of strings (non-repeating part, repeating part) of the digits after the point, found by long division and remembering each remainder. For example 1/6 = 0.1666… gives <C>("1", "6")</C> and 1/4 gives <C>("25", "")</C>.
+            Long division of p by q (0 ≤ p &lt; q) multiplies the remainder by 10 at each step, so after k steps the remainder is 10<sup>k</sup>·p mod q. Write <C>first_digits(p, q, k)</C>, the first k digits after the decimal point of p/q as a whole number, using integers only, and <C>repeats_after(p, q, n)</C>, which is True when the remainder after n steps is back to p, so the digits repeat with period n. For example, 1/7 = 0.142857142857…, so <C>first_digits(1, 7, 3)</C> is 142 and <C>repeats_after(1, 7, 6)</C> is True.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def decimal(p, q):
-    return (str(p / q)[2:], '')
+        starter: `def first_digits(p, q, k):
+    return p // q
+
+def repeats_after(p, q, n):
+    return False
 `,
-        solution: `def decimal(p, q):
-    digits, seen, r = '', {}, p
-    while r != 0 and r not in seen:
-        seen[r] = len(digits)
-        r *= 10
-        digits += str(r // q)
-        r %= q
-    if r == 0:
-        return (digits, '')
-    i = seen[r]
-    return (digits[:i], digits[i:])
+        solution: `def first_digits(p, q, k):
+    return 10 ** k * p // q
+
+def repeats_after(p, q, n):
+    return 10 ** n * p % q == p
 `,
         tests: [
-          { name: "ending", code: `assert decimal(1, 4) == ('25', '') and decimal(3, 8) == ('375', '') and decimal(0, 5) == ('', ''), 'When the remainder hits 0 the expansion ends.'` },
-          { name: "repeating", code: `assert decimal(1, 3) == ('', '3') and decimal(1, 6) == ('1', '6') and decimal(1, 7) == ('', '142857'), 'A repeated remainder starts the cycle again.'` },
-          { name: "long cycle", code: `a, b = decimal(1, 97)
-assert a == '' and len(b) == 96, '1/97 has period 96.'` },
-          { name: "mixed", code: `assert decimal(7, 12) == ('58', '3') and decimal(22, 70) == ('3', '142857'), 'Record the position at which each remainder first appeared.'` },
+          { name: "digits", code: `assert first_digits(1, 7, 3) == 142 and first_digits(1, 4, 2) == 25 and first_digits(1, 3, 5) == 33333 and first_digits(1, 16, 1) == 0, 'Shift the point k places with 10 ** k, then divide.'` },
+          { name: "exact", code: `assert first_digits(1, 97, 30) == 10309278350515463917525773195, 'Floats keep only about 16 digits; integers keep them all.'` },
+          { name: "period", code: `assert repeats_after(1, 7, 6) and not repeats_after(1, 7, 3) and repeats_after(1, 3, 1) and repeats_after(1, 11, 2) and not repeats_after(1, 11, 1), 'Compare 10 ** n · p mod q with p.'` },
         ],
       },
     },

@@ -141,16 +141,16 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: (
         <>
-          <Code>{`import numpy as np
-q = np.array([1.0, 0.0])
-K = np.array([[1.0, 0.0], [0.0, 1.0], [1.0, 1.0]])
-s = K @ q
-w = np.exp(s) / np.exp(s).sum()
-print(np.round(w, 2))`}</Code>
-          <p>Attention turns dot-product scores into weights with a softmax. What does this print?</p>
+          <Code>{`import math
+q = [1.0, 0.0]                                  # the query
+keys = [[1.0, 0.0], [0.0, 1.0], [1.0, 1.0]]
+scores = [q[0] * k[0] + q[1] * k[1] for k in keys]
+total = sum(math.exp(s) for s in scores)
+print([round(math.exp(s) / total, 2) for s in scores])`}</Code>
+          <p>Attention scores each key by its dot product with the query, then turns the scores into weights with a softmax. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["[0.42 0.16 0.42]", "[0.33 0.33 0.33]", "[0.5 0.  0.5]", "[1. 0. 1.]"], correct: [0] },
+      answer: { kind: "choice", options: ["[0.42, 0.16, 0.42]", "[0.33, 0.33, 0.33]", "[0.5, 0.0, 0.5]", "[1.0, 0.0, 1.0]"], correct: [0] },
     },
     {
       key: "read2",
@@ -173,34 +173,36 @@ print([round(x, 3) for x in w], round(sum(w), 6))`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>attention(Q, K, V)</C>, scaled dot-product attention softmax(QKᵀ / √d) V for numpy arrays, where d is the number of columns of Q. Subtract each row&rsquo;s maximum before exponentiating so large scores do not overflow.
+            Write <C>softmax(scores)</C>, which turns a list of scores into weights e<sup>s</sup> / Σe<sup>s</sup>, subtracting the largest score first so that large scores do not overflow, and <C>attend(scores, values)</C>, the weighted average of a list of numbers <C>values</C> with those weights: one attention step for a single query.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `import numpy as np
+        starter: `import math
 
-def attention(Q, K, V):
-    return V
+def softmax(scores):
+    return scores
+
+def attend(scores, values):
+    return sum(values) / len(values)
 `,
-        solution: `import numpy as np
+        solution: `import math
 
-def attention(Q, K, V):
-    s = Q @ K.T / np.sqrt(Q.shape[1])
-    s = s - s.max(axis=1, keepdims=True)
-    w = np.exp(s)
-    w = w / w.sum(axis=1, keepdims=True)
-    return w @ V
+def softmax(scores):
+    m = max(scores)
+    e = [math.exp(s - m) for s in scores]
+    return [x / sum(e) for x in e]
+
+def attend(scores, values):
+    return sum(w * v for w, v in zip(softmax(scores), values))
 `,
         tests: [
-          { name: "uniform", code: `import numpy as np
-Q = np.zeros((2, 4)); K = np.ones((3, 4)); V = np.array([[1.0], [2.0], [3.0]])
-assert np.allclose(attention(Q, K, V), [[2.0], [2.0]]), 'Equal scores give the average of the values.'` },
-          { name: "stable", code: `import numpy as np
-Q = np.array([[100.0, 0.0]]); K = np.array([[100.0, 0.0], [0.0, 0.0]]); V = np.array([[1.0, 0.0], [0.0, 1.0]])
-out = attention(Q, K, V)
-assert np.allclose(out, [[1.0, 0.0]]) and not np.isnan(out).any(), 'Subtract the row maximum to avoid overflow.'` },
+          { name: "softmax", code: `w = softmax([2.0, 1.0, 0.0])
+assert abs(sum(w) - 1) < 1e-12 and abs(w[0] - 0.6652409557748219) < 1e-12 and softmax([5.0, 5.0]) == [0.5, 0.5], 'Exponentiate, then divide by the total.'` },
+          { name: "stable", code: `w = softmax([1000.0, 999.0])
+assert abs(w[0] - 1 / (1 + 2.718281828459045 ** -1)) < 1e-9, 'Subtract the largest score so math.exp does not overflow.'` },
+          { name: "attend", code: `assert abs(attend([0.0, 0.0, 0.0], [1.0, 2.0, 3.0]) - 2.0) < 1e-12 and abs(attend([100.0, 0.0], [7.0, 1.0]) - 7.0) < 1e-9, 'Equal scores average the values; one dominant score picks its value.'` },
         ],
       },
     },
@@ -210,57 +212,34 @@ assert np.allclose(out, [[1.0, 0.0]]) and not np.isnan(out).any(), 'Subtract the
       prompt: (
         <>
           <p>
-            Write <C>causal_attention(Q, K, V)</C> in pure Python for lists of n vectors: position i attends only to positions j ≤ i, with scores qᵢ·kⱼ/√d and a numerically stable softmax (subtract the largest score first), returning the n output vectors. Then write <C>positional_encoding(n, d)</C>, the sinusoidal encoding with PE[pos][2i] = sin(pos/10000^(2i/d)) and PE[pos][2i+1] = cos(pos/10000^(2i/d)) for even d.
+            In a language model, position i may only attend to positions j ≤ i, so it cannot peek at later words. Write <C>causal_weights(scores, i)</C>, the softmax of the first i + 1 scores (later positions get no weight), and <C>causal_output(scores, values, i)</C>, the weighted average of the first i + 1 values with those weights. For example, with scores [0, 0, 5], position 1 gives equal weight to positions 0 and 1 and ignores the large score at 2.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def causal_attention(Q, K, V):
-    return [list(v) for v in V]
+        starter: `import math
 
-def positional_encoding(n, d):
-    return [[0.0] * d for _ in range(n)]
+def causal_weights(scores, i):
+    return [1.0]
+
+def causal_output(scores, values, i):
+    return values[i]
 `,
         solution: `import math
 
-def causal_attention(Q, K, V):
-    d = len(Q[0])
-    out = []
-    for i, q in enumerate(Q):
-        s = [sum(a * b for a, b in zip(q, K[j])) / math.sqrt(d) for j in range(i + 1)]
-        m = max(s)
-        e = [math.exp(x - m) for x in s]
-        z = sum(e)
-        out.append([sum(e[j] * V[j][c] for j in range(i + 1)) / z for c in range(len(V[0]))])
-    return out
+def causal_weights(scores, i):
+    seen = scores[:i + 1]
+    e = [math.exp(s - max(seen)) for s in seen]
+    return [x / sum(e) for x in e]
 
-def positional_encoding(n, d):
-    pe = [[0.0] * d for _ in range(n)]
-    for pos in range(n):
-        for i in range(d // 2):
-            ang = pos / 10000 ** (2 * i / d)
-            pe[pos][2 * i] = math.sin(ang)
-            pe[pos][2 * i + 1] = math.cos(ang)
-    return pe
+def causal_output(scores, values, i):
+    return sum(w * v for w, v in zip(causal_weights(scores, i), values))
 `,
         tests: [
-          { name: "first", code: `out = causal_attention([[1.0, 0.0], [0.0, 1.0]], [[1.0, 0.0], [0.0, 1.0]], [[5.0, 6.0], [7.0, 8.0]])
-assert out[0] == [5.0, 6.0], 'Position 0 can only see itself.'` },
-          { name: "numpy", code: `import numpy as np
-rng = np.random.default_rng(7)
-Q, K, V = rng.normal(size=(6, 4)), rng.normal(size=(6, 4)), rng.normal(size=(6, 3))
-S = Q @ K.T / 2.0
-S[np.triu_indices(6, 1)] = -np.inf
-A = np.exp(S - S.max(axis=1, keepdims=True)); A /= A.sum(axis=1, keepdims=True)
-assert np.allclose(causal_attention(Q.tolist(), K.tolist(), V.tolist()), A @ V), 'Agree with the matrix formula.'` },
-          { name: "stable", code: `out = causal_attention([[1000.0], [1000.0]], [[1000.0], [999.0]], [[1.0], [3.0]])
-import math
-assert abs(out[1][0] - (1 + 3 * math.exp(-1000)) / (1 + math.exp(-1000))) < 1e-9 and out[0] == [1.0], 'Huge scores must not overflow.'` },
-          { name: "positions", code: `import math
-pe = positional_encoding(50, 8)
-assert pe[0] == [0.0, 1.0] * 4 and abs(pe[1][0] - math.sin(1)) < 1e-12 and abs(pe[3][5] - math.cos(3 / 10000 ** (4 / 8))) < 1e-12, 'sin on even columns, cos on odd.'
-assert all(abs(pe[p][2 * i] ** 2 + pe[p][2 * i + 1] ** 2 - 1) < 1e-12 for p in range(50) for i in range(4))` },
+          { name: "weights", code: `assert causal_weights([0.0, 0.0, 5.0], 1) == [0.5, 0.5] and causal_weights([3.0, 1.0], 0) == [1.0] and len(causal_weights([1.0, 2.0, 3.0, 4.0], 2)) == 3, 'Only positions 0 to i take part.'` },
+          { name: "output", code: `assert causal_output([0.0, 0.0, 5.0], [2.0, 4.0, 100.0], 1) == 3.0 and causal_output([1.0, 9.0], [7.0, 1.0], 0) == 7.0, 'Position i averages only the values it can see.'` },
+          { name: "stable", code: `assert abs(causal_output([1000.0, 1000.0], [1.0, 3.0], 1) - 2.0) < 1e-9, 'Subtract the largest visible score first.'` },
         ],
       },
     },

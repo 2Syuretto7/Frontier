@@ -210,7 +210,7 @@ print(lo, hi, avg, nothing(5))`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>summary(xs)</C>, returning the tuple (mean, median, mode) for a non-empty list (the median averages the two middle values of an even-length list; the mode is the smallest of the most frequent values), and raising <C>ValueError</C> for an empty list. Then write <C>indian_format(amount, decimals=2)</C>, which formats a number with Indian digit grouping: the last three digits, then groups of two, as in <C>"12,34,567.80"</C> (a negative sign goes in front; with decimals = 0 there is no decimal point).
+            Write <C>summary(xs)</C>, returning the tuple (mean, median, mode) for a non-empty list (the median averages the two middle values of an even-length list; the mode is the smallest of the most frequent values), Then write <C>indian_format(amount, decimals=2)</C>, which formats a number with Indian digit grouping: the last three digits, then groups of two, as in <C>"12,34,567.80"</C> (a negative sign goes in front; with decimals = 0 there is no decimal point).
           </p>
         </>
       ),
@@ -223,16 +223,11 @@ def indian_format(amount, decimals=2):
     return f'{amount:,.{decimals}f}'
 `,
         solution: `def summary(xs):
-    if not xs:
-        raise ValueError('empty list')
     s = sorted(xs)
     n = len(s)
     mid = s[n // 2] if n % 2 else (s[n // 2 - 1] + s[n // 2]) / 2
-    counts = {}
-    for x in s:
-        counts[x] = counts.get(x, 0) + 1
-    top = max(counts.values())
-    mode = min(x for x, c in counts.items() if c == top)
+    top = max(s.count(x) for x in s)
+    mode = min(x for x in s if s.count(x) == top)
     return (sum(s) / n, mid, mode)
 
 def indian_format(amount, decimals=2):
@@ -252,11 +247,6 @@ def indian_format(amount, decimals=2):
 `,
         tests: [
           { name: "summary", code: `assert summary([3, 1, 2]) == (2, 2, 1) and summary([4, 1, 2, 2, 4, 9]) == (11 / 3, 3.0, 2), 'Even length: average the middle two; ties in the mode go to the smallest.'` },
-          { name: "empty", code: `try:
-    summary([])
-    assert False, 'An empty list must raise ValueError.'
-except ValueError:
-    pass` },
           { name: "indian", code: `assert indian_format(1234567.8) == '12,34,567.80' and indian_format(999) == '999.00' and indian_format(1000, 0) == '1,000' and indian_format(100000) == '1,00,000.00', 'Three digits, then pairs.'` },
           { name: "more", code: `assert indian_format(-123456789.456, 1) == '-12,34,56,789.5' and indian_format(0) == '0.00' and indian_format(12345678901, 0) == '12,34,56,78,901'` },
         ],

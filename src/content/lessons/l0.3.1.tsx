@@ -170,9 +170,13 @@ for m, c in [(1, 1), (1.2, 0.7)]:
     return (slopes[0], intercepts[0])
 `,
         solution: `def grid_fit(pts, slopes, intercepts):
-    def sse(m, c):
-        return sum((y - (m * x + c)) ** 2 for x, y in pts)
-    return min(((m, c) for m in slopes for c in intercepts), key=lambda mc: sse(*mc))
+    best, best_err = None, None
+    for m in slopes:
+        for c in intercepts:
+            err = sum((y - (m * x + c)) ** 2 for x, y in pts)
+            if best_err is None or err < best_err:
+                best, best_err = (m, c), err
+    return best
 `,
         tests: [
           { name: "grid", code: `pts = [(0, 1), (1, 3), (2, 5), (3, 7)]

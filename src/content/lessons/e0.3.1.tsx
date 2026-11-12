@@ -219,46 +219,38 @@ def perimeter(w, h):
       prompt: (
         <>
           <p>
-            Functions are values. Write <C>compose(f, g)</C>, which returns a new function computing f(g(x)); <C>apply_n(f, n, x)</C>, which applies f to x n times (n = 0 returns x); and <C>make_counter()</C>, which returns a function that gives 1, 2, 3, … on successive calls, keeping its count in an enclosing variable with <C>nonlocal</C> (separate counters must not share a count).
+            Functions can call other functions. Write <C>square(x)</C>; <C>hypotenuse(a, b)</C>, the longest side of a right-angled triangle with shorter sides a and b, using <C>square</C> and <C>math.sqrt</C>; and <C>triangle_perimeter(a, b)</C>, the sum of all three sides, using <C>hypotenuse</C>.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def compose(f, g):
-    return f
+        starter: `import math
 
-def apply_n(f, n, x):
-    return f(x)
-
-def make_counter():
-    return lambda: 1
-`,
-        solution: `def compose(f, g):
-    def h(x):
-        return f(g(x))
-    return h
-
-def apply_n(f, n, x):
-    for _ in range(n):
-        x = f(x)
+def square(x):
     return x
 
-def make_counter():
-    count = 0
-    def next_value():
-        nonlocal count
-        count += 1
-        return count
-    return next_value
+def hypotenuse(a, b):
+    return a + b
+
+def triangle_perimeter(a, b):
+    return a + b
+`,
+        solution: `import math
+
+def square(x):
+    return x * x
+
+def hypotenuse(a, b):
+    return math.sqrt(square(a) + square(b))
+
+def triangle_perimeter(a, b):
+    return a + b + hypotenuse(a, b)
 `,
         tests: [
-          { name: "compose", code: `inc = lambda x: x + 1
-dbl = lambda x: 2 * x
-assert compose(inc, dbl)(5) == 11 and compose(dbl, inc)(5) == 12, 'f(g(x)): the inner function runs first.'` },
-          { name: "apply", code: `assert apply_n(lambda x: x * 2, 10, 1) == 1024 and apply_n(str.upper, 0, 'a') == 'a' and apply_n(lambda s: s + '!', 3, 'hi') == 'hi!!!'` },
-          { name: "counter", code: `c1, c2 = make_counter(), make_counter()
-assert [c1(), c1(), c1()] == [1, 2, 3] and c2() == 1 and c1() == 4, 'Each counter keeps its own count.'` },
+          { name: "square", code: `assert square(3) == 9 and square(-4) == 16 and square(0.5) == 0.25` },
+          { name: "hypotenuse", code: `assert hypotenuse(3, 4) == 5.0 and hypotenuse(5, 12) == 13.0 and abs(hypotenuse(1, 1) - 2 ** 0.5) < 1e-12, 'Pythagoras: the square root of a² + b².'` },
+          { name: "perimeter", code: `assert triangle_perimeter(3, 4) == 12.0 and triangle_perimeter(6, 8) == 24.0, 'Add the two short sides and the hypotenuse.'` },
         ],
       },
     },

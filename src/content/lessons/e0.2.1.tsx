@@ -206,19 +206,19 @@ else:
       rung: "apply",
       prompt: (
         <>
-          <Code>{`def f(x):
-    if x > 10:
-        return "big"
-    elif x > 5:
-        return "medium"
-    elif x > 10:
-        return "huge"
-    return "small"
-print([f(x) for x in (3, 5, 6, 11, 100)])`}</Code>
+          <Code>{`x = 100
+if x > 10:
+    print("big")
+elif x > 5:
+    print("medium")
+elif x > 50:
+    print("huge")
+else:
+    print("small")`}</Code>
           <p>Only the first true branch runs. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["['small', 'small', 'medium', 'big', 'big']", "['small', 'medium', 'medium', 'big', 'huge']", "['small', 'small', 'medium', 'big', 'huge']", "['small', 'medium', 'medium', 'big', 'big']"], correct: [0] },
+      answer: { kind: "choice", options: ["big", "huge", "big and then huge", "medium"], correct: [0] },
     },
     {
       key: "write",

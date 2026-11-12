@@ -90,6 +90,27 @@ int(3.9)            # 3, the decimal part is dropped
         </p>
       </Example>
 
+      <Definition title="lists">
+        <p>
+          A <strong>list</strong> holds several values in order, written in square brackets: <C>xs = [3, 1, 2]</C>.
+          Positions count from 0, so <C>xs[0]</C> is <C>3</C>, and <C>xs[-1]</C> is the last item, <C>2</C>. A few
+          built-in functions work on a whole list of numbers at once:
+        </p>
+        <Code>{`
+xs = [3, 1, 2]
+len(xs)       # 3, the number of items
+sum(xs)       # 6
+min(xs)       # 1
+max(xs)       # 3
+sorted(xs)    # [1, 2, 3], a new list in increasing order
+xs[:2]        # [3, 1], the items before position 2
+xs[2:]        # [2], the items from position 2 on
+5 in xs       # False, since 5 is not an item of xs
+xs.index(2)   # 2, the position of the first 2
+`}</Code>
+        <p>Later lessons do much more with lists; these are enough to start.</p>
+      </Definition>
+
       <Remark title="floats are approximate">
         <p>
           In Python, <C>0.1 + 0.2</C> gives <C>0.30000000000000004</C>. This is not a bug in Python: 0.1 has no exact
@@ -204,42 +225,33 @@ label = raw + " items"
       prompt: (
         <>
           <p>
-            Write <C>kind(value)</C>, which returns <C>"bool"</C>, <C>"int"</C>, <C>"float"</C>, <C>"str"</C>, <C>"list"</C> or <C>"other"</C> (careful: <C>True</C> is also an int, so test for bool first). Then write <C>to_number(text)</C>: after removing spaces at both ends, return an <C>int</C> if the text is a whole number with an optional sign, a <C>float</C> if it is a decimal such as <C>"-2.5"</C> or <C>"3."</C>, and <C>None</C> for anything else. Use <C>try</C> and <C>except ValueError</C>.
+            Converting between types answers useful questions. Write <C>int_part(x)</C> and <C>frac_part(x)</C>, the whole-number part of a positive float and what is left over (so <C>int_part(3.75)</C> is 3 and <C>frac_part(3.75)</C> is 0.75), and <C>digit_count(n)</C>, the number of digits of a whole number n ≥ 0, by converting it to a string.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def kind(value):
-    return type(value).__name__
+        starter: `def int_part(x):
+    return x
 
-def to_number(text):
-    return float(text)
+def frac_part(x):
+    return 0.0
+
+def digit_count(n):
+    return n
 `,
-        solution: `def kind(value):
-    if isinstance(value, bool):
-        return 'bool'
-    for t in (int, float, str, list):
-        if isinstance(value, t):
-            return t.__name__
-    return 'other'
+        solution: `def int_part(x):
+    return int(x)
 
-def to_number(text):
-    text = text.strip()
-    try:
-        return int(text)
-    except ValueError:
-        pass
-    try:
-        return float(text)
-    except ValueError:
-        return None
+def frac_part(x):
+    return x - int(x)
+
+def digit_count(n):
+    return len(str(n))
 `,
         tests: [
-          { name: "kind", code: `assert [kind(v) for v in (True, 3, 3.0, '3', [3], (3,), None)] == ['bool', 'int', 'float', 'str', 'list', 'other', 'other'], 'Check bool before int.'` },
-          { name: "numbers", code: `r = [to_number(t) for t in ('42', ' -7 ', '+3', '2.5', '3.', '-0.25')]
-assert r == [42, -7, 3, 2.5, 3.0, -0.25] and [type(x).__name__ for x in r] == ['int', 'int', 'int', 'float', 'float', 'float'], 'Whole numbers become int, decimals float.'` },
-          { name: "not numbers", code: `assert [to_number(t) for t in ('', 'abc', '4 2', '1,000', '--1')] == [None] * 5, 'Anything else gives None.'` },
+          { name: "parts", code: `assert int_part(3.75) == 3 and type(int_part(3.75)) is int and frac_part(3.75) == 0.75 and int_part(7.0) == 7 and frac_part(7.0) == 0.0, 'int drops the decimal part.'` },
+          { name: "digits", code: `assert digit_count(0) == 1 and digit_count(7) == 1 and digit_count(2026) == 4 and digit_count(10 ** 30) == 31, 'str turns the number into its digits; len counts them.'` },
         ],
       },
     },

@@ -142,28 +142,29 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: (
         <>
-          <Code>{`pts = [1, 2, 3, 10, 11, 12]
-centres = [2, 11]
-labels = [min(range(2), key=lambda k: abs(p - centres[k])) for p in pts]
-print(labels)`}</Code>
-          <p>Clustering assigns each point to its nearest centre. What does this print?</p>
+          <Code>{`x = 9
+c0, c1 = 2, 11    # two cluster centres
+if abs(x - c0) < abs(x - c1):
+    print(0)
+else:
+    print(1)`}</Code>
+          <p>Clustering assigns each point to its nearest centre. Which centre does 9 join?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["[0, 0, 0, 1, 1, 1]", "[0, 1, 0, 1, 0, 1]", "[1, 1, 1, 0, 0, 0]", "[0, 0, 1, 1, 1, 1]"], correct: [0] },
+      answer: { kind: "numeric", value: 1 },
     },
     {
       key: "read2",
       rung: "apply",
       prompt: (
         <>
-          <Code>{`xs = [1, 2, 3, 10, 11, 30]
-cs = [0, 12]
-groups = {c: [x for x in xs if min(cs, key=lambda c2: abs(x - c2)) == c] for c in cs}
-print(groups, [sum(g) / len(g) for g in groups.values()])`}</Code>
-          <p>One assignment step and one update step of k-means. What does this print?</p>
+          <Code>{`group0 = [1, 2, 3]       # the points nearest centre 0
+group1 = [10, 11, 30]    # the points nearest centre 1
+print(sum(group0) / len(group0), sum(group1) / len(group1))`}</Code>
+          <p>After assigning points, k-means moves each centre to the mean of its points. Where do the centres move?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["{0: [1, 2, 3], 12: [10, 11, 30]} [2.0, 17.0]", "{0: [1, 2, 3, 10], 12: [11, 30]} [4.0, 20.5]", "{0: [1, 2, 3], 12: [10, 11]} [2.0, 10.5]", "{0: [1, 2, 3], 12: [10, 11, 30]} [2.0, 12.0]"], correct: [0] },
+      answer: { kind: "choice", options: ["2.0 17.0", "2.0 11.0", "2.0 12.0", "3.0 17.0"], correct: [0] },
     },
     {
       key: "write",
@@ -171,30 +172,29 @@ print(groups, [sum(g) / len(g) for g in groups.values()])`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>kmeans_1d(xs, centres, steps)</C>, which runs k-means on numbers: assign each x to its nearest centre, move each centre to the mean of its points (leave it if it has none), and repeat <C>steps</C> times. Return the sorted list of centres.
+            Write <C>nearest(x, c0, c1)</C>, which returns 0 or 1, the index of the centre nearer to x (0 on a tie), and <C>new_centre(points)</C>, the mean of a non-empty list of numbers: the two steps of k-means in one dimension.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def kmeans_1d(xs, centres, steps):
-    return sorted(centres)
+        starter: `def nearest(x, c0, c1):
+    return 0
+
+def new_centre(points):
+    return points[0]
 `,
-        solution: `def kmeans_1d(xs, centres, steps):
-    c = list(centres)
-    for _ in range(steps):
-        groups = [[] for _ in c]
-        for x in xs:
-            k = min(range(len(c)), key=lambda i: abs(x - c[i]))
-            groups[k].append(x)
-        c = [sum(g) / len(g) if g else c[i] for i, g in enumerate(groups)]
-    return sorted(c)
+        solution: `def nearest(x, c0, c1):
+    if abs(x - c1) < abs(x - c0):
+        return 1
+    return 0
+
+def new_centre(points):
+    return sum(points) / len(points)
 `,
         tests: [
-          { name: "two groups", code: `c = kmeans_1d([1, 2, 3, 10, 11, 12], [0, 5], 10)
-assert abs(c[0] - 2) < 1e-9 and abs(c[1] - 11) < 1e-9, 'Each centre should settle at the mean of its group.'` },
-          { name: "empty cluster", code: `c = kmeans_1d([1, 2, 3], [2, 100], 3)
-assert abs(c[0] - 2) < 1e-9 and c[1] == 100, 'A centre with no points stays where it is.'` },
+          { name: "nearest", code: `assert nearest(9, 2, 11) == 1 and nearest(3, 2, 11) == 0 and nearest(6.5, 2, 11) == 0 and nearest(-5, 11, 2) == 1, 'Compare the two distances; a tie goes to centre 0.'` },
+          { name: "centre", code: `assert new_centre([1, 2, 3]) == 2.0 and new_centre([10, 11, 30]) == 17.0 and new_centre([4]) == 4.0, 'The new centre is the mean of its points.'` },
         ],
       },
     },
@@ -204,57 +204,28 @@ assert abs(c[0] - 2) < 1e-9 and c[1] == 100, 'A centre with no points stays wher
       prompt: (
         <>
           <p>
-            Write <C>kmeans(points, centres, steps)</C> for points in the plane given as (x, y) tuples: alternate assigning each point to its nearest centre (the lowest index on ties) and moving each centre to the mean of its points (a centre with no points stays where it is), for at most <C>steps</C> rounds or until the labels stop changing. Return (centres, labels) with centres as a list of (x, y) tuples. Then write <C>inertia(points, centres, labels)</C>, the sum of squared distances from points to their centres.
+            k-means tries to make the inertia small: the sum, over the points, of the squared distance to the nearer centre. Write <C>cost(x, c0, c1)</C>, the squared distance from x to the nearer of the two centres, and <C>inertia(xs, c0, c1)</C> for a list xs of exactly three points. For example, with centres 2 and 11, the points 1, 3 and 10 have inertia 1 + 1 + 1 = 3.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def kmeans(points, centres, steps):
-    return list(centres), [0] * len(points)
+        starter: `def cost(x, c0, c1):
+    return 0
 
-def inertia(points, centres, labels):
-    return 0.0
+def inertia(xs, c0, c1):
+    return 0
 `,
-        solution: `def _d2(p, c):
-    return (p[0] - c[0]) ** 2 + (p[1] - c[1]) ** 2
+        solution: `def cost(x, c0, c1):
+    return min((x - c0) ** 2, (x - c1) ** 2)
 
-def kmeans(points, centres, steps):
-    centres = [tuple(c) for c in centres]
-    labels = None
-    for _ in range(steps):
-        new = [min(range(len(centres)), key=lambda j: _d2(p, centres[j])) for p in points]
-        if new == labels:
-            break
-        labels = new
-        for j in range(len(centres)):
-            mine = [p for p, l in zip(points, labels) if l == j]
-            if mine:
-                centres[j] = (sum(p[0] for p in mine) / len(mine), sum(p[1] for p in mine) / len(mine))
-    return centres, labels
-
-def inertia(points, centres, labels):
-    return sum(_d2(p, centres[l]) for p, l in zip(points, labels))
+def inertia(xs, c0, c1):
+    return cost(xs[0], c0, c1) + cost(xs[1], c0, c1) + cost(xs[2], c0, c1)
 `,
         tests: [
-          { name: "blobs", code: `pts = [(0, 0), (0, 1), (1, 0), (10, 10), (10, 11), (11, 10)]
-cs, labels = kmeans(pts, [(0, 0), (1, 0)], 20)
-assert labels in ([0, 0, 0, 1, 1, 1], [1, 1, 1, 0, 0, 0]) and sorted(cs) == [(1 / 3, 1 / 3), (31 / 3, 31 / 3)], 'Two clusters, centres at the means.'` },
-          { name: "inertia", code: `pts = [(0, 0), (2, 0), (10, 0)]
-assert inertia(pts, [(1, 0), (10, 0)], [0, 0, 1]) == 2 and inertia(pts, [(4, 0)], [0, 0, 0]) == 16 + 4 + 36` },
-          { name: "empty", code: `pts = [(0, 0), (1, 0)]
-cs, labels = kmeans(pts, [(0, 0), (100, 100)], 5)
-assert cs[1] == (100, 100) and labels == [0, 0] and cs[0] == (0.5, 0), 'A centre with no points stays put.'` },
-          { name: "monotone", code: `import random
-random.seed(1)
-pts = [(random.gauss(cx, 1), random.gauss(cy, 1)) for cx, cy in [(0, 0), (6, 0), (3, 5)] for _ in range(30)]
-init = pts[:3]
-prev = float('inf')
-for s in range(1, 8):
-    cs, labels = kmeans(pts, init, s)
-    J = inertia(pts, cs, labels)
-    assert J <= prev + 1e-9, 'Each round of k-means can only lower the inertia.'
-    prev = J` },
+          { name: "cost", code: `assert cost(1, 2, 11) == 1 and cost(9, 2, 11) == 4 and cost(2, 2, 11) == 0, 'Square the distance to whichever centre is nearer.'` },
+          { name: "inertia", code: `assert inertia([1, 3, 10], 2, 11) == 3 and inertia([1, 3, 10], 0, 100) == 1 + 9 + 100, 'Add the three costs.'` },
+          { name: "better centres", code: `assert inertia([1, 2, 30], 1.5, 30) < inertia([1, 2, 30], 2, 11), 'Centres at the group means give a smaller inertia.'` },
         ],
       },
     },

@@ -183,8 +183,12 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: (
         <>
-          <Code>{`f = lambda x: 2 * x + 3
-g = lambda x: (x - 3) / 2
+          <Code>{`def f(x):
+    return 2 * x + 3
+
+def g(x):
+    return (x - 3) / 2
+
 print(f(g(11)), g(f(11)), f(f(1)))`}</Code>
           <p>g undoes f. What does this print?</p>
         </>
@@ -196,18 +200,20 @@ print(f(g(11)), g(f(11)), f(f(1)))`}</Code>
       rung: "apply",
       prompt: (
         <>
-          <Code>{`def compose(*fs):
-    def h(x):
-        for f in reversed(fs):
-            x = f(x)
-        return x
-    return h
-g = compose(lambda x: x + 1, lambda x: 2 * x, lambda x: x - 3)
-print(g(5), g(0))`}</Code>
-          <p>compose(f, g, h)(x) means f(g(h(x))). What does this print?</p>
+          <Code>{`def f(x):
+    return x + 1
+
+def g(x):
+    return 2 * x
+
+def h(x):
+    return x - 3
+
+print(f(g(h(5))), h(g(f(5))))`}</Code>
+          <p>Composition applies the innermost function first, so the order matters. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["5 -5", "9 -5", "5 -2", "13 3"], correct: [0] },
+      answer: { kind: "choice", options: ["5 9", "9 5", "5 5", "13 9"], correct: [0] },
     },
     {
       key: "write",
@@ -215,29 +221,31 @@ print(g(5), g(0))`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>compose(f, g)</C>, which returns the function x ↦ f(g(x)), and <C>inverse_linear(m, c)</C>, which returns the inverse of x ↦ mx + c as a function (m ≠ 0).
+            Write <C>compose_at(f, g, x)</C>, the value (f ∘ g)(x) = f(g(x)), and <C>inverse_linear(m, c, y)</C>, the value at y of the inverse of x ↦ mx + c (m ≠ 0).
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def compose(f, g):
-    return lambda x: g(f(x))
+        starter: `def compose_at(f, g, x):
+    return g(f(x))
 
-def inverse_linear(m, c):
-    return lambda y: m * y + c
+def inverse_linear(m, c, y):
+    return m * y + c
 `,
-        solution: `def compose(f, g):
-    return lambda x: f(g(x))
+        solution: `def compose_at(f, g, x):
+    return f(g(x))
 
-def inverse_linear(m, c):
-    return lambda y: (y - c) / m
+def inverse_linear(m, c, y):
+    return (y - c) / m
 `,
         tests: [
-          { name: "order", code: `h = compose(lambda x: x + 1, lambda x: x * x)
-assert h(3) == 10, 'f ∘ g applies g first: 3² + 1 = 10.'` },
-          { name: "inverse", code: `inv = inverse_linear(2, 3)
-assert all(abs(inv(2 * x + 3) - x) < 1e-9 for x in range(-5, 6)), 'Undo the steps in reverse order: subtract c, then divide by m.'` },
+          { name: "compose", code: `def f(x):
+    return x + 1
+def g(x):
+    return x * x
+assert compose_at(f, g, 3) == 10 and compose_at(g, f, 3) == 16, 'f ∘ g applies g first: 3² + 1 = 10.'` },
+          { name: "inverse", code: `assert all(abs(inverse_linear(2, 3, 2 * x + 3) - x) < 1e-9 for x in range(-5, 6)) and inverse_linear(-1, 4, 0) == 4, 'Undo the steps in reverse order: subtract c, then divide by m.'` },
         ],
       },
     },
@@ -247,54 +255,44 @@ assert all(abs(inv(2 * x + 3) - x) < 1e-9 for x in range(-5, 6)), 'Undo the step
       prompt: (
         <>
           <p>
-            Write <C>inverse(f, lo, hi)</C> for a continuous, strictly increasing f on [lo, hi]. It returns a function g with g(y) ≈ f⁻¹(y) for f(lo) ≤ y ≤ f(hi), found by bisection to within 1e−12, and raises <C>ValueError</C> for y outside that range. Also write <C>iterate(f, n)</C>, which returns f composed with itself n times (the identity when n = 0).
+            Write <C>inverse_at(f, lo, hi, y)</C> for a continuous, strictly increasing f on [lo, hi] and f(lo) ≤ y ≤ f(hi): it returns x with f(x) ≈ y, found by bisection until the interval is shorter than 1e−12. Also write <C>iterate(f, n, x)</C>, the value of f applied n times to x (just x when n = 0).
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def inverse(f, lo, hi):
-    return lambda y: y
+        starter: `def inverse_at(f, lo, hi, y):
+    return y
 
-def iterate(f, n):
-    return f
+def iterate(f, n, x):
+    return f(x)
 `,
-        solution: `def inverse(f, lo, hi):
-    def g(y):
-        if not f(lo) <= y <= f(hi):
-            raise ValueError('out of range')
-        a, b = lo, hi
-        while b - a > 1e-12:
-            m = (a + b) / 2
-            if f(m) < y:
-                a = m
-            else:
-                b = m
-        return (a + b) / 2
-    return g
+        solution: `def inverse_at(f, lo, hi, y):
+    a, b = lo, hi
+    while b - a > 1e-12:
+        m = (a + b) / 2
+        if f(m) < y:
+            a = m
+        else:
+            b = m
+    return (a + b) / 2
 
-def iterate(f, n):
-    def h(x):
-        for _ in range(n):
-            x = f(x)
-        return x
-    return h
+def iterate(f, n, x):
+    for _ in range(n):
+        x = f(x)
+    return x
 `,
         tests: [
-          { name: "cube root", code: `g = inverse(lambda x: x ** 3, 0, 10)
-assert abs(g(27) - 3) < 1e-9 and abs(g(2) - 2 ** (1 / 3)) < 1e-9, 'Bisect on x until f(x) = y.'` },
-          { name: "round trip", code: `import math
-f = lambda x: x + math.exp(x)
-g = inverse(f, -5, 5)
-assert all(abs(f(g(y)) - y) < 1e-9 for y in [-4, 0, 1, 2.5, 100]), 'f(g(y)) should be y.'` },
-          { name: "range", code: `g = inverse(lambda x: 2 * x, 0, 1)
-try:
-    g(3)
-    ok = False
-except ValueError:
-    ok = True
-assert ok, 'y must lie between f(lo) and f(hi).'` },
-          { name: "iterate", code: `assert iterate(lambda x: 2 * x, 10)(1) == 1024 and iterate(lambda x: x + 3, 0)(7) == 7 and iterate(lambda s: s + 'a', 3)('') == 'aaa', 'Apply f n times.'` },
+          { name: "cube root", code: `def cube(x):
+    return x ** 3
+assert abs(inverse_at(cube, 0, 10, 27) - 3) < 1e-9 and abs(inverse_at(cube, 0, 10, 2) - 2 ** (1 / 3)) < 1e-9, 'Bisect on x until f(x) = y.'` },
+          { name: "undoes f", code: `import math
+def f(x):
+    return x + math.exp(x)
+assert all(abs(f(inverse_at(f, -5, 5, y)) - y) < 1e-9 for y in [-4, 0, 1, 2.5, 100]), 'f of the answer should be y.'` },
+          { name: "iterate", code: `def double(x):
+    return 2 * x
+assert iterate(double, 0, 3) == 3 and iterate(double, 5, 1) == 32, 'Apply f again and again, n times.'` },
         ],
       },
     },

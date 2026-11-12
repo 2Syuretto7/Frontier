@@ -139,9 +139,11 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: (
         <>
-          <Code>{`scores = {"cat": 2.1, "dog": 3.4, "fox": 0.7}
-print(max(scores, key=scores.get))`}</Code>
-          <p>A classifier outputs a score per class and predicts the highest. What does this print?</p>
+          <Code>{`classes = ["cat", "dog", "fox"]
+scores = [2.1, 3.4, 0.7]
+best = max(scores)
+print(classes[scores.index(best)])`}</Code>
+          <p>A classifier outputs a score per class and predicts the class with the highest score. What does this print?</p>
         </>
       ),
       answer: { kind: "choice", options: ["dog", "cat", "fox", "3.4"], correct: [0] },
@@ -151,16 +153,14 @@ print(max(scores, key=scores.get))`}</Code>
       rung: "apply",
       prompt: (
         <>
-          <Code>{`ys    = [1, 0, 1, 1, 0, 0, 1, 0]
-preds = [1, 0, 0, 1, 1, 0, 1, 0]
-tp = sum(y == 1 and p == 1 for y, p in zip(ys, preds))
-fp = sum(y == 0 and p == 1 for y, p in zip(ys, preds))
-fn = sum(y == 1 and p == 0 for y, p in zip(ys, preds))
-print(tp, fp, fn, tp / (tp + fp), tp / (tp + fn))`}</Code>
-          <p>True positives, false positives, false negatives, precision and recall. What does this print?</p>
+          <Code>{`tp, fp, fn = 3, 1, 2    # true positives, false positives, false negatives
+precision = tp / (tp + fp)
+recall = tp / (tp + fn)
+print(precision, recall, 2 * precision * recall / (precision + recall))`}</Code>
+          <p>Precision, recall and their harmonic mean, F1. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["3 1 1 0.75 0.75", "3 1 1 0.75 0.6", "4 1 1 0.8 0.8", "3 2 1 0.6 0.75"], correct: [0] },
+      answer: { kind: "choice", options: ["0.75 0.6 0.6666666666666665", "0.6 0.75 0.6666666666666665", "0.75 0.6 0.675", "0.75 0.75 0.75"], correct: [0] },
     },
     {
       key: "write",
@@ -168,30 +168,27 @@ print(tp, fp, fn, tp / (tp + fp), tp / (tp + fn))`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>accuracy(ys, preds)</C> and <C>majority_baseline(train_ys, test_ys)</C>, the accuracy on the test labels of always predicting the most common training label. Every classifier should beat this baseline.
+            Write <C>accuracy(tp, tn, fp, fn)</C>, the fraction of predictions that are right, from the four counts of a binary classifier, and <C>majority_baseline(n_pos, n_neg)</C>, the accuracy of always predicting whichever class is more common. Every classifier should beat this baseline.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def accuracy(ys, preds):
-    return 1.0
+        starter: `def accuracy(tp, tn, fp, fn):
+    return tp / (tp + fp)
 
-def majority_baseline(train_ys, test_ys):
-    return 1.0
+def majority_baseline(n_pos, n_neg):
+    return 0.5
 `,
-        solution: `from collections import Counter
+        solution: `def accuracy(tp, tn, fp, fn):
+    return (tp + tn) / (tp + tn + fp + fn)
 
-def accuracy(ys, preds):
-    return sum(y == p for y, p in zip(ys, preds)) / len(ys)
-
-def majority_baseline(train_ys, test_ys):
-    top = Counter(train_ys).most_common(1)[0][0]
-    return accuracy(test_ys, [top] * len(test_ys))
+def majority_baseline(n_pos, n_neg):
+    return max(n_pos, n_neg) / (n_pos + n_neg)
 `,
         tests: [
-          { name: "accuracy", code: `assert accuracy(['a', 'b', 'a', 'a'], ['a', 'a', 'a', 'b']) == 0.5, 'Two of four are right.'` },
-          { name: "baseline", code: `assert majority_baseline(['spam', 'ham', 'ham', 'ham'], ['ham', 'spam', 'ham', 'ham', 'ham']) == 0.8, 'Always predicting ham gets 4 of 5 right.'` },
+          { name: "accuracy", code: `assert accuracy(3, 4, 1, 2) == 0.7 and accuracy(5, 5, 0, 0) == 1.0, 'Right answers are true positives and true negatives.'` },
+          { name: "baseline", code: `assert majority_baseline(1, 4) == 0.8 and majority_baseline(9, 1) == 0.9 and majority_baseline(2, 2) == 0.5, 'Always predicting the common class gets that class right every time.'` },
         ],
       },
     },
@@ -201,55 +198,35 @@ def majority_baseline(train_ys, test_ys):
       prompt: (
         <>
           <p>
-            Classification with more than two classes. Write <C>confusion(ys, preds, labels)</C>, the matrix as a list of lists where entry [i][j] counts examples whose true label is labels[i] and predicted label is labels[j]. From it, write <C>recalls(ys, preds, labels)</C>, the recall of each class (0.0 for a class with no examples), and <C>macro_f1(ys, preds, labels)</C>, the unweighted mean over classes of 2PR/(P + R), with F1 = 0 when P + R = 0.
+            Accuracy hides which mistakes a classifier makes. Write <C>precision(tp, fp)</C>, the fraction of predicted positives that are real, <C>recall(tp, fn)</C>, the fraction of real positives that are found, and <C>f1(tp, fp, fn)</C>, their harmonic mean 2PR/(P + R). Assume every denominator is positive.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def confusion(ys, preds, labels):
-    return [[0] * len(labels) for _ in labels]
+        starter: `def precision(tp, fp):
+    return 1.0
 
-def recalls(ys, preds, labels):
-    return [1.0] * len(labels)
+def recall(tp, fn):
+    return 1.0
 
-def macro_f1(ys, preds, labels):
+def f1(tp, fp, fn):
     return 1.0
 `,
-        solution: `def confusion(ys, preds, labels):
-    idx = {l: i for i, l in enumerate(labels)}
-    M = [[0] * len(labels) for _ in labels]
-    for y, p in zip(ys, preds):
-        M[idx[y]][idx[p]] += 1
-    return M
+        solution: `def precision(tp, fp):
+    return tp / (tp + fp)
 
-def recalls(ys, preds, labels):
-    M = confusion(ys, preds, labels)
-    return [M[i][i] / sum(M[i]) if sum(M[i]) else 0.0 for i in range(len(labels))]
+def recall(tp, fn):
+    return tp / (tp + fn)
 
-def macro_f1(ys, preds, labels):
-    M = confusion(ys, preds, labels)
-    k = len(labels)
-    f1s = []
-    for i in range(k):
-        col = sum(M[r][i] for r in range(k))
-        P = M[i][i] / col if col else 0.0
-        Rr = M[i][i] / sum(M[i]) if sum(M[i]) else 0.0
-        f1s.append(2 * P * Rr / (P + Rr) if P + Rr else 0.0)
-    return sum(f1s) / k
+def f1(tp, fp, fn):
+    p = precision(tp, fp)
+    r = recall(tp, fn)
+    return 2 * p * r / (p + r)
 `,
         tests: [
-          { name: "matrix", code: `ys = ['cat', 'dog', 'cat', 'bird', 'dog', 'cat']
-ps = ['cat', 'cat', 'cat', 'bird', 'dog', 'dog']
-assert confusion(ys, ps, ['bird', 'cat', 'dog']) == [[1, 0, 0], [0, 2, 1], [0, 1, 1]], 'Rows are true labels, columns predictions.'` },
-          { name: "recall", code: `ys = ['cat', 'dog', 'cat', 'bird', 'dog', 'cat']
-ps = ['cat', 'cat', 'cat', 'bird', 'dog', 'dog']
-r = recalls(ys, ps, ['bird', 'cat', 'dog', 'fish'])
-assert r[0] == 1.0 and abs(r[1] - 2 / 3) < 1e-12 and r[2] == 0.5 and r[3] == 0.0, 'A class with no examples gets recall 0.'` },
-          { name: "macro", code: `ys = ['cat', 'dog', 'cat', 'bird', 'dog', 'cat']
-ps = ['cat', 'cat', 'cat', 'bird', 'dog', 'dog']
-assert abs(macro_f1(ys, ps, ['bird', 'cat', 'dog']) - (1 + 2 / 3 + 0.5) / 3) < 1e-12, 'Average the per-class F1 scores.'
-assert macro_f1([0, 0, 0, 1], [0, 0, 0, 0], [0, 1]) == (2 * 0.75 / 1.75 + 0) / 2, 'Always predicting the majority class scores badly on the minority.'` },
+          { name: "precision and recall", code: `assert precision(3, 1) == 0.75 and recall(3, 2) == 0.6 and precision(5, 0) == 1.0, 'Precision divides by predicted positives, recall by real positives.'` },
+          { name: "f1", code: `assert abs(f1(3, 1, 2) - 2 / 3) < 1e-12 and abs(f1(1, 0, 9) - 2 * 0.1 / 1.1) < 1e-12, 'F1 is low when either precision or recall is low.'` },
         ],
       },
     },

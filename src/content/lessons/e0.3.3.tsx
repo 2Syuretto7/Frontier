@@ -254,7 +254,7 @@ assert c == 3, 'Pass the count in and return the new value.'` },
       prompt: (
         <>
           <p>
-            Keep state in a closure instead of a global. Write <C>make_account(balance)</C>, which returns a tuple of three functions (deposit, withdraw, history): <C>deposit(x)</C> and <C>withdraw(x)</C> change the balance shared through <C>nonlocal</C> and return the new balance; both raise <C>ValueError</C> for an amount that is not positive, and withdraw raises <C>ValueError</C> if the balance would go negative (leaving it unchanged). <C>history()</C> returns a new list of (kind, amount) for the successful operations.
+            Keep state in a closure instead of a global. Write <C>make_account(balance)</C>, which returns a tuple of three functions (deposit, withdraw, history): <C>deposit(x)</C> and <C>withdraw(x)</C> change the balance shared through <C>nonlocal</C> and return the balance; an amount that is not positive, or a withdrawal larger than the balance, is refused: it changes nothing and is not recorded. <C>history()</C> returns a new list of (kind, amount) for the successful operations.
           </p>
         </>
       ),
@@ -274,14 +274,14 @@ assert c == 3, 'Pass the count in and return the new value.'` },
     def deposit(x):
         nonlocal balance
         if x <= 0:
-            raise ValueError('amount must be positive')
+            return balance
         balance += x
         log.append(('deposit', x))
         return balance
     def withdraw(x):
         nonlocal balance
         if x <= 0 or x > balance:
-            raise ValueError('invalid withdrawal')
+            return balance
         balance -= x
         log.append(('withdraw', x))
         return balance
@@ -292,13 +292,8 @@ assert c == 3, 'Pass the count in and return the new value.'` },
         tests: [
           { name: "shared", code: `d, w, h = make_account(100)
 assert d(50) == 150 and w(30) == 120 and d(5) == 125, 'Deposits and withdrawals share one balance.'` },
-          { name: "errors", code: `d, w, h = make_account(100)
-for f, x in ((w, 101), (d, 0), (w, -5)):
-    try:
-        f(x)
-        assert False, 'Invalid amounts must raise ValueError.'
-    except ValueError:
-        pass
+          { name: "refused", code: `d, w, h = make_account(100)
+assert w(101) == 100 and d(0) == 100 and w(-5) == 100, 'Refused amounts leave the balance as it was.'
 assert w(100) == 0 and h() == [('withdraw', 100)], 'Failed operations change nothing and are not logged.'` },
           { name: "separate", code: `d1, w1, h1 = make_account(10)
 d2, w2, h2 = make_account(10)

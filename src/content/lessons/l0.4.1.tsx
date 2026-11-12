@@ -142,12 +142,11 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: (
         <>
-          <Code>{`facts = {"socrates": "man"}
-rules = {"man": "mortal"}
-x = "socrates"
-chain = [x]
-while chain[-1] in facts or chain[-1] in rules:
-    chain.append(facts.get(chain[-1]) or rules[chain[-1]])
+          <Code>{`rules = [("socrates", "man"), ("man", "mortal")]    # each pair: if A, then B
+chain = ["socrates"]
+for a, b in rules:
+    if chain[-1] == a:
+        chain.append(b)
 print(chain)`}</Code>
           <p>Symbolic AI chains facts and rules. What does this print?</p>
         </>
@@ -159,20 +158,20 @@ print(chain)`}</Code>
       rung: "apply",
       prompt: (
         <>
-          <Code>{`facts = {"rain"}
-rules = [({"rain"}, "wet"), ({"wet", "cold"}, "ice"), ({"wet"}, "slippery")]
+          <Code>{`facts = ["rain"]
+rules = [(["rain"], "wet"), (["wet", "cold"], "ice"), (["wet"], "slippery")]
 changed = True
 while changed:
     changed = False
     for body, head in rules:
-        if body <= facts and head not in facts:
-            facts.add(head)
+        if all(b in facts for b in body) and head not in facts:
+            facts.append(head)
             changed = True
 print(sorted(facts))`}</Code>
           <p>Forward chaining until nothing new can be derived. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["['rain', 'slippery', 'wet']", "['ice', 'rain', 'slippery', 'wet']", "['rain', 'wet']", "['rain', 'slippery', 'wet', 'cold']"], correct: [0] },
+      answer: { kind: "choice", options: ["['rain', 'slippery', 'wet']", "['ice', 'rain', 'slippery', 'wet']", "['rain', 'wet']", "['cold', 'rain', 'slippery', 'wet']"], correct: [0] },
     },
     {
       key: "write",
@@ -180,31 +179,31 @@ print(sorted(facts))`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>forward_chain(facts, rules)</C>, a tiny expert system. <C>facts</C> is a set of strings and each rule is a pair (set of premises, conclusion). Keep adding conclusions whose premises all hold until nothing changes, and return the final set.
+            Write <C>forward_chain(facts, rules)</C>, a tiny expert system. <C>facts</C> is a list of strings and each rule is a pair (list of premises, conclusion). Keep adding conclusions whose premises all hold until nothing changes, and return the final facts as a sorted list.
           </p>
         </>
       ),
       answer: {
         kind: "code",
         starter: `def forward_chain(facts, rules):
-    return set(facts)
+    return sorted(facts)
 `,
         solution: `def forward_chain(facts, rules):
-    known = set(facts)
+    known = list(facts)
     changed = True
     while changed:
         changed = False
         for premises, conclusion in rules:
-            if premises <= known and conclusion not in known:
-                known.add(conclusion)
+            if all(p in known for p in premises) and conclusion not in known:
+                known.append(conclusion)
                 changed = True
-    return known
+    return sorted(known)
 `,
         tests: [
-          { name: "chain", code: `rules = [({'fever', 'cough'}, 'flu'), ({'flu'}, 'rest'), ({'rash'}, 'allergy')]
-assert forward_chain({'fever', 'cough'}, rules) == {'fever', 'cough', 'flu', 'rest'}, 'flu follows, and then rest follows from flu.'` },
-          { name: "order", code: `rules = [({'b'}, 'c'), ({'a'}, 'b')]
-assert forward_chain({'a'}, rules) == {'a', 'b', 'c'}, 'Keep looping until nothing new is added.'` },
+          { name: "chain", code: `rules = [(['fever', 'cough'], 'flu'), (['flu'], 'rest'), (['rash'], 'allergy')]
+assert forward_chain(['fever', 'cough'], rules) == ['cough', 'fever', 'flu', 'rest'], 'flu follows, and then rest follows from flu.'` },
+          { name: "order", code: `rules = [(['b'], 'c'), (['a'], 'b')]
+assert forward_chain(['a'], rules) == ['a', 'b', 'c'], 'Keep looping until nothing new is added.'` },
         ],
       },
     },

@@ -92,6 +92,26 @@ seconds = t % 60            # 5
         </p>
       </Example>
 
+      <Definition title="modules">
+        <p>
+          Python ships with a large <strong>standard library</strong> of ready-made tools, grouped into modules. The
+          statement <C>import math</C> makes the module <C>math</C> available, and its tools are then written with a dot:
+        </p>
+        <Code>{`
+import math
+math.sqrt(2)        # 1.4142135623730951
+math.pi             # 3.141592653589793
+math.floor(3.7)     # 3, rounds down
+math.ceil(3.2)      # 4, rounds up
+math.gcd(12, 18)    # 6
+`}</Code>
+        <p>
+          Other standard modules work the same way: <C>random</C> for random numbers, <C>fractions</C> for exact
+          fractions, <C>statistics</C> for means and medians. A lesson that uses one says what the tool does where it
+          first appears.
+        </p>
+      </Definition>
+
       <Remark title="negative numbers">
         <p>
           Floor division rounds <em>down</em>, towards minus infinity, not towards zero. So <C>-7 // 2</C> is{" "}
@@ -193,7 +213,7 @@ secs = seconds % 60
       prompt: (
         <>
           <p>
-            Work with digits using only arithmetic, never <C>str</C>. Write <C>digit_sum(n)</C> for n ≥ 0 by repeatedly taking n % 10 and n // 10; <C>reverse_digits(n)</C>, the number with its digits reversed (so 1200 gives 21); and <C>is_armstrong(n)</C>, true when n equals the sum of its digits each raised to the power of the number of digits (153 = 1³ + 5³ + 3³).
+            Work with the digits of a three-digit number (100 ≤ n ≤ 999) using only <C>//</C> and <C>%</C>, never <C>str</C>. Write <C>digit_sum(n)</C>; <C>reverse_digits(n)</C>, the number with its digits reversed (so 120 gives 21); and <C>is_armstrong(n)</C>, True when n equals the sum of the cubes of its digits, as 153 = 1³ + 5³ + 3³ does.
           </p>
         </>
       ),
@@ -209,48 +229,28 @@ def is_armstrong(n):
     return False
 `,
         solution: `def digit_sum(n):
-    s = 0
-    while n > 0:
-        s += n % 10
-        n //= 10
-    return s
+    return n // 100 + n // 10 % 10 + n % 10
 
 def reverse_digits(n):
-    r = 0
-    while n > 0:
-        r = r * 10 + n % 10
-        n //= 10
-    return r
-
-def _digits(n):
-    k = 1
-    while n >= 10:
-        n //= 10
-        k += 1
-    return k
+    return n % 10 * 100 + n // 10 % 10 * 10 + n // 100
 
 def is_armstrong(n):
-    k = _digits(n)
-    s, m = 0, n
-    while m > 0:
-        s += (m % 10) ** k
-        m //= 10
-    return s == n
+    return (n // 100) ** 3 + (n // 10 % 10) ** 3 + (n % 10) ** 3 == n
 `,
         tests: [
-          { name: "sum", code: `assert digit_sum(0) == 0 and digit_sum(7) == 7 and digit_sum(9875) == 29 and digit_sum(10 ** 30) == 1` },
-          { name: "reverse", code: `assert reverse_digits(1234) == 4321 and reverse_digits(1200) == 21 and reverse_digits(0) == 0 and reverse_digits(5) == 5` },
-          { name: "armstrong", code: `assert [n for n in range(1000) if is_armstrong(n)] == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 153, 370, 371, 407] and is_armstrong(9474), 'Every one-digit number is an Armstrong number.'` },
+          { name: "sum", code: `assert digit_sum(100) == 1 and digit_sum(987) == 24 and digit_sum(505) == 10, 'n // 100, n // 10 % 10 and n % 10 are the three digits.'` },
+          { name: "reverse", code: `assert reverse_digits(123) == 321 and reverse_digits(120) == 21 and reverse_digits(100) == 1 and reverse_digits(909) == 909, 'Put the last digit first.'` },
+          { name: "armstrong", code: `assert [n for n in range(100, 1000) if is_armstrong(n)] == [153, 370, 371, 407], 'Cube each digit and add.'` },
           { name: "no str", code: `import builtins
 real = builtins.str
 def banned(*a, **k):
     raise AssertionError('Use arithmetic, not str.')
 builtins.str = banned
 try:
-    r = (digit_sum(4321), reverse_digits(4321), is_armstrong(371))
+    r = (digit_sum(432), reverse_digits(432), is_armstrong(371))
 finally:
     builtins.str = real
-assert r == (10, 1234, True)` },
+assert r == (9, 234, True)` },
         ],
       },
     },

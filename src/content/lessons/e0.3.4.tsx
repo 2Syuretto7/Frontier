@@ -201,7 +201,10 @@ def topper(lines):
     return (name, int(marks))
 
 def topper(lines):
-    best = max((parse(l) for l in lines), key=lambda t: t[1])
+    best = parse(lines[0])
+    for line in lines:
+        if parse(line)[1] > best[1]:
+            best = parse(line)
     return best[0]
 `,
         tests: [
@@ -216,7 +219,7 @@ def topper(lines):
       prompt: (
         <>
           <p>
-            Build a marks report from small functions. Write <C>parse_line(line)</C>, turning <C>"Asha: 78, 91, 66"</C> into <C>("Asha", [78, 91, 66])</C> (spaces may vary); <C>average(marks)</C>; <C>letter(avg)</C>, which is <C>"A"</C> from 85, <C>"B"</C> from 70, <C>"C"</C> from 55 and otherwise <C>"F"</C>; and <C>report(lines)</C>, a list of strings like <C>"Asha 78.3 B"</C> (average to one decimal place) sorted by average from highest, then by name. <C>report</C> must use the other three.
+            Build a marks report from small functions. Write <C>parse_line(line)</C>, turning <C>"Asha: 78, 91, 66"</C> into <C>("Asha", [78, 91, 66])</C> (spaces may vary); <C>average(marks)</C>; and <C>report(lines)</C>, a list of strings like <C>"Asha 78.3"</C> (average to one decimal place) sorted by average from highest, then by name. <C>report</C> must use the other two.
           </p>
         </>
       ),
@@ -228,9 +231,6 @@ def topper(lines):
 def average(marks):
     return 0.0
 
-def letter(avg):
-    return 'F'
-
 def report(lines):
     return []
 `,
@@ -241,28 +241,19 @@ def report(lines):
 def average(marks):
     return sum(marks) / len(marks)
 
-def letter(avg):
-    if avg >= 85:
-        return 'A'
-    if avg >= 70:
-        return 'B'
-    if avg >= 55:
-        return 'C'
-    return 'F'
-
 def report(lines):
     rows = []
     for line in lines:
         name, marks = parse_line(line)
         a = average(marks)
-        rows.append((-a, name, f'{name} {a:.1f} {letter(a)}'))
+        rows.append((-a, name, f'{name} {a:.1f}'))
     return [r[2] for r in sorted(rows)]
 `,
         tests: [
           { name: "parse", code: `assert parse_line('Asha: 78, 91, 66') == ('Asha', [78, 91, 66]) and parse_line(' Ravi :100,0 ') == ('Ravi', [100, 0])` },
-          { name: "letters", code: `assert [letter(x) for x in (100, 85, 84.9, 70, 55, 54.99, 0)] == ['A', 'A', 'B', 'B', 'C', 'F', 'F'] and average([1, 2]) == 1.5` },
+          { name: "average", code: `assert average([1, 2]) == 1.5 and average([78, 91, 66]) == 235 / 3` },
           { name: "report", code: `r = report(['Asha: 78, 91, 66', 'Zoya: 90, 80', 'Ravi: 85, 85', 'Dev: 40, 50, 60'])
-assert r == ['Ravi 85.0 A', 'Zoya 85.0 A', 'Asha 78.3 B', 'Dev 50.0 F'], 'Highest average first; ties by name.'` },
+assert r == ['Ravi 85.0', 'Zoya 85.0', 'Asha 78.3', 'Dev 50.0'], 'Highest average first; ties by name.'` },
         ],
       },
     },

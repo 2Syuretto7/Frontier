@@ -222,11 +222,10 @@ export const lesson: LessonContent = {
       rung: "apply",
       prompt: (
         <>
-          <Code>{`n = 0
-for k in range(1, 11):
-    n += k
-print(n)`}</Code>
-          <p>This adds the first ten counting numbers. What does it print?</p>
+          <Code>{`n = 10
+pairs = n // 2
+print(pairs * (n + 1))`}</Code>
+          <p>Gauss&rsquo;s trick pairs 1 with 10, 2 with 9, and so on: each pair adds to 11. What does it print?</p>
         </>
       ),
       answer: { kind: "numeric", value: 55 },
@@ -236,17 +235,15 @@ print(n)`}</Code>
       rung: "apply",
       prompt: (
         <>
-          <Code>{`n, steps = 27, 0
-while n != 1:
-    n = n // 2 if n % 2 == 0 else 3 * n + 1
-    steps += 1
-    if steps == 5:
-        print(n)
-print(steps)`}</Code>
-          <p>The Collatz rule halves even numbers and sends odd n to 3n + 1. What is printed first, after five steps from 27?</p>
+          <Code>{`n = 27
+n = 3 * n + 1    # 27 is odd
+n = n // 2       # the result is even
+n = 3 * n + 1    # and this one is odd
+print(n)`}</Code>
+          <p>The Collatz rule halves even numbers and sends odd n to 3n + 1. What does this print after three steps from 27?</p>
         </>
       ),
-      answer: { kind: "numeric", value: 31 },
+      answer: { kind: "numeric", value: 124 },
     },
     {
       key: "write",
@@ -254,7 +251,7 @@ print(steps)`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>digit_sum(n)</C>, the sum of the decimal digits of a natural number n, using <C>%</C> and <C>//</C> rather than converting to a string.
+            Write <C>digit_sum(n)</C>, the sum of the decimal digits of a natural number n below 1000, using <C>%</C> and <C>//</C> rather than converting to a string. For example, <C>digit_sum(472)</C> is 4 + 7 + 2 = 13.
           </p>
         </>
       ),
@@ -264,15 +261,14 @@ print(steps)`}</Code>
     return n % 10
 `,
         solution: `def digit_sum(n):
-    s = 0
-    while n > 0:
-        s += n % 10
-        n //= 10
-    return s
+    units = n % 10
+    tens = n // 10 % 10
+    hundreds = n // 100
+    return units + tens + hundreds
 `,
         tests: [
-          { name: "examples", code: `assert digit_sum(0) == 0 and digit_sum(7) == 7 and digit_sum(1234) == 10, 'n % 10 is the last digit and n // 10 drops it.'` },
-          { name: "large", code: `assert digit_sum(99999) == 45, 'Keep going until n reaches 0.'` },
+          { name: "examples", code: `assert digit_sum(0) == 0 and digit_sum(7) == 7 and digit_sum(472) == 13, 'n % 10 is the last digit and n // 10 drops it.'` },
+          { name: "all three digits", code: `assert digit_sum(999) == 27 and digit_sum(105) == 6 and digit_sum(40) == 4, 'n // 10 % 10 is the tens digit and n // 100 the hundreds digit.'` },
         ],
       },
     },
@@ -282,41 +278,28 @@ print(steps)`}</Code>
       prompt: (
         <>
           <p>
-            Write <C>to_base(n, b)</C>, which returns the digits of a natural number n in base b (2 ≤ b ≤ 10) as a string, most significant first, with <C>to_base(0, b) == "0"</C>, and <C>from_base(s, b)</C>, which turns such a string back into n by Horner&rsquo;s rule. Do not use <C>int(s, b)</C>, <C>bin</C> or <C>format</C>.
+            Place value works in any base b. Write <C>digit(n, b, k)</C>, the digit of n in base b that is worth b<sup>k</sup> (so k = 0 is the last digit), and <C>from_digits(d2, d1, d0, b)</C>, the number whose three base-b digits are d2, d1, d0, computed by Horner&rsquo;s rule as (d2·b + d1)·b + d0. For example, 13 in base 2 is 1101, so <C>digit(13, 2, 2)</C> is 1, and <C>from_digits(1, 0, 1, 2)</C> is 5.
           </p>
         </>
       ),
       answer: {
         kind: "code",
-        starter: `def to_base(n, b):
-    return str(n)
+        starter: `def digit(n, b, k):
+    return n % b
 
-def from_base(s, b):
-    return int(s)
+def from_digits(d2, d1, d0, b):
+    return d2 + d1 + d0
 `,
-        solution: `def to_base(n, b):
-    if n == 0:
-        return '0'
-    out = ''
-    while n > 0:
-        out = str(n % b) + out
-        n //= b
-    return out
+        solution: `def digit(n, b, k):
+    return n // b ** k % b
 
-def from_base(s, b):
-    n = 0
-    for ch in s:
-        n = n * b + int(ch)
-    return n
+def from_digits(d2, d1, d0, b):
+    return (d2 * b + d1) * b + d0
 `,
         tests: [
-          { name: "binary", code: `assert to_base(13, 2) == '1101' and to_base(1, 2) == '1' and to_base(0, 2) == '0', '13 = 8 + 4 + 1, so 1101.'` },
-          { name: "other bases", code: `assert to_base(255, 8) == '377' and to_base(100, 3) == '10201' and to_base(9, 10) == '9', 'Repeatedly take n % b and divide by b.'` },
-          { name: "back", code: `assert from_base('1101', 2) == 13 and from_base('377', 8) == 255 and from_base('0', 5) == 0, 'Horner: n = n·b + digit for each digit from the left.'` },
-          { name: "round trip", code: `assert all(from_base(to_base(n, b), b) == n for n in range(0, 500) for b in range(2, 11)), 'The two functions should undo each other.'` },
-          { name: "no shortcuts", code: `import inspect
-src = inspect.getsource(to_base) + inspect.getsource(from_base)
-assert 'bin(' not in src and 'format(' not in src and 'int(s, b)' not in src, 'Build the digits yourself.'` },
+          { name: "digits", code: `assert digit(13, 2, 0) == 1 and digit(13, 2, 1) == 0 and digit(13, 2, 2) == 1 and digit(255, 8, 2) == 3, 'Divide by b to the power k to drop the last k digits, then take % b.'` },
+          { name: "back", code: `assert from_digits(1, 0, 1, 2) == 5 and from_digits(3, 7, 7, 8) == 255 and from_digits(4, 7, 2, 10) == 472, 'Horner: (d2·b + d1)·b + d0.'` },
+          { name: "round trip", code: `assert all(from_digits(digit(n, b, 2), digit(n, b, 1), digit(n, b, 0), b) == n for b in range(2, 11) for n in range(b ** 3)), 'Taking a number apart and putting it back should give the same number.'` },
         ],
       },
     },
