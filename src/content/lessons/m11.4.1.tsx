@@ -287,7 +287,7 @@ lam, v = inverse_iteration(A, 1.8, np.ones(3), 20)
 assert abs(lam - 2.0) < 1e-9 and abs(abs(v[1]) - 1.0) < 1e-9` },
           { name: "rqi", code: `A = np.array([[2.0, 1.0], [1.0, 2.0]])
 h = rqi(A, np.array([1.0, 0.2]), 4)
-assert len(h) == 4 and abs(h[0] - (2 + 0.4) / 1.04) < 1e-12 and abs(h[3] - 3.0) < 1e-6 and abs(h[2] - 3.0) < 0.01` },
+assert len(h) == 4 and abs(h[0] - 2.48 / 1.04) < 1e-12 and abs(h[3] - 3.0) < 1e-6 and abs(h[2] - 3.0) < 0.01` },
         ],
       },
     },
