@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 function makeRng(seed: number) {
   let s = seed >>> 0;
@@ -78,8 +78,11 @@ function tsne(P: number[][], seed: number, iters = 500) {
 export function TsnePerplexityViz() {
   const [perp, setPerp] = useState(3);
   const [seed, setSeed] = useState(1);
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
   const data = useMemo(makeData, []);
-  const Y = useMemo(() => tsne(affinities(data.X, perp), seed), [data, perp, seed]);
+  // The optimisation is chaotic, so it runs only in the browser to keep server and client output identical.
+  const Y = useMemo(() => (ready ? tsne(affinities(data.X, perp), seed) : data.X.map(() => [0, 0])), [ready, data, perp, seed]);
   const cent = [0, 1, 2].map((k) => {
     const pts = Y.filter((_, i) => data.lab[i] === k);
     return [pts.reduce((a, p) => a + p[0], 0) / PER, pts.reduce((a, p) => a + p[1], 0) / PER];
@@ -104,12 +107,12 @@ export function TsnePerplexityViz() {
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: 420, display: "block", margin: "0 auto" }} role="img" aria-label="Two-dimensional t-SNE embedding of three clusters">
         <rect x={0.5} y={0.5} width={W - 1} height={H - 1} fill="none" stroke="var(--border)" />
-        {Y.map((p, i) => (
+        {ready && Y.map((p, i) => (
           <circle key={i} cx={PX(p[0])} cy={PY(p[1])} r={3} fill={COLS[data.lab[i]]} opacity={0.8} />
         ))}
       </svg>
       <div className="mono" style={{ fontSize: 13, margin: "6px 0" }}>
-        width ratio B/A: data 10.0, plot {(spread[1] / spread[0]).toFixed(1)}; gap ratio (B to C)/(A to B): data 4.0, plot {(dist(1, 2) / dist(0, 1)).toFixed(1)}
+        {ready ? `width ratio B/A: data 10.0, plot ${(spread[1] / spread[0]).toFixed(1)}; gap ratio (B to C)/(A to B): data 4.0, plot ${(dist(1, 2) / dist(0, 1)).toFixed(1)}` : "computing the embedding"}
       </div>
       <figcaption className="viz-caption" aria-live="polite">
         Cluster A (accent) and cluster C (muted) are tight; cluster B (red) is ten times wider. In the data, C is four times
