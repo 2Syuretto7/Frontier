@@ -255,7 +255,8 @@ assert skipped(deps, set()) == []` },
         <p>
           Write <C>flaky(history)</C>. history is a list of (commit, test, outcome) with outcome <C>&apos;pass&apos;</C> or{" "}
           <C>&apos;fail&apos;</C>. A test is flaky on a commit if it both passed and failed on that commit. Return a list of
-          (test, number_of_commits_on_which_it_was_flaky) for every test flaky at least once, most flaky first, ties by name.
+          (test, count) pairs, where count is the number of commits on which the test was flaky, for every test flaky at least
+          once, most flaky first, ties by name.
         </p>
       ),
       answer: {

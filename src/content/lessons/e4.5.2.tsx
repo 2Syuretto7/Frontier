@@ -178,8 +178,10 @@ print(x.nbytes // 10**6, v.nbytes // 10**6, c.nbytes // 10**6, v.base is x, c.ba
       rung: "apply",
       prompt: (
         <>
+          <Code>{`memory_budget(n_params, optimizer, dtype_bytes, batch,
+              tokens, hidden, layers, saved_per_layer)`}</Code>
           <p>
-            Write <C>memory_budget(n_params, optimizer, dtype_bytes, batch, tokens, hidden, layers, saved_per_layer)</C>,
+            Write this function,
             returning a dict of bytes with keys params, grads, optimizer, activations and total. Parameters and gradients take
             dtype_bytes each; the optimiser state is float32, with 0, 1 or 2 numbers per parameter for{" "}
             <C>&apos;sgd&apos;</C>, <C>&apos;momentum&apos;</C> and <C>&apos;adam&apos;</C>; activations are batch × tokens ×

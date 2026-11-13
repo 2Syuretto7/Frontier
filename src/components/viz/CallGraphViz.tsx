@@ -4,18 +4,18 @@ import { useState } from "react";
 
 const FUNCS: { name: string; file: string; x: number; y: number; calls: string[] }[] = [
   { name: "main", file: "train.py", x: 50, y: 8, calls: ["load_config", "build_model", "make_loader", "fit"] },
-  { name: "load_config", file: "config.py", x: 12, y: 30, calls: [] },
-  { name: "build_model", file: "models/__init__.py", x: 38, y: 30, calls: ["Transformer"] },
-  { name: "make_loader", file: "data/loader.py", x: 64, y: 30, calls: ["tokenize"] },
-  { name: "fit", file: "trainer.py", x: 88, y: 30, calls: ["train_step", "evaluate"] },
-  { name: "Transformer", file: "models/transformer.py", x: 30, y: 54, calls: ["attention"] },
-  { name: "tokenize", file: "data/tokenize.py", x: 58, y: 54, calls: [] },
-  { name: "train_step", file: "trainer.py", x: 78, y: 54, calls: ["loss_fn"] },
-  { name: "evaluate", file: "eval.py", x: 96, y: 54, calls: ["loss_fn"] },
-  { name: "attention", file: "models/attention.py", x: 30, y: 78, calls: [] },
+  { name: "load_config", file: "config.py", x: 11, y: 30, calls: [] },
+  { name: "build_model", file: "models/__init__.py", x: 35, y: 30, calls: ["Transformer"] },
+  { name: "make_loader", file: "data/loader.py", x: 61, y: 30, calls: ["tokenize"] },
+  { name: "fit", file: "trainer.py", x: 87, y: 30, calls: ["train_step", "evaluate"] },
+  { name: "Transformer", file: "models/transformer.py", x: 32, y: 54, calls: ["attention"] },
+  { name: "tokenize", file: "data/tokenize.py", x: 53, y: 54, calls: [] },
+  { name: "train_step", file: "trainer.py", x: 76, y: 54, calls: ["loss_fn"] },
+  { name: "evaluate", file: "eval.py", x: 98, y: 54, calls: ["loss_fn"] },
+  { name: "attention", file: "models/attention.py", x: 35, y: 78, calls: [] },
   { name: "loss_fn", file: "losses.py", x: 86, y: 78, calls: [] },
-  { name: "old_attention", file: "models/attention.py", x: 8, y: 78, calls: [] },
-  { name: "train_v1", file: "scripts/train_v1.py", x: 60, y: 92, calls: ["loss_fn", "old_attention"] },
+  { name: "old_attention", file: "models/attention.py", x: 11, y: 78, calls: [] },
+  { name: "train_v1", file: "scripts/train_v1.py", x: 58, y: 92, calls: ["loss_fn", "old_attention"] },
 ];
 const byName = Object.fromEntries(FUNCS.map((f) => [f.name, f]));
 
