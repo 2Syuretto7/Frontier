@@ -7,18 +7,20 @@ const T = 200;
 /** Distance to the optimum per coordinate for SGD and Adam on a quadratic whose two curvatures differ greatly. */
 export function AdamScaleViz() {
   const [rExp, setRExp] = useState(4);
-  const lam = [1, 10 ** -rExp];
+  const lam = [1, Number(`1e-${rExp}`)];
   const runs = useMemo(() => {
-    const l = [1, 10 ** -rExp];
+    const l = [1, Number(`1e-${rExp}`)];
     const sgd: number[][] = [[1, 1]], adam: number[][] = [[1, 1]];
     let x = [1, 1];
     for (let t = 0; t < T; t++) { x = x.map((v, i) => v - 1.9 * l[i] * v); sgd.push(x.map(Math.abs)); }
-    let y = [1, 1], m = [0, 0], v = [0, 0];
+    let y = [1, 1], m = [0, 0], v = [0, 0], p1 = 1, p2 = 1;
     for (let t = 1; t <= T; t++) {
+      p1 *= 0.9;
+      p2 *= 0.999;
       const g = y.map((val, i) => l[i] * val);
       m = m.map((mi, i) => 0.9 * mi + 0.1 * g[i]);
       v = v.map((vi, i) => 0.999 * vi + 0.001 * g[i] * g[i]);
-      y = y.map((val, i) => val - (0.02 * m[i] / (1 - 0.9 ** t)) / (Math.sqrt(v[i] / (1 - 0.999 ** t)) + 1e-12));
+      y = y.map((val, i) => val - (0.02 * m[i] / (1 - p1)) / (Math.sqrt(v[i] / (1 - p2)) + 1e-12));
       adam.push(y.map(Math.abs));
     }
     return { sgd, adam };
