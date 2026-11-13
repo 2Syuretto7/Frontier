@@ -73,8 +73,8 @@ export function InitScaleViz() {
           : k === 1
             ? "Variance 1/n is right for a linear or tanh layer, but ReLU halves the second moment each layer, so the scale shrinks by about √2 per layer."
             : k === 0
-              ? "Each layer multiplies the scale by about 0.11, so after 20 layers the signal is around 1e-19: the network outputs essentially nothing and gradients vanish."
-              : "Each layer multiplies the scale by about 8, so after 20 layers activations are around 1e15 and the loss overflows."}
+              ? "Each layer multiplies the scale by about 0.08, so after 20 layers the signal is around 1e-22: the network outputs essentially nothing and gradients vanish."
+              : "Each layer multiplies the scale by about 8, so after 20 layers activations are around 1e18 and the gradients and updates are just as absurdly large."}
       </figcaption>
     </figure>
   );

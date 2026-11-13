@@ -168,8 +168,8 @@ export const lesson: LessonContent = {
     <>
       <p>
         Every Linear so far drew its weights as randn(nin, nout) / √nin. Why that scale? Draw them with standard deviation
-        0.01 instead, a common guess, and a 20-layer network outputs numbers around 10⁻¹⁹. Draw them with standard deviation
-        1 and it outputs numbers around 10¹⁵. What is the right scale, and why does it depend on the activation function?
+        0.01 instead, a common guess, and a 20-layer ReLU network of width 128 outputs numbers around 10⁻²². Draw them with
+        standard deviation 1 and it outputs numbers around 10¹⁸. What is the right scale, and why does it depend on the activation function?
       </p>
     </>
   ),
