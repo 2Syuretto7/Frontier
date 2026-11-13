@@ -405,6 +405,37 @@ import { lesson as l3_8_1 } from "./l3.8.1";
 import { lesson as l3_8_2 } from "./l3.8.2";
 import { lesson as l3_8_3 } from "./l3.8.3";
 import { lesson as l3_8_4 } from "./l3.8.4";
+import { lesson as m6_1_1 } from "./m6.1.1";
+import { lesson as m6_1_2 } from "./m6.1.2";
+import { lesson as m6_1_3 } from "./m6.1.3";
+import { lesson as m6_1_4 } from "./m6.1.4";
+import { lesson as m6_2_1 } from "./m6.2.1";
+import { lesson as m6_2_2 } from "./m6.2.2";
+import { lesson as m6_2_3 } from "./m6.2.3";
+import { lesson as m6_2_4 } from "./m6.2.4";
+import { lesson as m6_3_1 } from "./m6.3.1";
+import { lesson as m6_3_2 } from "./m6.3.2";
+import { lesson as m6_3_3 } from "./m6.3.3";
+import { lesson as m6_3_4 } from "./m6.3.4";
+import { lesson as m6_3_5 } from "./m6.3.5";
+import { lesson as m6_4_1 } from "./m6.4.1";
+import { lesson as m6_4_2 } from "./m6.4.2";
+import { lesson as m6_4_3 } from "./m6.4.3";
+import { lesson as m6_4_4 } from "./m6.4.4";
+import { lesson as m6_4_5 } from "./m6.4.5";
+import { lesson as m6_5_1 } from "./m6.5.1";
+import { lesson as m6_5_2 } from "./m6.5.2";
+import { lesson as m6_5_3 } from "./m6.5.3";
+import { lesson as m6_5_4 } from "./m6.5.4";
+import { lesson as m6_6_1 } from "./m6.6.1";
+import { lesson as m6_6_2 } from "./m6.6.2";
+import { lesson as m6_6_3 } from "./m6.6.3";
+import { lesson as m6_6_4 } from "./m6.6.4";
+import { lesson as m6_6_5 } from "./m6.6.5";
+import { lesson as m6_7_1 } from "./m6.7.1";
+import { lesson as m6_7_2 } from "./m6.7.2";
+import { lesson as m6_7_3 } from "./m6.7.3";
+import { lesson as m6_7_4 } from "./m6.7.4";
 
 export const LESSONS: readonly LessonContent[] = [
   m0_1_1,
@@ -813,4 +844,35 @@ export const LESSONS: readonly LessonContent[] = [
   l3_8_2,
   l3_8_3,
   l3_8_4,
+  m6_1_1,
+  m6_1_2,
+  m6_1_3,
+  m6_1_4,
+  m6_2_1,
+  m6_2_2,
+  m6_2_3,
+  m6_2_4,
+  m6_3_1,
+  m6_3_2,
+  m6_3_3,
+  m6_3_4,
+  m6_3_5,
+  m6_4_1,
+  m6_4_2,
+  m6_4_3,
+  m6_4_4,
+  m6_4_5,
+  m6_5_1,
+  m6_5_2,
+  m6_5_3,
+  m6_5_4,
+  m6_6_1,
+  m6_6_2,
+  m6_6_3,
+  m6_6_4,
+  m6_6_5,
+  m6_7_1,
+  m6_7_2,
+  m6_7_3,
+  m6_7_4,
 ];
