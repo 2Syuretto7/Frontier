@@ -4,7 +4,7 @@ import { useState } from "react";
 
 // f(x, y) = (x² − y², 2xy), the complex map z ↦ z²
 const f = (x: number, y: number): [number, number] => [x * x - y * y, 2 * x * y];
-const S = 230, SC1 = 55, SC2 = 30;
+const S = 230, SC1 = 60, SC2 = 34;
 const p1 = (x: number, y: number) => `${(S / 2 + x * SC1).toFixed(1)},${(S / 2 - y * SC1).toFixed(1)}`;
 const p2 = (u: number, v: number) => `${(S / 2 + u * SC2).toFixed(1)},${(S / 2 - v * SC2).toFixed(1)}`;
 
