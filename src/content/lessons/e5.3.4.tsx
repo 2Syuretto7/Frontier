@@ -159,7 +159,7 @@ export const lesson: LessonContent = {
   id: "e5.3.4",
   minutes: 50,
   links: {
-    requires: ["e5.3.3", "m7.2.4"],
+    requires: ["e5.3.3", "m4.6.3"],
     revisits: ["e5.3.1", "e5.1.3"],
     foreshadows: ["e5.4.1", "e5.4.3"],
   },
