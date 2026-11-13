@@ -376,6 +376,10 @@ import { lesson as e5_4_3 } from "./e5.4.3";
 import { lesson as e5_5_1 } from "./e5.5.1";
 import { lesson as e5_5_2 } from "./e5.5.2";
 import { lesson as e5_5_3 } from "./e5.5.3";
+import { lesson as l3_1_1 } from "./l3.1.1";
+import { lesson as l3_1_2 } from "./l3.1.2";
+import { lesson as l3_1_3 } from "./l3.1.3";
+import { lesson as l3_1_4 } from "./l3.1.4";
 
 export const LESSONS: readonly LessonContent[] = [
   m0_1_1,
@@ -755,4 +759,8 @@ export const LESSONS: readonly LessonContent[] = [
   e5_5_1,
   e5_5_2,
   e5_5_3,
+  l3_1_1,
+  l3_1_2,
+  l3_1_3,
+  l3_1_4,
 ];
