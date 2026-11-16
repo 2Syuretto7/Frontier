@@ -1,12 +1,15 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { requireOwner } from "@/lib/auth";
 import { EXERCISES, GRAPH, LESSON_BY_ID, exerciseId } from "@/lib/curriculum";
 import { connections, isUnlocked } from "@/lib/graph";
-import { exerciseStates, latestTeachBack, masteredSet, masteryReport, recallFor, startLesson } from "@/lib/learning";
+import { exerciseStates, latestTeachBack, masteredSet, masteryReport, startLesson } from "@/lib/learning";
+import { recallSources } from "@/lib/recall";
 import { toView } from "@/lib/views";
 import { TopBar } from "@/components/TopBar";
 import { ExerciseCard } from "@/components/lesson/ExerciseCard";
+import { RecallLoading, RecallQuestions } from "@/components/lesson/RecallQuestions";
 import { TeachBack } from "@/components/lesson/TeachBack";
 import { MasteryBanner } from "@/components/lesson/MasteryBanner";
 import { PartonPanel } from "@/components/parton/PartonPanel";
@@ -69,8 +72,8 @@ export default async function LessonPage({ params }: { params: Promise<{ lessonI
   }
 
   await startLesson(lessonId);
-  const recall = await recallFor(lessonId, mastered);
-  const states = await exerciseStates([lessonId, ...new Set(recall.map((r) => r.lessonId))]);
+  const hasRecall = recallSources(lessonId, mastered).length > 0;
+  const states = await exerciseStates([lessonId]);
   const [teach, report, chat, teachReview] = await Promise.all([
     latestTeachBack(lessonId),
     masteryReport(lessonId),
@@ -79,7 +82,7 @@ export default async function LessonPage({ params }: { params: Promise<{ lessonI
   ]);
   const connected = partonConnected();
   const links = connections(GRAPH, lessonId);
-  const sections = SECTIONS.filter(([id]) => id !== "recall" || recall.length > 0);
+  const sections = SECTIONS.filter(([id]) => id !== "recall" || hasRecall);
   const linkItem = (id: string) => {
     const n = GRAPH.nodes.get(id)!;
     const label = <>{n.title} <span className="muted">· {n.course}</span></>;
@@ -107,13 +110,13 @@ export default async function LessonPage({ params }: { params: Promise<{ lessonI
             </p>
           </header>
 
-          {recall.length > 0 && (
+          {hasRecall && (
             <section id="recall" className="lesson-section">
               <h2><StepChip id="recall" sections={sections} />Recall</h2>
               <p className="section-lede">Before the new idea, bring back the old ones it rests on.</p>
-              {recall.map((r) => (
-                <ExerciseCard key={r.id} view={toView(r, states.get(r.id))} context="recall">{r.exercise.prompt}</ExerciseCard>
-              ))}
+              <Suspense fallback={<RecallLoading />}>
+                <RecallQuestions lessonId={lessonId} mastered={mastered} />
+              </Suspense>
             </section>
           )}
 

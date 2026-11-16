@@ -79,6 +79,19 @@ const SCHEMA = [
      body TEXT NOT NULL,
      at TIMESTAMPTZ NOT NULL DEFAULT now()
    )`,
+  // Recall questions Parton wrote for the start of a lesson. Kept for good, so none is ever asked twice.
+  `CREATE TABLE IF NOT EXISTS recall_questions (
+     id SERIAL PRIMARY KEY,
+     lesson_id TEXT NOT NULL,
+     source_lesson_id TEXT NOT NULL,
+     prompt TEXT NOT NULL,
+     answer JSONB NOT NULL,
+     attempts INTEGER NOT NULL DEFAULT 0,
+     solved BOOLEAN NOT NULL DEFAULT false,
+     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+   )`,
+  `CREATE INDEX IF NOT EXISTS recall_questions_lesson ON recall_questions (lesson_id, created_at)`,
+  `CREATE INDEX IF NOT EXISTS recall_questions_source ON recall_questions (source_lesson_id)`,
 ];
 
 async function createRunner(): Promise<Runner> {
