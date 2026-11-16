@@ -296,9 +296,6 @@ assert eventually_below(ys, 1, 0.01) == 100 and count_above(ys, 1, 0.01) == 500`
     },
   ],
 
-  teachBack:
-    "Explain to a friend how limsup and liminf are built from tail suprema and infima, why they always exist for bounded sequences, the ε description of limsup, and why a sequence converges exactly when they agree.",
-
   glimpse: (
     <>
       <p>

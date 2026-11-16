@@ -277,9 +277,6 @@ assert N.count <= 3, f'Horner needs only three multiplications by x; you used mo
     },
   ],
 
-  teachBack:
-    "Explain to a friend why checking a number trick on ten examples does not prove it always works, but one line of algebra does.",
-
   glimpse: (
     <p>
       Next you will turn the question around: instead of evaluating an expression, find the value that makes it equal

@@ -288,9 +288,6 @@ assert isinstance(m, float) and isinstance(se, float)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to run an ablation that can be trusted: one change at a time, several paired seeds, standard errors, and a full factorial when components might interact.",
-
   glimpse: (
     <p>
       That completes the toolkit for building and training networks. The next course puts it to work on images: convolution,

@@ -173,20 +173,7 @@ async function rateCard(id: string, rating: Rating.Again | Rating.Good) {
   await query("UPDATE review_cards SET card = $2, due = $3 WHERE exercise_id = $1", [id, JSON.stringify(next), next.due.toISOString()]);
 }
 
-export async function saveTeachBack(lessonId: string, body: string) {
-  await query("INSERT INTO writings (lesson_id, kind, body) VALUES ($1, 'teachback', $2)", [lessonId, body]);
-  return evaluateMastery(lessonId);
-}
-
-export async function latestTeachBack(lessonId: string): Promise<string | null> {
-  const rows = await query<{ body: string }>(
-    "SELECT body FROM writings WHERE lesson_id = $1 AND kind = 'teachback' ORDER BY at DESC LIMIT 1",
-    [lessonId],
-  );
-  return rows[0]?.body ?? null;
-}
-
-export type MasteryReport = { score: number; writtenDone: boolean; teachBackDone: boolean; mastered: boolean };
+export type MasteryReport = { score: number; writtenDone: boolean; mastered: boolean };
 
 export async function masteryReport(lessonId: string): Promise<MasteryReport> {
   const lesson = LESSON_BY_ID.get(lessonId)!;
@@ -197,14 +184,13 @@ export async function masteryReport(lessonId: string): Promise<MasteryReport> {
   const solved = auto.filter((e) => states.get(exerciseId(lessonId, e.key))?.solved).length;
   const score = auto.length ? solved / auto.length : 1;
   const writtenDone = written.every((e) => states.get(exerciseId(lessonId, e.key))?.solved);
-  const teachBackDone = (await latestTeachBack(lessonId)) !== null;
-  return { score, writtenDone, teachBackDone, mastered: score >= MASTERY_THRESHOLD && writtenDone && teachBackDone };
+  return { score, writtenDone, mastered: score >= MASTERY_THRESHOLD && writtenDone };
 }
 
 /**
  * A lesson is mastered when at least 80% of its check, apply and prove exercises are solved,
  * every written proof or argument has been accepted by Parton (or provisionally accepted while
- * Parton is not connected), and the teach-back is written.
+ * Parton is not connected).
  */
 export async function evaluateMastery(lessonId: string): Promise<boolean> {
   const report = await masteryReport(lessonId);

@@ -292,9 +292,6 @@ assert ok, 'A Jordan block cannot be diagonalised.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a basis of eigenvectors turns a matrix into separate stretches, why that makes powers of the matrix easy, and how it gives a formula for the Fibonacci numbers.",
-
   glimpse: (
     <p>
       Next, powers of matrices in action: Markov chains, where repeated multiplication settles to a steady state. Numerical

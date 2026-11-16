@@ -320,9 +320,6 @@ assert abs(strong_gap(f, 4.0, x, y, 0.3)) < 1e-12 and strong_gap(f, 5.0, x, y, 0
     },
   ],
 
-  teachBack:
-    "Explain to a friend the chord definition of a convex function, why convexity of the function is the same as convexity of its epigraph, how Jensen's inequality follows, why sublevel sets are convex, and why local minima of convex functions are global.",
-
   glimpse: (
     <>
       <p>

@@ -270,9 +270,6 @@ assert abs(m[0] - 0.5) < 0.02 and abs(m[1] - 1 / 3) < 0.02` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how mean squared error splits into squared bias and variance, why shrinking an unbiased estimator can lower its error, why dividing by n + 1 beats n − 1 for normal variances, and why no estimator is best for every value of the parameter.",
-
   glimpse: (
     <>
       <p>

@@ -302,9 +302,6 @@ matplotlib.use('Agg')
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a scale is, how a line chart is drawn from one, and why loss curves are usually plotted on a log scale.",
-
   glimpse: (
     <p>
       Next, the harder half of plotting: choosing scales and marks so that the chart tells the truth about the data, and does

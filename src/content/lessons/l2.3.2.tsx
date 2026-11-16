@@ -307,9 +307,6 @@ assert np.allclose(kernel_ridge_predict(K, a), [1.0, 2.0])` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the SVM dual shows that only inner products matter, what a kernel is and why its Gram matrices are positive semidefinite, how ridge regression becomes kernel ridge regression, and what kernels cost.",
-
   glimpse: (
     <>
       <p>

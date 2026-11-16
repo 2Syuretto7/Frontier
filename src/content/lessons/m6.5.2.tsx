@@ -321,9 +321,6 @@ assert np.allclose(svt(A, 0.0), A) and np.allclose(svt(A, s[0] + 1), 0)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between operator norms and norms of the singular values, why the spectral and nuclear norms are dual, and why the nuclear norm encourages low rank.",
-
   glimpse: (
     <>
       <p>

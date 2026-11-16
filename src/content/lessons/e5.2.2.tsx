@@ -366,9 +366,6 @@ assert np.allclose(a.grad, 2 * A / B)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the gradient of a broadcast is a sum, how unbroadcast decides which axes to sum, and why testing with a batch of one can hide the bug.",
-
   glimpse: (
     <p>
       Elementwise operations and broadcasts are done. Next come the operations that mix entries: matrix multiplication,

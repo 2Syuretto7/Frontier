@@ -282,9 +282,6 @@ assert abs(angle_between_subspaces([[1], [0], [0]], [[1], [1], [0]]) - 45) < 1e-
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the null space of a matrix is perpendicular to its row space, and how every input vector splits into a part the matrix sees and a part it cannot see.",
-
   glimpse: (
     <p>
       Next, projections: the formula for the piece of a vector that lies in a subspace, the closest point of the subspace.

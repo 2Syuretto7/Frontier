@@ -328,9 +328,6 @@ assert np.allclose(nearest_psd(N), N)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a positive operator is, why that is the same as non-negative eigenvalues or the form S*S, and why its positive square root is unique.",
-
   glimpse: (
     <>
       <p>

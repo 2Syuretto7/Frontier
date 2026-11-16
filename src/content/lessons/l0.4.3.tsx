@@ -298,9 +298,6 @@ assert len(dW1) == 2 and all(len(r) == 3 for r in dW1) and len(db1) == 2 and len
     },
   ],
 
-  teachBack:
-    "Explain to a friend why neural networks, known since the 1980s, suddenly took over around 2012, naming the three ingredients that came together.",
-
   glimpse: (
     <p>
       Next, transformers and scale: the architecture behind today&rsquo;s language models, and the discovery that performance

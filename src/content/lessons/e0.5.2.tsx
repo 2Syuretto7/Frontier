@@ -272,9 +272,6 @@ assert select('s.csv', 'k', 'x') == [{'k': 'x', 'v': '1'}, {'k': 'x', 'v': '3'}]
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a CSV file is, why you should read it with the csv module rather than splitting at commas, and why every value comes back as a string.",
-
   glimpse: (
     <p>
       Next, errors and exceptions: what happens when something goes wrong, and how a program can recover. In Python, NumPy

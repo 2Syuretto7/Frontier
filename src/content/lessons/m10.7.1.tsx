@@ -304,9 +304,6 @@ assert h[-1] <= bound(np.sqrt(3), np.sqrt(3), st) and np.all(np.diff(h) <= 0)` }
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a subgradient is, why 0 in the subdifferential characterises a minimum, why the subgradient method can increase f yet still converge, and why its 1/√k rate is the best possible without more structure.",
-
   glimpse: (
     <>
       <p>

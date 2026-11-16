@@ -340,9 +340,6 @@ assert np.allclose(cayley(np.array([[0.0, -1.0], [1.0, 0.0]])), [[0.0, -1.0], [1
     },
   ],
 
-  teachBack:
-    "Explain to a friend what an orthogonal matrix is, why its eigenvalues lie on the unit circle, and how Householder reflections compute a QR factorisation stably.",
-
   glimpse: (
     <>
       <p>

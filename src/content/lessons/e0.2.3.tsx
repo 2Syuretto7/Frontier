@@ -305,9 +305,6 @@ print(x)
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to build a trace table for a program with a loop, and why tracing the first pass, the last pass and the number of passes catches so many bugs.",
-
   glimpse: (
     <p>
       This completes Control flow. Next, functions, which let you name a block of code and reuse it. Tracing returns in

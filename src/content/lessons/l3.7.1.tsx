@@ -298,9 +298,6 @@ assert abs(n - np.sqrt(25 + (0.5 * 2.0 / 5) ** 2)) < 1e-12` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the two things weight decay does: shrink weakly determined directions, and, for normalised layers, set the effective learning rate.",
-
   glimpse: (
     <p>
       Weight decay regularises the weights. Next: dropout, which regularises by randomly removing units during training.

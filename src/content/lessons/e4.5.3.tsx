@@ -327,9 +327,6 @@ assert vals == [i * i for i in range(50)] and 0 <= most < 50` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a pool of threads does not speed up a pure-Python loop but does speed up downloads, and what processes cost that threads do not.",
-
   glimpse: (
     <p>
       Fast, correct code still has to be understood by the next person, who is often you in six months. Next, documentation:

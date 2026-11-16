@@ -265,9 +265,6 @@ assert abs(raw - math.pi) > 0.04 and abs(acc - math.pi) < 1e-8, f'Accelerated va
     },
   ],
 
-  teachBack:
-    "Explain to a friend what it means for a sequence to converge, using the band of width ε, and why an increasing sequence that is bounded above must converge.",
-
   glimpse: (
     <p>
       Next, series: adding up infinitely many terms by taking the limit of the partial sums. Real Analysis proves the

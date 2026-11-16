@@ -293,9 +293,6 @@ assert abs(g2[1, 3] - (f(W1, W2 + F) - f(W1, W2 - F)) / 2e-6) < 1e-6` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the gradient of any program costs only a few times as much as running it, and what checkpointing trades to save memory.",
-
   glimpse: (
     <p>
       Neural networks are made of matrices, and differentiating them entry by entry is error-prone. Chapter 4 develops matrix

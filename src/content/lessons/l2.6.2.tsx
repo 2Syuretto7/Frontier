@@ -309,9 +309,6 @@ assert X.shape == (40000, 2) and np.allclose(X.mean(axis=0), [1, -1], atol=0.05)
     },
   ],
 
-  teachBack:
-    "Explain to a friend the generative model of probabilistic PCA, why its maximum-likelihood fit recovers the principal directions with σ² equal to the mean discarded variance, how to compute the posterior over the latent variable, and what the probabilistic version adds to PCA.",
-
   glimpse: (
     <>
       <p>

@@ -294,9 +294,6 @@ assert abs(f - 0.2) < 0.03 and abs(a - f) < 1e-9` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why many tests need adjusted thresholds, the difference between controlling the family-wise error rate and the false discovery rate, how Bonferroni, Holm and Benjamini-Hochberg work, and where hidden multiplicity arises in machine learning experiments.",
-
   glimpse: (
     <>
       <p>

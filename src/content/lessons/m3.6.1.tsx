@@ -310,9 +310,6 @@ assert np.isfinite(v) and abs(v - np.linalg.slogdet(A)[1]) < 1e-8, 'Sum logs ins
     },
   ],
 
-  teachBack:
-    "Explain to a friend the three rules that define the determinant, how they lead to computing it by elimination, and why det A = 0 exactly when A has no inverse.",
-
   glimpse: (
     <p>
       Next, the explicit formulas for the determinant, by cofactors, and what they give: Cramer&rsquo;s rule and a formula for

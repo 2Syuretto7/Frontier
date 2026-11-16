@@ -299,9 +299,6 @@ assert msg == 'many', 'Report several inverses.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how you can be sure that x³ + x = 1 has exactly one real solution, without ever solving it.",
-
   glimpse: (
     <p>
       The step &ldquo;an unbroken graph from below to above must cross&rdquo; is the intermediate value theorem, which Real Analysis proves from the completeness of the real numbers. Bisection is the simplest root-finding method in Numerical Linear Algebra and Scientific Computing, and existence-and-uniqueness theorems tell Convex Optimisation when a problem has exactly one best answer. Next: how to write all of this up so that a reader can follow it.

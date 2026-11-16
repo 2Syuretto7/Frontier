@@ -306,9 +306,6 @@ def deriv_quotients(df, dg, c, hs):
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a derivative vanishes at an interior extremum, how Rolle's theorem follows from the extreme value theorem, how tilting gives the mean value theorem, why f′ = 0 implies constant only on an interval, and how Cauchy's version proves L'Hôpital's rule.",
-
   glimpse: (
     <>
       <p>

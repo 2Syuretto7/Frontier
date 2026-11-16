@@ -309,9 +309,6 @@ assert 'math.sin' not in src and 'math.cos' not in src, 'Use the series.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the unit circle lets us define sine and cosine for any angle, not just angles in a right triangle, and why cos² + sin² = 1.",
-
   glimpse: (
     <p>
       Next, identities, rules such as the addition formulas that let one value of sine give many others. The wave traced

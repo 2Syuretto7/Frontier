@@ -307,9 +307,6 @@ assert all(a > b for a, b in zip(prof, prof[1:])), '1/x needs smaller and smalle
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between continuity and uniform continuity, using 1/x on (0, 1] as an example.",
-
   glimpse: (
     <p>
       This completes continuity. Next, derivatives: the slope of a curve at a point. Uniform continuity first earns its keep in the definite integral, later in this course. Real Analysis completes the proof sketched here, and Lipschitz continuity, a stronger cousin, controls how fast gradient descent can safely move in Optimisation for Deep Learning.

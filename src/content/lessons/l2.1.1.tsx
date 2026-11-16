@@ -286,9 +286,6 @@ assert abs(logsumexp(a) - np.log(np.exp(a).sum())) < 1e-12 and abs(logsumexp(a +
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the likelihood of a predictive model is, why log loss, cross-entropy and squared error are all negative log-likelihoods, why its expectation is smallest at the true distribution, and why we compute it in logs.",
-
   glimpse: (
     <>
       <p>

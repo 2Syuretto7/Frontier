@@ -276,9 +276,6 @@ assert all(first_failure(Fraction(p, 5), 40) is None for p in range(-5, 30)), 'N
     },
   ],
 
-  teachBack:
-    "Explain to a friend why proving P(1) and 'P(k) implies P(k + 1)' proves P(n) for every n, using dominoes, and what goes wrong in the horses proof.",
-
   glimpse: (
     <p>
       Sometimes knowing P(k) alone is not enough to reach P(k + 1), and you need every earlier case at once. That is strong induction, the next lesson. Induction is the main tool for recurrence relations in Discrete Mathematics, and for proving that loops and recursive programs are correct in Data Structures and Algorithms.

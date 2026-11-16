@@ -287,9 +287,6 @@ assert np.allclose(apply_affine(B @ A, P), apply_affine(B, apply_affine(A, P))),
     },
   ],
 
-  teachBack:
-    "Explain to a friend what makes a map linear, why it is determined by where it sends the basis vectors, and why doing one map after another corresponds to multiplying their matrices.",
-
   glimpse: (
     <p>
       Next, change of basis: the same linear map written in different coordinates. Linear Algebra II treats linear maps

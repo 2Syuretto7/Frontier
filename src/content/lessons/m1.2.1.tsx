@@ -257,9 +257,6 @@ def same_predicate(P, Q, D):
     },
   ],
 
-  teachBack:
-    "Explain to a friend why 'x is prime' is neither true nor false, and describe one way to turn it into a statement that is.",
-
   glimpse: (
     <p>
       Filling the hole with a particular object is one way to turn a predicate into a statement. The next lesson shows the

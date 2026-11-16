@@ -304,9 +304,6 @@ def divisors(n):
     },
   ],
 
-  teachBack:
-    "Explain to a friend the division algorithm and why it gives a unique remainder, and why a number and its digit sum leave the same remainder on division by 9.",
-
   glimpse: (
     <p>
       Next, the greatest common divisor and Euclid&rsquo;s algorithm, which computes it without factoring. Remainders then

@@ -300,9 +300,6 @@ for _ in range(20):
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the perceptron learns from its mistakes, what it can and cannot learn, and how that limit shaped the history of AI.",
-
   glimpse: (
     <p>
       Next, the deep learning revolution, when many-layered networks, trained by backpropagation on large data with fast

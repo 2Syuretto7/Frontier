@@ -319,9 +319,6 @@ assert np.allclose(ecdf(u ** 2, np.array([0.25, 0.49])), [0.5, 0.7], atol=0.01)`
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a probability density is, why it can exceed 1, how it relates to the CDF, and why the law of the unconscious statistician often lets you skip finding a density altogether.",
-
   glimpse: (
     <>
       <p>

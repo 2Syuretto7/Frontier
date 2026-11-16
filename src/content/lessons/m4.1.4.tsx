@@ -311,9 +311,6 @@ assert 850 < lis_length(a) < 940, 'About 2√n for random data, in O(n log n).'`
     },
   ],
 
-  teachBack:
-    "Explain to a friend the pigeonhole principle and how it proves that no lossless compressor can shrink every file.",
-
   glimpse: (
     <p>
       Hashing, later in this course, starts from the fact that collisions must happen. The probabilistic method, at the end of

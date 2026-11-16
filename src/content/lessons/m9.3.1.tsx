@@ -293,9 +293,6 @@ assert abs(b1) < 0.01 and abs(b2) < 0.01 and m2 < m1 / 3` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what makes a statistic sufficient, how the factorisation theorem identifies sufficient statistics for the Bernoulli, normal and uniform models, and how conditioning on a sufficient statistic improves an estimator.",
-
   glimpse: (
     <>
       <p>

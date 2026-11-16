@@ -272,9 +272,6 @@ except ValueError:
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a computational graph is, why it must be acyclic, and why a graph can be much smaller than the expression tree of the same function.",
-
   glimpse: (
     <p>
       Each node has a local derivative we know. Carrying a derivative alongside each value as the forward pass runs is

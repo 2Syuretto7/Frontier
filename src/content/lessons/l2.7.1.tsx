@@ -350,9 +350,6 @@ assert d_separated(G, "V", "Z", ["X"]) and d_separated(G, "V", "Y", ["X", "W"]) 
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a Bayesian network defines a joint distribution, why it saves parameters, how chains, forks and colliders pass or block dependence, how to test d-separation, and what explaining away is.",
-
   glimpse: (
     <>
       <p>

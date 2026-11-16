@@ -297,9 +297,6 @@ assert len(calls) <= 9, 'In exact arithmetic CG finishes in at most n steps.'` }
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to compute a Hessian-vector product without the Hessian, and how power iteration uses such products to find the sharpness of a loss.",
-
   glimpse: (
     <p>
       Minimising subject to a constraint changes the condition for a minimum: the gradient need not vanish, only point

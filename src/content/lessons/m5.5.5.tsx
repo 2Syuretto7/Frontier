@@ -280,9 +280,6 @@ assert abs((V(B + 1e-5) - V(B - 1e-5)) / 2e-5 - shadow_price(a, B)) < 1e-6` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why, at the best point on a constraint surface, the gradient of the objective is a multiple of the gradient of the constraint, and what the multiplier measures.",
-
   glimpse: (
     <p>
       The proof relied on the constraint set being a smooth surface. Chapter 6 proves the theorems that guarantee it: the

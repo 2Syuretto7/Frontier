@@ -320,9 +320,6 @@ assert all(a >= b - 1e-12 for a, b in zip(errs, errs[1:]))` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the closest point of a subspace is the orthogonal projection, and use it to derive the normal equations, the minimum-norm solution and the best polynomial approximation of a function.",
-
   glimpse: (
     <>
       <p>

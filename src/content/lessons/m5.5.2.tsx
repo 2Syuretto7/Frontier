@@ -307,9 +307,6 @@ assert np.linalg.eigvalsh(H).min() >= -1e-12` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the eigenvalues and eigenvectors of a Hessian say about the shape of a function, and why a large condition number slows gradient descent.",
-
   glimpse: (
     <p>
       At a point where the gradient vanishes, the signs of the Hessian&rsquo;s eigenvalues decide whether it is a minimum, a

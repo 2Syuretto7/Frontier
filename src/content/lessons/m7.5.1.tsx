@@ -340,9 +340,6 @@ assert np.all(r2 <= 1 + 1e-12) and abs(np.mean(r2 <= 0.25) - 0.25) < 0.005 and a
     },
   ],
 
-  teachBack:
-    "Explain to a friend how marginal and conditional distributions come from a joint one, how to tell from the joint density whether two variables are independent (including the trap of a non-product region), and how polar coordinates turn two uniforms into two independent normals.",
-
   glimpse: (
     <>
       <p>

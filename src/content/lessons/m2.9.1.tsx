@@ -282,9 +282,6 @@ assert abs(empirical_exponent(lambda n: count_ops(triple, n), [5, 10, 20, 40]) -
     },
   ],
 
-  teachBack:
-    "Explain to a friend what f = O(g) and f = o(g) mean, why you must say where x is going, and how they let you calculate with Taylor expansions.",
-
   glimpse: (
     <p>
       Next, Taylor approximations at work: estimating derivatives from function values, and the trade-off between

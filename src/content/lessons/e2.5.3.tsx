@@ -457,9 +457,6 @@ assert med[-1] == statistics.median_low(xs) and len(med) == 50000` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why finding the median does not need sorting, and how to keep the ten best scores from a stream too large to store.",
-
   glimpse: (
     <p>
       Chapter 5 is done: you can sort, search and select. Chapter 6 turns to graphs, where the heap returns as the engine of

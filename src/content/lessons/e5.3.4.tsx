@@ -417,9 +417,6 @@ assert np.array_equal(net.parameters()[0].data, W1), 'Use the seed so reinit is 
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the scale of the initial weights matters more as networks get deeper, where the 2 in He initialisation comes from, and when Xavier is the right choice instead.",
-
   glimpse: (
     <p>
       The framework can now build, initialise and train networks. How do we know its gradients are right? Next: gradient

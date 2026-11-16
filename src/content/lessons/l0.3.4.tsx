@@ -276,9 +276,6 @@ assert sum((predict_proba(w, b, x) > 0.5) == bool(y) for x, y in data) < 4, 'But
     },
   ],
 
-  teachBack:
-    "Explain to a friend what an artificial neuron computes, using a decision of your own with weights, and why one neuron cannot compute XOR but three can.",
-
   glimpse: (
     <p>
       This completes learning by hand. Next, a short history of AI, beginning with the attempt to build intelligence from

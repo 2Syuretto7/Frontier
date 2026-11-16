@@ -277,9 +277,6 @@ for _ in range(300):
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a chart can mislead with correct numbers, using a truncated bar axis and a missing error bar as examples.",
-
   glimpse: (
     <p>
       Next, interactive charts: views you can filter and link, so that a selection in one picture lights up the same data in

@@ -279,9 +279,6 @@ assert abs(mc - e) < 0.03 * e and isinstance(mc, float)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how inverted dropout works in training and testing, why it regularises, and what penalty it amounts to for a linear model.",
-
   glimpse: (
     <p>
       Dropout adds noise to the network. Next: data augmentation, which adds structured variation to the data instead,

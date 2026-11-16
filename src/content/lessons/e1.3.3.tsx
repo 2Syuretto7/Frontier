@@ -312,9 +312,6 @@ assert p.derivative() == Poly([3, 0, 12]) and Poly([7]).derivative() == Poly([])
     },
   ],
 
-  teachBack:
-    "Explain to a friend what self is, how u + v ends up calling a method, and why PyTorch models are called like functions.",
-
   glimpse: (
     <p>
       Next, iterators and generators, the protocol behind every for loop, and context managers, the protocol behind with.

@@ -296,9 +296,6 @@ for _ in range(200):
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the direct proof that 'n² even implies n even' gets stuck, and how the contrapositive gets it unstuck.",
-
   glimpse: (
     <p>
       The result of this lesson, that <M>{"n^2"}</M> even forces n even, is the key step in the most famous proof by

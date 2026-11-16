@@ -79,6 +79,9 @@ const SCHEMA = [
      body TEXT NOT NULL,
      at TIMESTAMPTZ NOT NULL DEFAULT now()
    )`,
+  // Teach it back was removed: delete the saved explanations and Parton's reviews of them.
+  `DELETE FROM writings WHERE kind = 'teachback'`,
+  `DELETE FROM parton_notes WHERE kind = 'teachback'`,
 ];
 
 async function createRunner(): Promise<Runner> {

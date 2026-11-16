@@ -499,9 +499,6 @@ for _ in range(200):
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a build tool decides the order to compile files, and how it knows when the imports go round in a circle.",
-
   glimpse: (
     <p>
       The critical-path pass was dynamic programming on a DAG. Next, edges get lengths and the graph may have cycles: shortest

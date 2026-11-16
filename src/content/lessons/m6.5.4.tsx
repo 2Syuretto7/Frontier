@@ -334,9 +334,6 @@ assert errs[-1] < errs[0]` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the condition number of a matrix is, why it bounds the relative error of a linear solve, and why it also sets the speed of gradient descent on a quadratic.",
-
   glimpse: (
     <>
       <p>

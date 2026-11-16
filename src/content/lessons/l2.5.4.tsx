@@ -329,9 +329,6 @@ assert path == [0, 0, 1, 1] and abs(lp - np.log(0.5 * 0.9 * 0.6 * 0.9 * 0.4 * 0.
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a hidden Markov model is, how the forward recursion computes the likelihood in O(TK²), how the backward pass gives smoothed posteriors, why scaling is needed, and how Viterbi differs from picking the most likely state at each step.",
-
   glimpse: (
     <>
       <p>

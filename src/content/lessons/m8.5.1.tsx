@@ -291,9 +291,6 @@ assert disagree(lambda x: x, lambda n: 1 / n, lambda n: -1 / n, 4) == 0.5` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the ε–δ definition of a limit of a function, why the value at c does not matter, the sequential criterion and its proof, and how two sequences show that sin(1/x) has no limit at 0.",
-
   glimpse: (
     <>
       <p>

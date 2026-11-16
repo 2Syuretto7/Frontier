@@ -365,9 +365,6 @@ def repeats_after(p, q, n):
     },
   ],
 
-  teachBack:
-    "Explain why every fraction gives a decimal that either stops or repeats. Pretend you are talking someone through long division by 7, and make them see why the repeat cannot be avoided.",
-
   glimpse: (
     <p>
       Next you will put rational and irrational numbers together on one line, the real numbers. The proof by

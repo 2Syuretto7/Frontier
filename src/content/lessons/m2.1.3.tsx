@@ -328,9 +328,6 @@ for _ in range(40):
     },
   ],
 
-  teachBack:
-    "Explain to a friend what |x − a| < r means on the number line, and why the triangle inequality is true.",
-
   glimpse: (
     <p>
       Next comes the idea of a limit, and then its precise definition, written entirely in the language of this lesson: f(x) is close to L whenever x is close enough to a. In Real Analysis, distance itself becomes the object of study, and the triangle inequality becomes one of the axioms that define it; the norms of Linear Algebra II measure the size of vectors and matrices the same way.

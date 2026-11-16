@@ -268,9 +268,6 @@ assert sum(z) == 10 ** 6 and len(z) <= 15` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why every whole number above 1 is a product of primes, and why ordinary induction from n − 1 would not help.",
-
   glimpse: (
     <p>
       The next lesson looks at induction from the opposite end: instead of climbing up from the bottom, look at the smallest case where something goes wrong. The existence of prime factorisations proved here is half of the fundamental theorem of arithmetic; the other half, uniqueness, rests on Euclid&rsquo;s algorithm for the highest common factor, which Discrete Mathematics develops.

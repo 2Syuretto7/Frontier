@@ -320,9 +320,6 @@ except sqlite3.IntegrityError:
     },
   ],
 
-  teachBack:
-    "Explain to a friend the order in which a SQL query is evaluated, the difference between WHERE and HAVING, and what a join does.",
-
   glimpse: (
     <p>
       That completes Python, NumPy and the Command Line. Data Structures and Algorithms comes next: the hash tables behind

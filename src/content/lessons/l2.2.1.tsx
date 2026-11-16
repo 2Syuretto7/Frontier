@@ -291,9 +291,6 @@ assert np.allclose(gd_fit(X, y, 0.3, 5000), np.linalg.lstsq(X, y, rcond=None)[0]
     },
   ],
 
-  teachBack:
-    "Explain to a friend where the normal equations come from, why solving them directly can lose accuracy, what the minimum-norm solution is, and why gradient descent from zero finds it.",
-
   glimpse: (
     <>
       <p>

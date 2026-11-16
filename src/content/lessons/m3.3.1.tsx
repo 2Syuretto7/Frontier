@@ -280,9 +280,6 @@ assert 'linalg' not in src and ('>>' in src or '// 2' in src or '%' in src or '&
     },
   ],
 
-  teachBack:
-    "Explain to a friend the two ways to read a matrix times a vector, why Ax = b asks whether b is a combination of the columns, and why a matrix is determined by what it does to e₁, …, eₙ.",
-
   glimpse: (
     <p>
       Next, multiplying two matrices, which can be seen in four different ways, each useful somewhere. Multivariable and

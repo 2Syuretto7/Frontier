@@ -300,9 +300,6 @@ assert m == 2.0 and abs(s - 0.5) < 2e-3` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a posterior is formed from a prior and a likelihood, what a credible interval means, why sequential and batch updating agree, and why different reasonable priors lead to nearly the same posterior once there is enough data.",
-
   glimpse: (
     <>
       <p>

@@ -300,9 +300,6 @@ assert catalan(300) == comb(600, 300) // 301, 'Cₙ = C(2n, n)/(n + 1).'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how '0! = 1 and (n + 1)! = (n + 1) · n!' defines n! for every n without any dots, and how that connects to induction.",
-
   glimpse: (
     <p>
       This completes the chapter on induction. Next come relations: ways of linking the elements of sets, such as &ldquo;less than&rdquo; and &ldquo;has the same remainder as&rdquo;. Recurrences are solved systematically in Discrete Mathematics, and recursion is the heart of many algorithms in Data Structures and Algorithms.

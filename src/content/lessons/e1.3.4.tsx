@@ -300,9 +300,6 @@ assert q.peek(7) is None and next(q) is None and q.peek(7) == 5, 'None is a real
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a for loop really does, how a generator pauses and resumes, and what a with block guarantees.",
-
   glimpse: (
     <p>
       Next, type hints and dataclasses, which make larger programs safer to change. Data loading, later in this course, streams

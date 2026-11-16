@@ -328,9 +328,6 @@ assert sum(min_pmf(10, 4).values()) == 1` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a random variable and its distribution are, what the CDF is and why it is right-continuous with jumps equal to the pmf, and how to find the distribution of a maximum through the CDF.",
-
   glimpse: (
     <>
       <p>

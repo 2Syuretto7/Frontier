@@ -310,9 +310,6 @@ for _ in range(10):
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between P and NP using subset sum, what a certificate is, and what it would mean if someone found a fast algorithm for one NP-complete problem.",
-
   glimpse: (
     <p>
       Data Structures and Algorithms meets the practical side: greedy algorithms that are fast but not always optimal, dynamic

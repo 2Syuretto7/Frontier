@@ -298,9 +298,6 @@ assert m[0] > 10 and m[1] < 1` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what ridge regression does, how the singular value decomposition shows which directions it shrinks, why some amount of ridge always beats least squares in mean squared error, and how it relates to weight decay and a normal prior.",
-
   glimpse: (
     <>
       <p>

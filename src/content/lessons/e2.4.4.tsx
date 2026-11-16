@@ -477,9 +477,6 @@ assert time.time() - t < 4, 'Walk the trie; do not try every end position.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a trie finds every word with a given prefix without looking at the other words, and how a tokeniser uses one to find the longest known piece.",
-
   glimpse: (
     <p>
       The segmentation count above is a first dynamic program; chapter 7 develops the idea. Suffix arrays in chapter 8 index every

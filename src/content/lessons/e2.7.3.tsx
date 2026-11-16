@@ -450,9 +450,6 @@ assert evaluate(e, dims) == c` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a cache turns a recursive function that would never finish into one that is instant, and how to find the table for a new problem.",
-
   glimpse: (
     <p>
       Dynamic programming needs every subproblem. When there are too many, as in choosing the best sentence from a vocabulary

@@ -298,9 +298,6 @@ assert all(is_prime(n) == s[n] for n in range(N)), 'Agree with a sieve below 200
     },
   ],
 
-  teachBack:
-    "Explain to a friend why you can reduce modulo n at every step of a calculation, when a number has an inverse modulo n, and how to find the last two digits of a huge power.",
-
   glimpse: (
     <p>
       Next, hashing, which uses arithmetic modulo a prime to scatter keys evenly. Public-key cryptography, from RSA to

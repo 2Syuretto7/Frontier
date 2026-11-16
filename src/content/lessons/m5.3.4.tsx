@@ -310,9 +310,6 @@ assert np.allclose(A, W) and np.allclose(B, W)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between a Jacobian-vector product and a vector-Jacobian product, which mode of differentiation computes each, and why neither needs the Jacobian itself.",
-
   glimpse: (
     <p>
       Reverse mode gets a whole gradient for the price of a few function evaluations. The last lesson of this chapter makes that

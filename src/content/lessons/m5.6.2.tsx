@@ -290,9 +290,6 @@ assert P[:, 1].max() > 3.15 and P[-1, 0] < 1.0, 'The tracer passes the top of th
     },
   ],
 
-  teachBack:
-    "Explain to a friend when an equation F(x, y) = 0 defines y as a function of x, and how to find that function's derivative without solving the equation.",
-
   glimpse: (
     <p>
       Many quantities in machine learning are defined as the solution of an equation: the optimum of an inner problem, the

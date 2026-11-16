@@ -293,9 +293,6 @@ assert abs(r[0] - 3e-9) / 3e-9 < 1e-9, 'Choose the sign so the two terms in q ad
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to find the biggest pen the farmer can build, without calculus. Say why the vertex form makes the answer certain rather than a good guess.",
-
   glimpse: (
     <p>
       Next, building new functions from old ones: doing one function after another, and undoing a function. Lines return

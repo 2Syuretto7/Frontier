@@ -347,9 +347,6 @@ assert abs(a - 0.3 / 0.72) < 1e-12 and abs(b - 0.3) < 1e-12 and a > 0.3` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what independence of several events means, why pairwise independence is not enough, how conditioning can create or destroy independence, and what the Borel–Cantelli lemmas say.",
-
   glimpse: (
     <>
       <p>

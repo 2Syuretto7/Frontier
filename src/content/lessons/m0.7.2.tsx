@@ -257,9 +257,6 @@ assert telescope(1) == Fraction(1, 2) and telescope(3) == Fraction(3, 4) and all
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the first n odd numbers add up to n squared, using the picture of L-shaped layers.",
-
   glimpse: (
     <p>
       Next, induction, the method for proving a formula like the sum of squares for every <M>n</M> at once. In Calculus, the

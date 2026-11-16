@@ -286,9 +286,6 @@ assert verify_proof(steps) == (0, 37), 'Check every n from −50 to 50.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between having the right idea for a proof and having written a proof, using one of the broken proofs as an example.",
-
   glimpse: (
     <p>
       This completes the chapter on proof techniques. The next chapter introduces sets, the language in which almost all of

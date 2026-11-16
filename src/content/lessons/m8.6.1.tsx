@@ -282,9 +282,6 @@ assert g_prime(0) == 0 and abs(g_prime(1 / (100 * math.pi)) + 1) < 1e-9` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the definition of the derivative as a limit, why differentiable implies continuous, Carathéodory's form and how it gives a clean proof of the chain rule, and the example of a derivative that exists everywhere but is not continuous.",
-
   glimpse: (
     <>
       <p>

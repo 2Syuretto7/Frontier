@@ -286,9 +286,6 @@ assert total_cost(act, y, 2.0, 5.0, 0.5) == 7.5` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a loss turns a predictive distribution into a decision, why squared, absolute, pinball and 0-1 losses pick the mean, median, a quantile and the mode, how unequal costs move a classifier's threshold, and when to defer.",
-
   glimpse: (
     <>
       <p>

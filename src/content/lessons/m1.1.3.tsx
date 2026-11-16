@@ -258,9 +258,6 @@ assert 'simplify_check' in inspect.getsource(is_tautology) and 'simplify_check' 
     },
   ],
 
-  teachBack:
-    "Explain to a friend why 'not (A and B)' means 'not A or not B', using the four cases for A and B.",
-
   glimpse: (
     <p>
       Next, conditionals in more depth: converses, contrapositives and how proofs use them. De Morgan&rsquo;s laws return twice in this course: to negate statements with &ldquo;for all&rdquo; and &ldquo;there exists&rdquo;, and as laws about unions and intersections of sets.

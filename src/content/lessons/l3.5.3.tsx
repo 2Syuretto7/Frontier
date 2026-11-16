@@ -262,9 +262,6 @@ assert np.allclose(residual_mlp(x, [(W1, W2), (W1, W2)]), [[6 + 12], [2 + 4]])` 
     },
   ],
 
-  teachBack:
-    "Explain to a friend why residual connections let very deep networks train, using the identity path in the backward pass, and what they do to the forward variance.",
-
   glimpse: (
     <p>
       With signals and gradients under control, the next question is how to use the gradient. Next: SGD with momentum, and

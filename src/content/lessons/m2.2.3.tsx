@@ -351,9 +351,6 @@ assert rational_limit([1, 0, 0, -8], [1, 0, -4], 2) == 3 and rational_limit([3, 
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the limit of a sum is the sum of the limits, and how the squeeze theorem shows that x sin(1/x) tends to 0.",
-
   glimpse: (
     <p>
       With these laws, most limits reduce to algebra. Next come limits from one side and limits at infinity. Their first big use is the next chapter&rsquo;s theory of continuity, and then the rules for derivatives, which are limit laws in disguise. Real Analysis proves the same laws for sequences.

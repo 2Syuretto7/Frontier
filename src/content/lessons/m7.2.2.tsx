@@ -336,9 +336,6 @@ assert g.min() >= 1 and abs(g.mean() - 1 / 0.3) < 0.03 and abs(np.mean(g > 4) - 
     },
   ],
 
-  teachBack:
-    "Explain to a friend the stories behind the Bernoulli, binomial, geometric, Poisson and categorical distributions, why the geometric is memoryless, and why the binomial with many rare trials is nearly Poisson.",
-
   glimpse: (
     <>
       <p>

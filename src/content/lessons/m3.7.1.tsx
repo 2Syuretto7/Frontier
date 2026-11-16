@@ -304,9 +304,6 @@ assert src.count('lu_factor(') == 1 and 'for' in src.split('lu_factor(')[1], 'Fa
     },
   ],
 
-  teachBack:
-    "Explain to a friend what an eigenvector and eigenvalue are, how det(A − λI) = 0 finds them, and why repeatedly applying a matrix turns almost every vector towards the eigenvector with the largest eigenvalue.",
-
   glimpse: (
     <p>
       Next, diagonalisation: using a basis of eigenvectors, a matrix becomes a list of independent stretches. Numerical Linear

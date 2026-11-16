@@ -277,9 +277,6 @@ assert '/' not in src and '%' not in src, 'Use the formula from the proof, not d
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to prove that the sum of two odd numbers is even, and why checking a million examples would not have been enough.",
-
   glimpse: (
     <p>
       Some statements resist a direct attack: assuming the hypothesis gives you nothing useful to compute with. The next lesson shows the first way round this, proving the contrapositive instead. Divisibility, unpacked exactly as here, is the starting point of number theory in Discrete Mathematics, where it underlies modular arithmetic and hashing.

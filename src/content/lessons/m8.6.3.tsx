@@ -302,9 +302,6 @@ def exp_taylor(x, n):
     },
   ],
 
-  teachBack:
-    "Explain to a friend the statement of Taylor's theorem with Lagrange remainder, the repeated-Rolle proof, how the remainder bound shows the exponential series converges everywhere, and why e^(−1/x²) shows that a smooth function need not equal its Taylor series.",
-
   glimpse: (
     <>
       <p>

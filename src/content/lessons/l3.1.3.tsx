@@ -270,9 +270,6 @@ assert np.all(sigmoid_grad(np.linspace(-10, 10, 101)) <= 0.25)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how an activation function's derivative affects the backward pass, why ReLU replaced the sigmoid, and what a gated unit such as SwiGLU computes.",
-
   glimpse: (
     <p>
       With a nonlinearity in between, how much can a network with one hidden layer represent? Next: the universal

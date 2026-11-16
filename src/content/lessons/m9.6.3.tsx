@@ -310,9 +310,6 @@ assert abs(a - 0.75) < 0.03 and abs(b - 1) < 0.03` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the distribution of the least squares coefficients under normal errors, why SSE is divided by n − p, how t-tests and confidence intervals for coefficients work, and why prediction intervals stay wide however much data you have.",
-
   glimpse: (
     <>
       <p>

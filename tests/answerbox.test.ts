@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { appendSpoken } from "../src/components/lesson/AnswerBox.tsx";
-import { MARK_RULES, TEACHBACK_RULES } from "../src/lib/parton/prompts.ts";
+import { MARK_RULES } from "../src/lib/parton/prompts.ts";
 
 test("dictated words join the answer with one space", () => {
   assert.equal(appendSpoken("", " the sum telescopes "), "The sum telescopes", "a new answer starts with a capital");
@@ -10,8 +10,7 @@ test("dictated words join the answer with one space", () => {
   assert.equal(appendSpoken("unchanged", "   "), "unchanged");
 });
 
-test("short answers are welcome in Prove or argue and Teach it back", () => {
+test("short answers are welcome in Prove or argue", () => {
   assert.match(MARK_RULES, /Brevity is welcome/);
   assert.match(MARK_RULES, /never mark a criterion unmet because it is short/);
-  assert.match(TEACHBACK_RULES, /Brevity is welcome/);
 });

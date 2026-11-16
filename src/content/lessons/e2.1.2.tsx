@@ -442,9 +442,6 @@ assert q.pop() == 5 and q.moves == 5` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how append can be O(1) when it sometimes copies the whole list, and why the array must grow by a factor rather than a fixed amount.",
-
   glimpse: (
     <p>
       Amortised bounds recur all through the course: the dynamic arrays of the next chapter, hash tables that rehash as they

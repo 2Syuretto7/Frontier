@@ -272,9 +272,6 @@ assert stump_labels([1, 2, 3, 4], ['y', 'n', 'n', 'y'], 3) == ('n', 'n'), 'Ties 
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a decision tree classifies by asking a series of questions, what makes a good question, and why a tree should not be allowed to grow without limit.",
-
   glimpse: (
     <p>
       Next, the building block of every neural network: a single artificial neuron. In Introduction to Machine Learning you

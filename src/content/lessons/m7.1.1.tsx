@@ -341,9 +341,6 @@ assert lo == 0.7 and hi == 1.0 and abs(ind - 0.94) < 1e-12` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the axioms of probability say, why countable additivity is needed for problems like tossing until a head, and how inclusion–exclusion and the union bound follow from the axioms.",
-
   glimpse: (
     <>
       <p>

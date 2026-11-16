@@ -301,9 +301,6 @@ assert abs(ecdf_max_gap(np.array([0.25, 0.75]), lambda t: t) - 0.25) < 1e-12` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the average of many independent draws approaches the mean, how Chebyshev gives a sample size that is always enough, what the strong law adds, and why averaging Cauchy draws never settles.",
-
   glimpse: (
     <>
       <p>

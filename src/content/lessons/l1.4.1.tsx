@@ -295,9 +295,6 @@ assert (knn_cosine(X, y, Xt * 100, 3) == knn_cosine(X, y, Xt, 3)).all(), 'Cosine
     },
   ],
 
-  teachBack:
-    "Explain to a friend how k-nearest neighbours predicts, why k = 1 always fits the training data perfectly, and how you would choose k.",
-
   glimpse: (
     <p>
       Next, why nearness itself starts to fail as the number of features grows. Statistical Machine Learning&rsquo;s Gaussian

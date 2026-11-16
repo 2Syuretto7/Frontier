@@ -310,9 +310,6 @@ for _ in range(200):
     },
   ],
 
-  teachBack:
-    "Explain to a friend what symbolic AI tried to do, one of its real successes, and why it ran into trouble as systems grew.",
-
   glimpse: (
     <p>
       Next, the other tradition, running alongside symbolic AI from the start: machines that learn, beginning with the

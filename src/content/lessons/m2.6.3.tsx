@@ -331,9 +331,6 @@ assert max(abs(a - b) for a, b in zip(back, ys)) < 1e-4, 'Differentiating the in
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the rate at which the area under a curve grows is the height of the curve, and how that turns finding areas into undoing derivatives.",
-
   glimpse: (
     <p>
       Next, substitution, the chain rule run backwards, the first technique for finding antiderivatives. The fundamental theorem has grand generalisations: in Multivariable and Matrix Calculus integrals over regions are computed one variable at a time, and in Probability a density is the derivative of a distribution function, so probabilities of intervals are differences of one function at two points.

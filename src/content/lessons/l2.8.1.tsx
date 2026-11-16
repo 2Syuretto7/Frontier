@@ -281,9 +281,6 @@ assert abs(best_binary(lg, 0.35) - 0.35) < 1e-9 and best_binary(abs_score, 0.6) 
     },
   ],
 
-  teachBack:
-    "Explain to a friend what makes a scoring rule proper, why the log and Brier scores are strictly proper while absolute error and accuracy are not, how the log score relates to KL divergence and maximum likelihood, and how the two scores differ in practice.",
-
   glimpse: (
     <>
       <p>

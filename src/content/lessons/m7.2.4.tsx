@@ -330,9 +330,6 @@ assert np.asarray(naive_var([1.0, 2.0])).dtype == np.float32` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the variance measures, why variances add for independent variables but need covariance terms otherwise, why an average of n samples has standard deviation σ/√n, and why E[X²] − E[X]² is a poor way to compute a variance in floating point.",
-
   glimpse: (
     <>
       <p>

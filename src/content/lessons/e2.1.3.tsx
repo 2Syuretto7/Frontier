@@ -376,9 +376,6 @@ assert lo < hi and v == "no clear difference"` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the four mistakes in timing a lazy map once with time.time(), and how you would decide whether one version of a function is really faster than another.",
-
   glimpse: (
     <p>
       Software engineering for ML research returns to profiling CPU and memory, and the accelerator courses benchmark GPU kernels,

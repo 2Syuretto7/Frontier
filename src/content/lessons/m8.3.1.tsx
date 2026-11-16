@@ -299,9 +299,6 @@ assert abs(alt_error_bound(lambda k: 1 / k, 9) - 0.1) < 1e-12` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the Cauchy criterion underlies the comparison and absolute convergence tests, how the root and ratio tests reduce to geometric series and why the root test is stronger, and why the alternating series test gives an error bound.",
-
   glimpse: (
     <>
       <p>

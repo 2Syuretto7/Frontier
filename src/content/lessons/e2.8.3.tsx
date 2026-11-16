@@ -403,9 +403,6 @@ assert time.perf_counter() - start < 15, 'Too slow: only cells within k of the d
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a spell checker can work out that recieve is one or two edits from receive, by filling in a table.",
-
   glimpse: (
     <p>
       That completes E2. The structures and techniques here, heaps, hash tables, tries, graphs, dynamic programming and beam

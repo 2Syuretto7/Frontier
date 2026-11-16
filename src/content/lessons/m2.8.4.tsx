@@ -281,9 +281,6 @@ assert inv == [Fraction((-1) ** k, math.factorial(k)) for k in range(12)] and se
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a power series is, why it converges on an interval about its centre, and how term-by-term integration gives the series for ln(1 + x).",
-
   glimpse: (
     <p>
       Next, Taylor series: the power series of a given function, with coefficients read off from its derivatives, and the

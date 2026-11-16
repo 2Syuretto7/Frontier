@@ -327,9 +327,6 @@ assert oA == 0.78 and oB == 0.826 and all(gA[g] > gB[g] for g in gA) and oA < oB
     },
   ],
 
-  teachBack:
-    "Explain to a friend why conditioning on an event gives a new probability with all the usual rules, how conditioning on the first step turns the gambler's ruin into a recurrence, and why the way information is obtained changes the right conditioning event.",
-
   glimpse: (
     <>
       <p>

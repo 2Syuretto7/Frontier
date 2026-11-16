@@ -272,9 +272,6 @@ assert a['implication'] == 2 and a['contrapositive'] == 2 and a['converse'] is N
     },
   ],
 
-  teachBack:
-    "Explain to a friend why, in the card puzzle, you must turn the 7 but not the 4, using the words converse and contrapositive.",
-
   glimpse: (
     <p>
       This completes propositional logic. Next come quantifiers, &ldquo;for all&rdquo; and &ldquo;there exists&rdquo;, which most mathematical statements need. In the chapter on proof, the contrapositive becomes a proof technique of its own: to prove &ldquo;if P then Q&rdquo;, assume Q fails and show P fails. Confusing a conditional with its converse is also behind many misread results, the subject of the last lesson of How Machines Learn.

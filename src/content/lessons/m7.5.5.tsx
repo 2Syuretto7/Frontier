@@ -318,9 +318,6 @@ assert 0 < v1[0] < 1` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to condition a multivariate normal on some of its coordinates, why the conditional mean is linear in the observation while the conditional covariance does not depend on it, and how this gives the Kalman update and Gaussian process regression.",
-
   glimpse: (
     <>
       <p>

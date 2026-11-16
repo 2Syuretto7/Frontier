@@ -313,9 +313,6 @@ assert chernoff(b, 40, [0.0, 0.5, 1.0]) == 1.0 and abs(chernoff(binom_dist(10, 0
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a moment generating function is, why sums of independent variables multiply their MGFs, and how optimising Markov's inequality applied to e^(tX) gives the Chernoff bound.",
-
   glimpse: (
     <>
       <p>

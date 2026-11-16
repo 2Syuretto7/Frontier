@@ -301,9 +301,6 @@ print(combo(3) - combo(1))
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to break a programming problem into functions top-down, what stubs and docstrings are for, and how to tell whether a function does too much.",
-
   glimpse: (
     <p>
       This completes Functions. Next, data structures, starting with lists. Software Engineering for ML Research returns to

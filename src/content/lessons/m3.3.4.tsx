@@ -314,9 +314,6 @@ assert 'solve' not in inspect.getsource(lu_solve).split(':', 1)[1], 'Substitute 
     },
   ],
 
-  teachBack:
-    "Explain to a friend how elimination produces A = LU, why storing the multipliers loses nothing, and why factoring once saves so much work when many right-hand sides share one matrix.",
-
   glimpse: (
     <p>
       Next, transposes and permutation matrices, which reorder rows and swap rows with columns. Numerical Linear Algebra and

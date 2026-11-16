@@ -427,9 +427,6 @@ for _ in range(150):
     },
   ],
 
-  teachBack:
-    "Explain to a friend why Dijkstra's algorithm can declare the nearest unsettled place final, and why a negative road length would ruin that.",
-
   glimpse: (
     <p>
       Shortest paths connect one source to everything. Next, the cheapest set of edges connecting everything to everything,

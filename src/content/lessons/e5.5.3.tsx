@@ -318,9 +318,6 @@ assert s == sum(float(i % 7) for i in range(256)) and k == 8` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a GPU kernel replaces a loop, how each thread finds its element, why the bounds check is needed, and why coalesced access and tree reductions matter.",
-
   glimpse: (
     <p>
       With autograd, tensors, modules, optimisers, testing and a backend, the framework is complete in outline. Every piece

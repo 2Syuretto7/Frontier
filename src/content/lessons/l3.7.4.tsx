@@ -270,9 +270,6 @@ assert np.allclose(spectral_gd_solution(X, y, 0.1, 5000), w_ls)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how early stopping works with patience and checkpoints, and why stopping gradient descent early is like choosing a ridge penalty.",
-
   glimpse: (
     <p>
       That completes the regularisers. The last chapter is about what to do when training goes wrong, starting with the first

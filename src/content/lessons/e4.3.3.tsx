@@ -351,9 +351,6 @@ assert compare_runs(runs, 'missing') == []` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what an experiment record should contain so that a question about hundreds of old runs can be answered without remembering anything, and why a smoothed loss curve can mislead at the start.",
-
   glimpse: (
     <p>
       Tracking records what happened; it does not record why you ran it or what you concluded. Next, the lab notebook: writing

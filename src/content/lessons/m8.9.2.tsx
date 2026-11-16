@@ -269,9 +269,6 @@ assert gaps([Fraction(1), Fraction(3, 2), Fraction(5, 4)]) == [0.5, 0.25]` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a complete metric space is, why ℚ is not complete, why closed subsets of complete spaces are complete, why C[a, b] is complete under the sup metric, and how steepening ramps show it is not complete under the integral metric.",
-
   glimpse: (
     <>
       <p>

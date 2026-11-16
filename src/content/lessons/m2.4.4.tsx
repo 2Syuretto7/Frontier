@@ -307,9 +307,6 @@ assert np.allclose(bce_grad(z, y), num, atol=1e-8), 'The gradient is (σ(z) − 
     },
   ],
 
-  teachBack:
-    "Explain to a friend why eˣ is its own derivative, how that gives the derivatives of bˣ and ln x, and why the sigmoid's slope is never above 1/4.",
-
   glimpse: (
     <p>
       Next, implicit differentiation, which finds slopes of curves that are not graphs of functions, and the theorem on

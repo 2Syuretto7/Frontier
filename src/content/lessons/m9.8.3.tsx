@@ -269,9 +269,6 @@ def sign_test_p(d):
     },
   ],
 
-  teachBack:
-    "Explain to a friend why paired tests are more powerful when units vary a lot, how the gain depends on the correlation, how the paired t, sign and signed-rank tests differ, and when each is appropriate for comparing models across tasks.",
-
   glimpse: (
     <>
       <p>

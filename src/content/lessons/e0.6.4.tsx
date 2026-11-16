@@ -292,9 +292,6 @@ except KeyError:
     },
   ],
 
-  teachBack:
-    "Explain to a friend how you would go from a problem description to a working program: specifying, planning stages as functions, building and testing one stage at a time, and handling bad input.",
-
   glimpse: (
     <p>
       This completes Programming from Zero. Python, NumPy and the Command Line follows: the terminal, version control with

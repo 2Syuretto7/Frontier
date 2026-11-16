@@ -285,9 +285,6 @@ assert abs(gauss_legendre(math.cos, 0, math.pi / 2, 10) - 1) < 1e-14, 'Ten Gauss
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the midpoint, trapezoid and Simpson rules approximate an integral, and why Simpson's error falls so much faster as the strips get thinner.",
-
   glimpse: (
     <p>
       This completes the techniques of integration. Next, sequences and series: what it means for infinitely many numbers to

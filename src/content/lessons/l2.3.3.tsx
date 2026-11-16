@@ -298,9 +298,6 @@ assert F.shape == (3, 20000) and abs(C[0, 0] - 1) < 0.05 and abs(C[0, 1] - np.ex
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a Gaussian process is, how GP regression comes from conditioning Gaussians, how it relates to kernel ridge and Bayesian linear regression, and how the marginal likelihood chooses the lengthscale.",
-
   glimpse: (
     <>
       <p>

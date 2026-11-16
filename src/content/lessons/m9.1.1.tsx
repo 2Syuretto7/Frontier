@@ -245,9 +245,6 @@ def var_of_mean(n, reps, seed=0):
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a random sample and a statistic are, why the sample mean has variance σ²/n, why dividing the sum of squared deviations by n − 1 gives an unbiased estimate of σ², and when the independence assumption fails.",
-
   glimpse: (
     <>
       <p>

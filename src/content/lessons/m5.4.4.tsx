@@ -301,9 +301,6 @@ assert abs(L - 1000) < 1e-9 and np.allclose(G, [[1.0, -1.0]])` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the gradient of softmax cross-entropy is predicted minus true, and why libraries compute it with log-sum-exp rather than softmax followed by log.",
-
   glimpse: (
     <p>
       The logits come from a matrix product. The last lesson of this chapter pushes gradients back through matrix products,

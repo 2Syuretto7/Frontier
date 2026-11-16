@@ -277,9 +277,6 @@ assert abs(d_one(lambda x: 1, lambda x: 3, 0, 2, 7) - 4) < 1e-12` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the three axioms of a metric and some examples beyond the line, how a norm gives a metric and why the discrete metric does not come from one, why all the usual norms on ℝⁿ agree about convergence, and why the sup and integral metrics on functions do not.",
-
   glimpse: (
     <>
       <p>

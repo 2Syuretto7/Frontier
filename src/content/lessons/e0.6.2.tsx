@@ -261,9 +261,6 @@ assert [g for _, _, g in r] == ['ValueError', 'ValueError']` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a test case is, how to choose test cases that are likely to catch bugs, and why passing tests do not prove a function is correct.",
-
   glimpse: (
     <p>
       Next, reading error messages, so that when a test fails or a program crashes you can find the cause quickly. In Software

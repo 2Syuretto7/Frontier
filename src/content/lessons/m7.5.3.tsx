@@ -307,9 +307,6 @@ assert abs(mahalanobis([1.0, 2.0], [0.0, 0.0], np.eye(2)) - np.sqrt(5)) < 1e-12 
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a covariance matrix is, why it is positive semidefinite, how to generate samples with a given covariance from independent normals, and what Mahalanobis distance measures.",
-
   glimpse: (
     <>
       <p>

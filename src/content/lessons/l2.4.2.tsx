@@ -301,9 +301,6 @@ assert p.shape == (2,) and p[0] < p[1] and np.all(bagged(x, np.full(10, 3.0), np
     },
   ],
 
-  teachBack:
-    "Explain to a friend what fraction of points a bootstrap sample contains, why averaging resampled predictors removes exactly their variance, which learners benefit from bagging and which do not, and why bagged trees stay correlated.",
-
   glimpse: (
     <>
       <p>

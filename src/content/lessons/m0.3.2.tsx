@@ -300,9 +300,6 @@ assert [round(x, 9) for x, _ in pts] == [-3, -2, -1, 0, 1, 2, 3] and [y for _, y
     },
   ],
 
-  teachBack:
-    "Explain the vertical line test to a friend, using the train puzzle. Then say why a horizontal line meeting a graph twice is no problem at all.",
-
   glimpse: (
     <p>
       Next, the two families of graphs you will meet most: straight lines and parabolas. The Cartesian plane returns in

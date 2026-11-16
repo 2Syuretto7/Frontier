@@ -382,9 +382,6 @@ assert np.allclose(W.grad, X.T @ G) and np.allclose(b.grad, G.sum(axis=0)) and n
     },
   ],
 
-  teachBack:
-    "Explain to a friend the gradient rules for a matrix product, a sum along an axis, a transpose and a reshape, and why composite operations like a linear layer need no closure of their own.",
-
   glimpse: (
     <p>
       Softmax followed by cross-entropy can be built from exp, sum and log, but that composite overflows and wastes work. Next:

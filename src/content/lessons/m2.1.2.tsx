@@ -325,9 +325,6 @@ assert abs(r - 0.3) < 1e-6 and 15 <= len(calls) <= 25, 'Bisection needs about lo
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the supremum of a set is, why the rationals with square below 2 have no rational supremum, and why calculus needs the completeness axiom.",
-
   glimpse: (
     <p>
       Completeness comes in many equivalent forms: every bounded monotone sequence converges, nested closed intervals have a common point, every Cauchy sequence converges. Real Analysis proves they are all the same, and later in this course completeness is what makes limits of sequences and sums of series exist at all. Next, the absolute value: the tool for measuring how close two numbers are.

@@ -289,9 +289,6 @@ assert abs(a - 1) < 0.02, 'sin is Lipschitz: exponent 1.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what it means for a function to be continuous at a point, and describe the different ways continuity can fail.",
-
   glimpse: (
     <p>
       The next two lessons prove the two great theorems about continuous functions on intervals. Real Analysis takes continuity further, defining it using any notion of distance, and Neural Networks from Scratch relies on it throughout: a network built from continuous pieces is continuous, which is why small changes to an input give small changes to the output.

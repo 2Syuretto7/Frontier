@@ -353,9 +353,6 @@ for _ in range(30):
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a property-based test is, give two kinds of property you could check, and explain why shrinking the failing input matters.",
-
   glimpse: (
     <p>
       Many properties of numerical code are only true approximately: floating-point arithmetic rounds. Next, testing

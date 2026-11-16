@@ -264,9 +264,6 @@ assert abs(exact(0) - (math.e - 1)) < 1e-15 and abs(exact(1) - 1) < 1e-15, 'The 
     },
   ],
 
-  teachBack:
-    "Explain to a friend how integration by parts comes from the product rule, how to choose u and dv, and how an integral can be solved by making it reappear.",
-
   glimpse: (
     <p>
       Next, partial fractions, which split a rational function into simple pieces with logarithms and arctangents as

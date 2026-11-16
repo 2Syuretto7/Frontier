@@ -327,9 +327,6 @@ for r0 in [0.5, 2.0, 3.0]:
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the rows, the columns and the determinant of a Jacobian each tell you, using polar coordinates as the example.",
-
   glimpse: (
     <p>
       When the output is a single number, the Jacobian is one row, and turned on its side it is the gradient. Next, gradients,

@@ -281,9 +281,6 @@ assert diverges(lambda x: 1 / x, 1) and diverges(lambda x: 1 / math.sqrt(x), 1) 
     },
   ],
 
-  teachBack:
-    "Explain to a friend how an area that stretches to infinity can be finite, why ∫ 1/x² converges while ∫ 1/x does not, and how comparison decides harder cases.",
-
   glimpse: (
     <p>
       Next, the most important improper integral of all: the area under the bell curve <M>{"e^{-x^2}"}</M>, which has no

@@ -316,9 +316,6 @@ assert abs(mahalanobis([2, 0], [0, 0], cov) - 1) < 1e-12 and abs(mahalanobis([0,
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a positive definite matrix is, the different ways to test for it, and why it decides whether a critical point is a bowl or a saddle.",
-
   glimpse: (
     <p>
       Next chapter: linear transformations, and finally the singular value decomposition. Multivariable and Matrix Calculus

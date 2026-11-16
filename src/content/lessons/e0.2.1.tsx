@@ -323,9 +323,6 @@ assert sum(is_right(a, b, c) for a in range(1, 30) for b in range(a, 30) for c i
     },
   ],
 
-  teachBack:
-    "Explain to a friend how if, elif and else choose which block runs, why the order of the conditions matters, and what indentation does in Python.",
-
   glimpse: (
     <p>
       Next, loops, which run a block again and again. The decision trees of How Machines Learn are nothing but nested if

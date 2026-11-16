@@ -296,9 +296,6 @@ assert ls < 1e-5 and ne > 100 * ls` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why least squares is an orthogonal projection, what the hat matrix and leverage are, how the Gauss-Markov theorem shows least squares is best among linear unbiased estimators, and why one should not solve the normal equations directly for ill-conditioned designs.",
-
   glimpse: (
     <>
       <p>

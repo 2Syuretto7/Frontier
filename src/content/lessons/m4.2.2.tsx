@@ -298,9 +298,6 @@ assert kth_term([1, 1], [0, 1], 10 ** 18, M) == fd(10 ** 18)[0], 'F at 10¹⁸ b
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to find a recurrence by looking at the last step, and how the characteristic equation turns the Fibonacci recurrence into a formula.",
-
   glimpse: (
     <p>
       Generating functions, next, solve recurrences by turning a sequence into a single function. Data Structures and

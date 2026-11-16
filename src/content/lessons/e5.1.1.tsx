@@ -366,9 +366,6 @@ assert op_counts(y) == {"*": 30, "+": 30}` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how wrapping numbers in a Value class lets ordinary arithmetic build a computational graph, and what each operation's _backward closure stores.",
-
   glimpse: (
     <p>
       Calling the closures by hand works only in the right order. Next, a topological sort finds that order automatically, and{" "}

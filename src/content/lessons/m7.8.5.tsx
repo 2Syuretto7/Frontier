@@ -356,9 +356,6 @@ assert abs(autocorr(y, 1) + 1) < 1e-12` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how Metropolis–Hastings proposes and accepts moves, why detailed balance makes the target stationary, why the normalising constant cancels, and how the proposal step size trades acceptance against movement.",
-
   glimpse: (
     <>
       <p>

@@ -289,9 +289,6 @@ assert euler_phi(36) == 12 and euler_phi(1000000000039) == 1000000000038, '10¹�
     },
   ],
 
-  teachBack:
-    "Explain to a friend why inclusion-exclusion alternates signs, using three overlapping sets, and how it counts the arrangements where no letter reaches its envelope.",
-
   glimpse: (
     <p>
       In Probability the same formula holds with P in place of | · |, and the union bound, its first term, controls the chance

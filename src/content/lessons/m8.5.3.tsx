@@ -256,9 +256,6 @@ assert abs(delta_at(lambda x: x * x * x, lambda y: y ** (1 / 3), 1, 1, 0, 2) - (
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between continuity and uniform continuity as an order of quantifiers, the sequential test for failure, why continuity on a compact set is automatically uniform, and why 1/x on (0, 1] is not.",
-
   glimpse: (
     <>
       <p>

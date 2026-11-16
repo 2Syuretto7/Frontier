@@ -328,9 +328,6 @@ assert isinstance(convolve_density(e, e, 1.0, 0, 1), float)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the density of g(X) is f_X divided by |g′|, how to handle a transformation like X² that is not one-to-one, and why the density of a sum of independent variables is a convolution.",
-
   glimpse: (
     <>
       <p>

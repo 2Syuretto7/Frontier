@@ -453,9 +453,6 @@ assert largest_true(lambda b: b <= 57, 50) == 57` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend binary search as finding where a true-or-false test first becomes true, and use it to find the largest batch size that fits in memory.",
-
   glimpse: (
     <p>
       Selection, next, finds the k-th smallest item without sorting. Binary search over suffixes is how suffix arrays answer

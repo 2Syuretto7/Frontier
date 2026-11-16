@@ -324,9 +324,6 @@ assert abs(expected_distinct(4, 3) - exact) < 1e-12` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the expectation of a discrete random variable is, why linearity holds even for dependent variables, how indicators turn counting problems into one-line expectations, and where the tail-sum formula comes from.",
-
   glimpse: (
     <>
       <p>

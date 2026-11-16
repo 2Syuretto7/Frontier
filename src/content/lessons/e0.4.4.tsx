@@ -293,9 +293,6 @@ assert pairs_with_sum(xs, 5) == want` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what tuples and sets are, how unpacking lets a function return several values, and how to choose between a list, tuple, set and dictionary.",
-
   glimpse: (
     <p>
       This completes Data structures. Next, programs that read and write files, so that data outlives a single run. In Data

@@ -300,9 +300,6 @@ assert throttle(ev, 100) == [(0, 1), (100, 3), (230, 6)] and throttle(ev, 0) == 
     },
   ],
 
-  teachBack:
-    "Explain to a friend what linked brushing is, what it can reveal that a single chart cannot, and why a pattern found by exploring still needs confirming.",
-
   glimpse: (
     <p>
       Next, data handling. Charts need tables, and the dataframe is the table you will use most: named, typed columns with

@@ -273,9 +273,6 @@ assert all(negate(negate(f)) == f for f in fs), 'Negating twice gives the formul
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to negate 'every student has read a book by Tagore', and why the answer is not 'no student has read a book by Tagore'.",
-
   glimpse: (
     <p>
       The stretch exercise used three quantifiers in a row, and the next lesson is about exactly that: statements with

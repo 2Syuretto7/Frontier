@@ -482,9 +482,6 @@ assert unsuccessful_cost(10007, 0.8, "linear", 20000, 3) > 2 * unsuccessful_cost
     },
   ],
 
-  teachBack:
-    "Explain to a friend why linear probing slows down sharply as a hash table fills, why deleted slots need tombstones, and how resizing keeps operations O(1).",
-
   glimpse: (
     <p>
       The next two lessons use hashing without storing the keys at all: a Bloom filter answers &ldquo;have I seen this?&rdquo;

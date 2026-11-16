@@ -278,9 +278,6 @@ assert best_tau2(X, np.zeros(3), 1.0, g) == 0.1 and best_tau2(X, np.full(3, 5.0)
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the posterior over regression weights is computed, why its mean is the ridge solution, where the two terms of the predictive variance come from, and how the evidence can choose the prior variance.",
-
   glimpse: (
     <>
       <p>

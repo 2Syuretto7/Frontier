@@ -299,9 +299,6 @@ assert np.allclose(softmax_grad(X, Y, W) + 0.01 * W, 0, atol=1e-6) and np.allclo
     },
   ],
 
-  teachBack:
-    "Explain to a friend why Gaussian classes with shared covariance give a logistic posterior, why logistic regression is convex, why separable data has no maximum-likelihood fit, and what the softmax gradient looks like.",
-
   glimpse: (
     <>
       <p>

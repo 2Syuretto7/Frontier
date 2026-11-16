@@ -474,9 +474,6 @@ for f, err in [(lambda: unlink(fs, '/y'), FileNotFoundError), (lambda: link(fs, 
     },
   ],
 
-  teachBack:
-    "Explain to a friend what an inode is and why deleting a file that another name still links to does not delete its data.",
-
   glimpse: (
     <p>
       Chapter 4 showed one processor shared among many programs. Next chapter: many threads inside one program, sharing the

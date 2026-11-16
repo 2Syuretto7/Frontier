@@ -314,9 +314,6 @@ assert max(greedy_colouring(8, crown, [0, 4, 1, 5, 2, 6, 3, 7])) == 3 and max(gr
     },
   ],
 
-  teachBack:
-    "Explain to a friend how exam timetabling becomes graph colouring, why odd cycles need three colours, and why greedy colouring never needs more than one more colour than the largest degree.",
-
   glimpse: (
     <p>
       The question of whether a graph can be 3-coloured is one of the classic NP-complete problems met at the end of this

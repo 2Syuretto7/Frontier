@@ -332,9 +332,6 @@ assert not segment_test(ring, np.array([0.8, 0.0]), np.array([-0.8, 0.0])) and s
     },
   ],
 
-  teachBack:
-    "Explain to a friend what makes a set convex, why convex sets contain all convex combinations of their points, why norm balls and the positive semidefinite cone are convex, and what a cone is.",
-
   glimpse: (
     <>
       <p>

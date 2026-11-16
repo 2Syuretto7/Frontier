@@ -372,9 +372,6 @@ assert chain_cost([1000, 1000, 1000, 1]) == 2000000` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what an einsum computes, why it is a tensor product followed by contractions, why the order of the pairwise contractions changes the cost but not the answer, and how to write the gradient of an einsum as another einsum.",
-
   glimpse: (
     <>
       <p>

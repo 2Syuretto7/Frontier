@@ -279,9 +279,6 @@ assert 0.88 < c < 0.99` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the bootstrap estimates the variability of a statistic from one sample, why it reproduces the usual standard error for the mean, how percentile intervals are formed, and when the bootstrap fails.",
-
   glimpse: (
     <>
       <p>

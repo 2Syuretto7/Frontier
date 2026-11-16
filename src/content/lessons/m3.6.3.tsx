@@ -284,9 +284,6 @@ assert abs(v - simplex_volume(pts)) < 0.02 and v == monte_carlo_volume(pts, 2000
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the determinant is the area or volume of the box spanned by the columns, why a linear map scales every region by the same factor, and what a negative determinant means.",
-
   glimpse: (
     <p>
       Next chapter: eigenvalues, the special directions a matrix only stretches, which are found by solving det(A − λI) = 0.

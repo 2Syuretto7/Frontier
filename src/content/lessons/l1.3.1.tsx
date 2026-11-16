@@ -278,9 +278,6 @@ assert np.allclose(w8, w30, atol=1e-10), 'Newton converges in a handful of steps
     },
   ],
 
-  teachBack:
-    "Explain to a friend how logistic regression turns a straight line into a probability, what log loss is, and why it punishes confident mistakes.",
-
   glimpse: (
     <p>
       Next, the decision boundary: where in feature space the model switches from one class to the other. Statistical

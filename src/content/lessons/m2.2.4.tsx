@@ -301,9 +301,6 @@ assert classify(lambda x: math.sin(1 / x) if x else 0, 0) == 'oscillating', 'sin
     },
   ],
 
-  teachBack:
-    "Explain to a friend what one-sided limits are, how they decide whether a limit exists, and what it really means to write that a limit equals infinity.",
-
   glimpse: (
     <p>
       Infinite limits and limits at infinity are the raw material of two later lessons in this course: L&rsquo;Hôpital&rsquo;s

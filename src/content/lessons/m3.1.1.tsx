@@ -295,9 +295,6 @@ assert len(pts) == 9 and (0, 0) in pts and (2, 1) in pts and (3, 4) not in pts a
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a linear combination is, what the combinations of one, two or three vectors in space fill, and why the plane is reachable from u = (2, 1) and v = (1, 2) but not from u and −u.",
-
   glimpse: (
     <p>
       Next, the dot product, which measures lengths and angles and turns geometry into arithmetic. Linear Algebra II treats

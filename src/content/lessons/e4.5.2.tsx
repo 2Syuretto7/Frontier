@@ -303,9 +303,6 @@ assert leaks([{'x': 1}, {'y': 2}, {'x': 3, 'y': 4}]) == [], 'A site missing from
     },
   ],
 
-  teachBack:
-    "Explain to a friend where the memory of a training step goes, why the peak matters more than the average, and how appending a loss tensor to a list can crash a run hours later.",
-
   glimpse: (
     <p>
       A single process can only use one core of Python at a time. Next, multiprocessing and the GIL: why threads do not speed

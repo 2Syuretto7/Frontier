@@ -269,9 +269,6 @@ for _ in range(30):
     },
   ],
 
-  teachBack:
-    "Explain to a friend when counts add and when they multiply, using a password or a menu, and why the product rule needs each stage to have the same number of options whatever was chosen before.",
-
   glimpse: (
     <p>
       Next, permutations and combinations: the product rule, followed by dividing out the orders that do not matter.

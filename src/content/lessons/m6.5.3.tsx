@@ -304,9 +304,6 @@ for scale in (0.01, 0.1, 0.5):
     },
   ],
 
-  teachBack:
-    "Explain to a friend why eigenvalues of symmetric matrices move by at most the size of the perturbation, why eigenvectors can move much more, and how the eigenvalue gap controls them.",
-
   glimpse: (
     <>
       <p>

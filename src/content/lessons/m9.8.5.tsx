@@ -352,9 +352,6 @@ assert cv_acc(X, y, 20, leak=True) > 0.85 and cv_acc(X, y, 20) < 0.75` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why random assignment gives an unbiased comparison, how blocking makes it more precise, what controls and ablations are for, how feature selection on the whole dataset leaks, and why writing the analysis plan down first matters.",
-
   glimpse: (
     <>
       <p>

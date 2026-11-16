@@ -351,9 +351,6 @@ assert np.allclose(z.grad, (P - Y) / 12)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how one nan can reach every weight in a single step, which special floating-point values cause it, and how stable forms and fused operations like BCE with logits prevent it.",
-
   glimpse: (
     <p>
       The framework is correct and robust, but every array operation is NumPy&rsquo;s. Next: building the array itself, a

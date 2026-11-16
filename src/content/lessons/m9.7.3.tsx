@@ -293,9 +293,6 @@ assert abs(bayes_predict(x, y, 3.0, 1.0) - 0.898) < 2e-3` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how MAP estimation relates to regularised maximum likelihood, why the MAP estimate changes under reparametrisation while quantiles do not, why predictions should average over the posterior, and what the Laplace approximation offers in between.",
-
   glimpse: (
     <>
       <p>

@@ -416,9 +416,6 @@ assert find_races(E) == [(0, 4), (3, 4)], 'Thread 2 never synchronised with anyo
     },
   ],
 
-  teachBack:
-    "Explain to a friend why 'if balance >= 80: balance -= 80' is unsafe with two threads, and how compare-and-swap fixes it without a lock.",
-
   glimpse: (
     <p>
       Threads let a program wait for many things at once, at the price of races. Next, asynchronous I/O: one thread, an

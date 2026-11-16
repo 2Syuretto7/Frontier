@@ -275,9 +275,6 @@ assert abs(v - (2 / 3) * (1 / 3)) < 1e-5` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how Fubini's theorem turns a double integral into two single integrals, how to rewrite the limits when swapping the order, and why the swap can fail.",
-
   glimpse: (
     <p>
       Some regions are awkward in x and y but simple in other coordinates, such as discs in polar coordinates. Changing

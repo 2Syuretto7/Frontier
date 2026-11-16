@@ -261,9 +261,6 @@ assert abs(grid_mean(1000, 1000, [], g) - 1) < 1e-3` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a conjugate prior is, derive the gamma-Poisson and normal-normal updates, explain why precisions add and how prior hyperparameters act as pseudo-data, and why every exponential family has a conjugate prior.",
-
   glimpse: (
     <>
       <p>

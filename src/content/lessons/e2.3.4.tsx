@@ -410,9 +410,6 @@ assert got == [("copy2", "d2"), ("copy4", "d4")], got` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the chance two sets share their first element under a random ordering equals their Jaccard similarity, and how banding finds similar documents without comparing every pair.",
-
   glimpse: (
     <p>
       Data engineering for foundation models scales this to web corpora, where de-duplication changes what a model memorises and

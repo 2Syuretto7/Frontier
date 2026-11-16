@@ -276,9 +276,6 @@ assert abs(osc_sum(lambda x: x, partition(0, 2, 4)) - 1) < 1e-12` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how upper and lower Darboux sums are defined, why refining a partition squeezes them together, why every lower sum is below every upper sum, how this defines the integral, and why the rational indicator function has none.",
-
   glimpse: (
     <>
       <p>

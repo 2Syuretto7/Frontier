@@ -277,9 +277,6 @@ assert {b for a, b in E if a == 1} == {1, 2, 5} and {b for a, b in E if a == 4} 
     },
   ],
 
-  teachBack:
-    "Explain to a friend what it means to say a relation is just a set of ordered pairs, and why 'is a sibling of' is symmetric but not transitive.",
-
   glimpse: (
     <p>
       Relations that are reflexive, symmetric and transitive behave like &ldquo;is the same as, in some respect&rdquo;, and they cut a set into pieces: that is the next lesson. Relations are the edges of graphs in Discrete Mathematics, and the graphs of Data Structures and Algorithms are relations stored in a computer.

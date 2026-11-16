@@ -287,9 +287,6 @@ assert hasse(A, lambda a, b: b % a == 0) == {(1, 2), (1, 3), (2, 4), (2, 6), (3,
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between a partial order and a total order, using getting dressed and the divisors of 12 as examples.",
-
   glimpse: (
     <p>
       This completes the chapter on relations. The next chapter shows that a function is a special kind of relation. The order axioms of the real numbers open Real Analysis, and partial orders reappear in Data Structures and Algorithms as the dependencies that a topological sort must respect.

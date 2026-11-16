@@ -273,9 +273,6 @@ assert 0.02 < p < 0.98` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the posterior predictive distribution is, why its variance has two parts, why it is wider than a plug-in prediction, and how posterior predictive checks reveal a misspecified model.",
-
   glimpse: (
     <>
       <p>

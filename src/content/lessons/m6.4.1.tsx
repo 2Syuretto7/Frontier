@@ -328,9 +328,6 @@ assert np.allclose(N * 45 ** 0.5, W)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the spectral theorem applied to T*T produces the singular value decomposition of any linear map, and why singular values and eigenvalues can differ so much.",
-
   glimpse: (
     <>
       <p>

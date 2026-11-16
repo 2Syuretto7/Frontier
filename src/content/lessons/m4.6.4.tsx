@@ -286,9 +286,6 @@ assert c is not None and not any(len({c[e] for e in combinations(S, 2)}) == 1 fo
     },
   ],
 
-  teachBack:
-    "Explain to a friend how choosing at random can prove that a good object exists, using the fact that every graph has a cut containing at least half its edges.",
-
   glimpse: (
     <p>
       This completes Discrete Mathematics. High-Dimensional Probability and Statistics and Statistical Learning Theory use the

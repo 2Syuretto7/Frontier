@@ -341,9 +341,6 @@ assert 'linalg.qr' not in inspect.getsource(cgs) + inspect.getsource(mgs) + insp
     },
   ],
 
-  teachBack:
-    "Explain to a friend why orthonormal bases make coordinates and projections easy, how Gram-Schmidt builds one from any basis, and how the process is recorded as A = QR.",
-
   glimpse: (
     <p>
       Next chapter: determinants, a single number that says whether a matrix is invertible and how it scales volume. Numerical

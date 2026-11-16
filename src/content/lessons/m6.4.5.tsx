@@ -330,9 +330,6 @@ assert np.allclose(np.abs(G), np.abs(Xc @ Vt[:3].T), atol=1e-8)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why maximising projected variance and minimising reconstruction error give the same PCA subspace, why the data must be centred, and how the SVD of the data computes everything.",
-
   glimpse: (
     <>
       <p>

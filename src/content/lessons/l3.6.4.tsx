@@ -298,9 +298,6 @@ assert abs(scaled_lr(0.1, 1024, 256, "linear") - 0.025) < 1e-12` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how batch size controls gradient noise, what the critical batch size is, and how the learning rate should change with the batch.",
-
   glimpse: (
     <p>
       The optimiser gets the training loss down. Whether the model does well on new data is another matter. Next chapter:

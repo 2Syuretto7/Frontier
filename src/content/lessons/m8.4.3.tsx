@@ -292,9 +292,6 @@ assert abs(bisect_value(lambda x: x, -1, 1, 0.3) - 0.3) < 1e-8` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what it means for a set of reals to be connected, why a missing point disconnects a set, the supremum argument showing intervals are connected, and how this gives the intermediate value theorem.",
-
   glimpse: (
     <>
       <p>

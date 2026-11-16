@@ -456,9 +456,6 @@ for _ in range(2000):
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a heap finds the minimum in O(1) and inserts in O(log n) while keeping only partial order, and how to keep the top 10 of a stream with a heap of size 10.",
-
   glimpse: (
     <p>
       Heaps run the selection algorithms of chapter 5, Dijkstra&rsquo;s shortest paths and Prim&rsquo;s spanning trees in chapter

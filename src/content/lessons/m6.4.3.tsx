@@ -318,9 +318,6 @@ assert np.allclose(np.linalg.norm(B, axis=0), np.sqrt(s[:3]))` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why truncating the SVD gives the best rank-k approximation, what its error is in the spectral and Frobenius norms, and how the argument uses dimension counting.",
-
   glimpse: (
     <>
       <p>

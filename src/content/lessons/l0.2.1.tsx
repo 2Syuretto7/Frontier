@@ -261,9 +261,6 @@ def f1(tp, fp, fn):
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a decision boundary is, using two kinds of fruit, and why a classifier with very high accuracy can still be useless.",
-
   glimpse: (
     <p>
       Next, regression, where the label is a number rather than a category. In Introduction to Machine Learning, logistic

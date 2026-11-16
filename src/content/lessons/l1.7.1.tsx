@@ -293,9 +293,6 @@ assert edges.tolist() == [1, 3, 5] and b.tolist() == [0, 0, 1, 1, 1], 'A value e
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a nearest-neighbour model needs standardised features, why the scaling must be learned from training data alone, and why categories are one-hot encoded.",
-
   glimpse: (
     <p>
       Next, leakage: the many ways information from the test set or the future creeps into training. Python, NumPy and the

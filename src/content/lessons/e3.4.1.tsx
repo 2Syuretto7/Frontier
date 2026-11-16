@@ -415,9 +415,6 @@ except ValueError:
     },
   ],
 
-  teachBack:
-    "Explain to a friend what fork() does and why a loop of three forks ends with eight processes.",
-
   glimpse: (
     <p>
       Hundreds of processes and only a few cores. Next, scheduling: how the operating system decides who runs next, and

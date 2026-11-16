@@ -321,9 +321,6 @@ def split_gain(parent, left, right, impurity):
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the gain of a regression split depends only on group sizes and means, how sorting and running sums find the best threshold quickly, why Gini and entropy are better split criteria than the error rate, and how cost-complexity pruning works.",
-
   glimpse: (
     <>
       <p>

@@ -398,9 +398,6 @@ assert h.largest_free() == 4096` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a pointer is, and why a struct of a char, a double and a char takes 24 bytes in C.",
-
   glimpse: (
     <p>
       Pointers and layouts are what the processor finally sees. Next, a look at the processor&rsquo;s own language, assembly,

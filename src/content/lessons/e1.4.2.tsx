@@ -247,9 +247,6 @@ assert b['PATH'] == '/two/bin:/usr/bin' and b['VIRTUAL_ENV'] == '/two' and deact
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a virtual environment is, how activation works through PATH, and what uv run does for you.",
-
   glimpse: (
     <p>
       Next, pinning: recording the exact version of every package, so that the environment on the GPU machine next month matches

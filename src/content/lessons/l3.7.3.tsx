@@ -292,9 +292,6 @@ assert not np.allclose(Ym, Y)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what an augmentation asserts about a task, why input noise acts like ridge regression, and how to choose augmentations that help.",
-
   glimpse: (
     <p>
       All of these regularisers have a strength to tune. The simplest regulariser of all needs no tuning: stop training at

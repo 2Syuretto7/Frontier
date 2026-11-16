@@ -403,9 +403,6 @@ for _ in range(40):
     },
   ],
 
-  teachBack:
-    "Explain to a friend why running short jobs first lowers the average wait, and why an operating system still cannot just do that.",
-
   glimpse: (
     <p>
       Processes spend much of their time blocked on disks and networks. Next, file systems and I/O: how bytes on a device

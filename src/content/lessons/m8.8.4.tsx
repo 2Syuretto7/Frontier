@@ -264,9 +264,6 @@ def chebyshev(n, x, delta):
     },
   ],
 
-  teachBack:
-    "Explain to a friend the statement of the Weierstrass approximation theorem, how Bernstein polynomials are expectations of f at a binomial proportion, and how uniform continuity and Chebyshev's inequality together prove uniform convergence.",
-
   glimpse: (
     <>
       <p>

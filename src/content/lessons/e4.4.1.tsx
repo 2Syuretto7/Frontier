@@ -315,9 +315,6 @@ assert config_debt("x = cfg.lr + other['d']", {'lr'}) == (['lr'], [])` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how research code and production code differ in purpose, and which parts of research code still deserve careful engineering.",
-
   glimpse: (
     <p>
       The cure for most research-code debt is good boundaries between parts. Next, modularity: splitting a training program

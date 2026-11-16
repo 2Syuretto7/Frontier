@@ -291,9 +291,6 @@ assert np.allclose(bce_grad(z, y), (p - y) / 6)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why classifiers use cross-entropy rather than squared error on probabilities, what its gradient is, and how to compute it without overflow.",
-
   glimpse: (
     <p>
       Cross-entropy keeps pushing the right class's probability towards 1, which means pushing logits towards infinity. Next:

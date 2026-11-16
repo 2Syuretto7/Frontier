@@ -301,9 +301,6 @@ def gap(a, b, c, d):
     },
   ],
 
-  teachBack:
-    "Explain what it means to say the rational numbers have holes but the real numbers do not. Use √2 and the zooming intervals, and say why being packed tightly is not the same as having no holes.",
-
   glimpse: (
     <p>
       This completes the number systems of school mathematics, from counting to the continuum. Completeness returns as

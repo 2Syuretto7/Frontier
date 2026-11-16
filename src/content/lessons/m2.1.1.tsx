@@ -447,9 +447,6 @@ assert 'sum(' not in src.replace('naive_sum(', '').replace('pairwise_sum(', '').
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a field and an ordered field are, why a · 0 = 0, and why multiplying an inequality by a negative number reverses it.",
-
   glimpse: (
     <p>
       Next, the axiom that separates the reals from the rationals: completeness, the promise that every bounded set has a

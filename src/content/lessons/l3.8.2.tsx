@@ -291,9 +291,6 @@ assert b == 1 and isinstance(b, int)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to tell overfitting, underfitting and learning-rate problems apart from training and validation curves, and how to smooth a noisy curve properly.",
-
   glimpse: (
     <p>
       Loss curves show that something is wrong, not where. Next: activation and gradient statistics, which look inside the
