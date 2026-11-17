@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { toPlainText } from "../src/lib/parton/plaintext.ts";
 import { renderParton } from "../src/lib/parton/render.ts";
-import { describeAnswer, rungFor, RUNGS } from "../src/lib/parton/prompts.ts";
+import { describeAnswer, rungFor, RUNGS, OVER_TO_YOU_RUNG, SOLUTION_RUNG, solutionAllowed, HINT_RULES, HINT_SCHEMA } from "../src/lib/parton/prompts.ts";
 import { lesson as counting } from "../src/content/lessons/m0.1.1.tsx";
 
 test("plain text keeps the lesson's words and its TeX", () => {
@@ -40,6 +40,17 @@ test("bad TeX falls back to code instead of throwing", () => {
 test("the hint ladder climbs one rung per hint and stops at five", () => {
   assert.equal(RUNGS.length, 5);
   assert.deepEqual([0, 1, 2, 3, 4, 5, 9].map(rungFor), [1, 2, 3, 4, 5, 5, 5]);
+});
+
+test("a worked solution is allowed only after every rung of the ladder", () => {
+  assert.deepEqual([0, 1, 4, 5, 6].map(solutionAllowed), [false, false, false, true, true]);
+  assert.equal(SOLUTION_RUNG, RUNGS.length + 1, "solutions are stored one past the hint ladder");
+  assert.equal(OVER_TO_YOU_RUNG, 0, "over-to-you replies sit below the ladder and do not climb it");
+  assert.equal(rungFor(OVER_TO_YOU_RUNG), 1);
+  assert.match(HINT_RULES, /can solve it, do not nudge/);
+  assert.match(HINT_RULES, /cannot solve it, nudge them in the direction of the solution/);
+  assert.match(HINT_RULES, /prefer hints to solutions/);
+  for (const k of ["learner_can_solve", "gives_solution"]) assert.ok((HINT_SCHEMA.required as readonly string[]).includes(k));
 });
 
 test("protected answers are described for the reviewing pass", () => {

@@ -20,7 +20,7 @@ export default async function Home() {
   const total = GRAPH.order.length;
   const lede =
     stats.mastered === 0
-      ? `One button, a map of ${fmt(total)} lessons from school arithmetic to frontier research, and a tutor who gives hints, never answers.`
+      ? `One button, a map of ${fmt(total)} lessons from school arithmetic to frontier research, and a tutor who gives more hints and fewer solutions.`
       : `${fmt(stats.mastered)} of ${fmt(total)} lessons mastered. Press Learn and Frontier picks the single best next step.`;
 
   return (
