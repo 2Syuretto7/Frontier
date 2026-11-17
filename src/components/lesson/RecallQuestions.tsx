@@ -5,6 +5,7 @@ import { ExerciseCard, type ExerciseView } from "@/components/lesson/ExerciseCar
 import { Pill } from "@/components/ui/Pill";
 import { Check } from "@/components/ui/Icons";
 import Link from "next/link";
+import { afterReviewAction } from "@/app/actions";
 
 /** What the browser may see of a recall or review question: never the answer. */
 function recallView(q: RecallItem): ExerciseView {
@@ -73,9 +74,10 @@ export async function ReviewQuestions() {
           </ExerciseCard>
         </div>
       ))}
-      <div className="review-done">
-        <Link href="/" className="btn btn-primary">Done for now</Link>
-      </div>
+      <form action={afterReviewAction} className="review-done">
+        <button type="submit" className="btn btn-primary">Done: open a lesson</button>
+        <Link href="/" className="btn">Home</Link>
+      </form>
     </>
   );
 }
