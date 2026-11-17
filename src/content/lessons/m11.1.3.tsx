@@ -252,23 +252,6 @@ assert cancel_factor(1.0001, 1.0) > 20000 and cancel_factor(3.0, -1.0) == 1.0` }
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove the Sterbenz lemma: if x and y are positive floats with y/2 ≤ x ≤ 2y, then x − y is exactly representable.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Reduces to y ≤ x ≤ 2y by symmetry and writes y as an integer multiple of 2^(e−p), where e is the exponent of y.",
-          "Argues that x, having exponent at least e, is also a multiple of 2^(e−p), so x − y is too.",
-          "Uses 0 ≤ x − y ≤ y to conclude x − y fits in p + 1 significant bits at that scale, so it is a float.",
-        ],
-      },
-    },
-    {
       key: "rel",
       rung: "stretch",
       prompt: (
@@ -280,9 +263,6 @@ assert cancel_factor(1.0001, 1.0) > 20000 and cancel_factor(3.0, -1.0) == 1.0` }
       answer: { kind: "numeric", value: 7.6145, tolerance: 0.001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend why subtracting nearly equal numbers destroys relative accuracy even though the subtraction is exact, how the amplification factor (|x| + |y|)/|x − y| measures the damage, and how algebraic rewriting such as the stable quadratic formula avoids it.",
 
   glimpse: (
     <>

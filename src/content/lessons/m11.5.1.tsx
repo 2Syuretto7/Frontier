@@ -314,23 +314,6 @@ assert np.linalg.norm(b - A @ krylov_solve(A, b, 1)) > 0.1 and np.allclose(A @ k
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let A be invertible with minimal polynomial μ of degree m. Prove that A⁻¹b lies in span{"{"}b, Ab, …, Aᵐ⁻¹b{"}"}.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes μ(t) = c₀ + c₁t + … + c_m tᵐ with μ(A) = 0.",
-          "Argues c₀ ≠ 0, because the roots of the minimal polynomial are eigenvalues and 0 is not an eigenvalue of an invertible matrix.",
-          "Rearranges to A⁻¹ = −(1/c₀)(c₁I + c₂A + … + c_m Aᵐ⁻¹) and concludes A⁻¹b is in the stated span.",
-        ],
-      },
-    },
-    {
       key: "rank1",
       rung: "stretch",
       prompt: (
@@ -342,9 +325,6 @@ assert np.linalg.norm(b - A @ krylov_solve(A, b, 1)) > 0.1 and np.allclose(A @ k
       answer: { kind: "numeric", value: 2, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend why searching a Krylov subspace is searching over polynomials in A, why few distinct or tightly clustered eigenvalues mean fast convergence, why the basis must be built by Arnoldi rather than by repeated multiplication, and what GMRES minimises.",
 
   glimpse: (
     <>

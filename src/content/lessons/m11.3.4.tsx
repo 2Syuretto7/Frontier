@@ -279,28 +279,12 @@ assert k2 != k` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that if A has full column rank then κ₂(AᵀA) = κ₂(A)².</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the SVD A = UΣVᵀ (thin or full) with σ₁ ≥ … ≥ σₙ > 0 by full column rank.",
-          "Computes AᵀA = VΣ²Vᵀ using UᵀU = I, and identifies its singular values (or eigenvalues) as σᵢ².",
-          "Concludes κ₂(AᵀA) = σ₁²/σₙ² = κ₂(A)².",
-        ],
-      },
-    },
-    {
       key: "kl",
       rung: "stretch",
       prompt: <p>For the Läuchli matrix with ε = 0.01, what is κ₂(A)? Give two decimals.</p>,
       answer: { kind: "numeric", value: 141.42, tolerance: 0.01 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend why forming AᵀA squares the condition number, what the Läuchli matrix shows about information lost in forming it, how the least-squares perturbation bound splits into a κ term and a κ² tan θ term, and when the normal equations are still acceptable.",
 
   glimpse: (
     <>

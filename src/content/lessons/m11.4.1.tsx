@@ -321,24 +321,6 @@ assert len(e) == 15 and e[-1] < e[0] and abs(e[12] / e[11] - 0.25) < 0.01` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let A be symmetric, Av = λv with ‖v‖ = 1, and x = cos θ · v + sin θ · w with w a unit vector orthogonal to v. Prove
-          that xᵀAx − λ = sin²θ (wᵀAw − λ).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Expands xᵀAx into the three terms cos²θ vᵀAv, 2 sin θ cos θ wᵀAv (using symmetry), and sin²θ wᵀAw.",
-          "Shows the cross term vanishes since wᵀAv = λwᵀv = 0, and vᵀAv = λ.",
-          "Subtracts λ = (cos²θ + sin²θ)λ to obtain sin²θ (wᵀAw − λ).",
-        ],
-      },
-    },
-    {
       key: "rq",
       rung: "stretch",
       prompt: (
@@ -350,9 +332,6 @@ assert len(e) == 15 and e[-1] < e[0] and abs(e[12] / e[11] - 0.25) < 0.01` },
       answer: { kind: "numeric", value: 65.6, tolerance: 1 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend why power iteration converges to the top eigenvector and how fast, why the Rayleigh quotient doubles the rate for symmetric matrices, how a shift and an inverse let you target any eigenvalue, and why the nearly singular solve does no harm.",
 
   glimpse: (
     <>

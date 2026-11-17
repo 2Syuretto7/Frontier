@@ -345,33 +345,12 @@ assert np.isclose(z + 5 * z ** 3, 2.0)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Show that backward Euler applied to x′ = λx gives x_(n+1) = x_n/(1 − z) with z = hλ, and prove that |1/(1 − z)| ≤ 1
-          whenever Re z ≤ 0. Contrast this with Euler, for which |1 + z| ≤ 1 forces h ≤ 2/|λ| when λ is real and negative.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Solves x_(n+1) = x_n + hλx_(n+1) to get x_(n+1) = x_n/(1 − z).",
-          "Shows |1 − z| ≥ Re(1 − z) = 1 − Re z ≥ 1 when Re z ≤ 0, hence |R(z)| ≤ 1.",
-          "For Euler with real λ < 0, |1 + hλ| ≤ 1 means −2 ≤ hλ ≤ 0, i.e. h ≤ 2/|λ|.",
-        ],
-      },
-    },
-    {
       key: "trapinf",
       rung: "stretch",
       prompt: <p>What is the trapezoid rule&apos;s |R(z)| at z = −1000? Give four decimals.</p>,
       answer: { kind: "numeric", value: 0.996, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend what makes a differential equation stiff, why every explicit Runge–Kutta method needs steps of order 1/|λ_max| on such a problem, how backward Euler and the trapezoid rule escape by solving an equation each step, why the trapezoid rule still lets stiff components ring, and how this connects to ill-conditioning in gradient descent.",
 
   glimpse: (
     <>

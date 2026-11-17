@@ -275,33 +275,12 @@ assert abs(float(pairwise_sum(xs)) - exact) <= gamma(12, u) * scale` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          With p fraction bits and round-to-nearest, prove that every x in the normal range satisfies fl(x) = x(1 + δ) with
-          |δ| ≤ 2^−(p+1).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Places x in a binade 2ᵉ ≤ |x| < 2ᵉ⁺¹ and notes the floats there (including the endpoints) are spaced 2^(e−p) apart.",
-          "Concludes that rounding to nearest changes x by at most half a spacing, 2^(e−p−1).",
-          "Divides by |x| ≥ 2ᵉ to get |δ| ≤ 2^−(p+1).",
-        ],
-      },
-    },
-    {
       key: "g1000",
       rung: "stretch",
       prompt: <p>Evaluate γ_n = nu/(1 − nu) for n = 1000 and single precision u = 2⁻²⁴.</p>,
       answer: { kind: "numeric", value: 0.0000596082, tolerance: 0.000000001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend what machine epsilon and the unit roundoff are, why every correctly rounded operation satisfies fl(x op y) = (x op y)(1 + δ) with |δ| ≤ u, how the factors accumulate into γ_n in a running sum, and why pairwise summation is so much more accurate.",
 
   glimpse: (
     <>

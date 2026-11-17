@@ -300,24 +300,6 @@ assert np.mean(errs) < 0.03` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let A be symmetric and v have independent entries equal to ±1 with probability 1/2. Prove that Var[vᵀAv] = 2Σ_(i≠j)
-          aᵢⱼ².
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses vᵢ² = 1 to write vᵀAv − tr A = Σ_(i≠j) aᵢⱼvᵢvⱼ, which has mean zero.",
-          "Computes E[vᵢvⱼvₖvₗ] for i ≠ j, k ≠ l: it is 1 if {k, l} = {i, j} and 0 otherwise.",
-          "Sums the surviving terms using symmetry aᵢⱼ = aⱼᵢ to get 2Σ_(i≠j) aᵢⱼ².",
-        ],
-      },
-    },
-    {
       key: "sd",
       rung: "stretch",
       prompt: (
@@ -329,9 +311,6 @@ assert np.mean(errs) < 0.03` },
       answer: { kind: "numeric", value: 0.02, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend why vᵀAv estimates the trace, why random signs beat Gaussian probes, how the error shrinks with the number of probes, and how Hutch++ gets a faster rate by computing the top part of the spectrum exactly.",
 
   glimpse: (
     <>

@@ -313,33 +313,12 @@ assert R.shape == (10, 10) and np.allclose(R, np.triu(R)) and np.linalg.cond(A @
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let S be an ε-subspace embedding for the span of the columns of A and b, x* minimise ‖Ax − b‖ and x̃ minimise
-          ‖S(Ax − b)‖. Prove that ‖Ax̃ − b‖ ≤ ((1 + ε)/(1 − ε))‖Ax* − b‖.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that Ax̃ − b and Ax* − b both lie in the embedded subspace, so the embedding inequalities apply to each.",
-          "Uses the lower embedding bound for Ax̃ − b and the optimality of x̃ for the sketched problem: (1 − ε)‖Ax̃ − b‖ ≤ ‖S(Ax̃ − b)‖ ≤ ‖S(Ax* − b)‖.",
-          "Uses the upper embedding bound for Ax* − b and divides by 1 − ε to conclude.",
-        ],
-      },
-    },
-    {
       key: "kap",
       rung: "stretch",
       prompt: <p>If S is a (1/3)-subspace embedding for range(A), what upper bound does the theorem give for κ(AR⁻¹)?</p>,
       answer: { kind: "numeric", value: 2, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend what a subspace embedding is, why it makes sketch-and-solve least squares nearly optimal, how the R factor of a sketch preconditions the full problem, and why CountSketch is attractive for sparse data.",
 
   glimpse: (
     <>

@@ -261,33 +261,12 @@ assert y[1] == 1.0 and y[2] == np.float32(1.015625) and y[3] == -2.5 and abs(y[4
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if x and 2ᵏx both lie in the normal range of a binary floating-point format with round-to-nearest-even,
-          then fl(2ᵏx) = 2ᵏ fl(x).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that multiplication by 2ᵏ maps the binade [2ᵉ, 2ᵉ⁺¹) onto [2ᵉ⁺ᵏ, 2ᵉ⁺ᵏ⁺¹) and its floats onto the floats there, with the same fraction bits.",
-          "Observes that the map scales all distances by 2ᵏ and preserves order, so nearest points correspond.",
-          "Checks that ties are broken identically because the fraction bits (and so their parity) are unchanged.",
-        ],
-      },
-    },
-    {
       key: "mxv",
       rung: "stretch",
       prompt: <p>An MX block with FP4 E2M1 elements has largest magnitude 13.7. The scale is 2^(⌊log₂ 13.7⌋ − 2). What value does the element 13.7 decode to after quantisation?</p>,
       answer: { kind: "numeric", value: 12, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend how exponent bits and fraction bits trade range against precision in FP16, BF16, FP8 and FP4, why BF16 replaced FP16 for training, and how a shared power-of-two scale per block lets a 4-bit format represent tensors with a huge dynamic range.",
 
   glimpse: (
     <>

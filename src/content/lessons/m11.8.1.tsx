@@ -341,24 +341,6 @@ assert abs(observed_order(g, [1.0], 2.0, ex, 200, HEUN) - 2) < 0.1 and abs(obser
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          For x′ = λx, show that one step of Heun&apos;s method multiplies x by R(z) = 1 + z + z²/2 with z = hλ, and deduce that
-          its local error |e^z − R(z)|·|x| is O(h³), while Euler&apos;s is O(h²).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes k₁ = λx and k₂ = λ(x + hλx), giving x + (h/2)(k₁ + k₂) = x(1 + z + z²/2).",
-          "Compares with the exact factor e^z = 1 + z + z²/2 + z³/6 + … to get e^z − R(z) = z³/6 + O(z⁴), which is O(h³).",
-          "For Euler, R(z) = 1 + z, so e^z − R(z) = z²/2 + O(z³), which is O(h²).",
-        ],
-      },
-    },
-    {
       key: "rad",
       rung: "stretch",
       prompt: (
@@ -370,9 +352,6 @@ assert abs(observed_order(g, [1.0], 2.0, ex, 200, HEUN) - 2) < 0.1 and abs(obser
       answer: { kind: "numeric", value: 1.051, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend why Euler's method has error proportional to the step size, how Runge–Kutta methods sample the slope inside a step to match more terms of the Taylor series, how to measure a method's order by halving the step, and why Euler spirals outwards on a spring.",
 
   glimpse: (
     <>

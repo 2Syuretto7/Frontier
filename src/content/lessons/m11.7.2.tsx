@@ -312,33 +312,12 @@ assert np.allclose(shampoo_direction(G, np.eye(4), np.eye(6), 0.0), G)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          For λ &gt; 0 and Heron&apos;s recurrence x_(k+1) = (x_k + λ/x_k)/2, prove that x_(k+1) − √λ = (x_k − √λ)²/(2x_k), and
-          deduce that from x₀ = 1 every x_k with k ≥ 1 satisfies x_k ≥ √λ.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes x_(k+1) − √λ = (x_k² + λ − 2x_k√λ)/(2x_k).",
-          "Recognises the numerator as (x_k − √λ)² to obtain the identity.",
-          "Argues by induction that x_k > 0 for all k, so the right side is nonnegative and x_k ≥ √λ for k ≥ 1.",
-        ],
-      },
-    },
-    {
       key: "tr",
       rung: "stretch",
       prompt: <p>What is the trace of A^(−1/4) for A = diag(16, 81)? Give four decimals.</p>,
       answer: { kind: "numeric", value: 0.8333, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend why the matrix Newton iteration for the square root is Heron's method on each eigenvalue in exact arithmetic, why rounding makes it blow up for ill-conditioned matrices, how the Denman–Beavers coupling fixes it, and where inverse fourth roots appear in Shampoo.",
 
   glimpse: (
     <>

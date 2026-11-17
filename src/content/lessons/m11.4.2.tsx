@@ -342,32 +342,12 @@ assert np.allclose(Q.T @ Q, np.eye(4)) and np.allclose(Q.T @ A @ Q, Ak) and same
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          For the unshifted QR algorithm, with Q̄ₖ = Q₀⋯Qₖ₋₁ and R̄ₖ = Rₖ₋₁⋯R₀, prove that Aₖ = Q̄ₖᵀAQ̄ₖ and Aᵏ = Q̄ₖR̄ₖ.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows Aₖ₊₁ = RₖQₖ = QₖᵀAₖQₖ and deduces Aₖ = Q̄ₖᵀAQ̄ₖ by induction, equivalently AQ̄ₖ = Q̄ₖAₖ.",
-          "Sets up the induction for Aᵏ = Q̄ₖR̄ₖ with a correct base case.",
-          "Carries out the step Aᵏ⁺¹ = AQ̄ₖR̄ₖ = Q̄ₖAₖR̄ₖ = Q̄ₖQₖRₖR̄ₖ = Q̄ₖ₊₁R̄ₖ₊₁.",
-        ],
-      },
-    },
-    {
       key: "wilk",
       rung: "stretch",
       prompt: <p>What is the Wilkinson shift for the trailing block with rows (3, 1) and (1, 1)? Give four decimals.</p>,
       answer: { kind: "numeric", value: 0.5858, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend why the QR algorithm preserves eigenvalues, why it is simultaneous power iteration in disguise, how shifts and deflation make it fast, and why practical codes reduce to Hessenberg or tridiagonal form first.",
 
   glimpse: (
     <>

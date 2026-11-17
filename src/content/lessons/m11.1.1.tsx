@@ -298,33 +298,12 @@ assert [round_nearest(v, x) for x in [0.03125, 0.09375, 1.125, 1.375, 6.0, 13.0,
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          In a binary IEEE format with subnormals and round-to-nearest, prove that if x and y are finite floats with x ≠ y,
-          then the computed difference fl(x − y) is not zero.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Observes that every finite float, normal or subnormal, is an integer multiple of the smallest positive subnormal σ.",
-          "Concludes that x − y is a nonzero multiple of σ, so |x − y| ≥ σ.",
-          "Uses monotonicity of rounding and the representability of σ to get |fl(x − y)| ≥ σ > 0.",
-        ],
-      },
-    },
-    {
       key: "count",
       rung: "stretch",
       prompt: <p>In the toy format with 3 exponent bits and 2 fraction bits, how many distinct finite real values are there, counting +0 and −0 as one value?</p>,
       answer: { kind: "numeric", value: 55, tolerance: 0.5 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend how IEEE 754 encodes normal numbers, subnormals, zeros, infinities and NaN, what correct rounding promises about every basic operation, and why gradual underflow and signed zeros are worth their cost.",
 
   glimpse: (
     <>

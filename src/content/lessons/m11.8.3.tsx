@@ -352,24 +352,6 @@ assert n == 59 and np.allclose(y, gaussian_flow(xT, 80.0, 0.0, 1.0, 0.5), atol=0
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          For data N(μ, s²), the probability flow ODE is x′ = t(x − μ)/(s² + t²). Show that x(t) = μ + (x(T) − μ)√((s² + t²)/(s² +
-          T²)) solves it, and deduce that if x(T) ~ N(μ, s² + T²) then x(0) ~ N(μ, s²).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Differentiates: d/dt √(s² + t²) = t/√(s² + t²), so x′(t) = (x(T) − μ)·t/(√(s² + t²)√(s² + T²)).",
-          "Rewrites this as t(x(t) − μ)/(s² + t²), confirming the ODE, and notes the formula gives x(T) at t = T.",
-          "At t = 0, x(0) − μ = (x(T) − μ)·s/√(s² + T²), a scaling of an N(0, s² + T²) variable, so x(0) ~ N(μ, s²).",
-        ],
-      },
-    },
-    {
       key: "renoise",
       rung: "stretch",
       prompt: (
@@ -380,9 +362,6 @@ assert n == 59 and np.allclose(y, gaussian_flow(xT, 80.0, 0.0, 1.0, 0.5), atol=0
       answer: { kind: "numeric", value: 2.5, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend how a diffusion model turns noise into data by solving a differential equation backwards in noise level, why the Gaussian case can be solved exactly, why steps should be spaced in proportion to the noise level, and why an Euler step is the same as predicting the clean image and adding back a smaller amount of the current noise.",
 
   glimpse: (
     <>
