@@ -367,34 +367,6 @@ assert call_with_retries(server([201]), 1, 1, 1, slept.append) == (201, 1)` },
         ],
       },
     },
-    {
-      key: "bucketproof",
-      rung: "prove",
-      prompt: <p>Prove that a token bucket with refill rate r and capacity b allows at most b + rT unit-cost requests in any time interval of length T.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "At the start of the interval the bucket holds at most b tokens.",
-          "During the interval at most rT tokens are added (refills are capped, so possibly fewer).",
-          "Each allowed request removes one token and the count never goes negative, so allowed requests ≤ starting tokens + tokens added.",
-          "Hence at most b + rT, and the bound is reached by a burst of b at the start followed by requests at rate r.",
-        ],
-      },
-    },
-    {
-      key: "exactlyonce",
-      rung: "stretch",
-      prompt: <p>A client sends a non-idempotent request (charge a card) and gets no reply before its timeout. Prove that no client strategy, without help from the server, guarantees the card is charged exactly once, and explain how idempotency keys give that guarantee.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "The client cannot distinguish 'request lost' from 'request performed, reply lost': both look like a timeout.",
-          "If it never retries, the first case leaves the card uncharged; if it retries, the second case charges twice; so neither choice works in both cases.",
-          "With an idempotency key, the server records which keys it has performed and answers a repeat with the stored result instead of charging again.",
-          "So the client can retry until it gets a reply: at-least-once delivery plus server deduplication gives an exactly-once effect.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

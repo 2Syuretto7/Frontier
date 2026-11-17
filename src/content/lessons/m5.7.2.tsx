@@ -245,24 +245,6 @@ assert abs(v - (2 / 3) * (1 / 3)) < 1e-5` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why, for f continuous on a rectangle, the double integral equals the iterated integral{" "}
-          <M>{"\\int_a^b (\\int_c^d f\\,dy)\\,dx"}</M>. Grouping a Riemann sum by columns is the main idea.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes a grid Riemann sum and groups it as Σ_i (Σ_j f(x_i, y_j) Δy) Δx.",
-          "Uses uniform continuity to show each inner sum is uniformly close to F(x_i) = ∫ f(x_i, y) dy for a fine grid.",
-          "Concludes the double sum is close to a Riemann sum of the continuous function F, so the limits agree.",
-        ],
-      },
-    },
-    {
       key: "fail",
       rung: "stretch",
       prompt: (

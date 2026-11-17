@@ -385,34 +385,6 @@ except ValueError:
         ],
       },
     },
-    {
-      key: "breakproof",
-      rung: "prove",
-      prompt: <p>Starting from one process, every process runs <C>for i in range(n): if fork() != 0: break</C> (now the parent leaves the loop). Prove that exactly n + 1 processes are created in total, and that they form a chain in which each process is the parent of the next.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows by induction that exactly one process is in the loop at the top of each iteration.",
-          "That process forks: the parent (fork returns non-zero) breaks out, and only the child continues to the next iteration.",
-          "So each iteration creates one process, giving 1 + n in total.",
-          "Each new process is the child of the process that was in the loop in the previous iteration, so they form a chain of length n + 1.",
-        ],
-      },
-    },
-    {
-      key: "cow",
-      rung: "stretch",
-      prompt: <p>A training script loads a list of 10 million Python strings (2 GB) and forks 8 DataLoader workers, each of which only reads the list. Explain why total memory can approach 18 GB over an epoch, and propose two fixes.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "fork shares pages copy-on-write, so at first the workers use almost no extra memory.",
-          "Reading a Python object increments and decrements its reference count, a write to the page holding it, which copies that page into the worker.",
-          "Over an epoch every page is touched, so each worker ends with its own 2 GB copy: about 2 + 8 × 2 = 18 GB.",
-          "Fixes: store the data as a few large NumPy arrays (offsets plus one byte buffer), or memory-map it from a file, or use gc.freeze; any two sound ones count.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

@@ -275,19 +275,6 @@ assert iterate_until(lambda x: x, 3.0, 1e-6, 5) == (3.0, 1)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that every Cauchy sequence of real numbers converges.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows a Cauchy sequence is bounded (ε = 1 beyond some N, plus finitely many earlier terms).",
-          "Applies Bolzano–Weierstrass to get a subsequence converging to some a.",
-          "Uses the Cauchy condition and the subsequence with ε/2 each and the triangle inequality to show aₙ → a.",
-        ],
-      },
-    },
-    {
       key: "golden",
       rung: "stretch",
       prompt: <p>What is the limit of xₙ₊₁ = 1/(1 + xₙ) from x₁ = 1? Give four decimal places.</p>,

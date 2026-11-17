@@ -289,25 +289,6 @@ assert config_debt("x = cfg.lr + other['d']", {'lr'}) == (['lr'], [])` },
       },
     },
     {
-      key: "count",
-      rung: "prove",
-      prompt: (
-        <p>
-          Show that k boolean flags give <M>{"2^k"}</M> configurations, that testing the default and each flag alone covers a
-          fraction <M>{"(k + 1)/2^k"}</M> that tends to 0, and that for k ≥ 2 any set of runs covering all pairs of flag values
-          has at least 4 runs.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Counts configurations with the product rule: two choices for each of k flags.",
-          "Notes that the default and the k single-flag runs are k + 1 distinct configurations, and that (k + 1)/2^k tends to 0 because 2^k grows faster than k.",
-          "For the lower bound, fixes two flags and notes that their four value combinations must each appear, and one run shows only one combination, so at least 4 runs are needed.",
-        ],
-      },
-    },
-    {
       key: "frac",
       rung: "stretch",
       prompt: <p>With 10 flags, what fraction of configurations do the default plus single-flag runs cover? Give four decimal places.</p>,

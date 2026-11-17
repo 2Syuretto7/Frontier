@@ -440,44 +440,6 @@ assert t.key == 3 and t.left.key == 2` },
         ],
       },
     },
-    {
-      key: "successor",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the <C>successor</C> function in the first reading exercise is correct: it returns the smallest key greater
-          than k, or None if there is none. (Hint: what is true of every key in the subtree still to be searched?)
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Invariant: every key greater than k that is smaller than best (or every key greater than k, if best is None) lies in the current subtree t.",
-          "Going left at a node with key > k: that key is a candidate, smaller than the previous best, and every smaller candidate is in the left subtree.",
-          "Going right at a node with key ≤ k: the node and its left subtree are all ≤ k, so no candidate is lost.",
-          "When t is None, no key between k and best remains, so best is the smallest key greater than k (or None if none was ever found).",
-        ],
-      },
-    },
-    {
-      key: "depth",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Keys 1, …, n are inserted into an empty BST in uniformly random order. Prove that key i is an ancestor of key j (i ≠ j)
-          with probability 1/(|i − j| + 1), and deduce that the expected depth of key j is at most 2 ln n + O(1).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows i is an ancestor of j exactly when i is the first of the keys between i and j inclusive to be inserted.",
-          "Each of these |i − j| + 1 keys is equally likely to be first, giving probability 1/(|i − j| + 1).",
-          "Writes the depth of j as the number of its ancestors and sums by linearity of expectation.",
-          "Bounds the sum by two harmonic sums, 2(H_n − 1) ≤ 2 ln n.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

@@ -282,24 +282,6 @@ assert abs(mahalanobis([1.0, 2.0], [0.0, 0.0], np.eye(2)) - np.sqrt(5)) < 1e-12 
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that for a random vector X with covariance matrix Σ and a fixed matrix A, Cov(AX) = AΣAᵀ, and deduce that Σ is
-          positive semidefinite.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes E[AX] = Aμ by linearity, so AX − E[AX] = A(X − μ).",
-          "Computes E[A(X − μ)(X − μ)ᵀAᵀ] = A E[(X − μ)(X − μ)ᵀ] Aᵀ = AΣAᵀ, by linearity of expectation applied entrywise.",
-          "Takes A = aᵀ (a row vector) to get aᵀΣa = Var(aᵀX) ≥ 0 for every a, which is positive semidefiniteness (symmetry being immediate).",
-        ],
-      },
-    },
-    {
       key: "maha",
       rung: "stretch",
       prompt: <p>With Σ = [[2, 1], [1, 2]], what is the Mahalanobis distance of the point (2, 0) from the origin? Give four decimal places.</p>,

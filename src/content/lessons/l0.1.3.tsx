@@ -229,25 +229,6 @@ def memorises(train_errors, test_errors, tol):
       },
     },
     {
-      key: "why-noise",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why a model with enough freedom to pass through every training point will usually have a higher test error
-          than a simpler model, when the data contain noise. Use the degree 9 polynomial as your example.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that each training value is pattern plus random noise.",
-          "Explains that passing exactly through every point means fitting the noise as well as the pattern.",
-          "Notes that new points have different, independent noise, so the fitted noise is wrong for them and the curve's wiggles between points add error.",
-          "Contrasts with a simpler model that cannot follow the noise and so stays close to the underlying pattern.",
-        ],
-      },
-    },
-    {
       key: "lookup",
       rung: "stretch",
       prompt: (

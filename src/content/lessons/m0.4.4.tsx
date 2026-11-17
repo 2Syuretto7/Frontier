@@ -263,19 +263,6 @@ finally:
       },
     },
     {
-      key: "product-law",
-      rung: "prove",
-      prompt: <p>Prove that <M>{"\\log_b(x^r) = r\\log_b x"}</M> for every <M>{"x > 0"}</M> and real <M>r</M>, using only the definition of the logarithm and the laws of exponents.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Sets u = log_b x, so that bᵘ = x.",
-          "Computes xʳ = (bᵘ)ʳ = b^(ru) using a law of exponents.",
-          "Concludes from the definition that log_b(xʳ) = ru = r log_b x.",
-        ],
-      },
-    },
-    {
       key: "chain",
       rung: "stretch",
       prompt: <p>Evaluate <M>{"\\log_2 3 \\cdot \\log_3 4 \\cdot \\log_4 5 \\cdot \\log_5 6 \\cdot \\log_6 7 \\cdot \\log_7 8"}</M>.</p>,

@@ -259,19 +259,6 @@ assert abs(mc - e) < 0.03 * e and isinstance(mc, float)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that for ŷ = Σⱼ xⱼwⱼmⱼ/(1 − p) with independent mⱼ ~ Bernoulli(1 − p), E[(y − ŷ)²] = (y − xᵀw)² + (p/(1 − p))Σⱼ xⱼ²wⱼ².</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses E[(y − Z)²] = (y − E Z)² + Var Z (bias–variance identity).",
-          "Shows E ŷ = xᵀw because E[mⱼ/(1 − p)] = 1.",
-          "Computes Var(mⱼ/(1 − p)) = p/(1 − p) and uses independence to sum the variances xⱼ²wⱼ²·p/(1 − p).",
-        ],
-      },
-    },
-    {
       key: "lam",
       rung: "stretch",
       prompt: <p>Dropout p = 0.2 on standardised inputs (every E[xⱼ²] = 1) of a linear model acts like ridge with what coefficient on Σⱼwⱼ² in the mean squared error?</p>,

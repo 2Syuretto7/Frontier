@@ -280,18 +280,6 @@ assert np.allclose(x2, [0.8, 0.1, 0.1])` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that if P² = P, then V = range P ⊕ null P.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows V = range P + null P by writing v = Pv + (v − Pv) and checking P(v − Pv) = 0.",
-          "Shows range P ∩ null P = {0}: if v = Pu and Pv = 0 then v = Pu = P²u = Pv = 0.",
-        ],
-      },
-    },
-    {
       key: "slanted",
       rung: "stretch",
       prompt: <p>P = A(BᵀA)⁻¹Bᵀ with A = (1, 0)ᵀ and B = (1, 2)ᵀ. What is ‖P‖₂? Give 4 decimal places.</p>,

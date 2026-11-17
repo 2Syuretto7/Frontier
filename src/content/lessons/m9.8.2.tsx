@@ -245,19 +245,6 @@ assert abs(m - 2 / 3.141592653589793 ** 0.5) < 0.03 and abs(s - 2 / 2 ** 0.5) < 
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>In the model Y_s = μ + S_s + E, with S₁, …, S_k iid of variance σ_s², and E of variance σ_t² shared by all seeds and independent of the S_s, prove that the mean of the k scores has variance σ_s²/k + σ_t².</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes Ȳ = μ + S̄ + E, noting that E appears once because every seed shares it.",
-          "Computes Var(S̄) = σ_s²/k from independence of the seed effects.",
-          "Adds the variances using independence of S̄ and E to get σ_s²/k + σ_t².",
-        ],
-      },
-    },
-    {
       key: "flip",
       rung: "stretch",
       prompt: <p>Recipe B is better by 0.5σ, where σ is the seed standard deviation. Comparing means of 5 seeds each, what is the probability that A&apos;s mean is at least B&apos;s? Use Φ(−0.5/√(2/5)) and give four decimal places.</p>,

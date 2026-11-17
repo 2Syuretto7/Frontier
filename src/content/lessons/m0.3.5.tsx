@@ -268,25 +268,6 @@ assert fit_shift(f, lambda x: (x - 3) ** 2 - 5, range(-4, 5)) == (3, -5) and fit
       },
     },
     {
-      key: "shift-proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if the graph of <M>f</M> is symmetric in the vertical line <M>{"x = h"}</M>, meaning{" "}
-          <M>{"f(h + t) = f(h - t)"}</M> for every <M>t</M>, then <M>{"g(x) = f(x + h)"}</M> is an even function. Explain
-          the result in terms of moving the graph.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes g(−x) = f(h − x) and g(x) = f(h + x).",
-          "Uses the symmetry with t = x to conclude g(−x) = g(x).",
-          "Explains that g is the graph of f moved left by h, so the axis of symmetry moves to the y-axis.",
-        ],
-      },
-    },
-    {
       key: "track-point",
       rung: "stretch",
       prompt: (

@@ -336,24 +336,6 @@ assert op_counts(y) == {"*": 30, "+": 30}` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          For L = a · b + a, show from the multivariable chain rule that ∂L/∂a = b + 1, and explain why the{" "}
-          <C>+=</C> in the closures produces exactly this sum, while <C>=</C> would not.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes L = c + a with c = a·b, so ∂L/∂a = ∂L/∂c · ∂c/∂a + (direct term) = 1 · b + 1.",
-          "Notes a appears in the graph along two paths, through c and directly into the sum.",
-          "Explains that each closure adds one path's contribution to a.grad, so with += they sum to b + 1; with = the later closure would overwrite the earlier one.",
-        ],
-      },
-    },
-    {
       key: "nodes",
       rung: "stretch",
       prompt: (

@@ -271,25 +271,6 @@ assert len(calls) <= 9, 'In exact arithmetic CG finishes in at most n steps.'` }
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that for a <M>{"C^2"}</M> function f and a fixed vector v,{" "}
-          <M>{"\\nabla_x(\\nabla f(x)^\\top v) = H_f(x) v"}</M>. Explain why this means a Hessian-vector product costs only a
-          constant times a function evaluation.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes g(x) = Σ_j ∂_j f(x) v_j with v constant.",
-          "Differentiates: ∂_i g = Σ_j ∂_i ∂_j f(x) v_j = (Hv)_i, using that v does not depend on x (and symmetry or the definition of H).",
-          "Notes g is a scalar function computed by one gradient evaluation plus a dot product, so its gradient by reverse mode costs a constant times that, by the cheap gradient principle.",
-        ],
-      },
-    },
-    {
       key: "count",
       rung: "stretch",
       prompt: <p>How many Hessian-vector products are needed to build the full Hessian of a function of 1000 variables?</p>,

@@ -244,20 +244,6 @@ assert abs(raw - math.pi) > 0.04 and abs(acc - math.pi) < 1e-8, f'Accelerated va
       },
     },
     {
-      key: "unique",
-      rung: "prove",
-      prompt: <p>Prove that a sequence cannot converge to two different limits.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Supposes a_n → L and a_n → M with L ≠ M, and takes ε = |L − M|/2.",
-          "Finds N₁ and N₂ from the two definitions and takes n ≥ max(N₁, N₂).",
-          "Uses the triangle inequality: |L − M| ≤ |L − a_n| + |a_n − M| < 2ε = |L − M|.",
-          "Concludes this is a contradiction, so L = M.",
-        ],
-      },
-    },
-    {
       key: "e2",
       rung: "stretch",
       prompt: <p>Find <M>{"\\lim_{n \\to \\infty} (1 + 2/n)^n"}</M>. Give three decimal places.</p>,

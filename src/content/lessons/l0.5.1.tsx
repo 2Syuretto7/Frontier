@@ -217,25 +217,6 @@ assert abs(params_for_budget(1.2e22) / N - 10) < 1e-9, 'A hundred times the comp
       },
     },
     {
-      key: "why-eval",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why a lab evaluates a model for dangerous capabilities <em>before</em> deploying it rather than waiting to
-          see how it is used, and why evaluations alone cannot guarantee safety.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that once a model is deployed to many users, harm can occur quickly and access is hard to withdraw.",
-          "Explains that evaluations let the lab decide on safeguards or delay release in advance.",
-          "Notes that evaluations only test what someone thought to test, and real users find new uses and failures.",
-          "Concludes that evaluation must be combined with monitoring and the ability to respond after deployment.",
-        ],
-      },
-    },
-    {
       key: "power",
       rung: "stretch",
       prompt: (

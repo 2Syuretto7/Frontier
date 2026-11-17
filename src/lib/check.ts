@@ -153,8 +153,6 @@ export function checkAnswer(answer: Answer, input: string): CheckResult {
     }
     case "code":
       return checkCode(answer, input);
-    case "written":
-      return { correct: input.trim().length >= 20, message: input.trim().length < 20 ? "Write a little more first." : undefined };
   }
 }
 

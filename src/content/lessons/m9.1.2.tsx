@@ -231,19 +231,6 @@ def tail_prob(n, reps, c, seed=0):
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that a χ²_k random variable has mean k and variance 2k. You may use E[Z⁴] = 3 for Z ~ N(0, 1).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the variable as a sum of k independent Zᵢ² and uses linearity: mean k·E[Z²] = k.",
-          "Computes Var(Z²) = E[Z⁴] − (E[Z²])² = 3 − 1 = 2.",
-          "Adds the variances of the independent terms to get 2k.",
-        ],
-      },
-    },
-    {
       key: "tail",
       rung: "stretch",
       prompt: <p>For samples of size 5, about what fraction of t statistics exceed 1.96 in absolute value? Give three decimal places.</p>,

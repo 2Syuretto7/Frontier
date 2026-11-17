@@ -276,24 +276,6 @@ assert e[1] < e[0] ** 2 and e[2] < e[1] ** 2` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let T be continuously differentiable near x* with T(x*) = x* and |T′(x*)| &lt; 1. Prove that some closed interval
-          around x* is mapped into itself by T, and that T is a contraction on it.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses continuity of T′ to choose δ and q < 1 with |T′| ≤ q on I = [x* − δ, x* + δ].",
-          "Applies the mean value theorem to get |Tx − Ty| ≤ q|x − y| for x, y ∈ I.",
-          "Shows |Tx − x*| = |Tx − Tx*| ≤ q|x − x*| ≤ δ, so T(I) ⊆ I (and may note I is complete, so the contraction theorem applies).",
-        ],
-      },
-    },
-    {
       key: "eta",
       rung: "stretch",
       prompt: <p>For L = 10, gradient descent on the quadratic is a contraction exactly for 0 &lt; η &lt; c. What is c?</p>,

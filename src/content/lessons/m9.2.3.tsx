@@ -250,19 +250,6 @@ assert abs(m1 - 0.0125) < 0.001 and m2 < m1` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that the posterior mean minimises the posterior expected squared loss E[(θ − a)² | x] over all real a.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Introduces m = E[θ | x] and writes θ − a = (θ − m) + (m − a).",
-          "Expands the square and shows the cross term vanishes because E[θ − m | x] = 0.",
-          "Concludes the expected loss is Var(θ | x) + (m − a)², minimised exactly at a = m.",
-        ],
-      },
-    },
-    {
       key: "map",
       rung: "stretch",
       prompt: <p>With prior Beta(3, 3) and 4 heads in 4 flips, what is the MAP estimate of p? Give four decimal places.</p>,

@@ -265,24 +265,6 @@ assert np.allclose(a[1], b[1]) and a[0].shape == (40, 3) and a[2].shape == (3, 3
       },
     },
     {
-      key: "fnorm",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"\\|A\\|_F^2 = \\sigma_1^2 + \\dots + \\sigma_r^2"}</M>. You may use that{" "}
-          <M>{"\\|A\\|_F^2 = \\operatorname{trace}(A^{\\mathsf T}A)"}</M> and that the trace is the sum of the eigenvalues.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Checks that trace(AᵀA) = Σ_j (AᵀA)_jj = Σ_j Σ_i a_ij², which is ‖A‖_F².",
-          "Notes that the eigenvalues of AᵀA are σ₁², …, σ_r² and zeros.",
-          "Concludes ‖A‖_F² = trace(AᵀA) = Σ σ_i².",
-        ],
-      },
-    },
-    {
       key: "lora",
       rung: "stretch",
       prompt: (

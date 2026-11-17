@@ -252,25 +252,6 @@ assert np.allclose(w, [1.0]) and step == 1 and np.allclose(curve, [1.0])` },
       },
     },
     {
-      key: "nested",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the least-squares training error of the best polynomial of degree <M>{"k + 1"}</M> is at most that of
-          the best polynomial of degree <M>k</M>, and explain why this makes training error useless for choosing the degree.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that any polynomial of degree k is a polynomial of degree k + 1 with leading coefficient zero.",
-          "Concludes that the minimum over the larger family is at most the minimum over the smaller family.",
-          "Explains that training error therefore always favours the largest degree, regardless of how it does on new data.",
-          "States that degree must be chosen with data not used for fitting, such as a validation set.",
-        ],
-      },
-    },
-    {
       key: "twovar",
       rung: "stretch",
       prompt: (

@@ -289,24 +289,6 @@ assert 'solve' not in inspect.getsource(lu_solve).split(':', 1)[1], 'Substitute 
       },
     },
     {
-      key: "lower",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the product of two lower triangular n × n matrices is lower triangular, and that its diagonal entries are
-          the products of the corresponding diagonal entries.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes (LM)_ij = Σ_k l_ik m_kj and notes l_ik = 0 for k > i and m_kj = 0 for k < j.",
-          "Concludes that a term can be non-zero only when j ≤ k ≤ i, so the entry is 0 when i < j.",
-          "For i = j, the only surviving term is k = i, giving l_ii m_ii.",
-        ],
-      },
-    },
-    {
       key: "break",
       rung: "stretch",
       prompt: <p>For which positive value of a does elimination on the matrix with rows (1, a) and (a, 1) meet a zero pivot?</p>,

@@ -261,23 +261,6 @@ assert time.time() - t < 5, 'Evaluate f on whole arrays, not point by point.'` }
       },
     },
     {
-      key: "nolimit",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"xy/(x^2 + y^2)"}</M> has no limit at the origin, and that <M>{"x^2 y/(x^2 + y^2)"}</M> tends to 0 there.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "For the first, computes the value along two lines, such as 0 on the x-axis and 1/2 on y = x, and uses the path theorem to conclude no limit exists.",
-          "For the second, bounds the absolute value by |y|, because x² ≤ x² + y².",
-          "Concludes from |y| ≤ ‖(x, y)‖ → 0 (with an ε-δ or squeeze argument) that the limit is 0.",
-        ],
-      },
-    },
-    {
       key: "area",
       rung: "stretch",
       prompt: <p>What is the area of the sublevel set <M>{"\\{(x, y) : x^2 + 4y^2 \\le 4\\}"}</M>? Give three decimal places.</p>,

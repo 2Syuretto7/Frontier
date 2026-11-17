@@ -348,24 +348,6 @@ assert check_op(lambda a, b: a @ b, [(3, 3), (3, 3)])` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Show that for f three times continuously differentiable, (f(x + h) − f(x − h)) / 2h − f′(x) is O(h²), while (f(x + h)
-          − f(x)) / h − f′(x) is in general only O(h).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Expands f(x ± h) by Taylor's theorem to third order with remainder.",
-          "Shows the f(x) and f″ terms cancel in f(x + h) − f(x − h), leaving 2hf′(x) + O(h³), so the central quotient is f′(x) + O(h²).",
-          "Shows the one-sided quotient equals f′(x) + hf″(x)/2 + O(h²), which is O(h) when f″(x) ≠ 0.",
-        ],
-      },
-    },
-    {
       key: "cost",
       rung: "stretch",
       prompt: <p>A full central-difference gradient check of a model with one million parameters needs how many forward passes (not counting the one backward pass)?</p>,

@@ -274,26 +274,6 @@ assert leaked_rows(np.array([[1, 2], [3, 4]]), np.array([[3, 4], [5, 6], [1, 2],
       },
     },
     {
-      key: "pipeline",
-      rung: "prove",
-      prompt: (
-        <p>
-          A colleague standardises all the data and selects the 20 best features using all the labels, then runs 5-fold
-          cross-validation. Explain precisely how information leaks into each validation fold, which step leaks more, and how to
-          restructure the procedure.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes the scaler's mean and standard deviation include the validation fold's values, a mild leak of input information.",
-          "Notes feature selection used the validation fold's labels, so features were chosen partly for fitting those labels, a severe leak.",
-          "Explains this makes the cross-validation score optimistic, possibly far above chance even on pure noise.",
-          "Prescribes fitting the scaler and the selection inside each training fold, for example with a pipeline, and applying them unchanged to the held-out fold.",
-        ],
-      },
-    },
-    {
       key: "anyone",
       rung: "stretch",
       prompt: <p>With 50 independent pure-noise features, what is the probability that at least one passes a test at the 5% level? Give three decimal places.</p>,

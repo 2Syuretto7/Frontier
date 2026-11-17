@@ -245,24 +245,6 @@ assert loo_mse(train, 59) > loo_mse(train, k)` },
       },
     },
     {
-      key: "k-extremes",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain what goes wrong with nearest neighbours at the two extremes: <M>{"k = 1"}</M>, and <M>k</M> equal to the
-          whole training set. Relate each to overfitting or underfitting.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "With k = 1, every prediction copies a single example, so noisy or mislabelled points flip predictions near them: overfitting.",
-          "With k equal to the whole training set, every input gets the same prediction, the overall majority or mean: underfitting.",
-          "Concludes that a middle value of k balances the two, and should be chosen on data not used for training.",
-        ],
-      },
-    },
-    {
       key: "work",
       rung: "stretch",
       prompt: (

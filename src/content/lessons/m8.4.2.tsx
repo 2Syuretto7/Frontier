@@ -274,19 +274,6 @@ assert abs(lebesgue_number(cov, xs) - 0.1) < 1e-9 and lebesgue_number([(0, 1)], 
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that a closed and bounded set K ⊆ ℝ is sequentially compact.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes a sequence in K and notes it is bounded because K is.",
-          "Applies Bolzano–Weierstrass to get a convergent subsequence.",
-          "Uses that K is closed (contains limits of its convergent sequences) to place the limit in K.",
-        ],
-      },
-    },
-    {
       key: "leb",
       rung: "stretch",
       prompt: <p>What is the Lebesgue number of the cover {"{(−1, 0.6), (0.4, 2)}"} of [0, 1], in the sense of the smallest radius_at over [0, 1]?</p>,

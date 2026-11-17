@@ -272,24 +272,6 @@ for _ in range(30):
       },
     },
     {
-      key: "areas",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why the areas of the bars of any density histogram add up to exactly 1, whatever the bin widths. Then
-          explain why the heights of a density histogram can be greater than 1.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Each bar's area is height × width = relative frequency.",
-          "The relative frequencies are the counts divided by n, and the counts add to n, so the areas add to 1.",
-          "Notes that a narrow bin with a large proportion has height = proportion / width, which exceeds 1 when the width is less than the proportion.",
-        ],
-      },
-    },
-    {
       key: "two-dice",
       rung: "stretch",
       prompt: (

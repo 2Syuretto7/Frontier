@@ -321,23 +321,6 @@ assert interlaces(A) is True and interlaces(np.diag([1.0, 3.0, 2.0])) is True` }
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that for a self-adjoint A with smallest and largest eigenvalues λ₁ and λₙ, every x ≠ 0 satisfies λ₁ ≤
-          ⟨Ax, x⟩/⟨x, x⟩ ≤ λₙ.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses the spectral theorem to expand x = Σ cⱼeⱼ in an orthonormal eigenbasis, so ⟨Ax, x⟩ = Σ λⱼ|cⱼ|² and ⟨x, x⟩ = Σ|cⱼ|².",
-          "Bounds Σ λⱼ|cⱼ|² between λ₁Σ|cⱼ|² and λₙΣ|cⱼ|² and divides by Σ|cⱼ|² > 0.",
-        ],
-      },
-    },
-    {
       key: "fiedler",
       rung: "stretch",
       prompt: (

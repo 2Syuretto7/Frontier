@@ -243,24 +243,6 @@ assert time.time() - t < 2, 'Lucas needs only a few digits.'` },
       },
     },
     {
-      key: "pascal-proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove Pascal&rsquo;s rule <M>{"\\binom{n+1}{r} = \\binom{n}{r-1} + \\binom{n}{r}"}</M> from the factorial formula.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes both terms on the right with the factorial formula.",
-          "Puts them over the common denominator r!(n + 1 − r)!.",
-          "Shows the numerator becomes n!·r + n!·(n + 1 − r) = n!(n + 1) = (n + 1)!.",
-          "Recognises the result as the formula for (n + 1 choose r).",
-        ],
-      },
-    },
-    {
       key: "middle-term",
       rung: "stretch",
       prompt: <p>What is the coefficient of <M>{"x^4"}</M> in the expansion of <M>{"\\left(x + \\tfrac1x\\right)^8"}</M>?</p>,

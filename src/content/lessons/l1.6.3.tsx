@@ -273,20 +273,6 @@ assert Z.shape == (500, 2) and np.allclose(np.cov(Z.T), np.eye(2)), 'Whitened sc
       },
     },
     {
-      key: "maxproof",
-      rung: "prove",
-      prompt: <p>Prove that the maximum of <M>{"u^\\top S u"}</M> over unit vectors <M>u</M>, for a symmetric matrix <M>S</M>, is its largest eigenvalue, and say where it is attained.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses the spectral theorem: a symmetric S has an orthonormal basis of eigenvectors q_j with real eigenvalues λ_j.",
-          "Writes u = Σ c_j q_j and uses orthonormality to get Σ c_j² = 1.",
-          "Computes uᵀSu = Σ λ_j c_j² and bounds it by λ₁ Σ c_j² = λ₁.",
-          "Shows equality at u = q₁, so the maximum is λ₁, attained at the top eigenvector.",
-        ],
-      },
-    },
-    {
       key: "recon",
       rung: "stretch",
       prompt: <p>For <M>{"S = \\begin{pmatrix} 3 & 1 \\\\ 1 & 3 \\end{pmatrix}"}</M>, keeping only the first component, what is the mean squared reconstruction error per point?</p>,

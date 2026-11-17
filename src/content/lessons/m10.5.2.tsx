@@ -268,24 +268,6 @@ assert abs(lo - 2.25) < 1e-12 and abs(hi - 9.0) < 1e-12` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let f be μ-strongly convex and differentiable, with minimum value f*. Prove the PL inequality f(x) − f* ≤
-          ‖∇f(x)‖²/(2μ).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses the strong convexity lower bound f(y) ≥ f(x) + ∇f(x)ᵀ(y − x) + (μ/2)‖y − x‖² for all y.",
-          "Minimises the right side over y (at y = x − ∇f(x)/μ) to get the value f(x) − ‖∇f(x)‖²/(2μ).",
-          "Concludes that f(y) ≥ f(x) − ‖∇f(x)‖²/(2μ) for every y, hence for f*, and rearranges.",
-        ],
-      },
-    },
-    {
       key: "kap2",
       rung: "stretch",
       prompt: <p>f(x) = x² + log(1 + eˣ) on ℝ. Using the best constants, what is κ = L/μ?</p>,

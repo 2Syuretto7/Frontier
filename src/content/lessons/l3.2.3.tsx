@@ -282,19 +282,6 @@ assert all(np.all(np.isfinite(g)) for pair in grads for g in pair)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>For Z = XW + 1bᵀ and Δ = ∂L/∂Z, prove that ∂L/∂W = XᵀΔ and ∂L/∂X = ΔWᵀ.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes Z_nj = Σ_i X_ni W_ij + b_j and the partial derivatives ∂Z_nj/∂W_ij = X_ni and ∂Z_nj/∂X_ni = W_ij.",
-          "Applies the chain rule summing over all entries of Z that depend on the variable: ∂L/∂W_ij = Σ_n X_ni Δ_nj and ∂L/∂X_ni = Σ_j Δ_nj W_ij.",
-          "Recognises these sums as entries of XᵀΔ and ΔWᵀ.",
-        ],
-      },
-    },
-    {
       key: "memory",
       rung: "stretch",
       prompt: <p>A batch of 64 passes through 4 layers of width 1024, and every layer&rsquo;s float32 activations are kept for the backward pass. How many bytes is that?</p>,

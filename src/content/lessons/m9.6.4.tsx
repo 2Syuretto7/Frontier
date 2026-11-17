@@ -278,19 +278,6 @@ assert m[0] > 10 and m[1] < 1` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Using MSE(λ) = Σⱼ (σ²dⱼ² + λ²θⱼ²)/(dⱼ² + λ)², prove that for full-rank X and σ² &gt; 0 some λ &gt; 0 has smaller MSE than least squares (λ = 0).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Differentiates a term: the variance part σ²dⱼ²/(dⱼ² + λ)² has derivative −2σ²dⱼ²/(dⱼ² + λ)³, equal to −2σ²/dⱼ⁴ at λ = 0.",
-          "Shows the bias part λ²θⱼ²/(dⱼ² + λ)² has derivative 0 at λ = 0.",
-          "Concludes MSE′(0) < 0, so MSE(λ) < MSE(0) for all small λ > 0 (by the definition of the derivative or continuity).",
-        ],
-      },
-    },
-    {
       key: "opt",
       rung: "stretch",
       prompt: <p>In one dimension with d² = 4, θ = 1 and σ² = 1, MSE(λ) = (4 + λ²)/(4 + λ)². What is the smallest achievable MSE? (Least squares gives 0.25.)</p>,

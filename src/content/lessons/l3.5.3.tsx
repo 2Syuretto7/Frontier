@@ -242,19 +242,6 @@ assert np.allclose(residual_mlp(x, [(W1, W2), (W1, W2)]), [[6 + 12], [2 + 4]])` 
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>For scalar residual blocks xₗ₊₁ = xₗ + fₗ(xₗ), show that dx_L/dx₀ = ∏ₗ(1 + fₗ′(xₗ)), and that it equals the sum over all subsets S of blocks of the product of fₗ′(xₗ) over ℓ in S.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses the chain rule: each block contributes the factor d xₗ₊₁/d xₗ = 1 + fₗ′(xₗ), so the derivative is the product.",
-          "Expands the product of L binomials: each term picks 1 or fₗ′ from every factor, i.e. a subset S of blocks, giving the product over S.",
-          "Notes the empty subset gives the term 1, the identity path.",
-        ],
-      },
-    },
-    {
       key: "meanpath",
       rung: "stretch",
       prompt: <p>In the path picture, paths through k of L branches carry weight C(L, k)·sᵏ. With L = 20 and s = 0.25, what is the weighted average path length?</p>,

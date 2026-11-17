@@ -318,24 +318,6 @@ assert grad_of(f, [2, -3]) == grad_of(f, [2, -3]) == (-4.0, [-2.0, 2.0])` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why running the closures in reverse post-order guarantees that, when a node&rsquo;s <C>_backward</C> runs,
-          its <C>grad</C> already includes the contribution from every node that uses it.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that post-order DFS appends a node only after all nodes in its _prev, so every input precedes its consumer.",
-          "Reverses this: every consumer precedes its inputs, so all consumers of v run before v.",
-          "Concludes each consumer has already added its contribution to v.grad, so v.grad is complete when v runs (by induction, the consumers' own grads were complete too).",
-        ],
-      },
-    },
-    {
       key: "limit",
       rung: "stretch",
       prompt: <p>What is CPython&rsquo;s default recursion limit, as returned by <C>sys.getrecursionlimit()</C>?</p>,

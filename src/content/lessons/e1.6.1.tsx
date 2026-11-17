@@ -271,26 +271,6 @@ matplotlib.use('Agg')
       },
     },
     {
-      key: "inverse",
-      rung: "prove",
-      prompt: (
-        <p>
-          Write the inverse of the linear scale <M>{"s(v) = p_0 + \\frac{v - d_0}{d_1 - d_0}(p_1 - p_0)"}</M>, giving the data
-          value at pixel <M>{"p"}</M>, and show that it undoes <M>{"s"}</M>. Then explain what an interactive chart needs this
-          inverse for, and why the inverse of a log scale is an exponential.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Gives v = d0 + (p − p0)/(p1 − p0) · (d1 − d0).",
-          "Substitutes s(v) for p and simplifies to recover v.",
-          "Notes interactive charts use the inverse to turn a mouse position into a data value, for tooltips, zooming or selection.",
-          "Explains the log scale is the linear scale applied to log10 v, so inverting gives 10 to the power of the linear inverse.",
-        ],
-      },
-    },
-    {
       key: "decades",
       rung: "stretch",
       prompt: (

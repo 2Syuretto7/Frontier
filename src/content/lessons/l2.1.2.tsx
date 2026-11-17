@@ -287,24 +287,6 @@ assert abs(fit_lad(X, y)[0] - 3.0) < 1e-3` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          For <M>{"y_i = x_i^\\top w + \\varepsilon_i"}</M> with independent N(0, σ²) noise, prove that the maximum-likelihood
-          w is a least-squares solution whatever σ is, and that the maximum-likelihood σ² is RSS(ŵ)/n.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the negative log-likelihood as (n/2)log(2πσ²) + RSS(w)/(2σ²).",
-          "Observes that for fixed σ only RSS(w) depends on w, with a positive coefficient, so the minimiser is the least-squares w.",
-          "Differentiates in σ² at ŵ, solves to get RSS/n, and checks it is a minimum (sign change or second derivative).",
-        ],
-      },
-    },
-    {
       key: "nllmin",
       rung: "stretch",
       prompt: <p>At the maximum-likelihood fit the Gaussian NLL equals (n/2)(log(2πσ̂²) + 1). Evaluate it for n = 10 and σ̂² = 1, to four decimal places.</p>,

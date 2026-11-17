@@ -294,24 +294,6 @@ assert first_true(lambda x: False, 3, 9) == 10 and first_true(lambda x: True, 3,
       },
     },
     {
-      key: "maxinv",
-      rung: "prove",
-      prompt: (
-        <p>
-          Write an algorithm that finds the largest element of a non-empty list in one pass, state a loop invariant, and use it
-          to prove the algorithm correct.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Keeps best = a[0] and updates best when a later element is larger.",
-          "States the invariant: before examining a[i], best is the largest of a[0..i − 1].",
-          "Checks initialisation, maintenance, and that at the end the invariant gives the maximum of the whole list.",
-        ],
-      },
-    },
-    {
       key: "russian",
       rung: "stretch",
       prompt: (

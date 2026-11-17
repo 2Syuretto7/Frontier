@@ -252,19 +252,6 @@ assert abs(r - 0.05) < 0.012` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>For a one-parameter model, assume √n(θ̂ − θ₀) → N(0, 1/I(θ₀)) under H₀ and −ℓ″(θ̃)/n → I(θ₀) in probability for any θ̃ between θ̂ and θ₀. Prove that −2 log Λ → χ²₁.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Taylor expands ℓ(θ₀) about θ̂ using ℓ′(θ̂) = 0, giving ℓ(θ₀) = ℓ(θ̂) + ½ℓ″(θ̃)(θ₀ − θ̂)².",
-          "Rewrites −2 log Λ as (−ℓ″(θ̃)/n)·(√n(θ̂ − θ₀))².",
-          "Uses Slutsky and continuous mapping: the limit is I·(Z/√I)² = Z² with Z standard normal, which is χ²₁.",
-        ],
-      },
-    },
-    {
       key: "exp",
       rung: "stretch",
       prompt: <p>An exponential sample of size 10 has mean X̄ = 2. What is −2 log Λ = 2n(X̄ − 1 − log X̄) for H₀: λ = 1? Give four decimal places.</p>,

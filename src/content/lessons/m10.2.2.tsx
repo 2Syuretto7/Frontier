@@ -282,23 +282,6 @@ assert np.allclose(H, np.eye(3) / 3 - 1 / 9) and np.allclose(lse_hessian(np.arra
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let f be differentiable on ℝⁿ. Prove that if f(y) ≥ f(x) + ∇f(x)ᵀ(y − x) for all x and y, then f is convex.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Fixes x, y, θ and sets z = θx + (1 − θ)y.",
-          "Applies the inequality at z towards x and towards y, multiplies by θ and 1 − θ, and adds.",
-          "Notes the gradient terms cancel since θ(x − z) + (1 − θ)(y − z) = 0, leaving θf(x) + (1 − θ)f(y) ≥ f(z).",
-        ],
-      },
-    },
-    {
       key: "lg",
       rung: "stretch",
       prompt: <p>What is the largest value of the second derivative of log(1 + eᵗ) over all real t?</p>,

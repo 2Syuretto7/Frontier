@@ -269,25 +269,6 @@ for a, b, c in [(3, 2, 7), (-2, 5, 4), (5, -5, 1)]:
       },
     },
     {
-      key: "am-gm",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that for all real <M>a</M> and <M>b</M>, <M>{"a^2 + b^2 \\ge 2ab"}</M>, and that equality holds exactly when{" "}
-          <M>{"a = b"}</M>. Then use it to show that a rectangle with perimeter 20 has area at most 25.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Rewrites the difference as (a - b)² and uses that squares are non-negative.",
-          "Proves both directions of the equality condition.",
-          "Sets up the rectangle with sides x and y, x + y = 10.",
-          "Derives xy ≤ 25, for example from (x - y)² ≥ 0 or the mean inequality.",
-        ],
-      },
-    },
-    {
       key: "min",
       rung: "stretch",
       prompt: <p>For <M>{"x > 0"}</M>, what is the smallest possible value of <M>{"x + \\tfrac{1}{x}"}</M>?</p>,

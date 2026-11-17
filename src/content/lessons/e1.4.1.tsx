@@ -267,25 +267,6 @@ except ImportError:
       },
     },
     {
-      key: "explain",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain step by step why saving <C>random.py</C> in a project folder broke a different script in that folder, and give
-          two ways to prevent this kind of problem.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "States that the script's folder is the first entry on sys.path.",
-          "Explains that import random therefore found the local random.py before the standard library's, and the local file lacks shuffle.",
-          "Suggests never naming files after standard-library or installed modules, for example renaming to random_experiment.py.",
-          "Suggests a second safeguard, such as putting code in a uniquely named package, or checking random.__file__ to see which file was imported.",
-        ],
-      },
-    },
-    {
       key: "path",
       rung: "stretch",
       prompt: <p>How many folders in the demonstration&rsquo;s search path does Python look inside before it finds <C>numpy</C>, counting the one where it is found?</p>,

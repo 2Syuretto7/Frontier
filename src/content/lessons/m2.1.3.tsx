@@ -117,7 +117,7 @@ export const lesson: LessonContent = {
           For all real x and y, <M>{"\\big|\\,|x| - |y|\\,\\big| \\le |x - y|"}</M>.
         </p>
       </Theorem>
-      <p>You will prove this in the practice. It says that nearby numbers have nearby sizes.</p>
+      <p>It follows from the triangle inequality applied to x = (x − y) + y, and again with x and y swapped. It says that nearby numbers have nearby sizes.</p>
     </>
   ),
 
@@ -286,43 +286,6 @@ for _ in range(40):
     else:
         assert abs(res[0] - grid[0]) <= 0.125 + 1e-9 and abs(res[1] - grid[-1]) <= 0.125 + 1e-9, (pts, r, res)` },
           { name: "median", code: `assert minimiser([5, 1, 3]) == 3 and minimiser([4, 1, 3, 2]) == 2, 'A median minimises a sum of distances.'` },
-        ],
-      },
-    },
-    {
-      key: "reverse",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove the reverse triangle inequality: <M>{"\\big|\\,|x| - |y|\\,\\big| \\le |x - y|"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes x = (x − y) + y and applies the triangle inequality to get |x| − |y| ≤ |x − y|.",
-          "Swaps the roles of x and y to get |y| − |x| ≤ |x − y|.",
-          "Combines the two using property 4 (with ≤).",
-        ],
-      },
-    },
-    {
-      key: "sum-close",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Let <M>{"\\varepsilon > 0"}</M>. Prove that if <M>{"|x - a| < \\varepsilon/2"}</M> and{" "}
-          <M>{"|y - b| < \\varepsilon/2"}</M>, then <M>{"|(x + y) - (a + b)| < \\varepsilon"}</M>. What would you need to
-          assume about x and y to make <M>{"xy"}</M> within <M>{"\\varepsilon"}</M> of ab?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Rearranges (x + y) − (a + b) as (x − a) + (y − b) and applies the triangle inequality.",
-          "Adds the two bounds to get less than ε.",
-          "For the product, writes xy − ab = x(y − b) + b(x − a), or similar, and notes that a bound on |x| is needed as well.",
-          "Proposes a reasonable condition, such as |x − a| < 1 together with suitably small distances.",
         ],
       },
     },

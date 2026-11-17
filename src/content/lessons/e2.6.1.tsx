@@ -431,34 +431,6 @@ assert d[0][299] == 299 and d[150][150] == 298 and d[299][0] == 299, 'Start from
         ],
       },
     },
-    {
-      key: "backedge",
-      rung: "prove",
-      prompt: <p>Prove that a directed graph has a cycle if and only if depth-first search (run from every unvisited vertex) finds an edge to a grey vertex.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "If DFS finds an edge u → v with v grey, v is an ancestor of u on the recursion stack, so the stack path from v to u plus that edge is a cycle.",
-          "Conversely, given a cycle, let v be the first vertex on it that DFS discovers, and u its predecessor on the cycle.",
-          "At v's discovery the rest of the cycle is white and reachable from v along white vertices, so u is discovered and finished while v is still grey (the white-path argument).",
-          "So when DFS scans the edge u → v, v is grey: a back edge is found.",
-        ],
-      },
-    },
-    {
-      key: "bipartite",
-      rung: "stretch",
-      prompt: <p>Show how to test whether an undirected graph is bipartite (its vertices split into two sides with every edge crossing) in O(V + E), and prove your test correct.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Runs BFS from each uncoloured vertex, colouring each vertex by the parity of its distance.",
-          "Reports not bipartite exactly when some edge joins two vertices of the same colour; the time is O(V + E).",
-          "If no edge is monochromatic, the colours are a valid split.",
-          "If edge u–v has equal parity, the two BFS-tree paths to their common ancestor plus u–v form an odd cycle, and a graph with an odd cycle cannot be bipartite.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

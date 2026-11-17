@@ -265,23 +265,6 @@ assert abs(riemann(lambda x: 2 * x, P, midpoints(P)) - 4) < 1e-12` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let f be integrable on [a, b], continuous at c ∈ (a, b), and <M>{"F(x) = \\int_a^x f"}</M>. Prove F′(c) = f(c).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes (F(c + h) − F(c))/h − f(c) as (1/h)∫ from c to c + h of (f(t) − f(c)) dt, using additivity of the integral.",
-          "Uses continuity at c to choose δ with |f(t) − f(c)| < ε for |t − c| < δ.",
-          "Bounds the integral by ε|h| for 0 < |h| < δ, so the quotient is within ε of f(c).",
-        ],
-      },
-    },
-    {
       key: "tag",
       rung: "stretch",
       prompt: <p>For F(x) = x³ on the cell [0, 1], find the tag t with 3t² equal to the change F(1) − F(0). Give four decimal places.</p>,

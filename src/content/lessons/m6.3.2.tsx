@@ -341,19 +341,6 @@ assert adjoint_test(lambda x: W @ x, lambda y: 1.001 * (W.T @ y), 6, 4) is False
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that null T* = (range T)⊥ for a linear map T: V → W between finite-dimensional inner product spaces.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows both inclusions (or a chain of equivalences): w ∈ null T* iff ⟨v, T*w⟩ = 0 for all v ∈ V.",
-          "Uses the defining identity ⟨v, T*w⟩ = ⟨Tv, w⟩ to translate this into ⟨Tv, w⟩ = 0 for all v, i.e. w ⊥ range T.",
-          "Justifies that ⟨v, T*w⟩ = 0 for all v forces T*w = 0 (take v = T*w).",
-        ],
-      },
-    },
-    {
       key: "deriv",
       rung: "stretch",
       prompt: (

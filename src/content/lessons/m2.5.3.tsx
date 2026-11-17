@@ -284,40 +284,6 @@ assert 'return 4' not in src.replace(' ', '').replace('return4', 'return 4'), 'F
         ],
       },
     },
-    {
-      key: "square",
-      rung: "prove",
-      prompt: <p>Prove that among all rectangles with a given perimeter P, the square has the largest area.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the area as A(x) = x(P/2 − x) on [0, P/2], where x is one side.",
-          "Finds the only critical point, x = P/4, from A′(x) = P/2 − 2x.",
-          "Compares with the endpoints, where A = 0 (or uses the second derivative test), and concludes both sides are P/4.",
-        ],
-      },
-    },
-    {
-      key: "lifeguard",
-      rung: "stretch",
-      prompt: (
-        <p>
-          A lifeguard runs along the beach at speed u and swims at speed w. The shoreline is a straight line; the lifeguard
-          starts at distance a from it on the sand, and the swimmer is at distance b from it in the water, a horizontal
-          distance d away. Show that the quickest route crosses the shoreline at the point where{" "}
-          <M>{"\\sin\\alpha / u = \\sin\\beta / w"}</M>, where <M>{"\\alpha"}</M> and <M>{"\\beta"}</M> are the angles the
-          two parts of the route make with the line perpendicular to the shore.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the time as T(x) = √(a² + x²)/u + √(b² + (d − x)²)/w, where x is the crossing point.",
-          "Differentiates and sets T′(x) = 0, getting x/(u√(a² + x²)) = (d − x)/(w√(b² + (d − x)²)).",
-          "Recognises the two fractions as sin α / u and sin β / w, and ideally notes this is Snell's law of refraction.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

@@ -374,40 +374,6 @@ assert got == [("copy2", "d2"), ("copy4", "d4")], got` },
         ],
       },
     },
-    {
-      key: "minhash-proof",
-      rung: "prove",
-      prompt: <p>Prove that for a uniformly random ordering of the universe, the first elements of nonempty sets A and B coincide with probability J(A, B). Where does uniformity enter?</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Considers x, the first element of A ∪ B under the ordering.",
-          "Uniformity: every element of A ∪ B is equally likely to come first among them, so P(x ∈ A ∩ B) = |A ∩ B| / |A ∪ B|.",
-          "If x ∈ A ∩ B it is the first element of both A and B.",
-          "If x is in only one set, the other set's first element differs from x, so the minima differ; hence the probability is exactly J.",
-        ],
-      },
-    },
-    {
-      key: "length",
-      rung: "stretch",
-      prompt: (
-        <p>
-          You want MinHash estimates within ±0.05 of the true similarity with probability about 95 per cent, for any J. How long
-          must the signature be? Then choose b and r for a 128-value signature so that the LSH threshold is near 0.7, and say
-          what happens to pairs at J = 0.5 and J = 0.9.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "The estimate is a mean of k Bernoulli(J) indicators, with standard deviation √(J(1 − J)/k), largest at J = 1/2, giving 0.5/√k.",
-          "Requires 1.96 · 0.5/√k ≤ 0.05, so k ≥ about 385.",
-          "Picks b·r = 128 with (1/b)^{1/r} ≈ 0.7, such as b = 16, r = 8, giving (1/16)^{1/8} ≈ 0.71.",
-          "Computes 1 − (1 − J⁸)¹⁶ ≈ 0.06 at J = 0.5 and ≈ 0.9999 at J = 0.9, so mostly dissimilar pairs are excluded and similar pairs kept.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

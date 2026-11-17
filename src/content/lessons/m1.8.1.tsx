@@ -249,39 +249,6 @@ assert a is not None and a == birthday_collision(30, 365, 3) and birthday_collis
         ],
       },
     },
-    {
-      key: "galileo",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the set of positive integers is infinite, by showing that <M>{"n \\mapsto n + 1"}</M> is a bijection onto a
-          proper subset and using the theorems of this lesson.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows n ↦ n + 1 is injective.",
-          "Identifies its image as the positive integers other than 1, a proper subset, and shows every such integer is hit.",
-          "Notes that a finite set has no bijection onto a proper subset.",
-          "Concludes that the positive integers are not finite.",
-        ],
-      },
-    },
-    {
-      key: "subset-finite",
-      rung: "stretch",
-      prompt: <p>Prove by induction on n that every subset of <M>{"[n]"}</M> is finite, with at most n elements.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Handles n = 0: the only subset of ∅ is ∅, with 0 elements.",
-          "For S ⊆ [n + 1], considers S ∖ {n + 1}, a subset of [n].",
-          "Applies the hypothesis to S ∖ {n + 1}, then adds back n + 1 if it is in S.",
-          "Concludes |S| ≤ n + 1, completing the induction.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

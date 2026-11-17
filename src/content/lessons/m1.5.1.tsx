@@ -246,34 +246,6 @@ assert all(first_failure(Fraction(p, 5), 40) is None for p in range(-5, 30)), 'N
         ],
       },
     },
-    {
-      key: "squares",
-      rung: "prove",
-      prompt: <p>Prove by induction that <M>{"1^2 + 2^2 + \\cdots + n^2 = \\tfrac{n(n + 1)(2n + 1)}{6}"}</M> for every <M>{"n \\ge 1"}</M>.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Checks the base case n = 1: both sides equal 1.",
-          "States the inductive hypothesis for k.",
-          "Adds (k + 1)² to both sides and simplifies to (k + 1)(k + 2)(2k + 3)/6.",
-          "Concludes by induction.",
-        ],
-      },
-    },
-    {
-      key: "inequality",
-      rung: "stretch",
-      prompt: <p>Prove that <M>{"2^n > n^2"}</M> for every <M>{"n \\ge 5"}</M>. Where exactly does your inductive step use <M>{"k \\ge 5"}</M>?</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Checks the base case n = 5: 32 > 25.",
-          "Assumes 2ᵏ > k² for some k ≥ 5 and writes 2ᵏ⁺¹ = 2 · 2ᵏ > 2k².",
-          "Shows 2k² ≥ (k + 1)², for instance because k² ≥ 2k + 1 when k ≥ 3, and notes where k ≥ 5 (or k ≥ 3) is used.",
-          "Concludes by induction.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

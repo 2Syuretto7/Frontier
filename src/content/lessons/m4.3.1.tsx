@@ -291,23 +291,6 @@ for _ in range(500):
       },
     },
     {
-      key: "lemma",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove the handshake lemma, and deduce that a graph in which every vertex has degree 3 has an even number of vertices.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Counts pairs (vertex, edge at that vertex) two ways: by vertices it is the degree sum; by edges it is 2|E|.",
-          "Concludes the degree sum is even.",
-          "For a 3-regular graph, 3|V| = 2|E| is even, so |V| is even.",
-        ],
-      },
-    },
-    {
       key: "labelled",
       rung: "stretch",
       prompt: <p>How many different (labelled) simple graphs are there on the vertex set {"{1, 2, 3, 4}"}?</p>,

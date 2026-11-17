@@ -246,25 +246,6 @@ assert len(ancestors(P, 4999)) == 5000, 'No recursion limit for long histories.'
       },
     },
     {
-      key: "base",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why Git needs the merge base, and not just the two branch tips, to merge correctly. Use an example of a line
-          that one branch changed and the other left alone.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that comparing only the two tips shows that a line differs, but not which side changed it.",
-          "Uses the base to see which side departed from the original: if main changed a line and feature kept the base version, main's change should win.",
-          "Explains that a conflict arises only when both sides changed the same part differently from the base.",
-          "Gives a concrete example, such as a learning rate changed on one branch only.",
-        ],
-      },
-    },
-    {
       key: "threeway",
       rung: "stretch",
       prompt: <p>The merge base sets <C>lr = 0.001</C>. Main changed it to <C>0.002</C>; feature left it alone. What value of <C>lr</C> does the merge produce?</p>,

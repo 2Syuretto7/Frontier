@@ -280,24 +280,6 @@ assert np.allclose(A, W) and np.allclose(B, W)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if y = Wx and L is a differentiable scalar function of y with <M>{"\\bar y = \\nabla_y L"}</M>, then{" "}
-          <M>{"\\partial L / \\partial W_{ij} = \\bar y_i x_j"}</M>, so <M>{"\\nabla_W L = \\bar y x^\\top"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes y_k = Σ_j W_kj x_j, so ∂y_k/∂W_ij is x_j when k = i and 0 otherwise (or perturbs W by H to get δy = Hx).",
-          "Applies the chain rule: ∂L/∂W_ij = Σ_k ȳ_k ∂y_k/∂W_ij = ȳ_i x_j.",
-          "Assembles the entries into the outer product ȳ xᵀ.",
-        ],
-      },
-    },
-    {
       key: "count",
       rung: "stretch",
       prompt: (

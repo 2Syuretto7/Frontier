@@ -255,24 +255,6 @@ assert abs(c[0] - 2 / 3) < 1e-3 and abs(c[1] - 0.5) < 1e-9, 'Heavier where x is 
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why, for f continuous on a closed rectangle R, all Riemann sums approach the same limit as the grid is
-          refined. You may use that f is uniformly continuous on R.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "States uniform continuity: for each ε > 0 a δ with |f(p) − f(q)| < ε when ‖p − q‖ < δ.",
-          "Notes that on a grid with cell diameters below δ, the values of f in a cell vary by less than ε, so any two Riemann sums on that grid differ by at most ε · area(R).",
-          "Argues that sums on two different fine grids are both close to sums on their common refinement, so all fine-grid sums are within about 2ε · area(R) of each other, giving a single limit.",
-        ],
-      },
-    },
-    {
       key: "sq",
       rung: "stretch",
       prompt: <p>Compute <M>{"\\iint_{[0,1]^2} (x + y)^2\\,dA"}</M>. Give three decimal places.</p>,

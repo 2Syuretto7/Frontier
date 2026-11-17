@@ -245,24 +245,6 @@ assert exists_count(lambda n: n > 1 and all(n % d for d in range(2, n)) and n > 
       },
     },
     {
-      key: "square-proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"\\forall x \\in \\mathbb{R},\\ x^2 - 2x + 1 \\ge 0"}</M>, and that{" "}
-          <M>{"\\exists x \\in \\mathbb{R},\\ x^2 - 2x + 1 = 0"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes an arbitrary real x rather than checking examples.",
-          "Rewrites x² − 2x + 1 as (x − 1)² and notes that a square of a real number is never negative.",
-          "Gives the witness x = 1 for the existential statement and checks it.",
-        ],
-      },
-    },
-    {
       key: "fermat",
       rung: "stretch",
       prompt: <p>Euler found that 641 divides <M>{"2^{32} + 1 = 4\\,294\\,967\\,297"}</M>. What is the other factor?</p>,

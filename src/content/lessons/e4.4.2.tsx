@@ -313,25 +313,6 @@ else:
       },
     },
     {
-      key: "ripple",
-      rung: "prove",
-      prompt: (
-        <p>
-          In a pipeline of n stages where stage i receives only the output of stage i − 1, argue that a change inside stage i
-          that keeps its outputs the same for every input cannot change any other stage&rsquo;s behaviour, and that a change
-          to its outputs can only affect stages after it. Contrast this with stages that share global state.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Argues that every later stage's behaviour is a function of the outputs it receives, so identical outputs mean identical behaviour downstream.",
-          "Notes that earlier stages never receive anything from stage i, so they are unaffected in either case.",
-          "Contrasts with shared global state, where any stage may read what stage i writes, so a change can affect any other stage.",
-        ],
-      },
-    },
-    {
       key: "diff",
       rung: "stretch",
       prompt: <p>With 8 components, how many more pairs could interact under shared global state than in a pipeline where each talks only to the next?</p>,

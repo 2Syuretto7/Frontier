@@ -266,19 +266,6 @@ assert abs(p - 1 / 64) < 0.006 and sign_flip(-np.ones(6), B=100) == 1.0` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Assume that under the null the observed statistic T and the B permuted statistics T₁, …, T_B are exchangeable with no ties. Prove that p = (1 + #{"{b : T_b ≥ T}"})/(1 + B) satisfies P(p ≤ α) ≤ α.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses exchangeability to argue that the rank of T among the B + 1 values is uniform on {1, …, B + 1}.",
-          "Shows p ≤ α exactly when T is among the top ⌊α(B + 1)⌋ values.",
-          "Concludes P(p ≤ α) = ⌊α(B + 1)⌋/(B + 1) ≤ α.",
-        ],
-      },
-    },
-    {
       key: "flip10",
       rung: "stretch",
       prompt: <p>A new model beats the old one on all 10 of 10 paired test sets. What is the exact one-sided sign-flip p-value for the statistic &quot;number of wins&quot;? Give six decimal places.</p>,

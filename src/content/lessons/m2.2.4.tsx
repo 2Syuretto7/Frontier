@@ -263,42 +263,6 @@ assert classify(lambda x: math.sin(1 / x) if x else 0, 0) == 'oscillating', 'sin
         ],
       },
     },
-    {
-      key: "prove-infinite",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove from the definition that <M>{"\\lim_{x \\to 0} \\dfrac{1}{x^2} = \\infty"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Lets B be given; notes that only B > 0 needs work (for B ≤ 0 any δ works).",
-          "Chooses δ = 1/√B.",
-          "Shows that 0 < |x| < δ gives x² < 1/B and so 1/x² > B.",
-        ],
-      },
-    },
-    {
-      key: "floor",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Let <M>{"\\lfloor x \\rfloor"}</M> be the greatest integer not exceeding x. At which real numbers a does{" "}
-          <M>{"\\lim_{x \\to a} \\lfloor x \\rfloor"}</M> exist? Find both one-sided limits at an integer n, and justify your
-          answers from the definitions.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "At a non-integer a, the function is constant on an interval around a, so the limit exists and equals ⌊a⌋.",
-          "At an integer n, the right-hand limit is n and the left-hand limit is n − 1.",
-          "Concludes the limit exists exactly at non-integers, with δ chosen as the distance to the nearest integer.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

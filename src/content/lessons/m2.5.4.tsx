@@ -250,26 +250,6 @@ assert abs(q - 1) < 0.05 and abs(errs[5] / errs[4] - 0.5) < 1e-12, 'At a double 
       },
     },
     {
-      key: "sqrt-error",
-      rung: "prove",
-      prompt: (
-        <p>
-          For <M>{"f(x) = x^2 - a"}</M> with <M>{"a > 0"}</M>, let <M>{"r = \\sqrt{a}"}</M> and <M>{"e_n = x_n - r"}</M>. Show
-          that <M>{"e_{n+1} = e_n^2 / (2x_n)"}</M>. Deduce that if <M>{"x_0 > 0"}</M>, every later iterate is at least r, and
-          the error at least squares (up to a constant) at each step.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes x_{n+1} − r = (x_n² + a)/(2x_n) − r and puts it over the common denominator 2x_n.",
-          "Recognises the numerator x_n² − 2r x_n + r² as (x_n − r)².",
-          "Concludes e_{n+1} ≥ 0 when x_n > 0, so x_{n+1} ≥ r for n ≥ 0, and all iterates stay positive.",
-          "Notes that for n ≥ 1, x_n ≥ r, so e_{n+1} ≤ e_n²/(2r): quadratic convergence.",
-        ],
-      },
-    },
-    {
       key: "digits",
       rung: "stretch",
       prompt: (

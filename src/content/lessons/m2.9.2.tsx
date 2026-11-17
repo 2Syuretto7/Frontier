@@ -252,26 +252,6 @@ for x in [1e-6, 1e-3, 0.4]:
       },
     },
     {
-      key: "derive",
-      rung: "prove",
-      prompt: (
-        <p>
-          Using Taylor expansions of <M>{"f(x + h)"}</M> and <M>{"f(x - h)"}</M>, show that{" "}
-          <M>{"D_0(h) = f'(x) + \\tfrac16 f'''(x)h^2 + O(h^4)"}</M> for a smooth f. Then explain why the error of{" "}
-          <M>{"D_0"}</M> applied to any quadratic is exactly 0.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes both expansions up to the h⁵ term (or with an O(h⁵) remainder).",
-          "Subtracts: the even-power terms cancel, leaving 2f′h + (1/3)f‴h³ + O(h⁵).",
-          "Divides by 2h to get the stated formula.",
-          "Notes a quadratic has f‴ = 0 and all higher derivatives zero, so every error term vanishes.",
-        ],
-      },
-    },
-    {
       key: "richardson",
       rung: "stretch",
       prompt: (

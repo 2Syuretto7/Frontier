@@ -286,24 +286,6 @@ assert abs(mahalanobis([2, 0], [0, 0], cov) - 1) < 1e-12 and abs(mahalanobis([0,
       },
     },
     {
-      key: "ata",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"A^{\\mathsf T}A"}</M> is positive semidefinite for every matrix A, and positive definite exactly when
-          the columns of A are independent.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes AᵀA is symmetric.",
-          "Computes xᵀAᵀAx = (Ax)ᵀ(Ax) = ‖Ax‖² ≥ 0.",
-          "Observes ‖Ax‖² = 0 exactly when Ax = 0, so positivity for every x ≠ 0 means N(A) = {0}, that is, independent columns.",
-        ],
-      },
-    },
-    {
       key: "tri",
       rung: "stretch",
       prompt: (

@@ -286,23 +286,6 @@ for _ in range(10):
       },
     },
     {
-      key: "reduction",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why, if problem A reduces to problem B in polynomial time and B is in P, then A is in P.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Runs the reduction on an instance of A of size n, taking polynomial time, so the output has polynomial size.",
-          "Runs B's polynomial algorithm on that output; a polynomial of a polynomial is a polynomial.",
-          "Notes the answers agree by the definition of a reduction, so this decides A in polynomial time.",
-        ],
-      },
-    },
-    {
       key: "tsp",
       rung: "stretch",
       prompt: <p>How many distinct round trips through 10 cities are there, starting and ending at a fixed city, if a tour and its reverse count as the same?</p>,

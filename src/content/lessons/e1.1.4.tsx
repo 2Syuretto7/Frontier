@@ -239,25 +239,6 @@ assert [check_host_key(known, 'gpu', 'SHA256:abc'), check_host_key(known, 'cpu',
       },
     },
     {
-      key: "why",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why logging in with a key is safer than typing a password, even over an encrypted connection, and why SSH
-          checks the server&rsquo;s host key before you authenticate.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that the private key never leaves the laptop; only a signature over this session's data is sent, which cannot be reused for another session.",
-          "Notes that a password is sent to the server, so a fake or compromised server learns it, and passwords can be guessed or reused.",
-          "Explains that checking the host key first ensures you are talking to the real server, not an attacker in the middle.",
-          "Concludes that without the host check, an impostor could accept your login and capture what you type.",
-        ],
-      },
-    },
-    {
       key: "tmux",
       rung: "stretch",
       prompt: <p>You start a ten-hour training run directly in an SSH session, without tmux, and your Wi-Fi drops after an hour. What usually happens to the run?</p>,

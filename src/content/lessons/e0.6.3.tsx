@@ -234,25 +234,6 @@ assert name == 'SyntaxError' and line == 2, 'A missing colon is reported on line
       },
     },
     {
-      key: "procedure",
-      rung: "prove",
-      prompt: (
-        <p>
-          Describe a step-by-step procedure for going from a traceback to the cause of a crash. Use the TypeError case to
-          explain why the line where the program stopped is not always the line that must be changed.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Reads the exception type and message on the last line first.",
-          "Finds the last File line to see where the program stopped, and reads that code.",
-          "Asks which values would cause that line to fail, and works back up the call chain or through the data to where those values came from.",
-          "Applies it to the example: line 4 failed because p was the string \"40\", which came from the list on line 7, so line 7 is the bug.",
-        ],
-      },
-    },
-    {
       key: "deep",
       rung: "stretch",
       prompt: (

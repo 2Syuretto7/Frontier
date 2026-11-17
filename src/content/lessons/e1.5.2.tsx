@@ -246,29 +246,6 @@ assert ranks([10, 30, 20, 20]).tolist() == [1.0, 4.0, 2.5, 2.5]` },
       },
     },
     {
-      key: "acc",
-      rung: "prove",
-      prompt: (
-        <>
-          <p>Rewrite this loop without any Python loop, and explain why your version computes the same value.</p>
-          <Code>{`correct = 0
-for p, t in zip(pred, target):
-    if p == t:
-        correct += 1
-acc = correct / len(pred)`}</Code>
-        </>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Assumes pred and target are NumPy arrays of the same length, converting them with np.asarray if needed.",
-          "Replaces it with acc = (pred == target).mean(), or np.mean(pred == target).",
-          "Explains that pred == target is a boolean array with True exactly where the loop's condition holds.",
-          "Explains that the mean of a boolean array counts True as 1 and False as 0 and divides by the length, matching the loop's arithmetic.",
-        ],
-      },
-    },
-    {
       key: "softmax",
       rung: "stretch",
       prompt: <p>Using the stable <C>softmax</C> above, what is the first entry of <C>softmax(np.array([1000.0, 1000.0]))</C>?</p>,

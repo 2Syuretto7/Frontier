@@ -279,24 +279,6 @@ assert src.count('lu_factor(') == 1 and 'for' in src.split('lu_factor(')[1], 'Fa
       },
     },
     {
-      key: "indep",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that eigenvectors <M>{"\\mathbf x_1, \\mathbf x_2"}</M> belonging to different eigenvalues{" "}
-          <M>{"\\lambda_1 \\ne \\lambda_2"}</M> are linearly independent.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Supposes c₁x₁ + c₂x₂ = 0.",
-          "Applies A to get c₁λ₁x₁ + c₂λ₂x₂ = 0, and subtracts λ₂ times the original equation.",
-          "Obtains c₁(λ₁ − λ₂)x₁ = 0, so c₁ = 0 since λ₁ ≠ λ₂ and x₁ ≠ 0; then c₂ = 0 similarly.",
-        ],
-      },
-    },
-    {
       key: "rot",
       rung: "stretch",
       prompt: <p>How many real eigenvalues does the 90° rotation matrix with rows (0, −1) and (1, 0) have?</p>,

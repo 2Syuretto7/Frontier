@@ -304,24 +304,6 @@ def from_digits(d2, d1, d0, b):
       },
     },
     {
-      key: "one-plus-two",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove from the definition of addition and the numerals that <M>{"1 + 2 = 3"}</M>. Justify every step.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes 2 as S(1) and applies a + S(b) = S(a + b).",
-          "Writes 1 as S(0) and applies the rule again.",
-          "Uses a + 0 = a to finish.",
-          "Converts S(S(1)) to 3 using the numerals.",
-        ],
-      },
-    },
-    {
       key: "pairings",
       rung: "stretch",
       prompt: <p>In how many different ways can <M>{"\\{a, b, c\\}"}</M> be paired one to one with <M>{"\\{1, 2, 3\\}"}</M>?</p>,

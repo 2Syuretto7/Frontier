@@ -250,19 +250,6 @@ assert abs(m[0] - 0.5) < 0.02 and abs(m[1] - 1 / 3) < 0.02` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that the mean squared error of any estimator with finite variance equals its squared bias plus its variance.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Splits θ̂ − θ into (θ̂ − E θ̂) + (E θ̂ − θ).",
-          "Shows the cross term has expectation 0, because E θ̂ − θ is a constant and E[θ̂ − E θ̂] = 0.",
-          "Identifies the remaining terms as Var(θ̂) and bias², giving MSE = bias² + Var.",
-        ],
-      },
-    },
-    {
       key: "np1",
       rung: "stretch",
       prompt: <p>For a normal sample of size 10 with σ² = 1, what is the mean squared error of SS/11? Give four decimal places.</p>,

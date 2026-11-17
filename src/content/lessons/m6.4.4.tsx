@@ -298,24 +298,6 @@ assert np.allclose(gd_from_zero(A, b, 0.05, 1), 0.05 * A.T @ b)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that A⁺b minimises ‖Ax − b‖ and has the smallest norm among all minimisers. You may use the SVD A = UΣVᵀ with
-          U and V square orthogonal.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Changes variables y = Vᵀx, c = Uᵀb and uses that orthogonal matrices preserve norms, so ‖Ax − b‖² = Σⱼ≤ᵣ(σⱼyⱼ − cⱼ)² + Σⱼ>ᵣ cⱼ².",
-          "Concludes the minimisers are exactly yⱼ = cⱼ/σⱼ for j ≤ r with yⱼ (j > r) arbitrary.",
-          "Uses ‖x‖ = ‖y‖ to show the minimum-norm minimiser sets yⱼ = 0 for j > r, which is x = VΣ⁺Uᵀb = A⁺b.",
-        ],
-      },
-    },
-    {
       key: "damp",
       rung: "stretch",
       prompt: (

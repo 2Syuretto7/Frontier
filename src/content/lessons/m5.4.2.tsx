@@ -248,25 +248,6 @@ assert np.allclose(newton_step(A, b, np.zeros(2)), np.linalg.solve([[2.0, 1.0], 
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Using differentials, prove that <M>{"\\nabla_x (x^\\top A x) = (A + A^\\top)x"}</M> and that{" "}
-          <M>{"\\nabla_x \\tfrac12\\|Ax - b\\|^2 = A^\\top(Ax - b)"}</M>. Deduce the normal equations.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Applies the product rule: d(xᵀAx) = dxᵀ A x + xᵀ A dx.",
-          "Transposes the scalar dxᵀAx to xᵀAᵀdx and reads off the gradient (A + Aᵀ)x.",
-          "For least squares, writes r = Ax − b, d(½rᵀr) = rᵀ dr = rᵀ A dx, so the gradient is Aᵀr.",
-          "Sets the gradient to 0 to obtain AᵀAx = Aᵀb.",
-        ],
-      },
-    },
-    {
       key: "ridge",
       rung: "stretch",
       prompt: (

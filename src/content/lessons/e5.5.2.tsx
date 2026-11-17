@@ -314,24 +314,6 @@ assert c == 2 and r.device == "gpu" and r.dtype == "float32" and r.data == [9.0,
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Suppose the dtype of a binary operation is the larger of its operands&rsquo; dtypes in a fixed total order. Prove
-          that every way of combining operands d₁, …, dₙ (any bracketing, any order) produces the dtype max(d₁, …, dₙ).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that max in a total order is commutative and associative (each side equals the largest element involved).",
-          "Uses induction on the number of operands or on the expression tree: an expression's dtype is the max of its two sub-expressions' dtypes, each the max of its own operands.",
-          "Concludes that the result is the max over all operands, independent of bracketing and order.",
-        ],
-      },
-    },
-    {
       key: "half",
       rung: "stretch",
       prompt: <p>What is the largest finite float16 value?</p>,

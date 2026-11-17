@@ -304,23 +304,6 @@ assert np.allclose(N * 45 ** 0.5, W)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let e₁, …, eₙ be an orthonormal eigenbasis of T*T with eigenvalues σ₁², …, σₙ². Prove that the vectors Teₖ/σₖ, for
-          the k with σₖ &gt; 0, form an orthonormal list, and that Teₖ = 0 when σₖ = 0.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes ⟨Teⱼ, Teₖ⟩ = ⟨T*Teⱼ, eₖ⟩ = σⱼ²⟨eⱼ, eₖ⟩ using the adjoint.",
-          "Concludes the Teₖ are mutually orthogonal with ‖Teₖ‖ = σₖ, so dividing by σₖ > 0 gives unit vectors, and ‖Teₖ‖ = 0 forces Teₖ = 0 when σₖ = 0.",
-        ],
-      },
-    },
-    {
       key: "shear",
       rung: "stretch",
       prompt: <p>What is the largest singular value of the shear [[1, 2], [0, 1]]? Give 4 decimal places.</p>,

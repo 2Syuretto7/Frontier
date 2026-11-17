@@ -284,19 +284,6 @@ assert image_range(lambda x: (x - 1) * (x - 1), 0, 3, 3) == (0.0, 4.0)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that a continuous function on a compact set K ⊆ ℝ is bounded.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Supposes f is unbounded and picks x_n ∈ K with |f(x_n)| > n.",
-          "Uses compactness of K to extract a subsequence x_{n_k} converging to some x ∈ K.",
-          "Uses continuity to get f(x_{n_k}) → f(x), contradicting |f(x_{n_k})| > n_k → ∞ (or argues equivalently via f(K) compact).",
-        ],
-      },
-    },
-    {
       key: "min",
       rung: "stretch",
       prompt: <p>What is the minimum of x³ − 3x on [−3, 2]?</p>,

@@ -262,19 +262,6 @@ assert abs(W2.std() - np.sqrt(2 / 300)) < 0.005` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that a ReLU unit that is dead on the whole training set stays dead under full-batch gradient descent.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the gradient for the unit's weights and bias as sums over examples of δₙ·relu′(aₙ)·xₙ and δₙ·relu′(aₙ).",
-          "Notes relu′(aₙ) = 0 for every example because every aₙ ≤ 0, so both gradients are exactly zero.",
-          "Concludes the weights and bias, hence the pre-activations, are unchanged, so the unit is dead at the next step and by induction at every step.",
-        ],
-      },
-    },
-    {
       key: "chain",
       rung: "stretch",
       prompt: <p>A gradient passes back through five sigmoid units in series, each at a = 0, with all weights 1. By what factor is it multiplied?</p>,

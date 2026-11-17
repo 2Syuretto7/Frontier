@@ -275,24 +275,6 @@ assert np.allclose(unfold(P, 1), M @ unfold(T, 1))` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove the universal property: for every bilinear β: V × W → U there is a unique linear L: V ⊗ W → U with L(v ⊗ w) =
-          β(v, w).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Defines L on the basis eᵢ ⊗ fⱼ by L(eᵢ ⊗ fⱼ) = β(eᵢ, fⱼ) and extends linearly.",
-          "Checks L(v ⊗ w) = Σᵢⱼ vᵢwⱼβ(eᵢ, fⱼ) = β(v, w) using v ⊗ w = Σ vᵢwⱼ eᵢ ⊗ fⱼ and bilinearity of β.",
-          "Proves uniqueness: any linear L with the property is determined on the basis eᵢ ⊗ fⱼ.",
-        ],
-      },
-    },
-    {
       key: "rank",
       rung: "stretch",
       prompt: <p>What is the tensor rank of the element of ℝ³ ⊗ ℝ³ given by the array [[1, 2, 3], [2, 4, 6], [1, 1, 1]]?</p>,

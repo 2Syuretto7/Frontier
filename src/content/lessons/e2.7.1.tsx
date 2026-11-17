@@ -353,34 +353,6 @@ assert math.isclose(got, best), (got, best)` },
         ],
       },
     },
-    {
-      key: "levels",
-      rung: "prove",
-      prompt: <p>Using the recursion tree, prove that T(n) = aT(n/b) + n^d with a &gt; b^d is Θ(n^(log_b a)) for n a power of b.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Level i has aⁱ subproblems of size n/bⁱ, so its work is n^d (a/b^d)ⁱ.",
-          "There are log_b n + 1 levels, and the series is geometric with ratio r = a/b^d > 1.",
-          "The sum is within a constant factor (depending on r) of its last term, n^d r^(log_b n).",
-          "Simplifies n^d (a/b^d)^(log_b n) = a^(log_b n) = n^(log_b a).",
-        ],
-      },
-    },
-    {
-      key: "strip",
-      rung: "stretch",
-      prompt: <p>In the closest-pair algorithm, prove that each point in the strip needs comparing only with a constant number of the points that follow it in y order.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Considers a d × 2d rectangle in the strip starting at the point's y and spanning both sides of the dividing line.",
-          "Splits it into eight d/2 × d/2 squares, four on each side of the line.",
-          "Each square holds at most one point, since two points in one square would be on the same side at distance at most d/√2 < d.",
-          "So at most 7 other points lie within distance d above it in y order, and later points are farther than d in y.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

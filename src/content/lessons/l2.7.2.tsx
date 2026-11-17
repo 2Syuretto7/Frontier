@@ -308,25 +308,6 @@ assert separated(E, [0], [2], [1, 3]) and not separated(E, [0], [2], [1]) and se
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let p(x) = (1/Z) Π_C ψ_C(x_C) over the cliques of an undirected graph, and suppose the variables split into
-          disjoint sets A, B and S with no edge between A and B. Prove that x_A and x_B are conditionally independent given
-          x_S.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Argues that no clique meets both A and B, because a clique is fully connected and there is no edge between A and B.",
-          "Groups the potentials to write p(x) = f(x_A, x_S) g(x_B, x_S).",
-          "Concludes p(x_A, x_B | x_S) = p(x_A | x_S) p(x_B | x_S), for example by normalising f and g separately for each fixed x_S.",
-        ],
-      },
-    },
-    {
       key: "chain3",
       rung: "stretch",
       prompt: <p>A chain of three Ising spins with J = 0.5 and h = 0. What is E[x₁x₃]? Give four decimal places.</p>,

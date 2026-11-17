@@ -280,23 +280,6 @@ for scale in (0.01, 0.1, 0.5):
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove Weyl&apos;s inequality |λₖ(A + E) − λₖ(A)| ≤ ‖E‖₂ for symmetric A and E, using the Courant–Fischer theorem.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that for unit x, xᵀ(A + E)x = xᵀAx + xᵀEx with |xᵀEx| ≤ ‖E‖₂.",
-          "Concludes that for every subspace U, max over U of the Rayleigh quotient of A + E lies within ‖E‖₂ of that of A.",
-          "Uses λₖ = min over k-dimensional U of max over U (Courant–Fischer) to transfer the bound to λₖ, in both directions.",
-        ],
-      },
-    },
-    {
       key: "sigma",
       rung: "stretch",
       prompt: <p>A has singular values 5 and 2, and ‖E‖₂ = 0.5. What is the smallest possible value of σ₂(A + E)?</p>,

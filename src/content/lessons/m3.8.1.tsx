@@ -257,24 +257,6 @@ assert np.allclose(apply_affine(B @ A, P), apply_affine(B, apply_affine(A, P))),
       },
     },
     {
-      key: "proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that rotating by α and then by β is rotating by α + β, by multiplying the rotation matrices. Deduce the addition
-          formulas for sine and cosine.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes rotation by α + β is linear and is the composite, so its matrix is R_β R_α.",
-          "Multiplies out the first column: (cos β cos α − sin β sin α, sin β cos α + cos β sin α).",
-          "Compares with the first column of R_(α+β), (cos(α + β), sin(α + β)), to read off both formulas.",
-        ],
-      },
-    },
-    {
       key: "deriv",
       rung: "stretch",
       prompt: (

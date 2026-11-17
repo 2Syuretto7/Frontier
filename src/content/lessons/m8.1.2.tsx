@@ -303,24 +303,6 @@ assert all(a2 >= a1 - 1e-12 and b2 <= b1 + 1e-12 for (a1, b1), (a2, b2) in zip(i
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Using the least upper bound property, prove the monotone convergence theorem: an increasing sequence that is bounded
-          above converges to its supremum.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Defines s = sup of the terms, which exists by LUB because the set of terms is non-empty and bounded above.",
-          "Given ε > 0, uses that s − ε is not an upper bound to find N with x_N > s − ε.",
-          "For n ≥ N uses monotonicity and x_n ≤ s to get s − ε < x_n ≤ s, hence |x_n − s| < ε.",
-        ],
-      },
-    },
-    {
       key: "steps",
       rung: "stretch",
       prompt: <p>Bisection for a supremum starts with [0, 2]. How many steps are needed before the width is below 0.001?</p>,

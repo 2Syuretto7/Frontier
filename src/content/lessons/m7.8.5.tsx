@@ -325,25 +325,6 @@ assert abs(autocorr(y, 1) + 1) < 1e-12` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the Metropolis–Hastings chain with proposal q and acceptance probability{" "}
-          <M>{"\\alpha(x, y) = \\min(1, \\pi(y)q(y, x)/(\\pi(x)q(x, y)))"}</M> satisfies detailed balance with respect to π, and
-          explain why the normalising constant of π is not needed.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes P(x, y) = q(x, y)α(x, y) for y ≠ x and computes π(x)q(x, y)α(x, y) = min(π(x)q(x, y), π(y)q(y, x)).",
-          "Observes the right side is symmetric in x and y, so it equals π(y)P(y, x), and notes the case x = y is trivial.",
-          "Notes α depends on π only through the ratio π(y)/π(x), in which Z cancels, so π̃ suffices.",
-        ],
-      },
-    },
-    {
       key: "stay",
       rung: "stretch",
       prompt: (

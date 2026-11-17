@@ -333,34 +333,6 @@ for _ in range(1000):
         ],
       },
     },
-    {
-      key: "count",
-      rung: "prove",
-      prompt: <p>Prove that a format with e exponent bits and m fraction bits has exactly <M>{"2^m"}</M> representable numbers in [2^k, 2^(k+1)) for each normal exponent k, and use it to count the positive normal float16 values.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Fixing the stored exponent fixes k, and the 2^m fraction values give 2^m distinct numbers (1 + F/2^m)2^k in [2^k, 2^(k+1)).",
-          "Different stored exponents give disjoint ranges, so nothing else lands there.",
-          "float16 has stored exponents 1 to 30, so 30 normal binades.",
-          "Positive normal float16 values: 30 × 2^10 = 30,720.",
-        ],
-      },
-    },
-    {
-      key: "swamp",
-      rung: "stretch",
-      prompt: <p>A weight of 1.0 stored in bfloat16 receives 1,000 updates of +0.001 each. Show that adding them one by one in bfloat16 leaves the weight at 1.0, while accumulating in float32 does not, and explain why mixed-precision training keeps a float32 copy of the weights.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Finds the bfloat16 gap just above 1.0 is 2^−7 = 0.0078125.",
-          "Notes 0.001 is less than half that gap, so 1.0 + 0.001 rounds back to 1.0 every time.",
-          "In float32 the gap is 2^−23, so the updates accumulate to about 1.001 (within rounding).",
-          "Concludes that a float32 master copy (or float32 accumulator) is needed so small updates are not lost, then cast to 16 bits for compute.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

@@ -282,19 +282,6 @@ def exp_taylor(x, n):
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove the second derivative test: if f′(c) = 0 and f″ is continuous at c with f″(c) &gt; 0, then f has a strict local minimum at c.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses continuity of f″ at c to get an interval around c on which f″ > 0.",
-          "Applies Taylor's theorem with n = 1 (or the mean value theorem twice) to write f(x) = f(c) + f′(c)(x − c) + ½f″(ξ)(x − c)² with ξ between c and x.",
-          "Uses f′(c) = 0 and f″(ξ) > 0 to conclude f(x) > f(c) for x ≠ c in the interval.",
-        ],
-      },
-    },
-    {
       key: "nsin",
       rung: "stretch",
       prompt: <p>Using the bound 1/(n + 1)!, what is the smallest degree n that guarantees the Taylor polynomial of sin at 0 is within 10⁻⁶ of sin 1?</p>,

@@ -250,44 +250,6 @@ assert all(position(a, b) == i + 1 for i, (a, b) in enumerate(L)), 'position inv
         ],
       },
     },
-    {
-      key: "finite-strings",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the set of all finite strings of letters from the English alphabet is countable. (Hint: list the strings
-          by length.)
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes there are 26ᵏ strings of length k, a finite number.",
-          "Lists all strings of length 0, then of length 1, then of length 2, and so on, each block in alphabetical order.",
-          "Argues that every string appears at a finite position, exactly once.",
-          "Concludes the set is countable.",
-        ],
-      },
-    },
-    {
-      key: "union",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Prove that if A and B are countably infinite, then <M>{"A \\cup B"}</M> is countable. Then prove that{" "}
-          <M>{"A \\times B"}</M> is countable.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Lists A as a₀, a₁, … and B as b₀, b₁, ….",
-          "For the union, interleaves the lists a₀, b₀, a₁, b₁, … and deletes repeats, or gives a surjection from ℕ.",
-          "For the product, uses (aₘ, bₙ) ↦ (m, n) as a bijection with ℕ × ℕ.",
-          "Uses the countability of ℕ × ℕ to conclude.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

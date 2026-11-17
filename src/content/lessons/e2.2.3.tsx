@@ -452,34 +452,6 @@ assert checked > 400` },
         ],
       },
     },
-    {
-      key: "linear",
-      rung: "prove",
-      prompt: <p>Prove that the sliding window maximum algorithm in the second reading exercise runs in O(n) time, and that the front of the deque is always the maximum of the current window.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Each index is appended once and removed at most once (from either end), so total work is O(n).",
-          "Invariant: the deque holds indices in increasing order whose values strictly decrease from front to back.",
-          "Any index popped from the back has a later index with a value at least as large, so it can never again be a window maximum.",
-          "The front is the largest value among indices in the window, since anything larger and newer would have removed it, and stale indices are dropped from the front.",
-        ],
-      },
-    },
-    {
-      key: "maxqueue",
-      rung: "stretch",
-      prompt: <p>Design a queue that supports enqueue, dequeue and max, each in O(1) amortised time. Explain why it is correct.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Keeps the ordinary queue plus a deque of candidate maxima, decreasing from front to back.",
-          "Enqueue appends to the queue and pops smaller values off the back of the deque before appending the new value.",
-          "Dequeue removes the front of the queue, and also the front of the deque if it is that same value.",
-          "Max reads the front of the deque; each value enters and leaves the deque once, so operations are O(1) amortised.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

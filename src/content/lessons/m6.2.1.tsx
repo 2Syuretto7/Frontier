@@ -260,19 +260,6 @@ assert G.shape == (4, 4) and np.allclose(G, H, atol=1e-6) and np.all(np.linalg.e
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove the Cauchy–Schwarz inequality |⟨u, v⟩| ≤ ‖u‖‖v‖ in any inner product space, using only the inner product axioms.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Handles v = 0 separately, then decomposes u = cv + w with c = ⟨u, v⟩/‖v‖² so that ⟨w, v⟩ = 0 (or equivalently uses 0 ≤ ‖u − tv‖² with the optimal t).",
-          "Uses the Pythagorean identity ‖cv + w‖² = |c|²‖v‖² + ‖w‖², from expanding and the vanishing cross terms.",
-          "Concludes ‖u‖² ≥ |⟨u, v⟩|²/‖v‖² and multiplies through.",
-        ],
-      },
-    },
-    {
       key: "angle",
       rung: "stretch",
       prompt: <p>With ⟨f, g⟩ = ∫₀¹ fg, what is the cosine of the angle between f(x) = 1 and g(x) = x? Give 4 decimal places.</p>,

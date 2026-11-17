@@ -258,19 +258,6 @@ assert best_tau2(X, np.zeros(3), 1.0, g) == 0.1 and best_tau2(X, np.full(3, 5.0)
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Given the posterior w ~ N(m, S) and independent noise ε ~ N(0, σ²), prove that y = xᵀw + ε has distribution N(xᵀm, σ² + xᵀSx).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "States that xᵀw is Gaussian as a linear function of a Gaussian vector.",
-          "Computes its mean xᵀm and variance xᵀSx.",
-          "Uses independence of w and ε to conclude the sum is Gaussian with mean xᵀm and variance xᵀSx + σ².",
-        ],
-      },
-    },
-    {
       key: "ev",
       rung: "stretch",
       prompt: <p>One observation y = 2 with x = 1, σ² = 1 and τ² = 3. What is the log evidence? Give four decimal places.</p>,

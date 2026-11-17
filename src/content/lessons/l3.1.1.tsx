@@ -273,19 +273,6 @@ assert m[-1] == 0 and np.all(predict(w, F) == y) and margin(w, F, y) > 0.9` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that no single linear threshold unit computes XOR on the four points (0, 0), (0, 1), (1, 0), (1, 1).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the four strict or non-strict inequalities a separating (w₁, w₂, b) would need: w₂ + b > 0 and w₁ + b > 0 for the true points, b ≤ 0 and w₁ + w₂ + b ≤ 0 for the false points.",
-          "Adds the two true-point inequalities and the two false-point inequalities to get w₁ + w₂ + 2b > 0 and w₁ + w₂ + 2b ≤ 0.",
-          "Concludes the contradiction (or gives an equivalent convexity argument: the midpoint (½, ½) lies on both segments joining the true points and the false points).",
-        ],
-      },
-    },
-    {
       key: "updates",
       rung: "stretch",
       prompt: <p>Each update raises y·(w·x) for the misclassified point by how much, in terms of x?</p>,

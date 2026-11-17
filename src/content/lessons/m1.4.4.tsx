@@ -258,32 +258,6 @@ assert F == [{1, 2}, {2, 3}], 'Do not change the sets you were given.'` },
         ],
       },
     },
-    {
-      key: "de-morgan-fam",
-      rung: "prove",
-      prompt: <p>Prove that <M>{"\\big(\\bigcap_{i \\in I} A_i\\big)^c = \\bigcup_{i \\in I} A_i^c"}</M>.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes x ∉ ∩Aᵢ as ¬∀i (x ∈ Aᵢ).",
-          "Uses the quantifier negation law to get ∃i (x ∉ Aᵢ).",
-          "Recognises this as x ∈ ∪Aᵢᶜ, and concludes the sets are equal.",
-        ],
-      },
-    },
-    {
-      key: "union-proof",
-      rung: "stretch",
-      prompt: <p>Prove that <M>{"\\bigcup_{n=1}^{\\infty} [\\tfrac1n, 2] = (0, 2]"}</M>.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows ⊆: each [1/n, 2] is contained in (0, 2] since 1/n > 0.",
-          "Shows ⊇: for x in (0, 2], chooses n with 1/n ≤ x (possible since x > 0), so x ∈ [1/n, 2].",
-          "Concludes by double inclusion.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

@@ -301,19 +301,6 @@ assert np.allclose(svt(A, 0.0), A) and np.allclose(svt(A, s[0] + 1), 0)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that tr(AᵀB) ≤ ‖A‖₂ ‖B‖_* for real matrices of the same shape.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes B = Σ σⱼuⱼvⱼᵀ (SVD) and computes tr(AᵀB) = Σ σⱼ uⱼᵀAvⱼ, using linearity of trace and tr(Aᵀuvᵀ) = uᵀAv.",
-          "Bounds each |uⱼᵀAvⱼ| ≤ ‖uⱼ‖‖Avⱼ‖ ≤ ‖A‖₂ by Cauchy–Schwarz and the definition of the spectral norm.",
-          "Sums to get tr(AᵀB) ≤ ‖A‖₂ Σ σⱼ = ‖A‖₂‖B‖_*.",
-        ],
-      },
-    },
-    {
       key: "ratio",
       rung: "stretch",
       prompt: <p>Over all matrices of rank 4, what is the largest possible value of ‖A‖_* / ‖A‖_F?</p>,

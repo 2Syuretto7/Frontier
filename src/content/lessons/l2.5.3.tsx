@@ -273,19 +273,6 @@ assert abs(m - 1.0) < 1e-3 and abs(s - np.sqrt(2 / 3)) < 1e-3` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that log p(x) = E_q[log p(x, z) − log q(z)] + KL(q(z) ‖ p(z | x)) for any q positive where the posterior is, and conclude that the first term is a lower bound on log p(x).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes log p(x) = log p(x, z) − log p(z | x) for each z, which holds by the definition of conditional probability.",
-          "Adds and subtracts log q(z) and takes the expectation under q, identifying the second part as the KL divergence.",
-          "Uses KL ≥ 0 to conclude the ELBO is at most log p(x), with equality when q equals the posterior.",
-        ],
-      },
-    },
-    {
       key: "kl2",
       rung: "stretch",
       prompt: <p>What is KL(N(0, 1) ‖ N(0, 2²))? Give four decimal places.</p>,

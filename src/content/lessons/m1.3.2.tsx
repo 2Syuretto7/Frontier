@@ -262,38 +262,6 @@ for _ in range(200):
         ],
       },
     },
-    {
-      key: "five",
-      rung: "prove",
-      prompt: <p>Prove that for every integer n, if <M>{"n^2 - 6n + 5"}</M> is even, then n is odd.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "States that the proof is by contrapositive: if n is even, then n² − 6n + 5 is odd.",
-          "Writes n = 2k and computes n² − 6n + 5 = 4k² − 12k + 5.",
-          "Repacks as 2(2k² − 6k + 2) + 1 and notes the bracket is an integer, so the expression is odd.",
-        ],
-      },
-    },
-    {
-      key: "three",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Prove that if <M>{"n^2"}</M> is divisible by 3, then n is divisible by 3. (Hint: an integer not divisible by 3 is of
-          the form <M>{"3k + 1"}</M> or <M>{"3k + 2"}</M>.)
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Proves the contrapositive: if 3 does not divide n, then 3 does not divide n².",
-          "Handles the case n = 3k + 1, getting n² = 3(3k² + 2k) + 1.",
-          "Handles the case n = 3k + 2, getting n² = 3(3k² + 4k + 1) + 1.",
-          "Concludes that n² leaves remainder 1 on division by 3 in both cases, so 3 does not divide n².",
-        ],
-      },
-    },
   ],
 
   glimpse: (

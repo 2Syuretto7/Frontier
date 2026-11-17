@@ -266,19 +266,6 @@ assert c is not None and not any(len({c[e] for e in combinations(S, 2)}) == 1 fo
       },
     },
     {
-      key: "average",
-      rung: "prove",
-      prompt: <p>Prove that every graph with m edges has a bipartite subgraph with at least m/2 edges.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Splits the vertices by independent fair coins and keeps only the edges between the two parts, which form a bipartite subgraph.",
-          "Computes the probability ½ that each edge is kept and uses linearity to get expected m/2 kept edges.",
-          "Applies the averaging principle: some split keeps at least m/2 edges.",
-        ],
-      },
-    },
-    {
       key: "tournament",
       rung: "stretch",
       prompt: <p>In a round-robin tournament on n players, each game&rsquo;s winner is decided by a fair coin. What is the expected number of orderings of all n players in which each player beat the next one, for n = 5?</p>,

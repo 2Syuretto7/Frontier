@@ -267,24 +267,6 @@ assert np.allclose(loo_residuals(X, y), ref), 'Agree with scikit-learn leave-one
       },
     },
     {
-      key: "sumzero",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if <M>{"w_0 = \\bar y - w_1 \\bar x"}</M>, the residuals <M>{"r_i = y_i - w_0 - w_1 x_i"}</M> add up
-          to zero, whatever the value of <M>{"w_1"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the sum of residuals as the sum of y_i minus n w_0 minus w_1 times the sum of x_i.",
-          "Replaces the sums by n ȳ and n x̄.",
-          "Substitutes w_0 = ȳ − w_1 x̄ and simplifies to n ȳ − n ȳ + n w_1 x̄ − n w_1 x̄ = 0.",
-        ],
-      },
-    },
-    {
       key: "r2",
       rung: "stretch",
       prompt: <p>For the three points <M>{"(1, 2), (2, 4), (3, 5)"}</M> and their least-squares line, what is <M>{"R^2"}</M>? Give two decimal places.</p>,

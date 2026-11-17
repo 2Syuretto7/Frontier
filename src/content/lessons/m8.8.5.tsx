@@ -268,24 +268,6 @@ assert abs(g(0.52) - 0.5) < 1e-9 and abs(g(0.0) - 0.0) < 1e-9` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let L be the piecewise-linear interpolant of f at knots t₀ &lt; t₁ &lt; … &lt; tₙ, with slope sᵢ on [tᵢ, tᵢ₊₁]. Prove
-          that on [t₀, tₙ], L(x) = f(t₀) + s₀ ReLU(x − t₀) + Σᵢ₌₁ⁿ⁻¹ (sᵢ − sᵢ₋₁) ReLU(x − tᵢ).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes both sides are continuous and piecewise linear on [t₀, tₙ] with possible breaks only at the knots.",
-          "Computes the slope of the right side on (tᵢ, tᵢ₊₁) as s₀ + (s₁ − s₀) + … + (sᵢ − sᵢ₋₁) = sᵢ, since exactly the units with knots ≤ tᵢ are active.",
-          "Checks both sides equal f(t₀) at t₀ and concludes they agree everywhere (equal value at one point and equal slopes on each cell).",
-        ],
-      },
-    },
-    {
       key: "n500",
       rung: "stretch",
       prompt: <p>For a 1-Lipschitz function on [0, 1], how many ReLU units does the interpolant construction need to guarantee error at most 0.001?</p>,

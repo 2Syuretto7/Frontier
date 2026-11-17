@@ -270,34 +270,6 @@ assert catalan(300) == comb(600, 300) // 301, 'Cₙ = C(2n, n)/(n + 1).'` },
         ],
       },
     },
-    {
-      key: "linear",
-      rung: "prove",
-      prompt: <p>Let <M>{"c_0 = 1"}</M> and <M>{"c_{n+1} = c_n + 2n + 3"}</M>. Compute a few terms, guess a formula for <M>{"c_n"}</M>, and prove it by induction.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes terms 1, 4, 9, 16, … and guesses cₙ = (n + 1)².",
-          "Checks the base case c₀ = 1 = 1².",
-          "Shows (k + 1)² + 2k + 3 = (k + 2)² in the inductive step.",
-          "Concludes by induction.",
-        ],
-      },
-    },
-    {
-      key: "fib-sum",
-      rung: "stretch",
-      prompt: <p>Prove that <M>{"F_0 + F_1 + \\cdots + F_n = F_{n+2} - 1"}</M> for every <M>{"n \\ge 0"}</M>.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Checks the base case n = 0: F₀ = 0 = F₂ − 1.",
-          "Assumes the formula for k and adds Fₖ₊₁ to both sides.",
-          "Uses Fₖ₊₂ + Fₖ₊₁ = Fₖ₊₃ to get Fₖ₊₃ − 1.",
-          "Concludes by induction.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

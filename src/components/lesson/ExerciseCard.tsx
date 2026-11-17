@@ -3,38 +3,24 @@
 import { useState, useTransition, type ReactNode } from "react";
 import { checkExerciseAction, codeTestsAction } from "@/app/actions";
 import { CodeRunner, type RunnerApi } from "@/components/code/CodeRunner";
-import { AnswerBox, clearDraft } from "@/components/lesson/AnswerBox";
 import { Pill } from "@/components/ui/Pill";
 import { Check, Close, Spark } from "@/components/ui/Icons";
 
 export type ExerciseView = {
   id: string;
-  rung: "check" | "apply" | "prove" | "stretch";
-  kind: "numeric" | "expression" | "choice" | "written" | "code";
+  rung: "check" | "apply" | "stretch";
+  kind: "numeric" | "expression" | "choice" | "code";
   options?: string[];
   multiple?: boolean;
   variables?: string[];
   code?: { starter: string; setup?: string; files?: Record<string, string>; checks: number };
   solved: boolean;
   response: string | null;
-  verdict: "accepted" | "revise" | "pending" | null;
-  feedbackHtml: string | null;
 };
 
-const RUNG: Record<ExerciseView["rung"], string> = { check: "Check", apply: "Apply", prove: "Prove or argue", stretch: "Stretch" };
+const RUNG: Record<ExerciseView["rung"], string> = { check: "Check", apply: "Apply", stretch: "Stretch" };
 
 type Status = { tone: "right" | "wrong" | "info"; text: string } | null;
-
-const WRITTEN_STATUS: Record<NonNullable<ExerciseView["verdict"]>, Status> = {
-  accepted: { tone: "right", text: "Accepted by Parton." },
-  revise: { tone: "info", text: "Nearly there. Parton has a friendly suggestion below; revise and submit again whenever you like." },
-  pending: { tone: "info", text: "Submitted. Parton marks written work once connected; until then it counts as submitted." },
-};
-
-function initialStatus(view: ExerciseView): Status {
-  if (view.kind === "written" && view.verdict) return WRITTEN_STATUS[view.verdict];
-  return view.solved ? { tone: "right", text: "Solved." } : null;
-}
 
 export function askParton(exerciseId: string, label: string) {
   window.dispatchEvent(new CustomEvent("frontier:ask", { detail: { exerciseId, label } }));
@@ -47,11 +33,10 @@ export function ExerciseCard({ view, context, children, index }: {
   index?: number;
 }) {
   const fresh = context !== "lesson";
-  const [value, setValue] = useState(fresh ? "" : view.kind === "choice" ? view.response ?? "" : view.response ?? "");
+  const [value, setValue] = useState(fresh ? "" : view.response ?? "");
   const [solved, setSolved] = useState(fresh ? false : view.solved);
   const [tries, setTries] = useState(0);
-  const [status, setStatus] = useState<Status>(fresh ? null : initialStatus(view));
-  const [feedback, setFeedback] = useState<string | null>(fresh ? null : view.feedbackHtml);
+  const [status, setStatus] = useState<Status>(!fresh && view.solved ? { tone: "right", text: "Solved." } : null);
   const label = `Practice question ${index}`;
   const askable = context === "lesson" && index !== undefined;
   const [pending, start] = useTransition();
@@ -65,12 +50,7 @@ export function ExerciseCard({ view, context, children, index }: {
       const res = await checkExerciseAction(view.id, input, context, attempt);
       if (res.message && !res.correct) { setStatus({ tone: "info", text: res.message }); return; }
       setTries(attempt);
-      if (view.kind === "written" && context === "lesson") clearDraft(`frontier:written:${view.id}`);
-      if (res.verdict) {
-        setSolved((s) => s || res.correct);
-        setStatus(WRITTEN_STATUS[res.verdict]);
-        setFeedback(res.feedbackHtml ?? null);
-      } else if (res.correct) {
+      if (res.correct) {
         setSolved(true);
         setStatus({ tone: "right", text: attempt === 1 ? "Correct." : "Correct, after another look. That counts." });
       } else if (view.kind === "code") {
@@ -112,7 +92,7 @@ export function ExerciseCard({ view, context, children, index }: {
     }
   };
 
-  const locked = solved && view.kind !== "written" && view.kind !== "code";
+  const locked = solved && view.kind !== "code";
   const starter = view.code?.starter ?? "";
 
   return (
@@ -121,8 +101,8 @@ export function ExerciseCard({ view, context, children, index }: {
         {index !== undefined && <span className="exercise-index">{String(index).padStart(2, "0")}</span>}
         <span className={`rung rung-${view.rung}`}>{RUNG[view.rung]}</span>
         {view.rung === "stretch" && <span>Optional</span>}
-        {solved && status?.tone === "right" && <Pill tone="success" icon="check">{view.kind === "written" ? "Accepted" : "Solved"}</Pill>}
-        {(pending || checking) && <Pill tone="accent" icon="spin">{view.kind === "written" ? "Reading" : "Checking"}</Pill>}
+        {solved && status?.tone === "right" && <Pill tone="success" icon="check">Solved</Pill>}
+        {(pending || checking) && <Pill tone="accent" icon="spin">Checking</Pill>}
       </p>
       <div className="exercise-body">
       <div className="exercise-prompt">{children}</div>
@@ -171,18 +151,12 @@ export function ExerciseCard({ view, context, children, index }: {
             placeholder={view.kind === "numeric" ? "A number, such as 12 or 3/4" : `An expression in ${view.variables?.join(", ")}, such as 2x^2 + 1`}
             aria-label="Your answer" />
         )}
-        {view.kind === "written" && (
-          <AnswerBox value={value} onChange={setValue} rows={6} label="Your answer"
-            draftKey={context === "lesson" ? `frontier:written:${view.id}` : undefined}
-            onSubmit={() => { if (!pending && value.trim()) submit(); }}
-            placeholder="Brief is fine: the key steps in your own words, with symbols or notes. Or tap Dictate and say it." />
-        )}
         {!locked && (
           <div className="exercise-actions">
             <button type="submit" className="btn btn-primary" disabled={pending || !value.trim()}>
-              {pending ? (view.kind === "written" ? "Parton is reading…" : "Checking…") : view.kind === "written" ? (solved ? "Submit revision" : "Submit") : "Check"}
+              {pending ? "Checking…" : "Check"}
             </button>
-            {askable && !(solved && view.kind !== "written") && (
+            {askable && !solved && (
               <button type="button" className="btn" onClick={() => askParton(view.id, label)}><span className="parton-mark" aria-hidden="true">P</span>Ask Parton</button>
             )}
           </div>
@@ -193,12 +167,6 @@ export function ExerciseCard({ view, context, children, index }: {
           {status.tone === "right" ? <Check /> : status.tone === "wrong" ? <Close /> : <Spark />}
           <span>{status.text}</span>
         </p>
-      )}
-      {feedback && (
-        <div className="parton-feedback">
-          <p className="parton-feedback-head"><span className="parton-mark" aria-hidden="true">P</span>Parton</p>
-          <div className="parton-prose" dangerouslySetInnerHTML={{ __html: feedback }} />
-        </div>
       )}
       </div>
     </div>

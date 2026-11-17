@@ -290,25 +290,6 @@ assert flaky([('c1', 't', 'fail'), ('c2', 't', 'pass')]) == [], 'Failing on one 
       },
     },
     {
-      key: "bound",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that a suite of n independent tests, each failing spuriously with probability f, goes red spuriously with
-          probability <M>{"1 - (1 - f)^n"}</M>, and that this is at most nf. If every failing test is automatically rerun once
-          and counts as passed if the rerun passes, what does the probability become?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Multiplies the pass probabilities by independence to get (1 − f)^n for a green suite.",
-          "Proves (1 − f)^n ≥ 1 − nf, by induction (Bernoulli's inequality) or by the union bound.",
-          "With one rerun, a test is spuriously red only if both runs fail, probability f², so the suite probability becomes 1 − (1 − f²)^n.",
-        ],
-      },
-    },
-    {
       key: "retry",
       rung: "stretch",
       prompt: <p>With one automatic rerun, what is the probability that the 200-test suite with f = 0.005 goes red for no reason? Give four decimal places.</p>,

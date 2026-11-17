@@ -291,24 +291,6 @@ assert np.allclose(m, [0, 2, 4]) and np.allclose(al, 0.3) and np.allclose(ep, [0
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Scores s₁, …, s_(n+1) are exchangeable and almost surely distinct, and q̂ is the k-th smallest of s₁, …, s_n with
-          k = ⌈(n + 1)(1 − α)⌉ ≤ n. Prove that P(s_(n+1) ≤ q̂) ≥ 1 − α.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses exchangeability to argue that the rank of s_(n+1) among all n + 1 scores is uniform on 1, …, n + 1.",
-          "Shows that s_(n+1) ≤ q̂ exactly when that rank is at most k (fewer than k calibration scores lie below s_(n+1)).",
-          "Concludes the probability is k/(n + 1) ≥ 1 − α by the choice of k.",
-        ],
-      },
-    },
-    {
       key: "nmin",
       rung: "stretch",
       prompt: <p>What is the smallest number n of calibration points for which split conformal prediction with α = 0.01 gives a finite interval?</p>,

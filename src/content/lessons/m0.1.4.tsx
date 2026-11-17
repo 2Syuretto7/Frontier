@@ -339,25 +339,6 @@ def repeats_after(p, q, n):
       },
     },
     {
-      key: "root-three",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"\\sqrt{3}"}</M> is irrational. You will need a fact like the parity proposition: if{" "}
-          <M>{"n^2"}</M> is divisible by 3, then <M>n</M> is divisible by 3. Prove that fact too.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Proves the lemma: if n is not divisible by 3, then n = 3k + 1 or n = 3k + 2, and in both cases n² leaves remainder 1 on division by 3.",
-          "Assumes √3 = a/b in lowest terms and derives a² = 3b².",
-          "Uses the lemma to get a = 3c, then b² = 3c², so b is divisible by 3.",
-          "Concludes with the contradiction to lowest terms.",
-        ],
-      },
-    },
-    {
       key: "hundredth",
       rung: "stretch",
       prompt: <p>What is the 100th digit after the decimal point in the decimal for <M>{"\\tfrac{1}{7}"}</M>?</p>,

@@ -250,26 +250,6 @@ assert all((x == z).all() for x, z in zip((a1, b1, c1), stratified_split(y, (0.5
       },
     },
     {
-      key: "why",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why choosing the best of many models by their test scores makes the winning test score an overestimate,
-          even if every model is equally good, and describe a procedure that gives an unbiased estimate of the chosen
-          model&rsquo;s accuracy.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains that each test score contains random error from the particular sample of test examples.",
-          "Explains that picking the maximum selects the score with the most favourable error, so its expected value exceeds the true accuracy.",
-          "Notes that the overestimate grows with the number of models compared.",
-          "Describes choosing with a validation set and then measuring the single chosen model once on a separate, untouched test set.",
-        ],
-      },
-    },
-    {
       key: "two",
       rung: "stretch",
       prompt: (

@@ -243,24 +243,6 @@ assert next_token_pairs(*tokens_and_mask([('system', 'be brief')])) == []` },
       },
     },
     {
-      key: "sycophancy",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain how training on human preferences could make a model agree with users who are wrong, and suggest one
-          change to the feedback process that would reduce this.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that graders may prefer replies that agree with them or flatter them, even when those replies are less accurate.",
-          "Explains that reinforcement learning increases whatever graders reward, so agreement gets reinforced over correctness.",
-          "Suggests a concrete change, such as checking facts before rating, rating against written principles that value honesty, or including test cases where the user is deliberately wrong.",
-        ],
-      },
-    },
-    {
       key: "days",
       rung: "stretch",
       prompt: (

@@ -341,24 +341,6 @@ assert np.allclose(a.grad, 2 * A / B)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          x has shape (n, d), b has shape (d,), and y = x + b by broadcasting. For a scalar loss L, prove that ∂L/∂bⱼ = Σᵢ
-          ∂L/∂yᵢⱼ.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "States that yᵢⱼ = xᵢⱼ + bⱼ, so ∂yᵢⱼ/∂bₖ = 1 if k = j and 0 otherwise.",
-          "Applies the multivariable chain rule: ∂L/∂bₖ = Σᵢ Σⱼ (∂L/∂yᵢⱼ)(∂yᵢⱼ/∂bₖ).",
-          "Concludes the double sum collapses to Σᵢ ∂L/∂yᵢₖ, the sum over the broadcast axis.",
-        ],
-      },
-    },
-    {
       key: "copies",
       rung: "stretch",
       prompt: <p>A gradient of shape (8, 3, 5) is unbroadcast to shape (3, 1). How many entries of the gradient are added into each entry of the result?</p>,

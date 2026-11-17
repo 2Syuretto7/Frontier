@@ -242,24 +242,6 @@ assert stump_labels([1, 2, 3, 4], ['y', 'n', 'n', 'y'], 3) == ('n', 'n'), 'Ties 
       },
     },
     {
-      key: "overgrown",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why a decision tree grown until every leaf is pure will always have zero training error, and why that does
-          not mean it will do well on new data.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that the tree can keep splitting until each leaf contains examples of only one label, possibly one example each, as long as no two identical inputs have different labels.",
-          "Concludes that every training example is then classified correctly: zero training error.",
-          "Explains that the tiny boxes around individual points capture noise and accidents of the sample, so predictions on new points near them are unreliable: overfitting.",
-        ],
-      },
-    },
-    {
       key: "questions",
       rung: "stretch",
       prompt: (

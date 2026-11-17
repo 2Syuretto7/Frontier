@@ -270,25 +270,6 @@ for w in ['BANANA', 'CABBAGE', 'DCBA']:
       },
     },
     {
-      key: "symmetry",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"\\binom{n}{r} = \\binom{n}{n-r}"}</M>, first from the formula and then by a counting argument that
-          uses no algebra.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Substitutes n − r for r in the formula and notes the two factorials in the bottom simply swap.",
-          "For the counting argument, observes that choosing r objects to take is the same as choosing n − r to leave.",
-          "Explains that this pairs the two kinds of choice one to one.",
-          "Concludes the two counts are equal.",
-        ],
-      },
-    },
-    {
       key: "banana",
       rung: "stretch",
       prompt: <p>How many different arrangements are there of the letters of the word BANANA?</p>,

@@ -317,24 +317,6 @@ assert abs(a - 0.3 / 0.72) < 1e-12 and abs(b - 0.3) < 1e-12 and a > 0.3` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove the first Borel–Cantelli lemma: if <M>{"\\sum_n P(A_n) < \\infty"}</M>, then the probability that infinitely
-          many of the <M>{"A_n"}</M> occur is 0.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the event as ∩ₘ Uₘ with Uₘ = ∪_{n ≥ m} Aₙ, or otherwise notes it is contained in every Uₘ.",
-          "Bounds P(Uₘ) ≤ Σ_{n ≥ m} P(Aₙ) by the union bound.",
-          "Notes the tail of a convergent series tends to 0, and concludes (by monotonicity or continuity) that the probability is 0.",
-        ],
-      },
-    },
-    {
       key: "none",
       rung: "stretch",
       prompt: (

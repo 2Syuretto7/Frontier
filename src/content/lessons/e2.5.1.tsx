@@ -392,40 +392,6 @@ assert 0.45 < inv / (100000 * 99999 / 2) < 0.55 and time.time() - t < 6` },
         ],
       },
     },
-    {
-      key: "expected",
-      rung: "prove",
-      prompt: <p>Prove that randomised quicksort makes fewer than 2nH<sub>n</sub> comparisons in expectation on n distinct items, where H<sub>n</sub> = 1 + 1/2 + … + 1/n.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the count as a sum of indicators X_ij over pairs z_i < z_j of the sorted items, using linearity of expectation.",
-          "Shows z_i and z_j are compared if and only if one of them is the first pivot chosen from z_i, …, z_j.",
-          "Each of those j − i + 1 items is equally likely to be first, so P(X_ij = 1) = 2/(j − i + 1).",
-          "Sums: Σ_i Σ_{k=2}^{n−i+1} 2/k < 2n H_n.",
-        ],
-      },
-    },
-    {
-      key: "equal-keys",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Show that quicksort with the two-way Lomuto partition takes Θ(n²) time on an array of n equal items, even with random
-          pivots, and that with a three-way partition it takes Θ(n). Then argue that with three-way partitioning and random
-          pivots, an array with only k distinct values takes O(n log k) expected time.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "With all items equal, Lomuto puts nothing on the left (no item is less than the pivot), so each call removes only the pivot: Σ (n − i) = Θ(n²).",
-          "Three-way partition puts every item in the equal part in one pass of n − 1 comparisons, and both recursive calls are empty: Θ(n).",
-          "With k distinct values, each partition removes every copy of the pivot's value; the recursion acts like quicksort on the k distinct values.",
-          "Each level of the recursion costs O(n) and the expected depth in distinct values is O(log k), giving O(n log k).",
-        ],
-      },
-    },
   ],
 
   glimpse: (

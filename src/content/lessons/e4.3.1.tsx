@@ -312,25 +312,6 @@ assert first_divergence([], [1.0]) == 0` },
       },
     },
     {
-      key: "order",
-      rung: "prove",
-      prompt: (
-        <p>
-          Give three doubles a, b, c for which <M>{"(a + b) + c \\ne a + (b + c)"}</M>, explaining the rounding. Then argue why a
-          parallel sum that combines the workers&rsquo; partial sums in the order they finish may differ between runs, while
-          one that combines them in a fixed order does not.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Gives a valid example, such as a = 1e16 and b = c = 1, and explains that a + b rounds back to a while b + c is exact.",
-          "Notes that the finishing order of workers can vary from run to run, so the sequence of additions, and therefore the rounding, varies too.",
-          "Notes that with a fixed combining order every addition, and so every rounding, is the same in each run, giving the same bits.",
-        ],
-      },
-    },
-    {
       key: "collide",
       rung: "stretch",
       prompt: (

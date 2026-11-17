@@ -275,25 +275,6 @@ assert 2 * math.sqrt(400 / math.pi) - 1.2 < expected_returns(400) < 2 * math.sqr
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          A walk starts at 0 and returns to 0 with probability f. Using the Markov property, prove that the number of returns
-          V satisfies <M>{"P(V \\ge m) = f^m"}</M>, and deduce that <M>{"E[V] = f/(1 - f)"}</M> when f &lt; 1 and that V is infinite
-          with probability 1 when f = 1.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Argues by induction that given m returns, the walk restarts at 0 independently of the past (Markov property), so P(V ≥ m + 1) = f · P(V ≥ m).",
-          "Computes E[V] = Σ_{m≥1} P(V ≥ m) = Σ f^m = f/(1 − f) for f < 1.",
-          "For f = 1 notes P(V ≥ m) = 1 for every m, so P(V = ∞) = 1.",
-        ],
-      },
-    },
-    {
       key: "biased",
       rung: "stretch",
       prompt: (

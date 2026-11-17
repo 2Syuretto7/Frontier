@@ -285,24 +285,6 @@ assert abs(slem(lazy(C)) - (0.5 + 0.5 * np.cos(2 * np.pi / k))) < 1e-9 and isins
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let P be a k × k stochastic matrix with every entry at least ε &gt; 0, where kε &lt; 1. Prove that{" "}
-          <M>{"\\|\\mu P - \\nu P\\|_{TV} \\le (1 - k\\varepsilon)\\|\\mu - \\nu\\|_{TV}"}</M> for all distributions μ, ν.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes P = kεU + (1 − kε)Q with U the matrix of uniform rows, and checks Q is stochastic (entries ≥ 0 from P_ij ≥ ε, rows sum to 1).",
-          "Notes x = μ − ν has entries summing to 0, so xU = 0 and xP = (1 − kε)xQ.",
-          "Shows Σ_j |(xQ)_j| ≤ Σ_i |x_i| using the triangle inequality and row sums of Q, and halves both sides to conclude.",
-        ],
-      },
-    },
-    {
       key: "bound",
       rung: "stretch",
       prompt: (

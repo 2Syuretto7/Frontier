@@ -244,26 +244,6 @@ assert rle_decode('x10y1') == 'x' * 10 + 'y'` },
       },
     },
     {
-      key: "palindrome",
-      rung: "prove",
-      prompt: (
-        <p>
-          Write a function <C>is_palindrome(text)</C> that returns <C>True</C> when the text reads the same backwards,
-          ignoring capital letters and spaces, so that &ldquo;Never odd or even&rdquo; counts. Explain each step, and why
-          the function must use the strings that methods return.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Lowers the case, for example with lower().",
-          "Removes spaces, for example with replace(\" \", \"\") or by joining the split pieces.",
-          "Compares the cleaned string with its reverse, for example s == s[::-1], and returns the result.",
-          "Explains that strings are immutable, so each method returns a new string that must be stored or used.",
-        ],
-      },
-    },
-    {
       key: "vowels",
       rung: "stretch",
       prompt: (

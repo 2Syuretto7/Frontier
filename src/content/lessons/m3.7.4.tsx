@@ -260,24 +260,6 @@ assert 'eig' not in src.replace('jacobi_eigen', ''), 'Rotate the matrix yourself
       },
     },
     {
-      key: "proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that eigenvectors of a real symmetric matrix S belonging to different eigenvalues are perpendicular. Point out
-          exactly where symmetry is used.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Starts from Sx = λx and Sy = μy with λ ≠ μ.",
-          "Computes (Sx)ᵀy = xᵀSᵀy and uses Sᵀ = S to rewrite it as xᵀSy.",
-          "Gets λ xᵀy = μ xᵀy, so (λ − μ) xᵀy = 0 and xᵀy = 0.",
-        ],
-      },
-    },
-    {
       key: "rayleigh",
       rung: "stretch",
       prompt: <p>Find the largest value of <M>{"2x^2 + 2xy + 2y^2"}</M> over all (x, y) with <M>{"x^2 + y^2 = 1"}</M>.</p>,

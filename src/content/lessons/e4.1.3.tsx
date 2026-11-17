@@ -302,26 +302,6 @@ assert grad_check(f, bad, x) > 0.4, 'A gradient that is twice too big should be 
       },
     },
     {
-      key: "central",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if f has a continuous third derivative, then{" "}
-          <M>{"\\frac{f(x + h) - f(x - h)}{2h} - f'(x) = \\frac{h^2}{6} f'''(\\xi)"}</M> for some ξ in [x − h, x + h], and
-          explain why this makes the central difference more accurate than the forward difference for small h.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the Taylor expansions of f(x + h) and f(x − h) to second order with third-order remainders.",
-          "Subtracts them so the f(x) and f''(x) terms cancel, leaving 2h f'(x) plus h³/6 times a sum of two third derivatives.",
-          "Uses the intermediate value theorem on the continuous f''' to replace the average of the two third derivatives by f'''(ξ).",
-          "Compares with the forward difference, whose error h f''(x)/2 is of order h, so for small h the h² error of the central difference is much smaller.",
-        ],
-      },
-    },
-    {
       key: "step",
       rung: "stretch",
       prompt: (

@@ -265,25 +265,6 @@ assert chain_costs([2, 3, 4]) == (24, 24)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove the chain rule: if f is differentiable at a and g at f(a), then{" "}
-          <M>{"D(g \\circ f)(a) = Dg(f(a))\\,Df(a)"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes f(a + h) = f(a) + Ah + r(h) and g(b + k) = g(b) + Bk + s(k) with remainders that are o(‖h‖) and o(‖k‖).",
-          "Substitutes k = Ah + r(h) to get g(f(a + h)) = g(f(a)) + BAh + Br(h) + s(k).",
-          "Shows B r(h) is o(‖h‖) using ‖B r(h)‖ ≤ ‖B‖ ‖r(h)‖.",
-          "Shows s(k) is o(‖h‖) by bounding ‖k‖ ≤ C‖h‖ for small h, handling the case k = 0.",
-        ],
-      },
-    },
-    {
       key: "sum",
       rung: "stretch",
       prompt: (

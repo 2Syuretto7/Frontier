@@ -274,19 +274,6 @@ assert abs(b / a - 0.8) < 0.03 and abs(regression_to_mean(0.0)[1]) < 0.05` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Derive the least squares estimates β̂₁ = S_xy/S_xx and β̂₀ = ȳ − β̂₁x̄ for simple linear regression, and show the residuals sum to zero.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Differentiates the sum of squares in b₀ and sets it to zero, giving Σ residuals = 0 and b₀ = ȳ − b₁x̄.",
-          "Differentiates in b₁, substitutes b₀, and simplifies (using Σ(xᵢ − x̄) = 0) to S_xy = b₁S_xx.",
-          "Notes the objective is a convex quadratic (or checks the second-order condition) so the stationary point is the minimum, assuming S_xx > 0.",
-        ],
-      },
-    },
-    {
       key: "r",
       rung: "stretch",
       prompt: <p>Two variables have correlation 0.6, standard deviations s_x = 2 and s_y = 5. What is the least squares slope of y on x?</p>,

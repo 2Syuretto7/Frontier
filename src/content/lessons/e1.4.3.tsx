@@ -264,25 +264,6 @@ assert resolve(index, {'x': ''}) is None and resolve({'p': {'1.0.0': {}}}, {'p':
       },
     },
     {
-      key: "policy",
-      rung: "prove",
-      prompt: (
-        <p>
-          Propose a dependency policy for a small research team: what goes in <C>pyproject.toml</C>, what goes in the lock
-          file, when and how versions are upgraded, and what each run records. Justify each choice.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Declares direct dependencies with sensible ranges in pyproject.toml.",
-          "Commits the lock file and installs with uv sync, so every machine and CI use identical versions.",
-          "Upgrades deliberately, for example with uv lock --upgrade in a pull request whose tests must pass.",
-          "Records per run the commit hash, the lock file or its hash, the configuration and seeds, so results can be reproduced.",
-        ],
-      },
-    },
-    {
       key: "range",
       rung: "stretch",
       prompt: <p>Which range would have kept the demonstration&rsquo;s script working in every month while still accepting bug-fix and feature releases?</p>,

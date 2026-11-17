@@ -247,19 +247,6 @@ assert abs(a - 20) < 0.5 and abs(b - 2) < 0.3` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>In the model x̄ | θ ~ N(θ, σ²), θ ~ N(μ, τ²), prove that marginally x̄ ~ N(μ, σ² + τ²).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes x̄ = θ + e with θ ~ N(μ, τ²) and e ~ N(0, σ²) independent (or argues equivalently via the joint density).",
-          "Computes E[x̄] = μ and Var(x̄) = τ² + σ², for example by the laws of total expectation and variance.",
-          "Concludes normality, since a sum of independent normals is normal (or by completing the square in the marginal integral).",
-        ],
-      },
-    },
-    {
       key: "risk0",
       rung: "stretch",
       prompt: <p>For p = 20 and θ = 0, the James-Stein risk is p − (p − 2)² E[1/‖X‖²] with E[1/‖X‖²] = 1/(p − 2). What is it?</p>,

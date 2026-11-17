@@ -288,26 +288,6 @@ except sqlite3.IntegrityError:
       },
     },
     {
-      key: "alias",
-      rung: "prove",
-      prompt: (
-        <p>
-          Using the evaluation order, explain why <C>WHERE total &gt; 1000</C> fails while <C>ORDER BY total</C> works, and
-          why <C>WHERE SUM(o.amount) &gt; 1000</C> also fails. Then rewrite the condition so that the query returns only cities
-          whose total exceeds 1000.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains that WHERE runs before SELECT, so the alias total does not exist yet, while ORDER BY runs after SELECT.",
-          "Explains that WHERE acts on single rows before grouping, so an aggregate has nothing to aggregate there.",
-          "Rewrites the condition as HAVING SUM(o.amount) > 1000 after GROUP BY.",
-          "Notes that some databases also accept the alias in HAVING, but the aggregate form is portable.",
-        ],
-      },
-    },
-    {
       key: "cross",
       rung: "stretch",
       prompt: (

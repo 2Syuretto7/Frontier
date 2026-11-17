@@ -278,19 +278,6 @@ assert abs(scaled_lr(0.1, 1024, 256, "linear") - 0.025) < 1e-12` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that the mean of B independent per-example gradients, each with mean G and covariance Σ, satisfies E‖ḡ − G‖² = tr(Σ)/B.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows E[ḡ] = G by linearity.",
-          "Shows Cov(ḡ) = Σ/B, using independence (cross-covariances vanish) and the 1/B² factor from the scaling.",
-          "Uses E‖X − EX‖² = tr Cov(X) to conclude tr(Σ)/B.",
-        ],
-      },
-    },
-    {
       key: "crit",
       rung: "stretch",
       prompt: <p>Under S(B) = S_min(1 + B_noise/B), at what batch size, as a multiple of B_noise, are the steps exactly 1.25 × S_min?</p>,

@@ -281,24 +281,6 @@ assert split_by_group(items, g, 0.01, seed=0)[1] != [], 'ceil gives at least one
       },
     },
     {
-      key: "indep",
-      rung: "prove",
-      prompt: (
-        <p>
-          If each of r reviewers independently misses a bug with probability q, show that all miss it with probability{" "}
-          <C>q ** r</C>. Then argue why real reviewers are not independent, and what that means for adding more of them.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses independence to multiply the r miss probabilities.",
-          "Gives a reason the misses are correlated, such as shared blind spots, the same unfamiliar pitfall, or the same misleading description.",
-          "Concludes that extra reviewers help less than the formula suggests, and that checklists, tests or automated checks address the shared blind spots.",
-        ],
-      },
-    },
-    {
       key: "count",
       rung: "stretch",
       prompt: <p>If each reviewer independently misses a bug with probability 0.4, how many reviewers are needed for the chance that all miss it to fall below 1%?</p>,

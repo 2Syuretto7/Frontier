@@ -281,24 +281,6 @@ assert len(path) == 30001 and np.allclose(empirical_transitions(path, 2), P, ato
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that for a Markov chain with transition matrix P, <M>{"\\pi_n = \\pi_0 P^n"}</M> for every n ≥ 0, where{" "}
-          <M>{"\\pi_n"}</M> is the distribution of <M>{"X_n"}</M> as a row vector.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Sets up induction, with the base case π₀ = π₀P⁰.",
-          "Uses the law of total probability over X_n = i together with P(X_{n+1} = j | X_n = i) = P_ij to get π_{n+1} = π_n P.",
-          "Combines with the induction hypothesis: π_{n+1} = π₀Pⁿ P = π₀P^{n+1}.",
-        ],
-      },
-    },
-    {
       key: "twostate",
       rung: "stretch",
       prompt: (

@@ -234,26 +234,6 @@ assert [g for _, _, g in r] == ['ValueError', 'ValueError']` },
       },
     },
     {
-      key: "design",
-      rung: "prove",
-      prompt: (
-        <p>
-          A function <C>grade(score)</C> must return &ldquo;A&rdquo; for 80 to 100, &ldquo;B&rdquo; for 60 to 79, and
-          &ldquo;C&rdquo; for 0 to 59. List the test cases you would write, with expected outputs, and explain what plausible
-          mistake each one is there to catch.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Includes typical values from each band, such as 90, 70 and 30.",
-          "Includes both sides of each boundary: 79 and 80, 59 and 60.",
-          "Includes the extremes 0 and 100.",
-          "Links each test to a mistake it would catch, such as > written for >=, conditions in the wrong order, or a missing band.",
-        ],
-      },
-    },
-    {
       key: "count",
       rung: "stretch",
       prompt: <p>For the years 1 to 2400 inclusive, on how many years does Version B give a different answer from Version C?</p>,

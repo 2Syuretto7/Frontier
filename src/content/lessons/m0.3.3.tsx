@@ -262,25 +262,6 @@ assert abs(r[0] - 3e-9) / 3e-9 < 1e-9, 'Choose the sign so the two terms in q ad
       },
     },
     {
-      key: "square-pen",
-      rung: "prove",
-      prompt: (
-        <p>
-          A rectangle has perimeter 4 metres. Prove that its area is at most 1 square metre, with equality only for the
-          square. Use vertex form.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Lets one side be x, so the other is 2 − x, and the area is x(2 − x).",
-          "Rewrites the area as 1 − (x − 1)².",
-          "Argues that (x − 1)² ≥ 0, so the area is at most 1.",
-          "Notes equality exactly when x = 1, so both sides are 1 and the rectangle is a square.",
-        ],
-      },
-    },
-    {
       key: "ball",
       rung: "stretch",
       prompt: (

@@ -251,26 +251,6 @@ assert np.allclose(w8, w30, atol=1e-10), 'Newton converges in a handful of steps
       },
     },
     {
-      key: "squared",
-      rung: "prove",
-      prompt: (
-        <p>
-          Compare the penalties that log loss and squared error give a model that predicts probability 0.99 for an event
-          that does not happen, and probability 0.6 for one that does. Explain why log loss is preferred for training
-          classifiers that output probabilities.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes log loss −ln(0.01) ≈ 4.6 for the confident mistake and −ln(0.6) ≈ 0.51 for the hesitant correct prediction.",
-          "Computes squared errors 0.98 and 0.16, noting that squared error can never exceed 1 per example.",
-          "Explains that log loss punishes confident mistakes far more and without limit, which pushes the model to give honest probabilities.",
-          "Mentions that log loss is the negative log-probability of what happened, so minimising it is maximising the likelihood of the data.",
-        ],
-      },
-    },
-    {
       key: "where",
       rung: "stretch",
       prompt: <p>With <M>{"z = -2 + 0.8 \\times \\text{hours}"}</M>, at how many hours is the probability of passing exactly one half?</p>,

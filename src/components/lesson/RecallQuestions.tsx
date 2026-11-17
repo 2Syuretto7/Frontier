@@ -16,8 +16,6 @@ function recallView(q: RecallItem): ExerciseView {
     variables: a.kind === "expression" ? a.variables : undefined,
     solved: false,
     response: null,
-    verdict: null,
-    feedbackHtml: null,
   };
 }
 

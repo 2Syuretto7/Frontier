@@ -10,16 +10,12 @@ import {
   CHECK_SYSTEM,
   HINT_RULES,
   HINT_SCHEMA,
-  MARK_RULES,
-  acceptWritten,
-  MARK_SCHEMA,
   RUNGS,
   VOICE,
   describeAnswer,
   rungFor,
   type CheckOutput,
   type HintOutput,
-  type MarkOutput,
 } from "./prompts";
 import { renderParton } from "./render";
 
@@ -45,7 +41,6 @@ function exerciseText(ref: ExerciseRef): string {
   const lines = [`${capitalise(exerciseLabel(ref))} (${ref.exercise.rung}): ${toPlainText(ref.exercise.prompt)}`];
   if (a.kind === "choice") lines.push(`Options: ${a.options.map((o, i) => `(${String.fromCharCode(97 + i)}) ${o}`).join("; ")}`);
   if (a.kind === "expression") lines.push(`The answer is an expression in ${a.variables.join(", ")}.`);
-  if (a.kind === "written") lines.push("The learner writes a full proof or argument.");
   if (a.kind === "code") {
     lines.push(`The learner writes Python that runs in the browser and must pass these checks: ${a.tests.map((t) => t.name).join("; ")}.`);
     lines.push(`The editor starts with:\n${a.starter}`);
@@ -234,30 +229,6 @@ export async function askParton(lessonId: string, exercise: string | null, messa
     if (error instanceof PartonError) return { ok: false, error: error.message };
     throw error;
   }
-}
-
-// ---------------------------------------------------------------------------------------------
-// Marking written work
-
-export type Marking = { accepted: boolean; feedback: string };
-
-export async function markWritten(ref: ExerciseRef, response: string): Promise<Marking> {
-  const answer = ref.exercise.answer;
-  if (answer.kind !== "written") throw new Error("Only written answers are marked by Parton.");
-  const out = await structured<MarkOutput>({
-    system: `${VOICE}\n\n${MARK_RULES}\n\n${lessonBrief(ref.lessonId)}`,
-    schema: MARK_SCHEMA,
-    effort: "high",
-    maxTokens: 16000,
-    messages: [{
-      role: "user",
-      content: `${exerciseText(ref)}\n\nRubric:\n${answer.rubric.map((r, i) => `${i + 1}. ${r}`).join("\n")}\n\nThe learner's answer:\n<<<\n${response}\n>>>`,
-    }],
-  });
-  const accepted = acceptWritten(out, answer.rubric.length);
-  const feedback = accepted ? out.feedback : await guard(out.feedback, describeAnswer(answer), 3);
-  await note(ref.lessonId, ref.id, "misconception", out.misconception);
-  return { accepted, feedback };
 }
 
 function capitalise(s: string) {

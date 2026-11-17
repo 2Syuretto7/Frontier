@@ -438,34 +438,6 @@ for _ in range(60):
         ],
       },
     },
-    {
-      key: "exact",
-      rung: "prove",
-      prompt: <p>Prove that if the model&rsquo;s next-token distribution does not depend on the prefix at all, beam search of any width k ≥ 1 returns the most probable sequence.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes the sequence probability is then a product of independent per-position factors p(t₁)p(t₂)…",
-          "The best sequence takes the most probable token at every position.",
-          "Shows by induction that the best prefix of each length is always the top beam: extending it by the top token beats every other extension.",
-          "Concludes that width 1, and so any width, returns the best sequence (with ties handled consistently).",
-        ],
-      },
-    },
-    {
-      key: "viterbi",
-      rung: "stretch",
-      prompt: <p>Suppose the next-token distribution depends only on the last token, as in a bigram model. Give an O(L V²) dynamic programme that finds the most probable sequence of length L exactly, explain why keeping one prefix per last token loses nothing, and compare its cost with beam search.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Defines best[i][t] as the highest log probability of a length-i prefix ending in token t, with a back pointer.",
-          "Recurrence best[i][t] = max over s of best[i − 1][s] + log p(t | s), with best[1][t] = log p(t).",
-          "Argues that two prefixes ending in the same token have identical futures, so only the better one can lead to the optimum.",
-          "Gives O(L V²) time against beam search's O(L k V), noting the DP is exact while the beam is not; this is the Viterbi algorithm.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

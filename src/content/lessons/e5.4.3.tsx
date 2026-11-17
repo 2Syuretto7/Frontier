@@ -326,24 +326,6 @@ assert np.allclose(z.grad, (P - Y) / 12)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Show that for y in {"{0, 1}"}, −y log σ(z) − (1 − y) log(1 − σ(z)) = softplus(z) − yz, where σ(z) = 1/(1 + e⁻ᶻ) and
-          softplus(z) = log(1 + eᶻ), and that its derivative in z is σ(z) − y.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses log σ(z) = −log(1 + e⁻ᶻ) = z − softplus(z) and log(1 − σ(z)) = −softplus(z) (or equivalent identities).",
-          "Substitutes and simplifies: −y(z − softplus(z)) + (1 − y)softplus(z) = softplus(z) − yz.",
-          "Differentiates: softplus′(z) = eᶻ/(1 + eᶻ) = σ(z), so the derivative is σ(z) − y.",
-        ],
-      },
-    },
-    {
       key: "normal",
       rung: "stretch",
       prompt: <p>The smallest positive normal float32 is 2ᵏ. What is k?</p>,

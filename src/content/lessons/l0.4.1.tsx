@@ -279,25 +279,6 @@ for _ in range(200):
       },
     },
     {
-      key: "bottleneck",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain the knowledge acquisition bottleneck with an example of your own, and explain how learning from examples
-          sidesteps it. What new problem does learning bring in exchange?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Describes an expert task where the expert cannot fully state their rules, such as recognising a ripe mango or a fake signature.",
-          "Explains that symbolic AI needs those rules written down, which is slow, incomplete and error-prone.",
-          "Explains that learning needs only labelled examples, which experts can supply without stating rules.",
-          "Names a cost of learning, such as needing much data, or producing a model whose reasoning cannot easily be read or checked.",
-        ],
-      },
-    },
-    {
       key: "rules",
       rung: "stretch",
       prompt: (

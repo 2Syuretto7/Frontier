@@ -267,19 +267,6 @@ assert quotient_dim(3, []) == 3 and quotient_dim(2, [np.array([1.0, 0.0]), np.ar
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that if v₁, …, vₙ is a basis of V, the dual basis φ₁, …, φₙ (with φⱼ(vₖ) = 1 if j = k, else 0) is a basis of V′.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Independence: if Σaⱼφⱼ = 0, evaluating at vₖ gives aₖ = 0 for each k.",
-          "Spanning: for any ψ in V′, ψ and Σψ(vⱼ)φⱼ agree on every basis vector, hence are equal because a linear map is determined by its values on a basis.",
-          "Concludes the φⱼ form a basis (and so dim V′ = dim V).",
-        ],
-      },
-    },
-    {
       key: "transpose",
       rung: "stretch",
       prompt: <p>T: ℝ⁵ → ℝ³ has rank 2. What is the rank of its dual map T′: (ℝ³)′ → (ℝ⁵)′?</p>,

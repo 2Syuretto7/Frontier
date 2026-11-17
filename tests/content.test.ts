@@ -24,7 +24,7 @@ for (const lesson of LESSONS) {
   test(`${lesson.id} has a sound practice ladder`, () => {
     const keys = lesson.practice.map((e) => e.key);
     assert.equal(new Set(keys).size, keys.length, "exercise keys are unique");
-    for (const rung of ["check", "apply", "prove"] as const) {
+    for (const rung of ["check", "apply"] as const) {
       assert.ok(lesson.practice.some((e) => e.rung === rung), `has a ${rung} exercise`);
     }
     for (const e of lesson.practice) {
@@ -35,7 +35,6 @@ for (const lesson of LESSONS) {
       }
       if (a.kind === "numeric") assert.ok(checkAnswer(a, String(a.value)).correct, `${e.key}: its own answer checks`);
       if (a.kind === "expression") assert.ok(checkAnswer(a, a.value).correct, `${e.key}: its own answer checks`);
-      if (a.kind === "written") assert.ok(a.rubric.length >= 2, `${e.key}: has a real rubric`);
       if (a.kind === "code") assert.ok(a.tests.length >= 2, `${e.key}: a code exercise has several checks`);
     }
   });

@@ -421,24 +421,6 @@ assert accuracy(net, X, 1 - y) < 0.05` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          A batch B of size b is a uniformly random subset of n examples. Prove that the batch gradient (1/b) Σ_{"{i ∈ B}"} gᵢ
-          has expectation equal to the full gradient (1/n) Σᵢ gᵢ.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Rewrites the batch gradient as (1/b) Σᵢ 1[i ∈ B] gᵢ over all n examples.",
-          "Shows P(i ∈ B) = b/n for every i (by symmetry, or by counting C(n−1, b−1)/C(n, b)).",
-          "Uses linearity of expectation to get (1/b) Σᵢ (b/n) gᵢ = (1/n) Σᵢ gᵢ.",
-        ],
-      },
-    },
-    {
       key: "variance",
       rung: "stretch",
       prompt: <p>Per-example gradients have variance 4 around the full gradient. Sampling 16 examples with replacement, what is the variance of the batch-mean gradient?</p>,

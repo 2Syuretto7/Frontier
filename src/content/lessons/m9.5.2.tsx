@@ -259,19 +259,6 @@ assert 0.88 < c < 0.99` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Given data x₁, …, xₙ, prove that the mean of a bootstrap resample has conditional mean x̄ and conditional variance σ̂²/n, with σ̂² = (1/n)Σ(xᵢ − x̄)².</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that each resampled value is drawn uniformly from the data, independently of the others given the data.",
-          "Computes the mean and variance of one draw: x̄ and (1/n)Σ(xᵢ − x̄)² = σ̂².",
-          "Concludes the average of n independent draws has mean x̄ and variance σ̂²/n.",
-        ],
-      },
-    },
-    {
       key: "miss",
       rung: "stretch",
       prompt: <p>In a bootstrap resample of size 10 from 10 observations, what is the probability that a particular observation is not chosen at all? Give four decimal places.</p>,

@@ -420,34 +420,6 @@ assert evaluate(e, dims) == c` },
         ],
       },
     },
-    {
-      key: "knapproof",
-      rung: "prove",
-      prompt: <p>Prove that the knapsack recurrence best[i][c] = max(best[i − 1][c], best[i − 1][c − wᵢ₋₁] + vᵢ₋₁) (the second option only when wᵢ₋₁ ≤ c) is correct.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Considers an optimal choice S from the first i items with capacity c, and splits on whether item i − 1 is in S.",
-          "If not, S is a valid choice from the first i − 1 items with capacity c, so its value is at most best[i − 1][c].",
-          "If so, S without item i − 1 fits capacity c − wᵢ₋₁, so its value is at most best[i − 1][c − wᵢ₋₁] + vᵢ₋₁.",
-          "Both options are achievable, so the maximum equals best[i][c]; induction on i with base row 0 completes it.",
-        ],
-      },
-    },
-    {
-      key: "space",
-      rung: "stretch",
-      prompt: <p>Show how to compute the knapsack value with one array of length C + 1 instead of a full table, explain why the inner loop must run over capacities from high to low, and say what is lost.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Keeps one row best[c] and updates best[c] = max(best[c], best[c − w] + v) for each item.",
-          "Running c downwards means best[c − w] still holds the previous row's value when it is read.",
-          "Running upwards would read an already updated cell and allow an item to be taken more than once (the unbounded knapsack).",
-          "The full table is gone, so the chosen items cannot be rebuilt by walking back without extra storage or recomputation.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

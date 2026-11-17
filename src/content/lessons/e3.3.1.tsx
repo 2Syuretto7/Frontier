@@ -367,34 +367,6 @@ for S, W, L in [(8, 1, 16), (4, 2, 16), (2, 4, 32), (16, 2, 8)]:
         ],
       },
     },
-    {
-      key: "cyclic",
-      rung: "prove",
-      prompt: <p>A fully associative LRU cache holds C lines. A program reads C + 1 distinct lines in a fixed cyclic order, over and over. Prove that every access misses, and show that a cache which kept C of the lines fixed and never replaced them would hit on almost a fraction C/(C + 1) of accesses.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Observes that just before an access to line x, the C most recently used lines are exactly the other C lines of the cycle.",
-          "So x is not among the C lines LRU holds, and the access misses; the same holds for every access after the first round, and the first round misses compulsorily.",
-          "For the fixed cache: C of the C + 1 lines in each cycle are always present, so after warm-up C of every C + 1 accesses hit.",
-          "Concludes that LRU can be the worst possible policy for loops slightly larger than the cache, which is why some caches use other policies.",
-        ],
-      },
-    },
-    {
-      key: "inclusion",
-      rung: "stretch",
-      prompt: <p>Prove that for any trace, a fully associative LRU cache of C + 1 lines misses no more often than one of C lines.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that a fully associative LRU cache of size C always holds the C most recently used distinct lines (or all of them, if fewer).",
-          "Concludes that at every moment the size-C contents are a subset of the size-(C + 1) contents (the inclusion property).",
-          "So any access that hits in the smaller cache also hits in the larger one, and the larger cache's misses are a subset.",
-          "Mentions that FIFO lacks this property (Belady's anomaly), so a bigger FIFO cache can miss more.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

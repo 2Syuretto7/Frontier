@@ -250,25 +250,6 @@ assert diverges(lambda x: 1 / x, 1) and diverges(lambda x: 1 / math.sqrt(x), 1) 
       },
     },
     {
-      key: "gamma",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"\\Gamma(s + 1) = s\\,\\Gamma(s)"}</M> for <M>{"s > 0"}</M>, where{" "}
-          <M>{"\\Gamma(s) = \\int_0^\\infty x^{s-1}e^{-x}\\,dx"}</M>. Deduce that <M>{"\\Gamma(n + 1) = n!"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Applies integration by parts on [0, R] with u = xˢ and dv = e⁻ˣ dx.",
-          "Shows the boundary term Rˢe⁻ᴿ − 0 tends to 0 as R → ∞ (exponential beats power), and is 0 at x = 0 since s > 0.",
-          "Obtains Γ(s + 1) = s ∫₀^∞ xˢ⁻¹ e⁻ˣ dx = s Γ(s).",
-          "Computes Γ(1) = 1 and uses induction to get Γ(n + 1) = n!.",
-        ],
-      },
-    },
-    {
       key: "mean",
       rung: "stretch",
       prompt: (

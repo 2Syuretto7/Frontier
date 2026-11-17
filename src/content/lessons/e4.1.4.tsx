@@ -311,24 +311,6 @@ assert check_shapes({'rgb': (32, 32, 3)}, {'rgb': 'h w 3'}) == {'h': 32, 'w': 32
       },
     },
     {
-      key: "assoc",
-      rung: "prove",
-      prompt: (
-        <p>
-          Argue that broadcasting is associative: for shapes a, b and c, broadcasting a with b and then the result with c gives
-          the same shape as broadcasting a with the result of b and c, and one way raises an error exactly when the other does.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Pads all three shapes with 1s on the left to a common length, noting that padding first does not change either grouping.",
-          "Observes that each position is handled independently of the others.",
-          "Shows that at one position, both groupings succeed exactly when all sizes other than 1 among the three are equal, and then give that size (or 1 if all are 1), so the results agree.",
-        ],
-      },
-    },
-    {
       key: "silent",
       rung: "stretch",
       prompt: (

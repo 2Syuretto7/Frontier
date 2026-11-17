@@ -273,26 +273,6 @@ assert abs(num - np.sum(gauss_nll_grad(Sig, S) * H)) < 1e-6` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove Jacobi&rsquo;s formula <M>{"d\\det X = \\det X\\,\\mathrm{tr}(X^{-1}dX)"}</M> for invertible X, starting from{" "}
-          <M>{"\\det(I + tH) = 1 + t\\,\\mathrm{tr}H + O(t^2)"}</M>, and deduce <M>{"\\nabla_X \\log\\det X = X^{-\\top}"}</M>{" "}
-          when det X &gt; 0.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Justifies det(I + tH) = 1 + t tr H + O(t²), for example by noting only the diagonal product contributes a t¹ term (or via eigenvalues).",
-          "Factors det(X + dX) = det X · det(I + X⁻¹dX) using multiplicativity of det.",
-          "Concludes d det X = det X · tr(X⁻¹ dX) to first order.",
-          "Writes tr(X⁻¹dX) = tr((X⁻ᵀ)ᵀ dX), reads off ∇ det = det X · X⁻ᵀ, and divides by det X (chain rule for log) to get X⁻ᵀ.",
-        ],
-      },
-    },
-    {
       key: "ld",
       rung: "stretch",
       prompt: (

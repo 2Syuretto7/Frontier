@@ -423,34 +423,6 @@ assert largest_true(lambda b: b <= 57, 50) == 57` },
         ],
       },
     },
-    {
-      key: "invariant",
-      rung: "prove",
-      prompt: <p>Prove that <C>first_true</C> terminates after at most ⌈log₂(hi − lo + 1)⌉ evaluations of the predicate.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Tracks the number of candidate answers, hi − lo + 1 (the answer lies in [lo, hi]).",
-          "With mid = ⌊(lo + hi)/2⌋, both new ranges [lo, mid] and [mid + 1, hi] have at most ⌈(hi − lo + 1)/2⌉ candidates.",
-          "So after k evaluations at most ⌈N/2ᵏ⌉ candidates remain, with N = hi − lo + 1.",
-          "The loop stops when one candidate remains, which takes at most ⌈log₂ N⌉ evaluations.",
-        ],
-      },
-    },
-    {
-      key: "lower",
-      rung: "stretch",
-      prompt: <p>Prove that any algorithm that finds the insertion position of x in a sorted array of n items, using only comparisons of x with items, must make at least ⌈log₂(n + 1)⌉ comparisons in the worst case.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "There are n + 1 possible answers (positions 0 to n), and each is the right answer for some input.",
-          "Models the algorithm as a binary decision tree whose leaves give answers; each answer needs at least one leaf.",
-          "A binary tree of depth d has at most 2ᵈ leaves, so 2ᵈ ≥ n + 1.",
-          "Hence the worst-case number of comparisons d is at least ⌈log₂(n + 1)⌉.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

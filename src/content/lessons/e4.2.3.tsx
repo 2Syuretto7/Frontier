@@ -326,25 +326,6 @@ else:
       },
     },
     {
-      key: "robust",
-      rung: "prove",
-      prompt: (
-        <p>
-          For the reading exercise&rsquo;s <C>first_bad</C>, assume only that ok(0) is True and ok(n) is False, not that ok is
-          monotone. Prove that it returns some hi with ok(hi − 1) True and ok(hi) False, and that it makes at most{" "}
-          <M>{"\\lceil \\log_2 n \\rceil"}</M> probes.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "States the invariant that ok(lo) is True and ok(hi) is False, and checks that it holds initially and is preserved by each update.",
-          "Notes that the loop ends with hi = lo + 1, so the invariant gives ok(hi − 1) True and ok(hi) False.",
-          "Shows that each probe at least halves hi − lo, rounding up, so after k probes the gap is at most ⌈n / 2^k⌉, and the loop stops once that reaches 1, after at most ⌈log₂ n⌉ probes.",
-        ],
-      },
-    },
-    {
       key: "minutes",
       rung: "stretch",
       prompt: (

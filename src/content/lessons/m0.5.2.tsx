@@ -285,25 +285,6 @@ assert all(a < b for a, b in zip(vals, vals[1:])), 'Inscribed polygons approach 
       },
     },
     {
-      key: "sector-proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that a sector of angle <M>{"\\theta"}</M> radians in a circle of radius <M>r</M> has area{" "}
-          <M>{"\\tfrac12 r^2\\theta"}</M>, using the area of the whole circle.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that the area of a sector is proportional to its angle, for instance because equal angles give congruent sectors.",
-          "Identifies the whole circle as a sector of angle 2π with area πr².",
-          "Writes the sector as the fraction θ/(2π) of the circle.",
-          "Simplifies (θ/2π)·πr² to ½r²θ.",
-        ],
-      },
-    },
-    {
       key: "eratosthenes",
       rung: "stretch",
       prompt: (

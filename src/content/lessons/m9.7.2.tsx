@@ -241,19 +241,6 @@ assert abs(grid_mean(1000, 1000, [], g) - 1) < 1e-3` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that a Gamma(a, b) prior on a Poisson rate λ, with density proportional to λ^(a−1)e^(−bλ), gives a Gamma(a + Σxᵢ, b + n) posterior after observing counts x₁, …, xₙ.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the Poisson likelihood ∏ e^(−λ)λ^(xᵢ)/xᵢ! and notes it is proportional to λ^(Σxᵢ)e^(−nλ) as a function of λ.",
-          "Multiplies by the prior kernel to obtain λ^(a + Σxᵢ − 1)e^(−(b + n)λ).",
-          "Identifies this as the kernel of Gamma(a + Σxᵢ, b + n), so after normalisation the posterior is exactly that distribution.",
-        ],
-      },
-    },
-    {
       key: "pred0",
       rung: "stretch",
       prompt: <p>With a Gamma(13, 4) posterior on a Poisson rate, the probability that the next count is 0 is (b/(b + 1))^a. What is it? Give four decimal places.</p>,

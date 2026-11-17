@@ -246,44 +246,6 @@ assert abs(v - 4) < 1e-12, 'Approach a = 2 from the right.'` },
         ],
       },
     },
-    {
-      key: "deceive",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why the values of <M>{"\\sin(\\pi/x)"}</M> at <M>{"x = 0.1, 0.01, 0.001, \\ldots"}</M> are all 0, and why
-          the function nonetheless has no limit as <M>{"x \\to 0"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes π/x = 10ᵏπ at x = 10⁻ᵏ, and notes that the sine of a whole multiple of π is 0.",
-          "Finds other points tending to 0, such as x = 2/(4k + 1), where the value is 1.",
-          "Concludes that values near 0 do not all approach a single number, so there is no limit.",
-        ],
-      },
-    },
-    {
-      key: "speed",
-      rung: "stretch",
-      prompt: (
-        <p>
-          A stone falls <M>{"5t^2"}</M> metres in t seconds. Write its average speed between times 2 and{" "}
-          <M>{"2 + h"}</M> as an expression in h, simplify it, and find its limit as <M>{"h \\to 0"}</M>. Explain how this
-          answers the puzzle about the speedometer.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the average speed as (5(2 + h)² − 20)/h.",
-          "Simplifies to 20 + 5h for h ≠ 0.",
-          "Finds the limit 20 metres per second.",
-          "Explains that instantaneous speed is the limit of average speeds, which avoids dividing 0 by 0.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

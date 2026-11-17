@@ -269,24 +269,6 @@ assert abs(r.mean() - statistics.fmean(xs)) < 1e-9 and abs(r.variance() - statis
       },
     },
     {
-      key: "shift",
-      rung: "prove",
-      prompt: (
-        <p>
-          Every value in a data set is increased by the same number <M>k</M>. Prove that the mean increases by <M>k</M> and
-          the standard deviation does not change.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes the new mean: (1/n)Σ(xᵢ + k) = x̄ + k.",
-          "Notes that each new deviation is (xᵢ + k) − (x̄ + k) = xᵢ − x̄.",
-          "Concludes the variance, and so the standard deviation, is unchanged.",
-        ],
-      },
-    },
-    {
       key: "shortcut",
       rung: "stretch",
       prompt: (

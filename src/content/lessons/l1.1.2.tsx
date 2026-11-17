@@ -245,25 +245,6 @@ assert tr < 1e-20 and te > 5, 'With one point the line fits the noise exactly an
       },
     },
     {
-      key: "optimistic",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why the training error of a fitted model is usually lower than its error on new data, and why the test set
-          must not be used in any way during training.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains that fitting chooses the model to make the training error small, including by fitting the noise in those particular examples.",
-          "Notes that the noise in new examples is different, so what was fitted to noise does not carry over.",
-          "Explains that the test error estimates generalisation only if the test examples played no part in choosing the model.",
-          "Notes that any use of the test set in training or choosing makes its error optimistic too.",
-        ],
-      },
-    },
-    {
       key: "sigma",
       rung: "stretch",
       prompt: <p>Labels contain noise with standard deviation 0.3. What is the smallest test mean squared error any model can expect?</p>,

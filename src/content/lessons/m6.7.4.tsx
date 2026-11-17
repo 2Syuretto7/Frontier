@@ -371,25 +371,6 @@ assert min(errs) < 1e-6` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let S be any three-way tensor whose mode-n unfolding has rank at most rₙ, and let τₙ² be the sum of the squared
-          singular values of T₍ₙ₎ beyond the rₙ-th. Prove that ‖T − S‖ ≥ τₙ, where ‖·‖ is the square root of the sum of
-          squared entries.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that unfolding only rearranges entries, so ‖T − S‖ = ‖T₍ₙ₎ − S₍ₙ₎‖_F, and that unfolding is linear so (T − S)₍ₙ₎ = T₍ₙ₎ − S₍ₙ₎.",
-          "Uses that S₍ₙ₎ has rank at most rₙ.",
-          "Applies Eckart–Young (Frobenius form): the distance from T₍ₙ₎ to any matrix of rank at most rₙ is at least the square root of the sum of the squared singular values beyond rₙ, which is τₙ.",
-        ],
-      },
-    },
-    {
       key: "tuckerstore",
       rung: "stretch",
       prompt: (

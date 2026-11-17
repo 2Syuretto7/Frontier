@@ -280,19 +280,6 @@ assert m == 2.0 and abs(s - 0.5) < 2e-3` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Assuming x₁ and x₂ are conditionally independent given θ, prove that updating sequentially (first with x₁, then with x₂) gives the same posterior as updating once with (x₁, x₂).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the batch posterior as proportional to p(x₁, x₂ | θ)π(θ) and factorises the likelihood by conditional independence.",
-          "Recognises p(x₁ | θ)π(θ) as proportional to π(θ | x₁), so the batch posterior is proportional to p(x₂ | θ)π(θ | x₁), the sequential posterior.",
-          "Argues the normalising constants must agree because both are probability densities in θ.",
-        ],
-      },
-    },
-    {
       key: "gt",
       rung: "stretch",
       prompt: <p>With a uniform prior on a coin&apos;s bias θ and one head in one flip, what is the posterior probability that θ &gt; 0.5?</p>,

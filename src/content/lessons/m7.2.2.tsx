@@ -306,24 +306,6 @@ assert g.min() >= 1 and abs(g.mean() - 1 / 0.3) < 0.03 and abs(np.mean(g > 4) - 
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that for fixed λ &gt; 0 and fixed k, <M>{"\\binom{n}{k}(\\lambda/n)^k(1-\\lambda/n)^{n-k} \\to e^{-\\lambda}\\lambda^k/k!"}</M>{" "}
-          as n → ∞.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Rewrites the expression as (λᵏ/k!) · [n(n−1)⋯(n−k+1)/nᵏ] · (1 − λ/n)ⁿ · (1 − λ/n)^(−k).",
-          "Shows n(n−1)⋯(n−k+1)/nᵏ → 1 because it is a product of k factors (1 − j/n), with k fixed.",
-          "Uses (1 − λ/n)ⁿ → e^(−λ) and (1 − λ/n)^(−k) → 1, and combines the limits.",
-        ],
-      },
-    },
-    {
       key: "requests",
       rung: "stretch",
       prompt: (

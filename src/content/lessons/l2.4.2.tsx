@@ -281,19 +281,6 @@ assert p.shape == (2,) and p[0] < p[1] and np.all(bagged(x, np.full(10, 3.0), np
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>For a random prediction f̂ with mean f̄ and a fixed target y, prove that E(f̂ − y)² = (f̄ − y)² + Var(f̂), and conclude that the averaged prediction f̄ has squared error no larger than E(f̂ − y)².</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes f̂ − y = (f̂ − f̄) + (f̄ − y) and expands the square.",
-          "Shows the cross term has expectation zero because E(f̂ − f̄) = 0.",
-          "Identifies E(f̂ − f̄)² as Var(f̂) ≥ 0 and concludes (f̄ − y)² ≤ E(f̂ − y)².",
-        ],
-      },
-    },
-    {
       key: "oob",
       rung: "stretch",
       prompt: <p>With 200 bootstrap trees, about how many of them leave out a given training point, using the limiting out-of-bag probability e⁻¹? Give one decimal place.</p>,

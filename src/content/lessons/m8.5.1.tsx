@@ -266,24 +266,6 @@ assert disagree(lambda x: x, lambda n: 1 / n, lambda n: -1 / n, 4) == 0.5` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove: if <M>{"\\lim_{x \\to c} f(x) = L"}</M> and <M>{"x_n \\to c"}</M> with <M>{"x_n \\neq c"}</M>, then{" "}
-          <M>{"f(x_n) \\to L"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Fixes ε > 0 and takes δ from the definition of the functional limit.",
-          "Uses convergence of x_n to find N with |x_n − c| < δ for n ≥ N.",
-          "Uses x_n ≠ c to get 0 < |x_n − c| < δ, hence |f(x_n) − L| < ε for n ≥ N.",
-        ],
-      },
-    },
-    {
       key: "power",
       rung: "stretch",
       prompt: <p>What does find_delta(lambda x: x * x, 2, 4, 0.01) return? Give the exact decimal.</p>,

@@ -252,24 +252,6 @@ def lip_bound(ws):
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if f is <M>{"K_1"}</M>-Lipschitz and g is <M>{"K_2"}</M>-Lipschitz then g ∘ f is{" "}
-          <M>{"K_1 K_2"}</M>-Lipschitz, and that √x is not Lipschitz on [0, 1].
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Applies the Lipschitz bound for g to the points f(x), f(y), then the bound for f, to get |g(f(x)) − g(f(y))| ≤ K₁K₂|x − y|.",
-          "For √x, computes the secant slope from 0 to x as 1/√x.",
-          "Concludes that 1/√x is unbounded as x → 0, so no constant K works.",
-        ],
-      },
-    },
-    {
       key: "grid",
       rung: "stretch",
       prompt: <p>What does lip_estimate(math.sqrt, [i / 1000 for i in range(1001)]) return? Give two decimal places.</p>,

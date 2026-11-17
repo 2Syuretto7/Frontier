@@ -309,24 +309,6 @@ assert len(ts) == 158 and all(a * a + b * b == c * c and math.gcd(a, b) == 1 for
       },
     },
     {
-      key: "exterior",
-      rung: "prove",
-      prompt: (
-        <p>
-          Extend one side of a triangle beyond a vertex. Prove that the angle formed outside the triangle, the{" "}
-          <em>exterior angle</em>, equals the sum of the two interior angles at the other two vertices.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that the exterior angle and the interior angle at the same vertex lie along a line, so add to 180°.",
-          "Uses the angle sum: the three interior angles add to 180°.",
-          "Subtracts to conclude the exterior angle equals the sum of the other two interior angles.",
-        ],
-      },
-    },
-    {
       key: "space-diagonal",
       rung: "stretch",
       prompt: (

@@ -262,19 +262,6 @@ assert u < 0.01 and abs(p - 0.05) < 0.02` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>For iid pairs (aᵢ, bᵢ) of 0/1 outcomes, prove that Var(ā − b̄) = (Var(a) + Var(b) − 2Cov(a, b))/n, and conclude that the unpaired standard error √((Var(a) + Var(b))/n) is too large whenever Cov(a, b) &gt; 0.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes ā − b̄ as the mean of the iid differences dᵢ = aᵢ − bᵢ, so its variance is Var(d)/n.",
-          "Expands Var(a − b) = Var(a) + Var(b) − 2Cov(a, b).",
-          "Concludes that a positive covariance makes the true variance smaller than (Var(a) + Var(b))/n, so the unpaired formula overstates the standard error.",
-        ],
-      },
-    },
-    {
       key: "deff",
       rung: "stretch",
       prompt: <p>A benchmark has 1000 questions in clusters of 10 with intra-cluster correlation 0.2. What is the effective sample size n/(1 + (m − 1)ρ)? Give two decimal places.</p>,

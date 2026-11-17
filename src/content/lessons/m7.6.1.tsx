@@ -295,25 +295,6 @@ assert isinstance(mse(np.ones(3), np.ones(3)), float) and mse(np.ones(3), np.one
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          X and Y are discrete with finite means, and h is any function with h(X)Y integrable. Prove that{" "}
-          <M>{"E[h(X)Y \\mid X = x] = h(x)\\,E[Y \\mid X = x]"}</M> for every x with <M>{"P(X = x) > 0"}</M>, and that if X and Y
-          are independent then <M>{"E[Y \\mid X] = E[Y]"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes E[h(X)Y | X = x] as a sum over (x', y) of h(x')y P(X = x', Y = y)/P(X = x) and notes only x' = x contributes.",
-          "Pulls the constant h(x) out of the remaining sum to get h(x) Σ_y y P(Y = y | X = x) = h(x) E[Y | X = x].",
-          "For independence, uses P(Y = y | X = x) = P(Y = y) to get E[Y | X = x] = E[Y] for every x, so E[Y | X] is the constant E[Y].",
-        ],
-      },
-    },
-    {
       key: "stick",
       rung: "stretch",
       prompt: (

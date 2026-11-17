@@ -313,24 +313,6 @@ assert classify_critical(np.array([[1.0, 2.0], [2.0, 1.0]])) == "saddle"` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that for a real symmetric S and any invertible P, the matrices S and PᵀSP have the same number of positive
-          eigenvalues.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Characterises n₊(S) basis-free, as the largest dimension of a subspace W with xᵀSx > 0 for all nonzero x ∈ W (justifying it with an eigenbasis: the positive eigenvectors give such a W, and any larger W meets the span of the non-positive eigenvectors).",
-          "Notes that x ↦ Px maps subspaces on which PᵀSP is positive definite to subspaces of the same dimension on which S is positive definite, and P⁻¹ does the reverse.",
-          "Concludes n₊(PᵀSP) = n₊(S).",
-        ],
-      },
-    },
-    {
       key: "pivot",
       rung: "stretch",
       prompt: <p>What is the last pivot of symmetric elimination on [[2, 1, 1], [1, 2, 1], [1, 1, 2]]? Give 4 decimal places.</p>,

@@ -299,19 +299,6 @@ assert list(hard_assign(x, [0.0, 10.0])) == [0, 0, 1, 1] and np.allclose(kmeans_
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that one iteration of EM (E-step then M-step) never decreases the log-likelihood of a mixture model.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses Jensen's inequality to show that for any distribution q over components, log p(x | φ) ≥ Σ_k q_k log(p(x, k | φ)/q_k) for every φ.",
-          "Shows that with q equal to the responsibilities at the current θ the bound is an equality at φ = θ.",
-          "Argues the M-step maximises this bound over φ, so ℓ(θ′) ≥ B(θ′) ≥ B(θ) = ℓ(θ).",
-        ],
-      },
-    },
-    {
       key: "var",
       rung: "stretch",
       prompt: <p>With responsibilities 0.9, 0.8, 0.2, 0.1 for data 0, 1, 4, 5, what is the updated variance σ₁²? Give four decimal places.</p>,

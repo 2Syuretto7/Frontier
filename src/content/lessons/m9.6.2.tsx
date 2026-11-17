@@ -276,19 +276,6 @@ assert ls < 1e-5 and ne > 100 * ls` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove the Gauss-Markov theorem: if E[y] = Xβ and Cov(y) = σ²I, then any linear unbiased estimator Cy of β has Cov(Cy) − σ²(XᵀX)⁻¹ positive semidefinite.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses unbiasedness for every β to derive CX = I, and writes C = (XᵀX)⁻¹Xᵀ + D with DX = 0.",
-          "Computes Cov(Cy) = σ²CCᵀ and shows the cross terms vanish because DX = 0 (equivalently XᵀDᵀ = 0).",
-          "Concludes Cov(Cy) = σ²(XᵀX)⁻¹ + σ²DDᵀ, and DDᵀ is positive semidefinite.",
-        ],
-      },
-    },
-    {
       key: "avg",
       rung: "stretch",
       prompt: <p>A regression has n = 50 observations and p = 5 columns. What is the average leverage?</p>,

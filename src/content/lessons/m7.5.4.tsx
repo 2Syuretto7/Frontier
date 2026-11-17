@@ -292,24 +292,6 @@ assert abs(np.mean(y) ) < 0.01 and abs(np.std(y) - 1) < 0.01 and 0.48 < np.mean(
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          (X, Y) is bivariate normal with positive definite diagonal covariance matrix diag(σ₁², σ₂²). Using the density
-          formula, prove that X and Y are independent.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the density with Σ⁻¹ = diag(1/σ₁², 1/σ₂²) and det Σ = σ₁²σ₂², so the quadratic form is (x − μ₁)²/σ₁² + (y − μ₂)²/σ₂².",
-          "Shows the density factorises as the product of the N(μ₁, σ₁²) density in x and the N(μ₂, σ₂²) density in y.",
-          "Concludes independence because the joint density is the product of the marginal densities.",
-        ],
-      },
-    },
-    {
       key: "orthant",
       rung: "stretch",
       prompt: (

@@ -339,24 +339,6 @@ assert np.allclose(a.grad, num, atol=1e-8), (a.grad, num)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let y = f(a) where f is a scalar function applied to each entry of the array a, and let L be a scalar depending on
-          y. Show that ∂L/∂a = f′(a) ⊙ ∂L/∂y, so that the closure never needs the full Jacobian.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Observes that yᵢ = f(aᵢ) depends only on aᵢ, so ∂yⱼ/∂aᵢ = 0 for j ≠ i and ∂yᵢ/∂aᵢ = f′(aᵢ): the Jacobian is diagonal.",
-          "Applies the chain rule: ∂L/∂aᵢ = Σⱼ (∂L/∂yⱼ)(∂yⱼ/∂aᵢ), which collapses to (∂L/∂yᵢ) f′(aᵢ).",
-          "Concludes the result is the elementwise product f′(a) ⊙ ∂L/∂y, computed in O(n) without forming the n × n Jacobian.",
-        ],
-      },
-    },
-    {
       key: "bytes",
       rung: "stretch",
       prompt: <p>How many megabytes (10⁶ bytes) does a float64 array of shape (1000, 1000) occupy? A Tensor of that shape stores two.</p>,

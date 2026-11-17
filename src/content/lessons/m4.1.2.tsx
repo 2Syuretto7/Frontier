@@ -273,24 +273,6 @@ except ValueError:
       },
     },
     {
-      key: "symmetry",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"\\binom{n}{r} = \\binom{n}{n-r}"}</M> twice: once from the formula, and once by a bijection between
-          r-element subsets and (n − r)-element subsets.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Algebra: substituting n − r for r in n!/(r!(n − r)!) gives the same expression.",
-          "Bijection: sends a subset to its complement, which has n − r elements.",
-          "Checks the complement map is its own inverse, so it is a bijection, and concludes the counts are equal.",
-        ],
-      },
-    },
-    {
       key: "necklace",
       rung: "stretch",
       prompt: <p>In how many ways can 6 people sit round a circular table if two particular people refuse to sit next to each other? Rotations count as the same.</p>,

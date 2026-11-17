@@ -270,19 +270,6 @@ assert all(x > y for x, y in zip(a, b)) and abs(a[1] - 0.327) < 0.02` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove the Neyman-Pearson lemma: if the test rejecting when f₁(x) &gt; k f₀(x) has size α, then no test of level α has greater power.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Lets φ* be the likelihood ratio test and φ any level α test (values in [0, 1]).",
-          "Shows (φ* − φ)(f₁ − k f₀) ≥ 0 pointwise by considering the cases f₁ > k f₀ and f₁ ≤ k f₀.",
-          "Integrates to get ∫(φ* − φ) f₁ ≥ k(α − ∫ φ f₀) ≥ 0, so the power of φ* is at least that of φ.",
-        ],
-      },
-    },
-    {
       key: "pow",
       rung: "stretch",
       prompt: <p>With n = 4 observations from N(μ, 1), the most powerful size 0.05 test of μ = 0 against μ = 1 rejects when X̄ &gt; 1.645/2. What is its power? Give three decimal places.</p>,

@@ -249,25 +249,6 @@ assert patch([], ['+ new']) == ['new']` },
       },
     },
     {
-      key: "review",
-      rung: "prove",
-      prompt: (
-        <p>
-          You review a pull request that changes how the training loss is averaged across GPUs. Describe what you would check,
-          in order, and write one example review comment that is specific and constructive.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Checks correctness first: whether the average is over all examples or over per-GPU means, and edge cases such as an uneven last batch.",
-          "Checks that tests cover the change, ideally comparing against a single-device computation.",
-          "Checks clarity: names, comments and the description explaining why.",
-          "Writes a comment that points to a line, explains the problem and suggests a fix, without vague criticism.",
-        ],
-      },
-    },
-    {
       key: "u",
       rung: "stretch",
       prompt: <p>What does the <C>-u</C> in <C>git push -u origin my-branch</C> do?</p>,

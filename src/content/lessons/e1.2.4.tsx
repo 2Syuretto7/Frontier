@@ -226,25 +226,6 @@ assert blame([('only', [])]) == []` },
       },
     },
     {
-      key: "assume",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why bisect needs about <C>log₂ n</C> tests, and describe two situations in which it would name the wrong
-          commit. How would you guard against each?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains that each test, if the property is monotone, rules out half of the remaining candidates, so after k tests about n / 2^k remain.",
-          "Concludes that k ≈ log₂ n tests reduce the candidates to one.",
-          "Names a flaky or non-deterministic test (for example unseeded training) and guards by fixing seeds or repeating runs.",
-          "Names a bug that appears, disappears and reappears, or several causes, and guards by checking the found commit and its neighbours directly.",
-        ],
-      },
-    },
-    {
       key: "three",
       rung: "stretch",
       prompt: <p>From the puzzle: what is the fewest number of tests guaranteed to find the culprit among 300 candidate commits?</p>,

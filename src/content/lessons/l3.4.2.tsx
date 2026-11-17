@@ -255,19 +255,6 @@ assert abs(act_second_moment(lambda z: z ** 2) - 3) < 1e-5` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that if a is symmetric about 0, then E[relu(a)²] = ½E[a²], and deduce the He variance for a ReLU layer.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes relu(a)² = a²·[a > 0] and uses symmetry to show E[a²[a > 0]] = E[a²[a < 0]].",
-          "Adds the two to get E[a²] (noting a = 0 contributes nothing), so each is ½E[a²].",
-          "Deduces the next pre-activation variance is n·σ_w²·½v and setting it to v gives σ_w² = 2/n.",
-        ],
-      },
-    },
-    {
       key: "lim",
       rung: "stretch",
       prompt: <p>He initialisation with a uniform distribution on [−b, b] for a layer with 600 inputs: what is b?</p>,

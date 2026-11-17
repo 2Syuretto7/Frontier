@@ -215,25 +215,6 @@ assert not dominates(lambda n: math.log(3) + 2 * math.log(n), lambda n: 2 * math
       },
     },
     {
-      key: "lnpower",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"\\ln x / x^a \\to 0"}</M> as <M>{"x \\to \\infty"}</M> for every <M>{"a > 0"}</M>, and deduce that{" "}
-          <M>{"x^{1/x} \\to 1"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes the ratio has the form ∞/∞, so L'Hôpital's rule applies.",
-          "Differentiates top and bottom to get (1/x)/(a x^(a−1)) = 1/(a xᵃ), which tends to 0.",
-          "Writes x^(1/x) = e^((ln x)/x) and uses the result with a = 1.",
-          "Uses continuity of the exponential to conclude the limit is e⁰ = 1.",
-        ],
-      },
-    },
-    {
       key: "scaling",
       rung: "stretch",
       prompt: (

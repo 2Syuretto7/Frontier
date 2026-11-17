@@ -271,19 +271,6 @@ assert b == 1 and isinstance(b, int)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that the bias-corrected EMA m_t/(1 − βᵗ), with m₀ = 0, equals c at every step when every input equals c.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Unrolls the recurrence to m_t = (1 − β)Σ βᵗ⁻ˢ x_s, or proves m_t = (1 − βᵗ)c by induction.",
-          "Sums the geometric series (1 − β)Σₖ₌₀ᵗ⁻¹ βᵏ = 1 − βᵗ.",
-          "Divides by 1 − βᵗ to obtain c.",
-        ],
-      },
-    },
-    {
       key: "lag",
       rung: "stretch",
       prompt: <p>The loss drops suddenly from 2 to 1 and stays there. With β = 0.9 (and many earlier steps at 2), after how many steps has the EMA fallen below 1.1? Give the smallest whole number.</p>,

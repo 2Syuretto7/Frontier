@@ -466,34 +466,6 @@ assert check(t) < 60, 'Random priorities keep even sorted insertions shallow.'` 
         ],
       },
     },
-    {
-      key: "avl-height",
-      rung: "prove",
-      prompt: <p>Let N(h) be the minimum number of nodes in an AVL tree of height h. Prove that N(h) = N(h − 1) + N(h − 2) + 1, and deduce that the height of an AVL tree with n nodes is O(log n).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "A tree of height h has a subtree of height h − 1; by the AVL condition the other has height at least h − 2.",
-          "A minimal tree uses minimal subtrees of heights exactly h − 1 and h − 2, giving the recurrence (and both bounds).",
-          "Shows N(h) + 1 follows the Fibonacci recurrence, so N(h) grows like φ^h, e.g. N(h) ≥ φ^h by induction.",
-          "Concludes n ≥ N(h) ≥ φ^h, so h ≤ log_φ n ≈ 1.44 log₂ n.",
-        ],
-      },
-    },
-    {
-      key: "rb-height",
-      rung: "stretch",
-      prompt: <p>Prove that a red-black tree with n internal nodes has height at most 2 log₂(n + 1).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Defines the black-height bh(x): the number of black nodes on any path from x down to an empty leaf, not counting x.",
-          "Proves by induction on height that the subtree at x contains at least 2^{bh(x)} − 1 internal nodes.",
-          "Since a red node has black children, at least half the nodes on any root-to-leaf path are black, so bh(root) ≥ h/2.",
-          "Combines: n ≥ 2^{h/2} − 1, so h ≤ 2 log₂(n + 1).",
-        ],
-      },
-    },
   ],
 
   glimpse: (

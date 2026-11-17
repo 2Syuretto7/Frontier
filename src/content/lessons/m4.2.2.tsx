@@ -272,25 +272,6 @@ assert kth_term([1, 1], [0, 1], 10 ** 18, M) == fd(10 ** 18)[0], 'F at 10¹⁸ b
       },
     },
     {
-      key: "verify",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if r is a root of <M>{"x^2 = px + q"}</M> then <M>{"a_n = r^n"}</M> satisfies{" "}
-          <M>{"a_n = pa_{n-1} + qa_{n-2}"}</M>, and that any combination <M>{"Ar_1^n + Br_2^n"}</M> of two such solutions does
-          too.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Multiplies r² = pr + q by rⁿ⁻² to get rⁿ = p rⁿ⁻¹ + q rⁿ⁻².",
-          "Writes the recurrence for A r₁ⁿ + B r₂ⁿ and splits it into A times one identity plus B times the other.",
-          "Names linearity of the recurrence as the reason combinations of solutions are solutions.",
-        ],
-      },
-    },
-    {
       key: "strings",
       rung: "stretch",
       prompt: <p>How many binary strings of length 10 have no two consecutive 1s?</p>,

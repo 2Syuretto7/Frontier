@@ -255,25 +255,6 @@ def triangle_perimeter(a, b):
       },
     },
     {
-      key: "why",
-      rung: "prove",
-      prompt: (
-        <p>
-          A program prints a formatted receipt in four different places, using the same six lines each time. Explain three
-          concrete benefits of moving those lines into a function, and describe what the program would look like afterwards.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that a change or fix is made once, in the function, instead of in four places that could drift apart.",
-          "Notes that a well-chosen name makes the calling code read as a description of what happens.",
-          "Notes that the function can be understood and tested on its own.",
-          "Describes one def with the six lines, possibly with parameters for what differs, and four short calls.",
-        ],
-      },
-    },
-    {
       key: "calls",
       rung: "stretch",
       prompt: (

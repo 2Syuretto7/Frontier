@@ -362,46 +362,6 @@ assert (r.p, r.q) == (1, 3)` },
         ],
       },
     },
-    {
-      key: "contract",
-      rung: "prove",
-      prompt: (
-        <p>
-          A table with separate chaining finds a key k by computing <M>{"i = h(k) \\bmod m"}</M> and comparing k with each key
-          in chain i. Prove that if some pair of keys has <C>a == b</C> but <M>{"h(a) \\ne h(b)"}</M>, then for some table size
-          m, inserting a and then looking up b fails, and explain why mutating a stored key breaks lookups in the same way.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Chooses m larger than |h(a) − h(b)| (or any m not dividing the difference), so a and b go to different chains.",
-          "Looking up b searches only chain h(b) mod m, which does not contain a, so b is reported absent though a == b is stored.",
-          "Mutating a stored key changes its hash (or its equality), so later lookups go to a chain that does not hold it, or compare unequal.",
-          "Concludes that a == b must imply h(a) == h(b), and hashes of stored keys must not change.",
-        ],
-      },
-    },
-    {
-      key: "flooding",
-      rung: "stretch",
-      prompt: (
-        <p>
-          In 2011 attackers took down web servers by sending HTTP requests with thousands of form fields whose names all
-          collided in the server&rsquo;s string hash. Explain why this makes parsing one request quadratic, and why giving the
-          hash a secret random key, as Python now does, defeats the attack.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "If n keys share a hash, they all land in one chain or probe sequence, so the i-th insertion compares with up to i keys: Θ(n²) for the request.",
-          "With a fixed, public hash function an attacker can precompute many colliding strings offline.",
-          "A keyed hash (such as SipHash with a random key per process) makes collisions unpredictable without the key.",
-          "So the attacker cannot choose colliding names, and keys behave like random ones, restoring O(1) expected operations.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

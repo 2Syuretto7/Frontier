@@ -298,19 +298,6 @@ assert np.allclose(ml, 0.9 * 0.1 + 0.1 * 0.6) and np.allclose(xl, adam_step(x, g
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that, ignoring ε, multiplying all of a parameter's gradients by c &gt; 0 does not change Adam's updates to that parameter.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows by induction (or by writing m and v as weighted sums) that the scaled run has m scaled by c and v scaled by c².",
-          "Notes the bias corrections do not depend on the gradients, so m̂ scales by c and √v̂ by c (using c > 0).",
-          "Concludes m̂/√v̂ and hence every update, and the whole trajectory, are unchanged.",
-        ],
-      },
-    },
-    {
       key: "decay",
       rung: "stretch",
       prompt: <p>AdamW with η = 0.001 and λ = 0.1, and no loss gradient: what fraction of a weight remains after 10 000 steps? Give 4 decimal places.</p>,

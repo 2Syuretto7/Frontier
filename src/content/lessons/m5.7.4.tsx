@@ -257,26 +257,6 @@ assert mc_ball_volume(25, 100000) < 0.01, 'In 25 dimensions almost no point land
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the Monte Carlo estimator <M>{"\\hat I_N"}</M> is unbiased with variance <M>{"\\sigma^2/N"}</M>, and use
-          Chebyshev&rsquo;s inequality to bound <M>{"P(|\\hat I_N - I| \\ge t)"}</M>. Point out where the dimension would enter,
-          and why it does not.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses linearity of expectation: E[Î_N] = (1/N) Σ E f(X_k) = I.",
-          "Uses independence so variances add: Var(Î_N) = (1/N²) · N σ² = σ²/N.",
-          "Applies Chebyshev: P(|Î_N − I| ≥ t) ≤ σ²/(N t²).",
-          "Notes the dimension enters only through σ², the variance of f(X), not through N or the rate.",
-        ],
-      },
-    },
-    {
       key: "v5",
       rung: "stretch",
       prompt: <p>What is the volume of the unit ball in <M>{"\\mathbb R^5"}</M>? Give three decimal places.</p>,

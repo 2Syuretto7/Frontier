@@ -250,19 +250,6 @@ assert np.all(sigmoid_grad(np.linspace(-10, 10, 101)) <= 0.25)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that σ′(x) = σ(x)(1 − σ(x)) and that it never exceeds 1/4, with equality only at x = 0.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Differentiates σ(x) = 1/(1 + e⁻ˣ) to get e⁻ˣ/(1 + e⁻ˣ)² and rewrites it as σ(x)(1 − σ(x)).",
-          "Bounds s(1 − s) for s in (0, 1): s(1 − s) = 1/4 − (s − 1/2)² ≤ 1/4 (or by AM–GM or calculus).",
-          "Identifies equality exactly when σ(x) = 1/2, that is x = 0.",
-        ],
-      },
-    },
-    {
       key: "silumin",
       rung: "stretch",
       prompt: <p>SiLU(x) = x·σ(x) has a single minimum. What is its value, to two decimal places?</p>,

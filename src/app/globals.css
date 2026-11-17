@@ -595,14 +595,12 @@ label { font-size: 13px; font-weight: 500; color: var(--text); }
 .rung { font-family: var(--font-mono); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; font-size: 11px; height: 20px; padding: 0 6px; display: inline-flex; align-items: center; border: 1px solid var(--border); border-radius: var(--radius); }
 .rung-check { color: var(--text-muted); }
 .rung-apply { color: var(--text); border-color: var(--border-strong); }
-.rung-prove { color: var(--link); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
 .rung-stretch { color: var(--text-faint); border-style: dashed; }
 .exercise-prompt { font-family: var(--font-serif); font-size: 17px; line-height: 1.6; margin-bottom: 16px; }
 .exercise-prompt p { margin: 0 0 12px; }
 .exercise-prompt p:last-child { margin-bottom: 0; }
 .exercise-form { display: grid; gap: 12px; }
 .answer-input { max-width: 380px; font-family: var(--font-mono); font-size: 14px; }
-.textarea { height: auto; padding: 12px; line-height: 1.6; resize: vertical; font-family: var(--font-sans); }
 .choices { display: grid; gap: 0; border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
 .choice {
   display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-top: 1px solid var(--border);
@@ -619,11 +617,6 @@ label { font-size: 13px; font-weight: 500; color: var(--text); }
 .feedback-right { background: var(--success-soft); color: var(--success); }
 .feedback-wrong { background: var(--danger-soft); color: var(--danger); }
 .feedback-info { background: var(--overlay); color: var(--text-muted); }
-.answer-box-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
-.answer-box-bar .btn { gap: 6px; }
-.answer-box-bar .btn.is-listening { color: var(--danger); border-color: var(--danger); }
-.answer-box-hint { flex: 1 1 12rem; min-width: 0; margin: 0; }
-@media (pointer: coarse) { .kbd-hint { display: none; } }
 .connections { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1px; margin-top: 16px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
 .connections > div { background: var(--bg); padding: 20px; }
 .connections h3 { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 12px; color: var(--text-faint); }
@@ -790,11 +783,6 @@ label { font-size: 13px; font-weight: 500; color: var(--text); }
 .parton-keys { margin: 8px 0 0; font-size: 11.5px; }
 .parton-keys kbd { font: 500 11px/1 var(--font-mono); border: 1px solid var(--border); border-radius: var(--radius); padding: 1px 4px; }
 
-.parton-feedback { margin: 16px 0 0; padding: 14px 16px; border: 1px solid var(--border); border-left: 2px solid var(--accent); border-radius: var(--radius-md); background: var(--bg-subtle); font-size: 14.5px; }
-.parton-feedback-head { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font-weight: 500; font-size: 13.5px; }
-.parton-feedback-sub { margin: 12px 0 4px; font-weight: 500; font-size: 13.5px; }
-.parton-questions { margin: 0 0 8px; padding-left: 20px; }
-.parton-questions li { margin-bottom: 6px; }
 
 @media (max-width: 720px) {
   .parton-launcher { right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); }

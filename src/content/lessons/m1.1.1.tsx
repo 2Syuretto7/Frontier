@@ -259,25 +259,6 @@ assert ' if ' not in src and '==' not in src and '<=' not in src, 'Build it from
       },
     },
     {
-      key: "vacuous",
-      rung: "prove",
-      prompt: (
-        <p>
-          A friend says it is absurd that &ldquo;if 2 + 2 = 5, then the moon is made of paneer&rdquo; counts as true. Explain,
-          as convincingly as you can, why mathematicians nevertheless define <M>{"P \\to Q"}</M> to be true when P is false.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that the conditional is only broken when P is true and Q is false.",
-          "Gives the promise analogy, or a similar everyday case.",
-          "Explains the role of general statements: 'for every n, if P(n) then Q(n)' needs instances with false P(n) to be true.",
-          "Acknowledges the oddity, noting that the material conditional does not claim a connection between P and Q.",
-        ],
-      },
-    },
-    {
       key: "xor",
       rung: "stretch",
       prompt: <p>Which formula is true exactly when one, but not both, of P and Q is true?</p>,

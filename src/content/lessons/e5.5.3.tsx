@@ -292,25 +292,6 @@ assert s == sum(float(i % 7) for i in range(256)) and k == 8` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          A block holds n = 2ᵏ values. At each step, every position t below the current stride s adds position t + s into
-          itself, and s goes n/2, n/4, …, 1. Prove that position 0 ends with the sum of all n values, after k steps and n − 1
-          additions.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "States an invariant: before the step with stride s, positions 0 to 2s − 1 hold values whose total is the sum of all n inputs.",
-          "Shows the step preserves it: adding t + s into t for t < s moves the total into positions 0 to s − 1, so the invariant holds for stride s/2.",
-          "Concludes after stride 1 that position 0 holds the total, and counts k steps and n/2 + n/4 + … + 1 = n − 1 additions.",
-        ],
-      },
-    },
-    {
       key: "warp",
       rung: "stretch",
       prompt: <p>How many threads are in a warp on NVIDIA GPUs?</p>,

@@ -444,34 +444,6 @@ for f, err in [(lambda: unlink(fs, '/y'), FileNotFoundError), (lambda: link(fs, 
         ],
       },
     },
-    {
-      key: "atomic",
-      rung: "prove",
-      prompt: <p>A program saves a checkpoint by writing it to <C>ckpt.tmp</C>, calling fsync on it, and then <C>os.replace(&apos;ckpt.tmp&apos;, &apos;ckpt&apos;)</C>. Assuming rename is atomic and fsync guarantees the data is on disk, prove that after a crash at any moment, <C>ckpt</C> holds either the complete old checkpoint or the complete new one.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Before the rename, the name ckpt still refers to the old inode, which was never modified, so a crash leaves the old checkpoint intact.",
-          "Atomicity of rename means there is no moment at which ckpt names a partial mixture: it names the old inode or the new one.",
-          "The fsync before the rename ensures that when ckpt names the new inode, all its data blocks are already on disk.",
-          "Notes that without the fsync, a crash could leave ckpt naming a new inode whose data was never written, e.g. zero-length; strictly the directory should also be fsynced to make the rename durable.",
-        ],
-      },
-    },
-    {
-      key: "journal",
-      rung: "stretch",
-      prompt: <p>A journaling file system writes (1) the new inode, bitmap and directory blocks to the journal, (2) a commit record, then (3) the blocks to their real locations, and finally (4) frees the journal entry. For a crash after each step, say what recovery does and why the file system ends consistent. Why must step 2 not start until step 1 is on disk?</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Crash during or after step 1 but before the commit: the entry is incomplete, recovery discards it, and the file system is in its old consistent state.",
-          "Crash after step 2: the committed entry is replayed, writing every block to its real location (replay is idempotent), giving the new consistent state.",
-          "Crash during step 3 or 4: same as after step 2; replaying again is harmless.",
-          "If the commit record could reach disk before the journal blocks, a crash could leave a commit pointing at garbage, which recovery would copy into the file system: hence a write barrier or flush between steps 1 and 2.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

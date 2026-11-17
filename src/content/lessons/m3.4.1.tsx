@@ -257,24 +257,6 @@ assert is_subspace(member, sample, 50, 2), 'Symmetric matrices form a subspace.'
       },
     },
     {
-      key: "intersect",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the intersection of two subspaces S and T is a subspace. Then give an example showing that their union need
-          not be.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that 0 is in both S and T, so in the intersection.",
-          "If u and v are in both, u + v and cu are in both by closure of each, so in the intersection.",
-          "Gives an example such as the x-axis and y-axis in ℝ², where (1, 0) + (0, 1) = (1, 1) is in neither.",
-        ],
-      },
-    },
-    {
       key: "sym",
       rung: "stretch",
       prompt: <p>Which of these are subspaces of the space of 2 × 2 matrices? Select all that apply.</p>,

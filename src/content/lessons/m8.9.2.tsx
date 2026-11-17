@@ -249,19 +249,6 @@ assert gaps([Fraction(1), Fraction(3, 2), Fraction(5, 4)]) == [0.5, 0.25]` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that a closed subset F of a complete metric space X is complete.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes a Cauchy sequence in F and notes it is also Cauchy in X.",
-          "Uses completeness of X to get a limit x ∈ X.",
-          "Uses that F is closed (contains the limits of its convergent sequences) to conclude x ∈ F.",
-        ],
-      },
-    },
-    {
       key: "n",
       rung: "stretch",
       prompt: <p>d₁ between the ramp fₙ and the unit step at 1/2 is 1/(4n). What is the smallest n with this below 0.001?</p>,

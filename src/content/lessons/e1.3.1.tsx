@@ -246,25 +246,6 @@ assert a == [1, [2, [3, 4]], 'x'] and b == [1, [2, [3, 4, 5]], 'x'] and b is not
       },
     },
     {
-      key: "fix",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain exactly why the <C>add</C> function above keeps growing the same list, and rewrite it so that each call
-          without a bucket gets a fresh one. Why is <C>None</C> a safe default when <C>[]</C> is not?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains that the default expression is evaluated once, when def runs, creating one list stored with the function.",
-          "Notes every call without a bucket binds the parameter to that same mutable list, so appends accumulate.",
-          "Rewrites with bucket=None and, inside, if bucket is None: bucket = [].",
-          "Explains None is immutable, so sharing it between calls can never leak state.",
-        ],
-      },
-    },
-    {
       key: "tuple",
       rung: "stretch",
       prompt: <p><C>a = (1, [2])</C>, then <C>a[1].append(3)</C>. Tuples are immutable, yet this runs. What is <C>len(a[1])</C>?</p>,

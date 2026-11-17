@@ -244,26 +244,6 @@ for _ in range(300):
       },
     },
     {
-      key: "lines",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why a line chart of training loss may use an axis that does not start at zero, while a bar chart of two
-          accuracies may not. Then explain why showing the spread over several seeds can change the conclusion drawn from two
-          bars.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains that lines and points encode values by position, which can be read against any labelled axis.",
-          "Explains that bars encode by length from the baseline, so a truncated axis distorts the ratio of the values.",
-          "Explains that a single run per method hides seed-to-seed variation.",
-          "Notes that if the spread is comparable to the difference, the difference may be noise, so the claim needs more runs or a test.",
-        ],
-      },
-    },
-    {
       key: "se",
       rung: "stretch",
       prompt: (

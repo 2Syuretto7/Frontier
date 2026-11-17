@@ -82,8 +82,7 @@ export const lesson: LessonContent = {
       </Theorem>
       <p>
         Ridge scales every coefficient by the same factor and never reaches zero. Lasso subtracts <M>{"\\lambda"}</M> from
-        each size and stops at zero, called <strong>soft thresholding</strong>. You will derive the lasso formula in the
-        practice.
+        each size and stops at zero, called <strong>soft thresholding</strong>.
       </p>
 
       <Example title="the formulas in use">
@@ -267,25 +266,6 @@ w = lasso_cd(X, y, 0.1, 200)
 assert set(np.nonzero(np.abs(w) > 1e-10)[0].tolist()) == {3, 7}, 'The lasso keeps only the real features.'
 L = lambda_max(X, y)
 assert np.all(lasso_cd(X, y, L * (1 + 1e-9), 50) == 0) and np.any(lasso_cd(X, y, 0.99 * L, 50) != 0), 'λ_max is exactly where the first coefficient appears.'` },
-        ],
-      },
-    },
-    {
-      key: "soft",
-      rung: "prove",
-      prompt: (
-        <p>
-          Show that the minimiser of <M>{"\\tfrac12(w - z)^2 + \\lambda|w|"}</M> over real <M>w</M>, for <M>{"\\lambda > 0"}</M>, is{" "}
-          <M>{"\\operatorname{sign}(z)\\max(|z| - \\lambda, 0)"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "On w > 0, the derivative is w − z + λ, so a minimiser there is w = z − λ, which is valid only when z > λ.",
-          "On w < 0, symmetrically, w = z + λ, valid only when z < −λ.",
-          "When |z| ≤ λ, shows the function is decreasing for w < 0 and increasing for w > 0, so the minimum is at w = 0.",
-          "Combines the cases into sign(z) max(|z| − λ, 0), noting the objective is convex so the minimiser is unique.",
         ],
       },
     },

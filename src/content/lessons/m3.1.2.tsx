@@ -241,25 +241,6 @@ assert abs(r['tri']) < 1e-12 and abs(r['cs']) < 1e-12, 'Same direction: both are
       },
     },
     {
-      key: "triangle",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove the triangle inequality <M>{"\\|\\mathbf u + \\mathbf v\\| \\le \\|\\mathbf u\\| + \\|\\mathbf v\\|"}</M> from
-          Cauchy-Schwarz, and say when equality holds.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Expands ‖u + v‖² = ‖u‖² + 2 u·v + ‖v‖².",
-          "Bounds u·v ≤ |u·v| ≤ ‖u‖‖v‖ by Cauchy-Schwarz, giving ‖u + v‖² ≤ (‖u‖ + ‖v‖)².",
-          "Takes square roots, both sides being non-negative.",
-          "States that equality needs u·v = ‖u‖‖v‖, so one vector is a non-negative multiple of the other.",
-        ],
-      },
-    },
-    {
       key: "cube",
       rung: "stretch",
       prompt: (

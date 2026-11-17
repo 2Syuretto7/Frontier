@@ -230,25 +230,6 @@ assert np.allclose(out, correlate2d(img, ker, mode='valid')), 'A convolution lay
       },
     },
     {
-      key: "speed",
-      rung: "prove",
-      prompt: (
-        <p>
-          For a large C-order array, explain why summing each row is usually faster than summing each column, using strides and
-          cache lines. Then explain why <C>a.T.reshape(-1)</C> must copy while <C>a.reshape(-1)</C> need not.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that along a row the stride is the item size, so consecutive elements share cache lines.",
-          "Notes that down a column the stride is a whole row, so each element needs a new cache line and most fetched bytes are wasted.",
-          "Explains a.reshape(-1) on a contiguous array reads memory in order, so it can be a view with one stride.",
-          "Explains a.T's elements, read in row-major order of the transpose, are not evenly spaced in memory, so no single stride works and NumPy copies.",
-        ],
-      },
-    },
-    {
       key: "three",
       rung: "stretch",
       prompt: <p>What is the first stride of a <C>float32</C> array of shape <C>(2, 3, 4)</C> in C order?</p>,

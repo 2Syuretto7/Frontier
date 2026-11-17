@@ -248,38 +248,6 @@ assert inverse(lambda x: x, range(3), range(4)) is None, 'Injective but not onto
         ],
       },
     },
-    {
-      key: "union",
-      rung: "prove",
-      prompt: <p>Prove that <M>{"f(S_1 \\cup S_2) = f(S_1) \\cup f(S_2)"}</M> for any function f and subsets <M>{"S_1, S_2"}</M> of its domain.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows f(S₁ ∪ S₂) ⊆ f(S₁) ∪ f(S₂): an output f(s) with s in S₁ or S₂ lies in f(S₁) or f(S₂).",
-          "Shows the reverse inclusion similarly.",
-          "Concludes equality by double inclusion.",
-        ],
-      },
-    },
-    {
-      key: "inj-iff",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Prove that f is injective if and only if <M>{"f(S_1 \\cap S_2) = f(S_1) \\cap f(S_2)"}</M> for all subsets{" "}
-          <M>{"S_1, S_2"}</M> of the domain.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that f(S₁ ∩ S₂) ⊆ f(S₁) ∩ f(S₂) always holds.",
-          "If f is injective, takes b = f(s₁) = f(s₂) with sᵢ ∈ Sᵢ, deduces s₁ = s₂ ∈ S₁ ∩ S₂.",
-          "If f is not injective, with f(a₁) = f(a₂) and a₁ ≠ a₂, takes S₁ = {a₁} and S₂ = {a₂} to break the equality.",
-          "Concludes both directions.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

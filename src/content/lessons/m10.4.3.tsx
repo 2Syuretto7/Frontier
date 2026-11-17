@@ -278,24 +278,6 @@ for _ in range(200):
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          For a convex problem (f₀, fᵢ convex and differentiable, hⱼ affine), suppose x, λ, ν satisfy the KKT conditions.
-          Prove that x is optimal and that the duality gap is zero.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes L(·, λ, ν) is convex because λ ≥ 0 and the hⱼ are affine, and that stationarity makes its gradient zero at x, so x minimises it and g(λ, ν) = L(x, λ, ν).",
-          "Uses complementary slackness and hⱼ(x) = 0 to show L(x, λ, ν) = f₀(x).",
-          "Concludes g(λ, ν) = f₀(x) with x feasible and λ ≥ 0, so by weak duality x is optimal and the gap is zero.",
-        ],
-      },
-    },
-    {
       key: "lam",
       rung: "stretch",
       prompt: <p>Minimise x₁² + x₂² subject to x₁ + 2x₂ ≥ 5. What is the optimal multiplier λ?</p>,

@@ -50,8 +50,6 @@ const SCHEMA = [
      key TEXT PRIMARY KEY,
      value JSONB NOT NULL
    )`,
-  `ALTER TABLE exercise_state ADD COLUMN IF NOT EXISTS verdict TEXT`,
-  `ALTER TABLE exercise_state ADD COLUMN IF NOT EXISTS feedback TEXT`,
   `CREATE TABLE IF NOT EXISTS attempt_log (
      id SERIAL PRIMARY KEY,
      exercise_id TEXT NOT NULL,
@@ -82,6 +80,15 @@ const SCHEMA = [
   // Teach it back was removed: delete the saved explanations and Parton's reviews of them.
   `DELETE FROM writings WHERE kind = 'teachback'`,
   `DELETE FROM parton_notes WHERE kind = 'teachback'`,
+  // Written proofs and arguments (Prove or argue, and written stretch questions) were removed: delete the
+  // submitted answers, their attempts, practice state and review cards, and Parton's marks. Every
+  // submission was also saved in writings as kind 'answer', which identifies the exercises.
+  `DELETE FROM attempt_log WHERE exercise_id IN (SELECT exercise_id FROM writings WHERE kind = 'answer')`,
+  `DELETE FROM review_cards WHERE exercise_id IN (SELECT exercise_id FROM writings WHERE kind = 'answer')`,
+  `DELETE FROM exercise_state WHERE exercise_id IN (SELECT exercise_id FROM writings WHERE kind = 'answer')`,
+  `DELETE FROM writings WHERE kind = 'answer'`,
+  `ALTER TABLE exercise_state DROP COLUMN IF EXISTS verdict`,
+  `ALTER TABLE exercise_state DROP COLUMN IF EXISTS feedback`,
   // Recall questions Parton wrote for the start of a lesson. Kept for good, so none is ever asked twice.
   `CREATE TABLE IF NOT EXISTS recall_questions (
      id SERIAL PRIMARY KEY,

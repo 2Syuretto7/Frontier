@@ -324,34 +324,6 @@ assert smallest_period(s) == 2` },
         ],
       },
     },
-    {
-      key: "borders",
-      rung: "prove",
-      prompt: <p>Prove that if b is the longest border of a string s, then every other border of s is a border of b. Explain why this justifies the fallback k = π[k − 1].</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes a shorter border c of s; c is a prefix of s, so a prefix of b (as |c| < |b| and b is also a prefix of s).",
-          "c is a suffix of s and b is a suffix of s, so c is a suffix of b.",
-          "Being a proper prefix and a suffix of b, c is a border of b.",
-          "So the borders of p[0 : k] in decreasing length are π[k − 1], then π[π[k − 1] − 1], and so on, which is what the fallback loop visits.",
-        ],
-      },
-    },
-    {
-      key: "zlinear",
-      rung: "stretch",
-      prompt: <p>Prove that the Z-algorithm runs in O(n) time.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Separates comparisons into those that fail (at most one per i, so at most n) and those that succeed.",
-          "Shows each successful comparison at position i examines a character at index ≥ r, because the starting value from z[i − l] is already known to match inside the window.",
-          "After the extension r moves to i + z[i], so each successful comparison increases r by 1.",
-          "Since r never decreases and is at most n, there are at most n successful comparisons, giving O(n) in total.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

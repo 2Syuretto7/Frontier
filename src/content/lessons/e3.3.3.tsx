@@ -343,34 +343,6 @@ for _ in range(60):
         ],
       },
     },
-    {
-      key: "levels",
-      rung: "prove",
-      prompt: <p>A process maps k pages that are contiguous in its virtual address space, with a four-level table of 512 entries per level. Prove that it needs at most ⌈k/512⌉ + 1 leaf tables, and hence that its page tables take about k/512 pages, a 0.2% overhead.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "A leaf table covers 512 consecutive virtual pages aligned to a multiple of 512.",
-          "k consecutive pages meet at most ⌈k/512⌉ + 1 such aligned blocks (the run can start part-way into a block).",
-          "Each higher level is 512 times sparser, so it adds at most about 1/512 as many tables again, plus one or two at each level for misaligned ends.",
-          "Concludes the total is about k/512 table pages for k data pages, roughly 0.2%, compared with 512 GiB for a flat table.",
-        ],
-      },
-    },
-    {
-      key: "anomaly",
-      rung: "stretch",
-      prompt: <p>The second program above shows FIFO faulting more with 4 frames than with 3 (Belady&rsquo;s anomaly). Prove that LRU can never do this: with more frames it never faults more.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Observes that with n frames, LRU holds exactly the n most recently used distinct pages (or all pages so far, if fewer).",
-          "So at every time the set held with n frames is contained in the set held with n + 1 frames (the inclusion, or stack, property).",
-          "A hit with n frames is therefore a hit with n + 1 frames, so faults with n + 1 frames are a subset of those with n.",
-          "Notes FIFO lacks inclusion: in the example, after some accesses the 3-frame memory holds a page the 4-frame memory has evicted.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

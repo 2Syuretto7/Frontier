@@ -365,34 +365,6 @@ for _ in range(100):
         ],
       },
     },
-    {
-      key: "rooms",
-      rung: "prove",
-      prompt: <p>Prove that the minimum number of rooms needed equals the largest number of meetings in progress at any single moment.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Lower bound: k meetings in progress at one moment pairwise overlap, so need k different rooms.",
-          "Upper bound: the sweep by start time opens a new room only when every room in use is busy at that start time.",
-          "So when the sweep opens its r-th room, r meetings are in progress at that moment.",
-          "Hence the sweep uses at most the maximum overlap, and the two numbers are equal.",
-        ],
-      },
-    },
-    {
-      key: "fractional",
-      rung: "stretch",
-      prompt: <p>Prove that for the fractional knapsack (items can be split, value proportional to the weight taken) taking items in decreasing order of value per unit weight is optimal, and give a small example showing the same rule fails for the 0/1 knapsack.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Exchange argument: if an optimal solution takes some weight of a lower-ratio item while a higher-ratio item is not fully taken, swapping equal weight increases or keeps the value.",
-          "Repeating the swap turns any optimal solution into the greedy one without lowering the value.",
-          "Gives a 0/1 counterexample, for example capacity 10 with items (weight 6, value 7) and two items (weight 5, value 5).",
-          "Shows greedy by ratio takes the first item for value 7, while the two others give 10.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

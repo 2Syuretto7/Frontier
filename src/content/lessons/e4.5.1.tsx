@@ -321,24 +321,6 @@ assert collapse([]) == {}` },
       },
     },
     {
-      key: "law",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove Amdahl&rsquo;s law: if a fraction p of the time is sped up by a factor s, the overall speed-up is{" "}
-          <M>{"1/((1 - p) + p/s)"}</M>, and it is less than <M>{"1/(1 - p)"}</M> however large s is.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Normalises the original time to 1 and writes the new time as (1 − p) + p/s.",
-          "Takes the ratio of old to new time to get the formula.",
-          "Notes that p/s is positive, so the new time is more than 1 − p and the speed-up is less than 1/(1 − p), the limit as s grows.",
-        ],
-      },
-    },
-    {
       key: "need",
       rung: "stretch",
       prompt: <p>A part takes 60% of the step. By what factor must it be sped up to make the whole step twice as fast?</p>,

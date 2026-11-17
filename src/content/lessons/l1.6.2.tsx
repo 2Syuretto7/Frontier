@@ -265,20 +265,6 @@ assert lab_s == [0] * 10 + [1] and lab_c != lab_s, 'Single linkage chains along 
       },
     },
     {
-      key: "mono",
-      rung: "prove",
-      prompt: <p>Prove that for complete linkage, merge heights never decrease from one merge to the next.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Lets A and B merge at height h, the minimum linkage distance among the current clusters.",
-          "Computes D(A ∪ B, C) = max(D(A, C), D(B, C)) for any other cluster C.",
-          "Uses D(A, C) ≥ h and D(B, C) ≥ h, both true because h was the minimum, to get D(A ∪ B, C) ≥ h.",
-          "Notes distances between other clusters are unchanged and already at least h, so the next merge height is at least h.",
-        ],
-      },
-    },
-    {
       key: "inversion",
       rung: "stretch",
       prompt: (

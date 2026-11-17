@@ -250,19 +250,6 @@ assert np.allclose(spectral_gd_solution(X, y, 0.1, 5000), w_ls)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that gradient descent from 0 on (1/2N)‖Xw − y‖² gives, in each eigen-direction of XᵀX/N with eigenvalue h &gt; 0, the coordinate (1 − (1 − ηh)ᵗ)·b/h after t steps, where b is that direction's component of Xᵀy/N.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the update and projects onto an eigenvector, obtaining the scalar recurrence c ← (1 − ηh)c + ηb.",
-          "Identifies the fixed point b/h and shows the deviation from it is multiplied by (1 − ηh) each step (or solves the recurrence by induction).",
-          "Uses c₀ = 0 to conclude c_t = (1 − (1 − ηh)ᵗ)·b/h.",
-        ],
-      },
-    },
-    {
       key: "half",
       rung: "stretch",
       prompt: <p>With η = 0.01, after how many steps has gradient descent fitted half of the direction with h = 0.1? Use (1 − ηh)ᵗ ≈ e^(−ηht) and give the nearest whole number.</p>,

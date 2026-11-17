@@ -425,24 +425,6 @@ assert loss.data < 0.3 * first, (first, loss.data)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          In Adam, m starts at 0 and m ← β₁m + (1 − β₁)g. Prove that if every gradient equals the same g, then after t steps
-          m = (1 − β₁ᵗ)g, and explain what bias correction does with this.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Unrolls the recursion (or uses induction): m_t = (1 − β₁) Σ_{k=0}^{t−1} β₁ᵏ g.",
-          "Evaluates the geometric sum to get m_t = (1 − β₁ᵗ) g (an induction step m_{t+1} = β₁(1 − β₁ᵗ)g + (1 − β₁)g = (1 − β₁ᵗ⁺¹)g also counts).",
-          "Explains that dividing by 1 − β₁ᵗ removes the shrinkage towards the zero initial value, so m̂ = g, which matters most in early steps.",
-        ],
-      },
-    },
-    {
       key: "memory",
       rung: "stretch",
       prompt: <p>A model has 10⁹ parameters stored in float32 (4 bytes each). How many gigabytes (10⁹ bytes) does Adam&rsquo;s m and s state need, if stored in float32 too?</p>,

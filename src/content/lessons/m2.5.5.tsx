@@ -272,42 +272,6 @@ for x in [1e-9, -1e-6, 1e-4, 0.01, 0.5, -2, 10]:
         ],
       },
     },
-    {
-      key: "proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Assume Cauchy&rsquo;s mean value theorem. Prove the 0/0 form of L&rsquo;Hôpital&rsquo;s rule for the limit as{" "}
-          <M>{"x \\to a^+"}</M>, in the case where f and g are continuous at a with <M>{"f(a) = g(a) = 0"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Applies Cauchy's mean value theorem on [a, x] to write f(x)/g(x) = f′(c)/g′(c) for some c in (a, x).",
-          "Notes that g(x) ≠ 0 (by Rolle's theorem, since g′ ≠ 0), so the quotient makes sense.",
-          "Argues that c → a as x → a⁺, so the quotient tends to L.",
-        ],
-      },
-    },
-    {
-      key: "fails",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Show that <M>{"\\dfrac{x + \\sin x}{x} \\to 1"}</M> as <M>{"x \\to \\infty"}</M>, but that the quotient of
-          derivatives <M>{"1 + \\cos x"}</M> has no limit. Does this contradict L&rsquo;Hôpital&rsquo;s rule?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the quotient as 1 + (sin x)/x and uses |sin x| ≤ 1 to show it tends to 1.",
-          "Notes that 1 + cos x oscillates between 0 and 2, so has no limit.",
-          "Explains there is no contradiction: the rule says that if f′/g′ has a limit then so does f/g, not the converse.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

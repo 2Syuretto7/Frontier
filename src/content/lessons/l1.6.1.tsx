@@ -300,20 +300,6 @@ assert many <= one and many < ref * 1.01, 'Restarts never hurt and should match 
       },
     },
     {
-      key: "terminate",
-      rung: "prove",
-      prompt: <p>Prove that neither step of Lloyd&rsquo;s algorithm increases <M>J</M>, and deduce that the algorithm stops after finitely many steps.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows the assign step cannot increase J, because each point's term becomes its distance to the nearest centre.",
-          "Shows, by expanding around the mean, that the mean minimises a cluster's sum of squared distances, so the update step cannot increase J.",
-          "Notes there are finitely many assignments of n points to k clusters.",
-          "Argues that while the algorithm continues J strictly decreases, or the assignment would repeat with no change, so no assignment recurs and it must stop.",
-        ],
-      },
-    },
-    {
       key: "best",
       rung: "stretch",
       prompt: <p>Points 0, 4, 6, 10 on a line, <M>{"k = 2"}</M>. What is the smallest possible <M>J</M>?</p>,

@@ -252,25 +252,6 @@ assert 'math' not in inspect.getsource(log_bits) and 'log' not in inspect.getsou
       },
     },
     {
-      key: "inverse-proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove from the definition that if <M>{"b > 1"}</M> and <M>{"0 < y < z"}</M>, then <M>{"\\log_b y < \\log_b z"}</M>.
-          (Hint: suppose not, and use what you know about <M>{"b^x"}</M>.)
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Sets u = log_b y and v = log_b z, so bᵘ = y and bᵛ = z.",
-          "Supposes u ≥ v.",
-          "Uses that b^x is increasing for b > 1 to deduce bᵘ ≥ bᵛ, that is y ≥ z.",
-          "Notes the contradiction with y < z and concludes u < v.",
-        ],
-      },
-    },
-    {
       key: "big-digits",
       rung: "stretch",
       prompt: <p>Given <M>{"\\log_{10} 2 \\approx 0.30103"}</M>, how many digits does <M>{"2^{100}"}</M> have?</p>,

@@ -256,25 +256,6 @@ assert 'math' not in inspect.getsource(isqrt) and '**' not in inspect.getsource(
       },
     },
     {
-      key: "forced",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain, as a short proof, why <M>{"a^0"}</M> must equal 1 and <M>{"a^{-n}"}</M> must equal{" "}
-          <M>{"\\tfrac{1}{a^n}"}</M> (for <M>{"a \\neq 0"}</M>) if the law <M>{"a^m a^n = a^{m + n}"}</M> is to keep
-          holding. Then say why the argument fails for <M>{"a = 0"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Applies the law with exponent 0 to get a^m · a^0 = a^m and divides by a^m, noting a^m ≠ 0.",
-          "Applies the law with n and -n to get a^n · a^{-n} = a^0 = 1, so a^{-n} is the reciprocal of a^n.",
-          "Identifies that for a = 0 the division by a^m (or by a^n) is impossible.",
-        ],
-      },
-    },
-    {
       key: "compare",
       rung: "stretch",
       prompt: <p>Which is larger, <M>{"2^{300}"}</M> or <M>{"3^{200}"}</M>? Decide without a calculator.</p>,

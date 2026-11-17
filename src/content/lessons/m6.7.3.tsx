@@ -343,24 +343,6 @@ assert chain_cost([1000, 1000, 1000, 1]) == 2000000` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let C = einsum(&quot;ij,jk-&gt;ik&quot;, A, B) and let G = ∂L/∂C. Prove from the definition of einsum that ∂L/∂A =
-          einsum(&quot;ik,jk-&gt;ij&quot;, G, B), that is ∂L/∂A = G Bᵀ.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes C[i, k] = Σⱼ A[i, j] B[j, k] and uses the chain rule ∂L/∂A[a, b] = Σᵢₖ G[i, k] ∂C[i, k]/∂A[a, b].",
-          "Computes ∂C[i, k]/∂A[a, b] = B[b, k] when i = a and 0 otherwise.",
-          "Concludes ∂L/∂A[a, b] = Σₖ G[a, k] B[b, k], which is the einsum ik,jk->ij, equivalently (G Bᵀ)[a, b].",
-        ],
-      },
-    },
-    {
       key: "cost",
       rung: "stretch",
       prompt: (

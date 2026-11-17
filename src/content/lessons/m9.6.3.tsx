@@ -290,19 +290,6 @@ assert abs(a - 0.75) < 0.03 and abs(b - 1) < 0.03` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>For y = Xβ + ε with E[ε] = 0, Cov(ε) = σ²I and X of full rank p, prove that E[SSE] = (n − p)σ².</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows the residual vector is (I − H)ε, using (I − H)X = 0.",
-          "Uses that I − H is symmetric and idempotent to write SSE = εᵀ(I − H)ε.",
-          "Computes E[εᵀAε] = σ² tr(A) and tr(I − H) = n − p, giving (n − p)σ².",
-        ],
-      },
-    },
-    {
       key: "pi",
       rung: "stretch",
       prompt: <p>A simple regression has n = 12, s = 2 and t critical value 2.228. What is the half-width of the 95% prediction interval at x₀ = x̄? Give four decimal places.</p>,

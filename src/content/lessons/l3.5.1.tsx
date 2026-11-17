@@ -255,19 +255,6 @@ assert abs(n - 0.5) < 1e-12 and np.allclose(gs[0], [0.3, 0.4]) and np.allclose(g
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that in a network of L sigmoid layers xₗ = σ(Wₗᵀxₗ₋₁) with ‖Wₗ‖ ≤ 1 for every l, ‖∂L/∂x₀‖ ≤ 4⁻ᴸ‖∂L/∂x_L‖.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes ∂L/∂x₀ as the product of the transposed layer Jacobians Dₗ Wₗᵀ applied to ∂L/∂x_L (chain rule).",
-          "Bounds ‖Dₗ‖ ≤ ¼ because Dₗ is diagonal with entries σ′ ≤ ¼ (e.g. σ′ = σ(1 − σ) ≤ ¼), and ‖Wₗ‖ ≤ 1.",
-          "Uses submultiplicativity of the operator norm to multiply the L factors of ¼, giving 4⁻ᴸ.",
-        ],
-      },
-    },
-    {
       key: "layers",
       rung: "stretch",
       prompt: <p>Each layer multiplies the gradient by 0.5. How many layers until it is smaller than one millionth of its starting size? Give the smallest whole number.</p>,

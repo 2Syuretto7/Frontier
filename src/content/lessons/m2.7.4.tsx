@@ -240,26 +240,6 @@ assert 'erf' not in inspect.getsource(norm_cdf), 'Build it yourself.'` },
       },
     },
     {
-      key: "variance",
-      rung: "prove",
-      prompt: (
-        <p>
-          Use integration by parts, with <M>{"u = x"}</M> and <M>{"dv = x e^{-x^2/2}\\,dx"}</M>, to show that{" "}
-          <M>{"\\int_{-\\infty}^{\\infty} x^2 e^{-x^2/2}\\,dx = \\sqrt{2\\pi}"}</M>. Conclude that the standard normal
-          distribution has variance 1.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Finds v = −e^(−x²/2) by substitution.",
-          "Shows the boundary term −x e^(−x²/2) vanishes at ±∞.",
-          "Reduces the integral to ∫ e^(−x²/2) dx = √(2π).",
-          "Divides by √(2π) to get E[X²] = 1, and with mean 0 by symmetry, variance 1.",
-        ],
-      },
-    },
-    {
       key: "gamma",
       rung: "stretch",
       prompt: <p>Using <M>{"\\Gamma(\\tfrac12) = \\sqrt\\pi"}</M> and <M>{"\\Gamma(s + 1) = s\\Gamma(s)"}</M>, find <M>{"\\Gamma(\\tfrac52)"}</M>. Give four decimal places.</p>,

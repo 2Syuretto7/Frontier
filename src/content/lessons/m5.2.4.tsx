@@ -282,25 +282,6 @@ assert k == 5` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if f is differentiable at a with <M>{"\\nabla f(a) \\ne 0"}</M>, then among unit vectors u the directional
-          derivative <M>{"D_u f(a)"}</M> is largest exactly for <M>{"u = \\nabla f(a) / \\|\\nabla f(a)\\|"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows D_u f(a) = ∇f(a) · u from the definition of the derivative with h = tu.",
-          "Applies Cauchy–Schwarz: ∇f · u ≤ ‖∇f‖ ‖u‖ = ‖∇f‖.",
-          "Checks that u = ∇f/‖∇f‖ attains ‖∇f‖.",
-          "Argues uniqueness: equality in Cauchy–Schwarz needs u to be a non-negative multiple of ∇f, and the unit length fixes it.",
-        ],
-      },
-    },
-    {
       key: "notlin",
       rung: "stretch",
       prompt: (

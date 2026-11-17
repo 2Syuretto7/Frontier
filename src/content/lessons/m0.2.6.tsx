@@ -285,25 +285,6 @@ assert rational_roots([6, -11, -3, 2]) == [Fraction(-1, 2), Fraction(1, 3), 2], 
       },
     },
     {
-      key: "formula",
-      rung: "prove",
-      prompt: (
-        <p>
-          Derive the solutions of <M>{"x^2 + bx + c = 0"}</M> by completing the square. Show each step, and say what happens
-          when <M>{"b^2 < 4c"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes x² + bx as (x + b/2)² - b²/4.",
-          "Rearranges to (x + b/2)² = (b² - 4c)/4.",
-          "Takes square roots with ±, giving x = (-b ± √(b² - 4c))/2.",
-          "Explains that if b² < 4c the right side is negative, so there is no real solution because squares are non-negative.",
-        ],
-      },
-    },
-    {
       key: "find-k",
       rung: "stretch",
       prompt: <p>For which value of <M>k</M> is <M>{"x - 1"}</M> a factor of <M>{"x^3 + kx^2 - 4x + 2"}</M>?</p>,

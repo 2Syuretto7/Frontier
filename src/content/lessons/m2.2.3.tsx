@@ -312,43 +312,6 @@ assert rational_limit([1, 0, 0, -8], [1, 0, -4], 2) == 3 and rational_limit([3, 
         ],
       },
     },
-    {
-      key: "product-law",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove the constant multiple law: if <M>{"f(x) \\to L"}</M> as <M>{"x \\to a"}</M>, then{" "}
-          <M>{"c f(x) \\to cL"}</M>, for any constant c.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Handles c = 0 separately, or uses a tolerance that avoids dividing by zero, such as ε/(|c| + 1).",
-          "Uses the δ for f with the adjusted tolerance.",
-          "Shows |cf(x) − cL| = |c| |f(x) − L| < ε.",
-        ],
-      },
-    },
-    {
-      key: "fails",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Give functions f and g such that neither <M>{"\\lim_{x \\to 0} f(x)"}</M> nor <M>{"\\lim_{x \\to 0} g(x)"}</M>{" "}
-          exists, but <M>{"\\lim_{x \\to 0} (f(x) + g(x))"}</M> and <M>{"\\lim_{x \\to 0} f(x)g(x)"}</M> both do. What does this
-          show about the limit laws?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Gives a valid example, such as f(x) = x/|x| and g(x) = −x/|x| (sum 0, product −1).",
-          "Checks that neither limit exists but the sum and product limits do.",
-          "Concludes that the laws only work in one direction: they need the separate limits to exist, and cannot be reversed.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

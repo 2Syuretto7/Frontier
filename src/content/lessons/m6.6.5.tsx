@@ -303,19 +303,6 @@ assert np.allclose(kron_eigvals(np.diag([2.0, 3.0]), np.diag([1.0, 2.0])), [2.0,
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove the mixed-product property (A ⊗ B)(C ⊗ D) = (AC) ⊗ (BD), and deduce (A ⊗ B)⁻¹ = A⁻¹ ⊗ B⁻¹ for invertible A, B.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes the (i, j) block of the product as Σₗ (aᵢₗB)(cₗⱼD) = (Σₗ aᵢₗcₗⱼ)BD = (AC)ᵢⱼBD.",
-          "Recognises this as the (i, j) block of (AC) ⊗ (BD).",
-          "Deduces (A ⊗ B)(A⁻¹ ⊗ B⁻¹) = I ⊗ I = I (and similarly on the other side), so the inverse is A⁻¹ ⊗ B⁻¹.",
-        ],
-      },
-    },
-    {
       key: "ksum",
       rung: "stretch",
       prompt: <p>A has eigenvalues 1 and 3, B has eigenvalues 2 and 5. What is the largest eigenvalue of A ⊗ I + I ⊗ B?</p>,

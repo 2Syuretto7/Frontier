@@ -285,44 +285,6 @@ assert uf.find(0) == uf.find(99999), 'A long chain must not overflow the stack o
         ],
       },
     },
-    {
-      key: "fraction-trans",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"(p, q) \\sim (r, s) \\iff ps = qr"}</M> is transitive on pairs of integers with non-zero second
-          entry.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Assumes ps = qr and ru = st, aiming for pu = qt.",
-          "Multiplies to combine the equations, for instance psu = qru = qst.",
-          "Cancels the non-zero s to get pu = qt, noting why s ≠ 0 is needed.",
-          "Concludes that the relation is transitive.",
-        ],
-      },
-    },
-    {
-      key: "partition-to-relation",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Given a partition of A, define <M>{"a \\sim b"}</M> when a and b lie in the same block. Prove that{" "}
-          <M>{"\\sim"}</M> is an equivalence relation whose classes are exactly the blocks.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Proves reflexivity using that every element lies in some block.",
-          "Proves symmetry directly from the definition.",
-          "Proves transitivity using that b lies in exactly one block.",
-          "Shows the class of a is the block containing a.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

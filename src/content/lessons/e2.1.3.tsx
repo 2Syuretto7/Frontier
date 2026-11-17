@@ -333,47 +333,6 @@ assert lo < hi and v == "no clear difference"` },
         ],
       },
     },
-    {
-      key: "minimum",
-      rung: "prove",
-      prompt: (
-        <p>
-          Suppose each measured time is <M>{"T = c + E"}</M>, where c is the true cost and the noise E ≥ 0 has a positive
-          probability of being below any ε &gt; 0. Argue that the minimum of n independent measurements converges to c as n
-          grows, and that the mean does not unless E has mean 0. When is the minimum the wrong statistic to report?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "The minimum is always at least c, since E ≥ 0.",
-          "P(min > c + ε) = P(E > ε)ⁿ, which tends to 0 because P(E > ε) < 1, so the minimum converges to c.",
-          "The mean converges to c + E[E] by the law of large numbers, which exceeds c whenever the noise has positive mean.",
-          "The minimum is wrong when variation is part of the behaviour users experience (caching, garbage collection, network), where the median or tail percentiles matter.",
-        ],
-      },
-    },
-    {
-      key: "design",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Design a benchmark to decide whether a new tokeniser is faster than the old one on your training corpus. Say what you
-          time, on what data, how you control for warm-up, caching and machine noise, how many runs you take, what you report,
-          and how you decide.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses a representative sample of real documents, the same for both, loaded before timing, and forces full evaluation of the output.",
-          "Warms up, interleaves the two versions and repeats each many times, on an otherwise idle machine.",
-          "Checks that both produce the same tokens, so the comparison is of equal work.",
-          "Reports a robust summary with spread or a bootstrap interval for the ratio, and decides only if the interval excludes 1.",
-          "Sweeps document sizes or batch sizes to see whether the difference holds at scale.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

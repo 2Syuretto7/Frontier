@@ -239,25 +239,6 @@ assert abs(-s.intercept_[0] / s.coef_[0, 0] - t) < 1e-3 and abs(1 / s.coef_[0, 0
       },
     },
     {
-      key: "ring",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why no logistic model on the raw features <M>{"x_1, x_2"}</M> can separate points inside a circle from points
-          on a ring around it, and show how adding squared features solves the problem.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "States that the boundary on raw features is a straight line, so one class must lie in a half-plane.",
-          "Argues that any half-plane containing points on the ring on one side of the centre must exclude points on the opposite side, or include the centre, so the classes cannot be separated.",
-          "Shows that with features x₁², x₂², a boundary such as x₁² + x₂² = r² is a circle.",
-          "Notes that the model is still linear in the new features, so the same fitting method works.",
-        ],
-      },
-    },
-    {
       key: "radius",
       rung: "stretch",
       prompt: <p>On features <M>{"(1, x_1, x_2, x_1^2, x_2^2)"}</M>, a model has weights <M>{"(-9, 0, 0, 1, 1)"}</M>. Its boundary is a circle. What is its radius?</p>,

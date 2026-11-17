@@ -265,25 +265,6 @@ assert np.allclose(x, [2, 2, 2]) and line_plane((0, 0, 0), (2, -1, 0), (1, 2, 2)
       },
     },
     {
-      key: "formula",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the distance from q to the hyperplane <M>{"\\mathbf n \\cdot \\mathbf x = c"}</M> is{" "}
-          <M>{"|\\mathbf n \\cdot \\mathbf q - c| / \\|\\mathbf n\\|"}</M>. Show both that this distance is achieved and that no
-          point of the hyperplane is closer.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Finds the point x₀ = q − s n on the hyperplane with s = (n·q − c)/‖n‖², and computes ‖q − x₀‖ = |n·q − c|/‖n‖.",
-          "For any other point x on the hyperplane, notes that x − x₀ is perpendicular to n.",
-          "Uses Pythagoras: ‖q − x‖² = ‖q − x₀‖² + ‖x₀ − x‖² ≥ ‖q − x₀‖².",
-        ],
-      },
-    },
-    {
       key: "dihedral",
       rung: "stretch",
       prompt: <p>Find the angle in degrees between the planes x + y = 1 and y + z = 1, measured as the angle between their normals.</p>,

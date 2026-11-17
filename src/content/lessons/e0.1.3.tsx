@@ -255,25 +255,6 @@ assert r == (9, 234, True)` },
       },
     },
     {
-      key: "divmod",
-      rung: "prove",
-      prompt: (
-        <p>
-          Write expressions that turn a whole number of seconds <C>t</C> into hours, minutes and seconds, and explain why{" "}
-          <C>(n // d) * d + n % d</C> always equals <C>n</C> for a positive whole number <C>d</C>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Gives hours as t // 3600, minutes as t % 3600 // 60 (or equivalent), and seconds as t % 60.",
-          "Explains that n // d is the number of whole times d fits into n.",
-          "Explains that n % d is what remains after removing those whole multiples of d.",
-          "Concludes that the whole multiples plus the remainder give back n.",
-        ],
-      },
-    },
-    {
       key: "tower",
       rung: "stretch",
       prompt: <p>What is the value of <C>2 ** 3 ** 2</C>? Remember which way <C>**</C> groups.</p>,

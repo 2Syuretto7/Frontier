@@ -241,25 +241,6 @@ assert abs(v - 1 / math.sqrt(math.pi * 5e5)) < 1e-9, 'The central probability is
       },
     },
     {
-      key: "bounds",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"n\\ln n - n + 1 \\le \\ln n! \\le (n + 1)\\ln(n + 1) - n"}</M> by comparing the sum{" "}
-          <M>{"\\sum_{k=2}^n \\ln k"}</M> with integrals of ln x. Deduce that <M>{"\\ln n! \\sim n\\ln n"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses that ln is increasing to compare each ln k with the integral over [k − 1, k] (from below) and over [k, k + 1] (from above).",
-          "Sums to get ∫₁ⁿ ln x dx ≤ ln n! ≤ ∫₁ⁿ⁺¹ ln x dx.",
-          "Evaluates the integrals as n ln n − n + 1 and (n + 1) ln(n + 1) − n.",
-          "Divides both bounds by n ln n and shows both tend to 1, so ln n! ∼ n ln n.",
-        ],
-      },
-    },
-    {
       key: "bits",
       rung: "stretch",
       prompt: (

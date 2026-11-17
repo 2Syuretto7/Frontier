@@ -304,24 +304,6 @@ assert s.buf == [100, 204, 308, 101, 205, 309, 102, 206, 310, 103, 207, 311], s.
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that for a shape (n₀, …, n_(d−1)) the row-major position Σ iₖsₖ, with sₖ the product of the later sizes, takes
-          each value 0, …, N − 1 exactly once as the index ranges over all valid indices.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows the minimum is 0 and the maximum is Σ (nₖ − 1)sₖ = N − 1 (for instance by telescoping (nₖ − 1)sₖ = sₖ₋₁ − sₖ).",
-          "Shows injectivity: two different indices give different positions (compare at the first differing digit, whose place value exceeds the largest possible contribution of all later digits), or invokes uniqueness of mixed-radix representation with justification.",
-          "Concludes by counting: N distinct indices map injectively into N values, so the map is a bijection.",
-        ],
-      },
-    },
-    {
       key: "bytes",
       rung: "stretch",
       prompt: <p>A contiguous float32 array has shape (64, 3, 32, 32). What is the stride of axis 0 in bytes?</p>,

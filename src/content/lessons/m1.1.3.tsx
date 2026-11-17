@@ -228,20 +228,6 @@ assert 'simplify_check' in inspect.getsource(is_tautology) and 'simplify_check' 
       },
     },
     {
-      key: "distributive",
-      rung: "prove",
-      prompt: <p>Prove that <M>{"P \\wedge (Q \\vee R) \\equiv (P \\wedge Q) \\vee (P \\wedge R)"}</M>, by a truth table or by an argument in cases.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Considers all eight rows, or splits into the cases P true and P false.",
-          "If P is false, shows both sides are false.",
-          "If P is true, shows both sides reduce to Q ∨ R.",
-          "Concludes the two formulas agree in every row.",
-        ],
-      },
-    },
-    {
       key: "nand",
       rung: "stretch",
       prompt: (

@@ -252,19 +252,6 @@ assert '/' not in src and '%' not in src, 'Use the formula from the proof, not d
       },
     },
     {
-      key: "even-odd",
-      rung: "prove",
-      prompt: <p>Prove that if m is even and n is odd, then m + n is odd.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Unpacks the hypotheses with different letters, such as m = 2j and n = 2k + 1.",
-          "Computes m + n = 2(j + k) + 1.",
-          "Notes that j + k is an integer and concludes m + n is odd.",
-        ],
-      },
-    },
-    {
       key: "three-consecutive",
       rung: "stretch",
       prompt: (

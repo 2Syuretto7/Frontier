@@ -287,19 +287,6 @@ assert np.allclose(kernel_ridge_predict(K, a), [1.0, 2.0])` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>For λ &gt; 0, prove that (XᵀX + λI)⁻¹Xᵀy = Xᵀ(XXᵀ + λI)⁻¹y, so ridge regression predictions depend on X only through inner products.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Verifies (XᵀX + λI)Xᵀ = Xᵀ(XXᵀ + λI) by expanding both sides.",
-          "Notes both bracketed matrices are positive definite for λ > 0, so invertible, and multiplies by the two inverses to get (XᵀX + λI)⁻¹Xᵀ = Xᵀ(XXᵀ + λI)⁻¹.",
-          "Concludes that w = Xᵀα with α = (XXᵀ + λI)⁻¹y, so a prediction xᵀw = Σαᵢ xᵢᵀx uses only inner products.",
-        ],
-      },
-    },
-    {
       key: "dim",
       rung: "stretch",
       prompt: <p>How many distinct monomials of degree at most 2 are there in 10 variables, which is the dimension of the feature space of (1 + xᵀz)² on 10-dimensional inputs?</p>,

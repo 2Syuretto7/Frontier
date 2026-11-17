@@ -268,26 +268,6 @@ for _ in range(20):
       },
     },
     {
-      key: "why-push",
-      rung: "prove",
-      prompt: (
-        <p>
-          Show that after an update on a misclassified example <M>{"(x_1, x_2)"}</M> with label <M>y</M>, the sum{" "}
-          <M>{"w_1 x_1 + w_2 x_2 + b"}</M> for that example changes by <M>{"\\eta\\, y\\,(x_1^2 + x_2^2 + 1)"}</M>, and explain
-          why this moves the example towards being classified correctly.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Substitutes the updated weights into the sum for the same example.",
-          "Collects the extra terms: η y x₁·x₁ + η y x₂·x₂ + η y = η y (x₁² + x₂² + 1).",
-          "Notes that x₁² + x₂² + 1 > 0 and η > 0, so the change has the sign of y.",
-          "Concludes the sum moves towards positive for y = +1 and towards negative for y = −1, the correct side.",
-        ],
-      },
-    },
-    {
       key: "parity",
       rung: "stretch",
       prompt: (

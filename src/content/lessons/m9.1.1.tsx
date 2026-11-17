@@ -225,19 +225,6 @@ def var_of_mean(n, reps, seed=0):
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that the sample variance S², with divisor n − 1, is an unbiased estimator of σ² for an iid sample.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Establishes the identity Σ(Xᵢ − X̄)² = Σ(Xᵢ − μ)² − n(X̄ − μ)² (or an equivalent expansion).",
-          "Computes E[Σ(Xᵢ − μ)²] = nσ² and E[n(X̄ − μ)²] = n·Var(X̄) = σ², using independence for Var(X̄) = σ²/n.",
-          "Concludes the sum of squares has mean (n − 1)σ², so dividing by n − 1 gives expectation σ².",
-        ],
-      },
-    },
-    {
       key: "n",
       rung: "stretch",
       prompt: <p>Observations have standard deviation 2. How many iid observations are needed for the standard deviation of their mean to be 0.1?</p>,

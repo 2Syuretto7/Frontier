@@ -3,7 +3,6 @@ import type { ExerciseView } from "@/components/lesson/ExerciseCard";
 import type { ExerciseRef } from "./curriculum";
 import type { ExerciseStateRow } from "./learning";
 import { codeSource } from "./check";
-import { renderParton } from "./parton/render";
 
 /** What the browser may see of an exercise: never the answer. */
 export function toView(ref: ExerciseRef, state?: ExerciseStateRow): ExerciseView {
@@ -18,7 +17,5 @@ export function toView(ref: ExerciseRef, state?: ExerciseStateRow): ExerciseView
     code: a.kind === "code" ? { starter: a.starter, setup: a.setup, files: a.files, checks: a.tests.length } : undefined,
     solved: state?.solved ?? false,
     response: state?.response ? (a.kind === "code" ? codeSource(state.response) : state.response) : null,
-    verdict: state?.verdict ?? null,
-    feedbackHtml: state?.feedback ? renderParton(state.feedback) : null,
   };
 }

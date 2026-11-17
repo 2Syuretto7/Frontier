@@ -244,25 +244,6 @@ assert np.allclose(w, np.r_[m.intercept_, m.coef_]) and abs(w[4] - 1) < 0.1, 'Th
       },
     },
     {
-      key: "why",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why adding <M>{"x^2"}</M> as a feature lets least squares fit a parabola without any change to the fitting
-          method, and why it helps to rescale <M>x</M> before forming high powers.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains that the prediction is still a weighted sum of fixed features, so the squared error is the same kind of function of the weights and the normal equations apply.",
-          "Notes that the rows of the feature matrix become (1, x_i, x_i²).",
-          "Explains that powers of large x span enormous ranges, making the matrix XᵀX badly scaled.",
-          "Concludes that scaling x to a small range keeps the computation numerically stable.",
-        ],
-      },
-    },
-    {
       key: "explode",
       rung: "stretch",
       prompt: <p>How many features, including the constant, does a polynomial of degree at most 3 in 10 variables have?</p>,

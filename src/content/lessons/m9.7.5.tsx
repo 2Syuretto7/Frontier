@@ -253,19 +253,6 @@ assert 0.02 < p < 0.98` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that Var(x̃ | x) = E[σ²(θ) | x] + Var(μ(θ) | x), where μ(θ) and σ²(θ) are the mean and variance of x̃ given θ, and x̃ is conditionally independent of x given θ.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses conditional independence to identify E[x̃ | θ, x] = μ(θ) and Var(x̃ | θ, x) = σ²(θ).",
-          "Applies the law of total variance (conditioning on θ) under the posterior given x.",
-          "Writes the result as E[σ²(θ) | x] + Var(μ(θ) | x), or derives it from E[x̃² | x] − E[x̃ | x]² directly.",
-        ],
-      },
-    },
-    {
       key: "two",
       rung: "stretch",
       prompt: <p>With a uniform prior and 3 successes in 3 trials (posterior Beta(4, 1)), what is the posterior predictive probability that the next two trials both succeed? Give four decimal places.</p>,

@@ -278,19 +278,6 @@ assert abs(n - np.sqrt(25 + (0.5 * 2.0 / 5) ** 2)) < 1e-12` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that the minimiser of ½(w − w*)ᵀH(w − w*) + (λ/2)‖w‖², for symmetric positive semi-definite H and λ &gt; 0, multiplies the component of w* along each eigenvector of H with eigenvalue h by h/(h + λ).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Sets the gradient H(w − w*) + λw to zero to get (H + λI)w = Hw*, noting H + λI is invertible (and the objective strictly convex) for λ > 0.",
-          "Writes H = QΛQᵀ with orthonormal eigenvectors and transforms to that basis, where both sides are diagonal.",
-          "Concludes each coordinate satisfies (h + λ)wᵢ = h wᵢ*, so wᵢ = h/(h + λ) · wᵢ*.",
-        ],
-      },
-    },
-    {
       key: "eqn",
       rung: "stretch",
       prompt: <p>With c = 1, η = 0.1 and λ = 0.001, what is the equilibrium weight norm (ηc²/2λ)^¼? Give 4 decimal places.</p>,

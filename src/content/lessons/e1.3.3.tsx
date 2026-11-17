@@ -285,26 +285,6 @@ assert p.derivative() == Poly([3, 0, 12]) and Poly([7]).derivative() == Poly([])
       },
     },
     {
-      key: "design",
-      rung: "prove",
-      prompt: (
-        <p>
-          Design a class <C>RunningMean</C> that you can call with a number to add it, that reports how many numbers it has
-          seen through <C>len</C>, and that prints as <C>RunningMean(mean=..., n=...)</C>. Name the special methods you need and
-          say what each does.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Stores a running total and a count as attributes, set in __init__.",
-          "Defines __call__(self, x) to add x to the total and increase the count.",
-          "Defines __len__ to return the count, and __repr__ to return the formatted text with the mean.",
-          "Handles the case of no numbers yet, for example by showing the mean as None or 0 without dividing by zero.",
-        ],
-      },
-    },
-    {
       key: "three",
       rung: "stretch",
       prompt: <p>With the traced <C>Vec</C> class, what is the <C>x</C> coordinate of <C>Vec(1, 2) + Vec(3, 4) + Vec(5, 6)</C>?</p>,

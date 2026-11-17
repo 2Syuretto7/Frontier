@@ -258,25 +258,6 @@ assert abs(taylor_eval(c, 0, 2.0) - math.cos(2.0)) < 1e-8, 'The actual error is 
       },
     },
     {
-      key: "exp-all",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the Taylor series of <M>{"e^x"}</M> about 0 converges to <M>{"e^x"}</M> for every real x, using the
-          Lagrange remainder.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes every derivative of eˣ is eˣ, so the remainder is e^c xⁿ⁺¹/(n + 1)! with c between 0 and x.",
-          "Bounds e^c ≤ e^|x|, a constant once x is fixed.",
-          "Shows |x|ⁿ⁺¹/(n + 1)! → 0 for fixed x, for example because the ratio of consecutive terms |x|/(n + 2) tends to 0.",
-          "Concludes the remainder tends to 0, so the partial sums converge to eˣ.",
-        ],
-      },
-    },
-    {
       key: "limit",
       rung: "stretch",
       prompt: <p>Use Taylor series to find <M>{"\\lim_{x \\to 0} \\dfrac{e^x - 1 - x}{x^2}"}</M>.</p>,

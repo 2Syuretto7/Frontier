@@ -273,25 +273,6 @@ assert k == 'one' and abs(x - 1) < 1e-12 and abs(y - 3) < 1e-12, 'Cramer: x = (e
       },
     },
     {
-      key: "unique-proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if <M>{"ad - bc \\neq 0"}</M>, the system <M>{"ax + by = 0"}</M>, <M>{"cx + dy = 0"}</M> has only the
-          solution <M>{"(0, 0)"}</M>. Then show by an example that the conclusion can fail when <M>{"ad - bc = 0"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that (0, 0) is a solution.",
-          "Eliminates y (multiply by d and b and subtract) to get (ad − bc)x = 0, and similarly (ad − bc)y = 0.",
-          "Divides by ad − bc, using that it is nonzero, to conclude x = 0 and y = 0.",
-          "Gives a system with ad − bc = 0 and a nonzero solution, such as x + y = 0, 2x + 2y = 0 with (1, −1).",
-        ],
-      },
-    },
-    {
       key: "three",
       rung: "stretch",
       prompt: (

@@ -317,43 +317,6 @@ assert abs(math.cos(x) - x) < 1e-11 and abs(x - 0.7390851332) < 1e-9, 'cos x = x
         ],
       },
     },
-    {
-      key: "fixed",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let f be continuous on <M>{"[0, 1]"}</M> with values in <M>{"[0, 1]"}</M>. Prove that f has a fixed point: some c
-          with <M>{"f(c) = c"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Defines g(x) = f(x) − x, and notes it is continuous.",
-          "Shows g(0) ≥ 0 and g(1) ≤ 0.",
-          "Handles the cases where g(0) = 0 or g(1) = 0, and otherwise applies the theorem.",
-        ],
-      },
-    },
-    {
-      key: "antipodes",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Prove that at any moment there are two diametrically opposite points on the equator with exactly the same
-          temperature. Assume temperature varies continuously along the equator.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Parametrises the equator by angle θ, with temperature T(θ) continuous and 2π-periodic.",
-          "Defines g(θ) = T(θ) − T(θ + π).",
-          "Observes g(θ + π) = −g(θ), so g takes values of both signs (or is 0).",
-          "Applies the theorem on [0, π] to find θ with g(θ) = 0.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

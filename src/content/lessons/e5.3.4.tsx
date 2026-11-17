@@ -392,24 +392,6 @@ assert np.array_equal(net.parameters()[0].data, W1), 'Use the seed so reinit is 
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          A ReLU layer computes y = W x and then relu(y), with independent zero-mean weights of variance σ² and nin inputs.
-          Show that the second moment of the activations is preserved from layer to layer exactly when σ² = 2/nin.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows Var(yⱼ) = nin·σ²·E[x²] using independence and zero mean (cross terms vanish).",
-          "Shows E[relu(y)²] = Var(y)/2 using that y is symmetric about 0.",
-          "Combines them: the new second moment is nin·σ²·E[x²]/2, which equals E[x²] iff σ² = 2/nin.",
-        ],
-      },
-    },
-    {
       key: "bound",
       rung: "stretch",
       prompt: <p>Xavier uniform initialisation for a layer with nin = nout = 300 draws from [−a, a]. What is a?</p>,

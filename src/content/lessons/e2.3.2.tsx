@@ -441,45 +441,6 @@ assert unsuccessful_cost(10007, 0.8, "linear", 20000, 3) > 2 * unsuccessful_cost
         ],
       },
     },
-    {
-      key: "amortise",
-      rung: "prove",
-      prompt: (
-        <p>
-          A chained hash table doubles m and re-inserts every key whenever α would exceed 1. Assuming uniform hashing, prove that
-          any sequence of n insertions into an initially empty table with m = 1 takes O(n) expected time.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Between resizes α ≤ 1, so each insertion (which checks for an existing key) costs O(1 + α) = O(1) expected.",
-          "Resizes happen when n reaches 1, 2, 4, …, and the resize at size 2ʲ re-inserts 2ʲ keys at O(1) each.",
-          "The total re-insertion work is 1 + 2 + … + 2ᵏ < 2n.",
-          "Adds the two parts to get O(n) expected, i.e. O(1) amortised expected per insertion.",
-        ],
-      },
-    },
-    {
-      key: "cuckoo",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Cuckoo hashing gives every key two possible slots, h₁(k) and h₂(k), and stores it in one of them. Explain why lookup
-          and deletion are O(1) in the worst case, how insertion works when both slots are full, and what the table does when an
-          insertion goes round in a loop.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Lookup and delete check exactly two slots, so they are worst-case O(1).",
-          "Insertion places k in h₁(k); if occupied, it evicts the occupant, which moves to its other slot, possibly evicting another, and so on.",
-          "A long chain of evictions or a cycle is detected by a step limit.",
-          "On failure the table rehashes with new hash functions (or grows), which happens rarely when the load is below about one half, so insertion is O(1) expected amortised.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

@@ -272,25 +272,6 @@ assert f > 0.94, f'Infinitely many rationals, yet {1 - f:.3f} of [0, 1) is cover
       },
     },
     {
-      key: "countable",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that for any probability on any set, the set of points with positive probability is countable. Then explain
-          why this means the uniform distribution on <M>{"[0, 1]"}</M> cannot be described by giving each point a weight.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Defines A_n as the set of points with probability at least 1/n and shows A_n has at most n points, since otherwise the total would exceed 1.",
-          "Notes that every point with positive probability lies in some A_n.",
-          "Concludes the set is a countable union of finite sets, hence countable.",
-          "Argues that the uniform distribution treats all points alike, so if one had positive weight, uncountably many would, which is impossible; hence every weight is 0, and weights summing to 0 cannot give total probability 1.",
-        ],
-      },
-    },
-    {
       key: "intervals",
       rung: "stretch",
       prompt: (

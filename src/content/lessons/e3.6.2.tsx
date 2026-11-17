@@ -343,34 +343,6 @@ assert bdp_segments(100 * 10 ** 9, 10e-6, 4096) == 31, 'A 100 Gb/s datacentre li
         ],
       },
     },
-    {
-      key: "fair",
-      rung: "prove",
-      prompt: <p>Two AIMD flows share a link of capacity C (in segments per round trip). Both add 1 per round trip, and both halve whenever their total exceeds C. Prove that the difference between their windows halves at every loss and never changes otherwise, so they converge to equal shares.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Let the windows be a and b. Additive increase adds 1 to each, so a − b is unchanged between losses.",
-          "At a loss both become a/2 and b/2, so the difference becomes (a − b)/2.",
-          "Losses keep happening, because the total grows by 2 per round trip and must exceed C within a bounded time.",
-          "So after k losses the difference is (a₀ − b₀)/2ᵏ → 0, and the windows converge to each other: the fair share, with the total oscillating between about C/2 and C.",
-        ],
-      },
-    },
-    {
-      key: "mathis",
-      rung: "stretch",
-      prompt: <p>In steady state an AIMD flow&rsquo;s window rises from W/2 to W by 1 segment per round trip, then a single loss halves it. Derive that the loss rate p satisfies p ≈ 8/(3W²) and that the throughput is about (MSS/RTT)·√(3/(2p)).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "One cycle lasts W/2 round trips, with the window averaging 3W/4.",
-          "So a cycle sends about (W/2)(3W/4) = 3W²/8 segments, with one loss: p ≈ 8/(3W²).",
-          "Hence W ≈ √(8/(3p)), and the average rate is (3W/4) segments per RTT.",
-          "Throughput ≈ (3/4)√(8/(3p)) · MSS/RTT = √(3/(2p)) · MSS/RTT, so a 100-times lower loss rate gives only 10 times the speed.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

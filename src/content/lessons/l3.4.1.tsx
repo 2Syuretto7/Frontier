@@ -277,19 +277,6 @@ assert len(calibrate(Ws, x, np.tanh)) == 5` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that if w₁, …, wₙ, x₁, …, xₙ are independent, each wᵢ has mean 0 and variance σ², and each xᵢ has E[xᵢ²] = m, then Var(Σᵢ wᵢxᵢ) = nσ²m.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows E[wᵢxᵢ] = E[wᵢ]E[xᵢ] = 0 by independence, so the sum has mean 0.",
-          "Computes Var(wᵢxᵢ) = E[wᵢ²xᵢ²] = E[wᵢ²]E[xᵢ²] = σ²m, using independence and E[wᵢ²] = σ² (mean 0).",
-          "Uses independence of the n products (or zero covariances) to add the variances, giving nσ²m.",
-        ],
-      },
-    },
-    {
       key: "depth",
       rung: "stretch",
       prompt: <p>With a per-layer gain of 0.9 on the standard deviation, after how many layers does the standard deviation first fall below 0.01? Give the whole number.</p>,

@@ -401,34 +401,6 @@ assert distinct_substrings(s) > 10 ** 8` },
         ],
       },
     },
-    {
-      key: "adjacent",
-      rung: "prove",
-      prompt: <p>Prove that the longest common prefix of any two suffixes is at most the LCP of some pair adjacent in the suffix array, so the longest repeated substring has length max LCP[r].</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes suffixes of ranks a < b with common prefix of length L.",
-          "Argues every suffix ranked between them, being sorted between two strings that start with the same L characters, also starts with them.",
-          "So each adjacent pair from rank a to rank b shares those L characters, and LCP[a + 1] ≥ L in particular.",
-          "Concludes that a substring occurring twice (a common prefix of two suffixes) has length at most max LCP, and that the maximum is attained.",
-        ],
-      },
-    },
-    {
-      key: "bwt",
-      rung: "stretch",
-      prompt: <p>Define the Burrows–Wheeler transform of s + &quot;$&quot; using the suffix array, compute it for banana$, and explain why it tends to put equal characters next to each other.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Defines BWT[r] as the character before suffix SA[r] (the last character, $, for the suffix starting at 0), with $ smallest.",
-          "Computes the suffix array of banana$ as [6, 5, 3, 1, 0, 4, 2] and the transform annb$aa.",
-          "Explains that suffixes are grouped by what follows each position, so the preceding characters come from similar contexts.",
-          "Notes that in text, a given context is usually preceded by few different characters, producing runs that compress well.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

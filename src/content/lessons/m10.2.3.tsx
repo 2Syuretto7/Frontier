@@ -279,24 +279,6 @@ assert abs(midpoint_gap(np.exp, 0.0, 2.0) - ((1 + np.e ** 2) / 2 - np.e)) < 1e-1
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let f(x, y) be convex in x for each y in an index set Y, and g(x) = sup over y in Y of f(x, y), assumed finite.
-          Prove that g is convex, and deduce that λ_max(X) is a convex function of the symmetric matrix X.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows f(θx₁ + (1 − θ)x₂, y) ≤ θ f(x₁, y) + (1 − θ) f(x₂, y) ≤ θ g(x₁) + (1 − θ) g(x₂) for each y (or argues via intersection of epigraphs).",
-          "Takes the supremum over y on the left to conclude g is convex.",
-          "Writes λ_max(X) = sup over unit v of vᵀXv, a supremum of functions linear in X, and concludes it is convex.",
-        ],
-      },
-    },
-    {
       key: "dist",
       rung: "stretch",
       prompt: <p>What is the distance from (3, 0.5, −2) to the box [0, 1]³? Give four decimal places.</p>,

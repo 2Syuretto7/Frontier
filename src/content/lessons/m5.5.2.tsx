@@ -276,26 +276,6 @@ assert np.linalg.eigvalsh(H).min() >= -1e-12` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let H be symmetric with eigenvalues <M>{"\\lambda_1 \\le \\dots \\le \\lambda_n"}</M>. Prove that{" "}
-          <M>{"\\lambda_1 \\le u^\\top H u \\le \\lambda_n"}</M> for every unit vector u, with equality at the corresponding
-          eigenvectors.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses the spectral theorem: an orthonormal basis of eigenvectors q_i exists.",
-          "Expands u = Σ c_i q_i with Σ c_i² = 1 (by orthonormality and ‖u‖ = 1).",
-          "Computes uᵀHu = Σ λ_i c_i², a weighted average of the eigenvalues.",
-          "Bounds the average between λ_1 and λ_n and checks equality at q_1 and q_n.",
-        ],
-      },
-    },
-    {
       key: "kappa",
       rung: "stretch",
       prompt: (

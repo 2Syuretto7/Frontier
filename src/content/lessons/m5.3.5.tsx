@@ -263,25 +263,6 @@ assert abs(g2[1, 3] - (f(W1, W2 + F) - f(W1, W2 - F)) / 2e-6) < 1e-6` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove the cheap gradient principle for tapes built from +, ×, sin and exp: if the forward pass has N operations, the
-          forward and backward passes together need at most 5N operations, plus O(N) to initialise the adjoints.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that the backward pass visits each tape entry exactly once, in reverse order.",
-          "Counts the backward cost of each operation: + needs 2, × needs 4, sin needs 3, exp needs 2 (or bounds each by 4).",
-          "Sums to at most 4N for the backward pass and adds N for the forward pass.",
-          "Observes the bound does not depend on the number of inputs n.",
-        ],
-      },
-    },
-    {
       key: "big",
       rung: "stretch",
       prompt: (

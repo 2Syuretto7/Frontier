@@ -261,19 +261,6 @@ assert monty_exact(3, 1) == Fraction(2, 3) and monty_exact(100, 98) == Fraction(
       },
     },
     {
-      key: "complement",
-      rung: "prove",
-      prompt: <p>Prove that if A and B are independent, then so are A and the complement of B.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes A as the disjoint union of A ∩ B and A ∩ Bᶜ, so P(A ∩ Bᶜ) = P(A) − P(A ∩ B).",
-          "Substitutes P(A ∩ B) = P(A)P(B).",
-          "Factors to P(A)(1 − P(B)) = P(A)P(Bᶜ).",
-        ],
-      },
-    },
-    {
       key: "retest",
       rung: "stretch",
       prompt: <p>In the disease example (1 in 1000, 99% detection, 2% false positives), a person tests positive twice, the tests being independent given their health. What is the probability they are ill? Give four decimal places.</p>,

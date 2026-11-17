@@ -250,25 +250,6 @@ assert lattice_points(pts) == sum(inside(x, y) for x in range(-3, 9) for y in ra
       },
     },
     {
-      key: "midpoint-proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let A be <M>{"(x_1, y_1)"}</M>, B be <M>{"(x_2, y_2)"}</M>, and M be the midpoint given by the formula. Use the
-          distance formula to prove that <M>{"MA = MB = \\tfrac12 AB"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes the coordinate differences from M to A as half of those from B to A, up to sign.",
-          "Applies the distance formula to get MA = ½·√((x₂ − x₁)² + (y₂ − y₁)²).",
-          "Does the same for MB.",
-          "Concludes that both equal half of AB.",
-        ],
-      },
-    },
-    {
       key: "circumradius",
       rung: "stretch",
       prompt: <p>What is the radius of the circle passing through <M>{"(0, 0)"}</M>, <M>{"(6, 0)"}</M> and <M>{"(0, 8)"}</M>?</p>,

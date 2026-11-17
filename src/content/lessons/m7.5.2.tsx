@@ -292,19 +292,6 @@ assert var_of_combination([1, 2, 3], S3) == 1 + 16 + 81 + 2 * 6` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that for random variables with positive finite variances, |ρ(X, Y)| ≤ 1.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Considers Var(Y − tX) (or a similar combination) and notes it is non-negative for every real t.",
-          "Expands it as σ_Y² − 2t·Cov(X, Y) + t²σ_X², a quadratic in t.",
-          "Uses that a non-negative quadratic has non-positive discriminant (or substitutes t = Cov/σ_X²) to get Cov² ≤ σ_X²σ_Y², hence |ρ| ≤ 1.",
-        ],
-      },
-    },
-    {
       key: "multinom",
       rung: "stretch",
       prompt: <p>A die is rolled 10 times. What is the covariance of the number of ones and the number of twos? Give four decimal places.</p>,

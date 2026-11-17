@@ -235,19 +235,6 @@ assert abs(p - 0.079) < 0.01 and x > 4 and 0.02 < w < 0.15` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>For a two-sided level α z-test with standard deviation σ and effect δ &gt; 0, prove that n ≥ ((z_(α/2) + z_β)σ/δ)² guarantees power at least 1 − β.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that √n X̄/σ is N(s, 1) with s = √n δ/σ, and writes the power as Φ(s − z_(α/2)) + Φ(−s − z_(α/2)).",
-          "Bounds the power below by Φ(s − z_(α/2)).",
-          "Shows Φ(s − z_(α/2)) ≥ 1 − β is equivalent to s ≥ z_(α/2) + z_β, which rearranges to the stated n.",
-        ],
-      },
-    },
-    {
       key: "two",
       rung: "stretch",
       prompt: <p>Two independent groups with σ = 1 per unit: how many units per group give 80% power at δ = 0.5, using 2((1.96 + 0.8416)σ/δ)² rounded up?</p>,

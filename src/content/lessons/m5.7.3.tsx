@@ -263,25 +263,6 @@ assert abs(tot - 1) < 1e-3, tot` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Show that the polar map has <M>{"|\\det J| = r"}</M>, and use it with Fubini to prove{" "}
-          <M>{"\\int_{-\\infty}^\\infty e^{-x^2}\\,dx = \\sqrt\\pi"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes J = [[cos θ, −r sin θ], [sin θ, r cos θ]] and det J = r cos²θ + r sin²θ = r.",
-          "Writes I² = ∫∫ e^{−(x²+y²)} dx dy using Fubini or Tonelli (justified by positivity).",
-          "Changes to polar coordinates: ∫₀^{2π} ∫₀^∞ e^{−r²} r dr dθ, and evaluates the inner integral as ½ by substitution.",
-          "Concludes I² = π and I = √π since I > 0.",
-        ],
-      },
-    },
-    {
       key: "ball",
       rung: "stretch",
       prompt: <p>Using spherical coordinates, what is the volume of the unit ball in <M>{"\\mathbb R^3"}</M>? Give four decimal places.</p>,

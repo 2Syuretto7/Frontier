@@ -257,24 +257,6 @@ assert 1e9 < sensitivity(H) < 1e11, 'The 8 × 8 Hilbert matrix has condition num
       },
     },
     {
-      key: "structure",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let <M>{"\\mathbf x_p"}</M> satisfy <M>{"A\\mathbf x_p = \\mathbf b"}</M>. Prove that x solves Ax = b if and only if{" "}
-          <M>{"\\mathbf x - \\mathbf x_p"}</M> solves Ax = 0.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses linearity: A(x − x_p) = Ax − Ax_p.",
-          "If Ax = b, then A(x − x_p) = b − b = 0.",
-          "Conversely, if A(x − x_p) = 0, then Ax = A(x − x_p) + Ax_p = 0 + b = b.",
-        ],
-      },
-    },
-    {
       key: "rank",
       rung: "stretch",
       prompt: <p>An m × n matrix A has rank r. Which statements are always true? Select all that apply.</p>,

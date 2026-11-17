@@ -294,24 +294,6 @@ assert c @ avg - c.min() <= md_bound(n, 1.0, k) and abs(md_bound(np.e ** 2, 1.0,
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that on the probability simplex, the minimiser of t gᵀx + KL(x‖y) (with y in the interior) is x_i = y_i
-          e^(−t g_i) / Σ_j y_j e^(−t g_j).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Forms the Lagrangian with a multiplier for Σx_i = 1 and differentiates: t g_i + log(x_i/y_i) + 1 + ν = 0.",
-          "Solves to x_i = y_i e^(−t g_i) times a common constant, notes x_i > 0 so the nonnegativity constraints are inactive, and normalises.",
-          "Justifies that the stationary point is the minimiser, by strict convexity of the objective on the simplex.",
-        ],
-      },
-    },
-    {
       key: "steps",
       rung: "stretch",
       prompt: <p>With n = 100 options and G = 1, what is the smallest k for which the guarantee G√(2 log n / k) is at most 0.1?</p>,

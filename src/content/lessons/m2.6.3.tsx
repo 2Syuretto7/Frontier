@@ -292,43 +292,6 @@ assert max(abs(a - b) for a, b in zip(back, ys)) < 1e-4, 'Differentiating the in
         ],
       },
     },
-    {
-      key: "proof1",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove part 1 of the fundamental theorem: if f is continuous and <M>{"A(x) = \\int_a^x f"}</M>, then{" "}
-          <M>{"A'(x) = f(x)"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the difference quotient of A as (1/h) times the integral of f from x to x + h.",
-          "Bounds this between the minimum and maximum of f on the small interval.",
-          "Uses continuity of f to show both bounds tend to f(x), and concludes by squeezing.",
-        ],
-      },
-    },
-    {
-      key: "average",
-      rung: "stretch",
-      prompt: (
-        <p>
-          The average value of f on <M>{"[a, b]"}</M> is <M>{"\\frac{1}{b - a}\\int_a^b f"}</M>. Prove that a continuous f
-          actually takes its average value somewhere in <M>{"[a, b]"}</M>. Then find the average of <M>{"\\sin x"}</M> on{" "}
-          <M>{"[0, \\pi]"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Applies the mean value theorem to the area function A, or uses the bounds m(b − a) ≤ ∫f ≤ M(b − a) with the intermediate value theorem.",
-          "Concludes there is c with f(c) equal to the average.",
-          "Computes the average of sin on [0, π] as 2/π.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

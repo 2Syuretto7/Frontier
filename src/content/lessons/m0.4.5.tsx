@@ -242,24 +242,6 @@ assert abs(e_series(10) - math.e) < abs(compound(10 ** 6) - math.e), 'Ten terms 
       },
     },
     {
-      key: "bound",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain carefully why <M>{"(1 + \\tfrac{1}{n})^n \\ge 2"}</M> for every whole number <M>{"n \\ge 1"}</M>. Your
-          argument should show why <M>{"(1 + p)^n \\ge 1 + np"}</M> for <M>{"p > 0"}</M>, not just quote it.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains why (1 + p)ⁿ ≥ 1 + np, for instance step by step: each multiplication by (1 + p) adds p times the current amount, which is at least p.",
-          "Substitutes p = 1/n.",
-          "Concludes (1 + 1/n)ⁿ ≥ 1 + n · (1/n) = 2.",
-        ],
-      },
-    },
-    {
       key: "half-life",
       rung: "stretch",
       prompt: (

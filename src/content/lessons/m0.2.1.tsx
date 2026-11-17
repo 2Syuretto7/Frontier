@@ -251,25 +251,6 @@ assert N.count <= 3, f'Horner needs only three multiplications by x; you used mo
       },
     },
     {
-      key: "trick",
-      rung: "prove",
-      prompt: (
-        <p>
-          A new trick: think of a number, add 4, multiply by 3, subtract 6, divide by 3, then take away the number you
-          first thought of. Prove that the answer is always the same, and say what it is.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Introduces a variable for the unknown number.",
-          "Tracks each instruction as an expression: n + 4, 3n + 12, 3n + 6, n + 2, 2.",
-          "Concludes the answer is always 2.",
-          "Explains why this covers every possible number, not just tested examples.",
-        ],
-      },
-    },
-    {
       key: "cube",
       rung: "stretch",
       prompt: <p>Expand <M>{"(a + b)^3"}</M>.</p>,

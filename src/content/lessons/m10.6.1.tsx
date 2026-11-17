@@ -253,24 +253,6 @@ def worst_factor(mu, L, alpha, beta, n=201):
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          For the heavy-ball recurrence x_{"{k+1}"} = (1 + β − αλ)x_k − βx_{"{k−1}"} with 0 ≤ β &lt; 1, prove that if (1 − √β)² ≤
-          αλ ≤ (1 + √β)², then both roots of the characteristic polynomial have modulus √β.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the characteristic polynomial z² − (1 + β − αλ)z + β and notes that the product of its roots is β.",
-          "Shows the condition is equivalent to |1 + β − αλ| ≤ 2√β, so the discriminant is at most 0.",
-          "Concludes the roots are complex conjugates (or a repeated real root), so each has modulus √(product) = √β.",
-        ],
-      },
-    },
-    {
       key: "eff",
       rung: "stretch",
       prompt: <p>In the velocity form with α = 0.01 and β = 0.9, the gradient is constantly 1. What does the displacement per step tend to?</p>,

@@ -276,40 +276,6 @@ assert all(g(i) != progs[i](i) for i in range(4)), 'g disagrees with program i a
         ],
       },
     },
-    {
-      key: "irr-proof",
-      rung: "prove",
-      prompt: <p>Prove that the set of irrational numbers is uncountable.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Supposes the irrationals are countable.",
-          "Notes that the rationals are countable and ℝ is their union with the irrationals.",
-          "Uses that a union of two countable sets is countable to make ℝ countable.",
-          "Concludes this contradicts the uncountability of ℝ.",
-        ],
-      },
-    },
-    {
-      key: "functions",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Use a diagonal argument to prove that the set of all functions <M>{"\\mathbb{N} \\to \\mathbb{N}"}</M> is uncountable.
-          Then explain why the same argument does not show that <M>{"\\mathbb{Q}"}</M> is uncountable, if you try to diagonalise
-          against decimal expansions of rationals.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Supposes f₀, f₁, f₂, … lists all functions ℕ → ℕ.",
-          "Defines g(n) = fₙ(n) + 1 and shows g differs from each fₙ at n.",
-          "Concludes the set is uncountable.",
-          "Explains that the diagonal number built from rationals need not be rational (its decimal need not repeat), so it can escape a list of rationals without contradiction.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

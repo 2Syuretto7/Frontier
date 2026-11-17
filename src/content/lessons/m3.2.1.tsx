@@ -279,24 +279,6 @@ assert 'np.diag' not in src and 'linalg' not in src, 'Do not build the full matr
       },
     },
     {
-      key: "same",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that subtracting ℓ times row i from row j (with i ≠ j) does not change the set of solutions of a linear system.
-          Prove both inclusions.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "If x satisfies equations i and j, it satisfies equation j − ℓ × equation i, so every old solution is a new solution.",
-          "The operation is undone by adding ℓ times row i back to the new row j, and row i itself is unchanged.",
-          "So every new solution satisfies the original equation j too, and the two solution sets are equal.",
-        ],
-      },
-    },
-    {
       key: "count",
       rung: "stretch",
       prompt: (

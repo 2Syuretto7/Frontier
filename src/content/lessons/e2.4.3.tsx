@@ -420,40 +420,6 @@ for _ in range(2000):
         ],
       },
     },
-    {
-      key: "linear",
-      rung: "prove",
-      prompt: <p>Prove that bottom-up heapify on n items makes O(n) swaps, by counting nodes at each height and summing.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "A node of height h sifts down at most h levels, so at most h swaps.",
-          "There are at most ⌈n/2^{h+1}⌉ nodes of height h in a complete binary tree.",
-          "The total is at most Σ_h h·⌈n/2^{h+1}⌉ ≤ n Σ h/2^{h+1} + O(log² n).",
-          "Uses Σ_{h≥0} h/2^h = 2 to conclude the total is at most about n swaps, O(n).",
-        ],
-      },
-    },
-    {
-      key: "dary",
-      rung: "stretch",
-      prompt: (
-        <p>
-          A d-ary heap gives each node d children. Find the cost of push, pop and decrease-key in terms of n and d, and explain
-          why a large d suits an algorithm that does many more decrease-keys than pops, such as Dijkstra&rsquo;s on a dense
-          graph.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "The height is log_d n.",
-          "Push and decrease-key sift up, one comparison per level: O(log_d n).",
-          "Pop sifts down, comparing all d children per level: O(d log_d n).",
-          "With E decrease-keys and V pops, total O(E log_d V + V d log_d V); choosing d ≈ E/V balances the terms and makes decrease-keys cheap on dense graphs.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

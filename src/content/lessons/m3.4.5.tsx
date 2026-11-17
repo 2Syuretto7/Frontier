@@ -249,25 +249,6 @@ assert B['null'].shape == (3, 0) and B['left_null'].shape == (3, 0) and np.allcl
       },
     },
     {
-      key: "rn",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove the rank-nullity theorem, dim C(A) + dim N(A) = n, using the reduced row echelon form. Explain why the pivot
-          columns of A (not of R) form a basis of C(A).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Counts r pivot columns and n − r free columns in R, and identifies the n − r special solutions as a basis of N(A).",
-          "Argues that Ax = 0 and Rx = 0 have the same solutions, so the same combinations of columns vanish in A and in R.",
-          "Concludes that the pivot columns of A are independent and every other column is a combination of them, as in R.",
-          "Adds r + (n − r) = n.",
-        ],
-      },
-    },
-    {
       key: "tall",
       rung: "stretch",
       prompt: <p>A is 6 × 4 and its columns are independent. What is the dimension of its left null space?</p>,

@@ -234,42 +234,6 @@ assert 'itertools' not in inspect.getsource(subsets_of_size) and 'combinations' 
         ],
       },
     },
-    {
-      key: "kuratowski",
-      rung: "prove",
-      prompt: (
-        <p>
-          Using Kuratowski&rsquo;s definition <M>{"(a, b) = \\{\\{a\\}, \\{a, b\\}\\}"}</M>, show that{" "}
-          <M>{"(1, 2) \\ne (2, 1)"}</M>, and compute how many elements <M>{"(1, 1)"}</M> has as a set.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes (1, 2) = {{1}, {1, 2}} and (2, 1) = {{2}, {1, 2}}.",
-          "Notes {1} is an element of the first but not the second, so they differ.",
-          "Computes (1, 1) = {{1}, {1}} = {{1}}, which has one element.",
-        ],
-      },
-    },
-    {
-      key: "product-empty",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Prove that <M>{"A \\times B = \\varnothing"}</M> if and only if <M>{"A = \\varnothing"}</M> or{" "}
-          <M>{"B = \\varnothing"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows that if A or B is empty, there can be no pair (a, b), so the product is empty.",
-          "For the converse, argues by contrapositive: if A and B are both non-empty, choose a ∈ A and b ∈ B.",
-          "Notes that (a, b) ∈ A × B, so the product is non-empty.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

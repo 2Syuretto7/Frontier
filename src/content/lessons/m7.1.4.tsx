@@ -329,25 +329,6 @@ assert abs(s['ham'] - (m['ham'][0] + m['ham'][1]['win'] + m['ham'][1]['prize']))
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove the odds form of Bayes&apos; rule: if 0 &lt; P(H) &lt; 1 and P(E) &gt; 0, then{" "}
-          <M>{"\\frac{P(H \\mid E)}{P(H^c \\mid E)} = \\frac{P(E \\mid H)}{P(E \\mid H^c)}\\cdot\\frac{P(H)}{P(H^c)}"}</M>, whenever
-          the denominators are non-zero.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes P(H | E) = P(E | H)P(H)/P(E), from the definition of conditional probability applied both ways.",
-          "Writes the same for Hᶜ: P(Hᶜ | E) = P(E | Hᶜ)P(Hᶜ)/P(E).",
-          "Divides the two, noting that P(E) cancels, to obtain the stated identity.",
-        ],
-      },
-    },
-    {
       key: "heads",
       rung: "stretch",
       prompt: (

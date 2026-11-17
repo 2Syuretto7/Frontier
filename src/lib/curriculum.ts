@@ -1,7 +1,7 @@
 import "server-only";
 import { LESSONS } from "@/content/lessons";
 import { buildGraph, type Graph } from "./graph";
-import { isAutoChecked, type Exercise, type LessonContent } from "./types";
+import type { Exercise, LessonContent } from "./types";
 
 export const LESSON_BY_ID = new Map(LESSONS.map((l) => [l.id, l]));
 
@@ -21,9 +21,8 @@ for (const l of LESSONS) {
   if (new Set(keys).size !== keys.length) throw new Error(`Duplicate exercise key in ${l.id}`);
 }
 
-/** Exercises that count towards mastery: check, apply and prove. Stretch is optional. */
+/** Exercises that count towards mastery: check and apply. Stretch is optional. */
 export const masteryExercises = (l: LessonContent) => l.practice.filter((e) => e.rung !== "stretch");
 
-/** Auto-checked check and apply exercises become spaced-review cards once a lesson is mastered. */
-export const reviewable = (l: LessonContent) =>
-  l.practice.filter((e) => (e.rung === "check" || e.rung === "apply") && isAutoChecked(e.answer));
+/** Check and apply exercises become spaced-review cards once a lesson is mastered. */
+export const reviewable = (l: LessonContent) => l.practice.filter((e) => e.rung === "check" || e.rung === "apply");

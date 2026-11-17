@@ -286,19 +286,6 @@ def deriv_quotients(df, dg, c, hs):
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Deduce the mean value theorem from Rolle&apos;s theorem.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Defines an auxiliary function such as h(x) = f(x) − m(x − a), with m the chord slope (f(b) − f(a))/(b − a).",
-          "Checks that h is continuous on [a, b], differentiable on (a, b), and h(a) = h(b).",
-          "Applies Rolle to get c with h′(c) = 0, i.e. f′(c) = m.",
-        ],
-      },
-    },
-    {
       key: "lim2",
       rung: "stretch",
       prompt: <p>What is the limit of (eˣ − 1 − x)/x² as x → 0?</p>,

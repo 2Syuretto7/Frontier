@@ -244,25 +244,6 @@ assert abs(s - math.exp(-1)) <= b < 1e-6, 'Σ(−1)ᵏ⁺¹/(k − 1)! = 1/e.'` 
       },
     },
     {
-      key: "proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Show that the positive terms of <M>{"1 - \\tfrac12 + \\tfrac13 - \\dots"}</M> have an infinite sum, and so do the
-          negative terms. Explain why this is exactly what allows the series to be rearranged to sum to 10.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Compares 1 + 1/3 + 1/5 + … with ½(1/1 + 1/2 + 1/3 + …), or with ∫ dx/(2x − 1), to show it diverges.",
-          "Notes the negative terms are ½ of the harmonic series, which diverges.",
-          "Describes adding positive terms until the partial sum exceeds 10, then negative ones until below 10, and repeating; this never stops because both supplies are infinite.",
-          "Notes the overshoots are at most the size of the last term used, which tends to 0, so the partial sums converge to 10.",
-        ],
-      },
-    },
-    {
       key: "half",
       rung: "stretch",
       prompt: (

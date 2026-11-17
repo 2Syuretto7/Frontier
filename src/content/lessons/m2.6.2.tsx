@@ -291,43 +291,6 @@ assert len(calls) == n and len(set(calls)) == len(calls) and abs(v - 6.4) < 1e-8
         ],
       },
     },
-    {
-      key: "monotone",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that an increasing function f on <M>{"[a, b]"}</M> is integrable. (Use n equal pieces and show that{" "}
-          <M>{"U - L = (f(b) - f(a))(b - a)/n"}</M>.)
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that on each piece the supremum is at the right end and the infimum at the left end.",
-          "Shows that U − L telescopes to (f(b) − f(a))(b − a)/n.",
-          "Concludes that U − L can be made smaller than any ε, so f is integrable.",
-        ],
-      },
-    },
-    {
-      key: "thomae",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Let <M>{"f(x) = 1/q"}</M> when <M>{"x = p/q"}</M> in lowest terms, and <M>{"f(x) = 0"}</M> when x is irrational,
-          on <M>{"[0, 1]"}</M>. Show that every lower sum is 0, and explain why the upper sums can be made small, so that f
-          is integrable with integral 0, even though it is discontinuous at every rational.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that every piece contains irrationals, so every lower sum is 0.",
-          "Observes that for a given ε only finitely many points have f(x) ≥ ε.",
-          "Covers those finitely many points with pieces of small total width, so the upper sum is less than about 2ε; any clear sketch of this idea is fine.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

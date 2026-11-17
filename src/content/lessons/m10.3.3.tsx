@@ -284,25 +284,6 @@ assert abs(z - 0.5) < 1e-12 and np.allclose(y, [1.0, 2.5]) and abs(v - (c @ x + 
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that minimising Σᵢ |aᵢᵀw − yᵢ| over w has the same optimal value as the LP: minimise Σᵢ tᵢ over (w, t)
-          subject to −tᵢ ≤ aᵢᵀw − yᵢ ≤ tᵢ, and that w is optimal for the first exactly when (w, t) with tᵢ = |aᵢᵀw − yᵢ| is
-          optimal for the second.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes the constraints are equivalent to tᵢ ≥ |aᵢᵀw − yᵢ|, so every feasible (w, t) has Σtᵢ ≥ Σ|rᵢ(w)|.",
-          "Shows that for each w the choice tᵢ = |rᵢ(w)| is feasible and attains Σ|rᵢ(w)|, so the optimal values agree.",
-          "Deduces the correspondence of optimal points in both directions.",
-        ],
-      },
-    },
-    {
       key: "gp",
       rung: "stretch",
       prompt: <p>With c = (1, 3), monomial exponent rows (1, −1) and (0, 2), what is log f at z = (1, −1)? Give four decimal places.</p>,

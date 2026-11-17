@@ -255,26 +255,6 @@ except KeyError:
       },
     },
     {
-      key: "extend",
-      rung: "prove",
-      prompt: (
-        <p>
-          Extend the project so that it also reports the single largest expense, with its date and category. Say which
-          functions change or are added, what each takes and returns, how you would test the new part, and what should
-          happen if every row is bad.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Keeps the date in the rows read (for example tuples of date, category and amount), and updates the other functions to match.",
-          "Adds a separate function, such as largest_expense(rows), that returns the row with the greatest amount.",
-          "Tests the new function directly on small lists, including a tie or a single row.",
-          "Handles the empty case, for example by returning None and reporting that there were no valid rows, rather than crashing.",
-        ],
-      },
-    },
-    {
       key: "sorted",
       rung: "stretch",
       prompt: (

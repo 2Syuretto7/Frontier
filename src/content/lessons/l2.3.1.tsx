@@ -293,19 +293,6 @@ assert list(support_vectors(np.array([1.0]), 0.0, X, y)) == [0, 2]` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that the soft-margin SVM with slack variables ξᵢ has the same minimising (w, b) as the unconstrained objective ½‖w‖² + CΣ max(0, 1 − yᵢ(wᵀxᵢ + b)).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Fixes (w, b) and notes the objective is increasing in each ξᵢ, so each ξᵢ should be as small as the constraints allow.",
-          "Identifies the smallest feasible ξᵢ as max(0, 1 − yᵢf(xᵢ)) from the two constraints.",
-          "Substitutes to get the hinge objective and concludes the minimisers over (w, b) coincide.",
-        ],
-      },
-    },
-    {
       key: "obj",
       rung: "stretch",
       prompt: (

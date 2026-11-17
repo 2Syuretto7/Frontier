@@ -265,24 +265,6 @@ assert len(pts) == 9 and (0, 0) in pts and (2, 1) in pts and (3, 4) not in pts a
       },
     },
     {
-      key: "closed",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if x and y are both linear combinations of u and w, then so is <M>{"a\\mathbf x + b\\mathbf y"}</M> for any
-          numbers a and b. Conclude that the span of u and w contains every combination of its own members.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes x = c₁u + c₂w and y = d₁u + d₂w for some numbers.",
-          "Expands ax + by and regroups it as (ac₁ + bd₁)u + (ac₂ + bd₂)w, using the rules of vector arithmetic.",
-          "Concludes that ax + by is a combination of u and w, so the span is closed under combinations.",
-        ],
-      },
-    },
-    {
       key: "dependent",
       rung: "stretch",
       prompt: (

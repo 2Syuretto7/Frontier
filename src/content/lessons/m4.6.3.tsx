@@ -261,19 +261,6 @@ assert expected_records(3) == Fraction(11, 6) and expected_records(0) == 0` },
       },
     },
     {
-      key: "linear",
-      rung: "prove",
-      prompt: <p>Prove that the expected number of fixed points of a uniformly random permutation of n items is 1, using indicators.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Defines the indicator Xᵢ of the event that item i stays in place.",
-          "Computes P(item i fixed) = (n − 1)!/n! = 1/n.",
-          "Sums by linearity to get n · (1/n) = 1, noting independence is not needed.",
-        ],
-      },
-    },
-    {
       key: "birthday",
       rung: "stretch",
       prompt: <p>In a group of 30 people with 365 equally likely birthdays, what is the expected number of pairs who share a birthday? Give three decimal places.</p>,

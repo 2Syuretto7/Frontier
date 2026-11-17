@@ -294,23 +294,6 @@ assert np.allclose(np.linalg.norm(B, axis=0), np.sqrt(s[:3]))` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if B has rank at most k, then ‖A − B‖₂ ≥ σₖ₊₁(A), where v₁, …, vₙ are the right singular vectors of A.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses rank–nullity: dim null B ≥ n − k, and span(v₁, …, vₖ₊₁) has dimension k + 1, so they intersect in a unit vector x.",
-          "Notes (A − B)x = Ax and computes ‖Ax‖² = Σⱼ≤ₖ₊₁ σⱼ²|cⱼ|² ≥ σₖ₊₁² for x = Σ cⱼvⱼ.",
-          "Concludes ‖A − B‖₂ ≥ ‖(A − B)x‖ ≥ σₖ₊₁.",
-        ],
-      },
-    },
-    {
       key: "energy",
       rung: "stretch",
       prompt: <p>For A = [[3, 0], [4, 5]], what fraction of ‖A‖_F² is kept by its best rank-1 approximation?</p>,

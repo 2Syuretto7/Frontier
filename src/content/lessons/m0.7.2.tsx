@@ -225,25 +225,6 @@ assert telescope(1) == Fraction(1, 2) and telescope(3) == Fraction(3, 4) and all
       },
     },
     {
-      key: "odd-proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"\\sum_{k=1}^{n} (2k - 1) = n^2"}</M> using the rules for sums and the formula for{" "}
-          <M>{"\\sum_{k=1}^{n} k"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Splits the sum as 2 times the sum of k, minus the sum of 1.",
-          "Substitutes n(n + 1)/2 for the sum of k.",
-          "Uses the sum of n ones being n.",
-          "Simplifies n(n + 1) − n to n².",
-        ],
-      },
-    },
-    {
       key: "cubes",
       rung: "stretch",
       prompt: (

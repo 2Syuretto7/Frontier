@@ -342,23 +342,6 @@ for x in (np.array([1.0, 0.0]), np.array([0.3, -2.0]), np.array([5.0, 7.0])):
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if e₁, …, eₙ is an orthonormal basis of V, then every v satisfies v = Σⱼ ⟨v, eⱼ⟩eⱼ and ‖v‖² = Σⱼ
-          |⟨v, eⱼ⟩|².
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes v = Σ aₖeₖ (possible because the list is a basis) and takes the inner product with eⱼ, using orthonormality to get aⱼ = ⟨v, eⱼ⟩.",
-          "For the norm, expands ⟨Σ aⱼeⱼ, Σ aₖeₖ⟩ and uses ⟨eⱼ, eₖ⟩ = 0 for j ≠ k and 1 for j = k to get Σ|aⱼ|².",
-        ],
-      },
-    },
-    {
       key: "legendre",
       rung: "stretch",
       prompt: (

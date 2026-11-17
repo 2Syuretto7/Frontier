@@ -297,25 +297,6 @@ assert iterate(double, 0, 3) == 3 and iterate(double, 5, 1) == 32, 'Apply f agai
       },
     },
     {
-      key: "compose-injective",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if <M>f</M> and <M>g</M> are both one-to-one, and <M>{"g \\circ f"}</M> is defined, then{" "}
-          <M>{"g \\circ f"}</M> is one-to-one.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Starts from g(f(x₁)) = g(f(x₂)).",
-          "Uses that g is one-to-one to deduce f(x₁) = f(x₂).",
-          "Uses that f is one-to-one to deduce x₁ = x₂.",
-          "Concludes that g ∘ f is one-to-one.",
-        ],
-      },
-    },
-    {
       key: "inverse-rational",
       rung: "stretch",
       prompt: (

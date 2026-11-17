@@ -285,19 +285,6 @@ assert 123456 in find_all(s, q) and find_all(s, 'acgtacgtacgtacgtacgt') == [i fo
       },
     },
     {
-      key: "patterns",
-      rung: "prove",
-      prompt: <p>Prove that if m is prime and d is not a multiple of m, the keys d, 2d, …, md land in m different buckets under k mod m.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Supposes id ≡ jd (mod m) with 1 ≤ i < j ≤ m.",
-          "Uses that d is invertible modulo the prime m (or Euclid's lemma) to get i ≡ j (mod m).",
-          "Notes 0 < j − i < m, a contradiction, so the m remainders are distinct.",
-        ],
-      },
-    },
-    {
       key: "prob",
       rung: "stretch",
       prompt: <p>5 keys are hashed uniformly into 10 buckets. What is the probability that no two collide? Give four decimal places.</p>,

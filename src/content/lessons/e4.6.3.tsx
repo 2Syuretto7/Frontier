@@ -310,24 +310,6 @@ assert unreachable(g, ['missing']) == sorted(g)` },
       },
     },
     {
-      key: "dfs",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the loop in the second reading exercise ends with <C>seen</C> equal to the set of functions reachable
-          from main by following calls.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows every function added to seen is reachable, since everything pushed is main or a callee of something already in seen.",
-          "Shows every reachable function is added, by induction on the length of a call path from main: when a function enters seen its callees are pushed and later popped.",
-          "Argues the loop ends, because each function enters seen at most once and so only finitely many items are ever pushed.",
-        ],
-      },
-    },
-    {
       key: "pushes",
       rung: "stretch",
       prompt: <p>In the second reading exercise, how many items are pushed onto the stack in total, counting the initial main?</p>,

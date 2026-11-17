@@ -232,24 +232,6 @@ def same_predicate(P, Q, D):
       },
     },
     {
-      key: "conditional-set",
-      rung: "prove",
-      prompt: (
-        <p>
-          Over a domain D, with truth sets A for P and B for Q, describe the truth set of <M>{"P(x) \\to Q(x)"}</M> and prove
-          your description.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Says the truth set is the elements outside A together with the elements in B (equivalently, everything except the elements in A but not in B).",
-          "Uses that P → Q is false exactly when P is true and Q is false.",
-          "Concludes that an element fails only if it lies in A and outside B.",
-        ],
-      },
-    },
-    {
       key: "goldbach",
       rung: "stretch",
       prompt: <p>In how many ways can 30 be written as a sum of two primes, if order does not matter (so 7 + 23 and 23 + 7 count once)?</p>,

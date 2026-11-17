@@ -397,34 +397,6 @@ for _ in range(150):
         ],
       },
     },
-    {
-      key: "bfproof",
-      rung: "prove",
-      prompt: <p>Prove that if no negative cycle is reachable from s, then after k rounds of Bellman–Ford, d[v] is at most the length of the shortest path from s to v that uses at most k edges; conclude that V − 1 rounds suffice.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Inducts on k, with base case k = 0: d[s] = 0 and the only 0-edge path is from s to s.",
-          "For a shortest path to v with at most k edges ending in u → v, after round k − 1 d[u] is at most the length of its first part, and round k relaxes u → v.",
-          "Uses that d[v] only decreases and is always the length of some real walk.",
-          "With no reachable negative cycle a shortest path can be taken simple, so it has at most V − 1 edges, and V − 1 rounds give exact distances.",
-        ],
-      },
-    },
-    {
-      key: "reweight",
-      rung: "stretch",
-      prompt: <p>A friend suggests handling negative weights by adding a constant c to every edge so that all are non-negative, then running Dijkstra. Show by example that this fails, and explain what kind of adjustment does preserve shortest paths.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Gives a concrete graph where a path with more edges is shortest but loses after each edge gains c (for example s→a→t of weights 1, −2 against s→t of weight 0).",
-          "Explains that adding c changes a path of k edges by kc, so it favours paths with fewer edges.",
-          "Describes reweighting w'(u, v) = w(u, v) + h(u) − h(v) for a potential h.",
-          "Shows every s–t path changes by the same h(s) − h(t), so shortest paths are preserved, and notes h from Bellman–Ford makes all w' ≥ 0 (Johnson's algorithm).",
-        ],
-      },
-    },
   ],
 
   glimpse: (

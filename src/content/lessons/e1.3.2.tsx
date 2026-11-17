@@ -303,25 +303,6 @@ assert k[0] == 101, 'Even a None result is remembered.'` },
       },
     },
     {
-      key: "timer",
-      rung: "prove",
-      prompt: (
-        <p>
-          Write a decorator <C>timed</C> that prints how long each call to the decorated function took, and returns its result
-          unchanged. Explain where each piece of state lives, and why you would use <C>functools.wraps</C>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Defines timed(fn) returning an inner wrapper(*args, **kwargs) that records time.perf_counter() before and after calling fn.",
-          "Returns fn's result from the wrapper, so behaviour is unchanged apart from the printing.",
-          "Explains that fn is held in the wrapper's closure, while the start time is a local of each call.",
-          "Explains functools.wraps copies fn's name and docstring onto the wrapper, so debugging and introspection still show the original.",
-        ],
-      },
-    },
-    {
       key: "mult",
       rung: "stretch",
       prompt: (

@@ -315,26 +315,6 @@ except ValueError:
       },
     },
     {
-      key: "bare",
-      rung: "prove",
-      prompt: (
-        <p>
-          A colleague wraps a whole 200-line program in <C>try:</C> &hellip; <C>except: pass</C> &ldquo;so that it never
-          crashes&rdquo;. Explain what can go wrong, and describe a better way to handle the bad survey rows of the
-          puzzle.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains that a bare except catches every exception, including bugs such as NameError or TypeError in the program itself.",
-          "Explains that pass hides the problem, so the program may stop partway or give wrong results with no message.",
-          "Proposes catching only the expected exception (ValueError) around the conversion of a single row.",
-          "Proposes reporting or counting the skipped rows, so that the problem is visible.",
-        ],
-      },
-    },
-    {
       key: "entries",
       rung: "stretch",
       prompt: (

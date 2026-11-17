@@ -253,20 +253,6 @@ assert moving_average(np.array([1.0, 2.0, 3.0]), np.array([4.0, 6.0]), 2) == ((4
       },
     },
     {
-      key: "meanbest",
-      rung: "prove",
-      prompt: <p>Prove that the constant minimising the mean squared error on <M>{"y_1, \\dots, y_n"}</M> is <M>{"\\bar y"}</M>, that its error is the variance, and deduce the value of <M>{"R^2"}</M> for this predictor.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes y_i − c = (y_i − ȳ) + (ȳ − c) and expands the sum of squares.",
-          "Shows the cross term is zero because the deviations from the mean sum to zero.",
-          "Concludes the sum is Σ(y_i − ȳ)² + n(ȳ − c)², minimised uniquely at c = ȳ, with mean error equal to the variance.",
-          "Deduces R² = 1 − variance / variance = 0.",
-        ],
-      },
-    },
-    {
       key: "cross",
       rung: "stretch",
       prompt: <p>At what prevalence of positives does a model with recall 0.8 and specificity 0.9 have the same accuracy as the majority baseline? Give three decimal places.</p>,

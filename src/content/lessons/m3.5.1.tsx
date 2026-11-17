@@ -257,24 +257,6 @@ assert abs(angle_between_subspaces([[1], [0], [0]], [[1], [1], [0]]) - 45) < 1e-
       },
     },
     {
-      key: "proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the left null space <M>{"N(A^{\\mathsf T})"}</M> is orthogonal to the column space C(A), and that the only
-          vector in both is 0.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes y with Aᵀy = 0 and a vector Ax in the column space.",
-          "Computes y · Ax = yᵀAx = (Aᵀy)ᵀx = 0.",
-          "Notes that a vector in both is orthogonal to itself, so its length squared is 0 and it is 0.",
-        ],
-      },
-    },
-    {
       key: "split",
       rung: "stretch",
       prompt: <p>Split x = (3, 1) into a part in the row space and a part in the null space of A = [1 1]. Give the first entry of the null space part.</p>,

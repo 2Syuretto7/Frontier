@@ -295,24 +295,6 @@ assert separates(a, 0.5, np.array([[0.0, 5.0], [0.4, -2.0]]), np.array([[1.0, 0.
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let C be a nonempty closed convex set, x a point not in C, and p its nearest point in C. Prove that ⟨x − p, z − p⟩
-          ≤ 0 for every z in C, and deduce that a = x − p satisfies aᵀz &lt; aᵀx for every z in C.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Considers the points p + θ(z − p), θ ∈ [0, 1], which lie in C by convexity, and expands ‖x − p − θ(z − p)‖².",
-          "Uses minimality of p to conclude that the derivative at θ = 0, −2⟨x − p, z − p⟩, is nonnegative (or argues with small θ directly).",
-          "Deduces aᵀz ≤ aᵀp = aᵀx − ‖a‖² < aᵀx, using a ≠ 0 because x is not in C.",
-        ],
-      },
-    },
-    {
       key: "half",
       rung: "stretch",
       prompt: <p>What is the distance from (2, 2, 2) to the halfspace x₁ + x₂ + x₃ ≤ 3? Give four decimal places.</p>,

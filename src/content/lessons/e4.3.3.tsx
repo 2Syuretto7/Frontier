@@ -320,25 +320,6 @@ assert compare_runs(runs, 'missing') == []` },
       },
     },
     {
-      key: "weights",
-      rung: "prove",
-      prompt: (
-        <p>
-          For <M>{"m_t = \\beta m_{t-1} + (1 - \\beta) x_t"}</M> with <M>{"m_0 = 0"}</M>, prove that{" "}
-          <M>{"m_t = (1 - \\beta)\\sum_{k=0}^{t-1}\\beta^k x_{t-k}"}</M> and that these weights sum to{" "}
-          <M>{"1 - \\beta^t"}</M>. Explain why this makes the uncorrected average too small early in training.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Proves the unrolled formula, by induction on t or by repeated substitution.",
-          "Sums the geometric series to get 1 − β^t.",
-          "Concludes that for small t the weights sum to much less than 1, so a constant or positive sequence is pulled towards the initial value 0.",
-        ],
-      },
-    },
-    {
       key: "window",
       rung: "stretch",
       prompt: (

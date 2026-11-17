@@ -330,18 +330,6 @@ assert np.allclose(fgsm(np.full(3, 0.5), np.zeros(3), 0.2), 0.5)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that the dual of the ℓ₁ norm on ℝⁿ (with the dot product) is the ℓ∞ norm.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Upper bound: for ‖x‖₁ ≤ 1, ⟨x, y⟩ ≤ Σ|xᵢ||yᵢ| ≤ maxᵢ|yᵢ| Σ|xᵢ| ≤ ‖y‖∞.",
-          "Attainment: x = sign(yᵢ)eᵢ for an index i with |yᵢ| = ‖y‖∞ has ‖x‖₁ = 1 and ⟨x, y⟩ = ‖y‖∞.",
-        ],
-      },
-    },
-    {
       key: "holder",
       rung: "stretch",
       prompt: <p>What is the maximum of ⟨x, (1, 2, 3)⟩ over ‖x‖₃ ≤ 1? Give 4 decimal places.</p>,

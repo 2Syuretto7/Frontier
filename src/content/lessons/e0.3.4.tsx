@@ -258,26 +258,6 @@ assert r == ['Ravi 85.0', 'Zoya 85.0', 'Asha 78.3', 'Dev 50.0'], 'Highest averag
       },
     },
     {
-      key: "design",
-      rung: "prove",
-      prompt: (
-        <p>
-          A program must take a week of daily maximum temperatures and print the hottest day, the average, and the number of
-          days above 35 degrees. Design it top-down: write the main program as calls to functions, then give each function a
-          name, its parameters, what it returns and a one-sentence docstring. Explain why you split it as you did.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes a short main part that calls named functions rather than containing the detailed logic.",
-          "Gives functions such as hottest, average and count_above, each with sensible parameters (for example the temperatures, and a threshold).",
-          "States what each returns and gives a docstring saying what, not how.",
-          "Justifies the split: each function does one job that can be named and tested on its own.",
-        ],
-      },
-    },
-    {
       key: "compose",
       rung: "stretch",
       prompt: (

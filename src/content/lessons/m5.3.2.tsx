@@ -282,26 +282,6 @@ assert abs(v["f"] - 3.0) < 1e-12 and abs(t["f"] - (3.0 + 2.0)) < 1e-12, t` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if <M>{"f(x + \\varepsilon) = f(x) + f'(x)\\varepsilon"}</M> and{" "}
-          <M>{"g(x + \\varepsilon) = g(x) + g'(x)\\varepsilon"}</M> hold in dual arithmetic, then the same identity holds for{" "}
-          <M>{"fg"}</M> and for <M>{"\\sin \\circ f"}</M>. Explain why this gives forward mode&rsquo;s correctness for any
-          program built from these operations.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Multiplies (f + f′ε)(g + g′ε) = fg + (f′g + fg′)ε using ε² = 0, and recognises the product rule.",
-          "Applies the definition sin(a + bε) = sin a + (cos a) b ε with a = f(x), b = f′(x) to get (sin ∘ f)′ = cos(f) f′, the chain rule.",
-          "Concludes by induction over the operations of the program (or the tape) that every intermediate value carries its own derivative.",
-        ],
-      },
-    },
-    {
       key: "tall",
       rung: "stretch",
       prompt: (

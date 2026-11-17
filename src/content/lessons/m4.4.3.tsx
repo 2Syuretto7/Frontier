@@ -273,24 +273,6 @@ assert all(is_prime(n) == s[n] for n in range(N)), 'Agree with a sieve below 200
       },
     },
     {
-      key: "zerodiv",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if n is composite, <M>{"\\mathbb Z_n"}</M> has non-zero a, b with <M>{"ab \\equiv 0"}</M>, and that such
-          an a has no inverse modulo n.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes n = ab with 1 < a, b < n, so a and b are non-zero modulo n but ab ≡ 0.",
-          "Supposes ax ≡ 1 and multiplies ab ≡ 0 by x to get b ≡ 0.",
-          "Concludes the contradiction, so a has no inverse.",
-        ],
-      },
-    },
-    {
       key: "digits",
       rung: "stretch",
       prompt: <p>What are the last two digits of <M>{"3^{2026}"}</M>? Give the number from 0 to 99.</p>,

@@ -271,25 +271,6 @@ assert ok, 'Each row and column must have exactly one 1.'` },
       },
     },
     {
-      key: "sym",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"(A\\mathbf x)\\cdot\\mathbf y = \\mathbf x\\cdot(A^{\\mathsf T}\\mathbf y)"}</M> for every m × n
-          matrix A, x in <M>{"\\mathbb R^n"}</M> and y in <M>{"\\mathbb R^m"}</M>. Deduce that{" "}
-          <M>{"A^{\\mathsf T}A"}</M> is symmetric.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes (Ax)·y = (Ax)ᵀy = xᵀAᵀy = x·(Aᵀy), using (AB)ᵀ = BᵀAᵀ; or expands both as Σ_i Σ_j a_ij x_j y_i.",
-          "For symmetry, computes (AᵀA)ᵀ = Aᵀ(Aᵀ)ᵀ = AᵀA.",
-          "Notes that AᵀA is n × n, so symmetry makes sense.",
-        ],
-      },
-    },
-    {
       key: "ata",
       rung: "stretch",
       prompt: <p>A has rows (1, 2), (3, 4) and (5, 6). Find the entry in row 1, column 2 of <M>{"A^{\\mathsf T}A"}</M>.</p>,

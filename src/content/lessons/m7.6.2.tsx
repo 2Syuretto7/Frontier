@@ -279,25 +279,6 @@ assert abs(m - em) < 0.15 and abs(v - ev) / ev < 0.05` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Assuming Adam&apos;s law <M>{"E[E[Z \\mid X]] = E[Z]"}</M> for any Z with a finite mean, prove Eve&apos;s law{" "}
-          <M>{"\\operatorname{Var}(Y) = E[\\operatorname{Var}(Y \\mid X)] + \\operatorname{Var}(E[Y \\mid X])"}</M> for Y with a
-          finite second moment.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes Var(Y | X) = E[Y² | X] − G² with G = E[Y | X], and uses Adam's law on Y² to get E[Var(Y | X)] = E[Y²] − E[G²].",
-          "Uses Adam's law on Y to get E[G] = E[Y], so Var(G) = E[G²] − E[Y]².",
-          "Adds the two to obtain E[Y²] − E[Y]² = Var(Y).",
-        ],
-      },
-    },
-    {
       key: "stick",
       rung: "stretch",
       prompt: (

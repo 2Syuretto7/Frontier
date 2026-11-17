@@ -273,19 +273,6 @@ assert abs(b1) < 0.01 and abs(b2) < 0.01 and m2 < m1 / 3` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>For an iid Bernoulli(p) sample, prove directly from the definition that T = ΣXᵢ is sufficient for p.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes P(X = x) = p^t(1 − p)^(n − t) for a sequence x with t ones.",
-          "Uses that T is Binomial(n, p), so P(T = t) = C(n, t) p^t(1 − p)^(n − t).",
-          "Divides to get P(X = x | T = t) = 1/C(n, t) for x with t ones (and 0 otherwise), which does not depend on p.",
-        ],
-      },
-    },
-    {
       key: "unb",
       rung: "stretch",
       prompt: <p>For a Poisson(λ) sample of size n, T = ΣXᵢ is Poisson(nλ). Compute E[((n − 1)/n)^T] when n = 5 and λ = 2, giving four decimal places.</p>,

@@ -233,25 +233,6 @@ assert abs(exact(0) - (math.e - 1)) < 1e-15 and abs(exact(1) - 1) < 1e-15, 'The 
       },
     },
     {
-      key: "esin",
-      rung: "prove",
-      prompt: (
-        <p>
-          Show that <M>{"\\int e^x \\sin x\\,dx = \\tfrac12 e^x(\\sin x - \\cos x) + C"}</M> using integration by parts twice,
-          and check your answer by differentiating it.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "First round: u = sin x, dv = eˣ dx (or the reverse), giving eˣ sin x − ∫ eˣ cos x dx.",
-          "Second round on ∫ eˣ cos x dx, keeping the same roles, giving eˣ cos x + ∫ eˣ sin x dx.",
-          "Combines to I = eˣ sin x − eˣ cos x − I and solves 2I = eˣ(sin x − cos x).",
-          "Differentiates ½eˣ(sin x − cos x) by the product rule and gets eˣ sin x.",
-        ],
-      },
-    },
-    {
       key: "reduce",
       rung: "stretch",
       prompt: (

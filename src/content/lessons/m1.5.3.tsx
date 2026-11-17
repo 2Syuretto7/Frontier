@@ -240,43 +240,6 @@ for a, b in [(12, 18), (35, 64), (6, 9), (17, 5), (100, 75)]:
         ],
       },
     },
-    {
-      key: "every-n",
-      rung: "prove",
-      prompt: (
-        <p>
-          Use a minimal counterexample to prove that every integer <M>{"n \\ge 2"}</M> has at least one prime factor.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Supposes some n ≥ 2 has no prime factor, and takes the least such m by well-ordering.",
-          "Notes m is not prime (else it is its own prime factor), so m = ab with 2 ≤ a < m.",
-          "Uses the minimality of m: a has a prime factor p, which then divides m.",
-          "Concludes this contradicts the choice of m.",
-        ],
-      },
-    },
-    {
-      key: "descent",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Prove that there are no positive integers x and y with <M>{"x^2 = 3y^2"}</M>, by taking a solution with the least
-          possible y and finding a smaller one.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes a solution with y least, by well-ordering.",
-          "Shows 3 divides x² and hence x (using the earlier result about 3 and squares), writing x = 3z.",
-          "Derives y² = 3z², another solution, with z < y since z² = y²/3 < y².",
-          "Concludes this contradicts the minimality of y.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

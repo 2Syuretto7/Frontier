@@ -6,8 +6,6 @@ import { checkAnswer, type CheckResult } from "./check";
 import { frontier } from "./graph";
 import { chooseNextStep, type LearnStep } from "./scheduler";
 import type { Track } from "./types";
-import { PartonError, markWritten, partonConnected } from "./parton";
-import { renderParton } from "./parton/render";
 import { RECALL_PREFIX, recallAttempt } from "./recall";
 
 const scheduler = fsrs({ enable_fuzz: true, request_retention: 0.9 });
@@ -77,20 +75,17 @@ export async function startLesson(lessonId: string) {
   );
 }
 
-export type Verdict = "accepted" | "revise" | "pending";
 export type ExerciseStateRow = {
   exercise_id: string;
   attempts: number;
   solved: boolean;
   response: string | null;
-  verdict: Verdict | null;
-  feedback: string | null;
 };
 
 export async function exerciseStates(lessonIds: string[]): Promise<Map<string, ExerciseStateRow>> {
   if (lessonIds.length === 0) return new Map();
   const rows = await query<ExerciseStateRow>(
-    "SELECT exercise_id, attempts, solved, response, verdict, feedback FROM exercise_state WHERE lesson_id = ANY($1)",
+    "SELECT exercise_id, attempts, solved, response FROM exercise_state WHERE lesson_id = ANY($1)",
     [lessonIds],
   );
   return new Map(rows.map((r) => [r.exercise_id, r]));
@@ -98,73 +93,39 @@ export async function exerciseStates(lessonIds: string[]): Promise<Map<string, E
 
 export type Context = "lesson" | "recall" | "review";
 
-export type AttemptResult = CheckResult & { lessonMastered?: boolean; verdict?: Verdict; feedbackHtml?: string };
+export type AttemptResult = CheckResult & { lessonMastered?: boolean };
 
 /**
  * Checks an answer, records it, and updates mastery and the review schedule.
  * In review, the first attempt of the session decides the review rating.
- * Written proofs and arguments are marked by Parton against the rubric when Parton is connected;
- * until then they are provisionally accepted on submission.
  */
 export async function attempt(id: string, input: string, context: Context, attemptInSession: number): Promise<AttemptResult> {
   // Recall questions are written fresh by Parton, so they live in their own table rather than the curriculum.
   if (id.startsWith(RECALL_PREFIX)) return context === "recall" ? recallAttempt(id, input) : { correct: false, message: "Unknown exercise." };
   const ref = EXERCISES.get(id);
   if (!ref) return { correct: false, message: "Unknown exercise." };
-  const written = ref.exercise.answer.kind === "written";
-  if (written && context !== "lesson") return { correct: false, message: "Written work is marked inside its lesson." };
   const result = checkAnswer(ref.exercise.answer, input);
   if (result.message && !result.correct) return result;
-
-  let correct = result.correct;
-  let verdict: Verdict | null = null;
-  let feedback: string | null = null;
-  if (written) {
-    if (partonConnected()) {
-      try {
-        const marking = await markWritten(ref, input);
-        correct = marking.accepted;
-        verdict = marking.accepted ? "accepted" : "revise";
-        feedback = marking.feedback;
-      } catch (error) {
-        if (error instanceof PartonError) return { correct: false, message: `${error.message} Your answer is still in the box.` };
-        throw error;
-      }
-    } else {
-      correct = true;
-      verdict = "pending";
-    }
-  }
+  const correct = result.correct;
 
   await query(
-    `INSERT INTO exercise_state (exercise_id, lesson_id, attempts, solved, first_try, response, verdict, feedback)
-     VALUES ($1, $2, 1, $3, $3, $4, $5, $6)
+    `INSERT INTO exercise_state (exercise_id, lesson_id, attempts, solved, first_try, response)
+     VALUES ($1, $2, 1, $3, $3, $4)
      ON CONFLICT (exercise_id) DO UPDATE SET
        attempts = exercise_state.attempts + 1,
        solved = exercise_state.solved OR EXCLUDED.solved,
        response = EXCLUDED.response,
-       verdict = CASE WHEN exercise_state.verdict = 'accepted' AND EXCLUDED.verdict = 'revise' THEN 'accepted' ELSE EXCLUDED.verdict END,
-       feedback = EXCLUDED.feedback,
        updated_at = now()`,
-    [id, ref.lessonId, correct, input, verdict, feedback],
+    [id, ref.lessonId, correct, input],
   );
   await query("INSERT INTO attempt_log (exercise_id, response, correct, context) VALUES ($1, $2, $3, $4)", [id, input.slice(0, ref.exercise.answer.kind === "code" ? 20000 : 4000), correct, context]);
-  if (written) {
-    await query("INSERT INTO writings (lesson_id, kind, exercise_id, body) VALUES ($1, 'answer', $2, $3)", [ref.lessonId, id, input]);
-  }
 
   if (context !== "lesson" && attemptInSession === 1) {
     await rateCard(id, correct ? Rating.Good : Rating.Again);
   }
 
   const lessonMastered = context === "lesson" ? await evaluateMastery(ref.lessonId) : undefined;
-  return {
-    correct,
-    message: result.message,
-    lessonMastered,
-    verdict: verdict ?? undefined,
-    feedbackHtml: feedback ? renderParton(feedback) : undefined,
-  };
+  return { correct, message: result.message, lessonMastered };
 }
 
 async function rateCard(id: string, rating: Rating.Again | Rating.Good) {
@@ -176,24 +137,19 @@ async function rateCard(id: string, rating: Rating.Again | Rating.Good) {
   await query("UPDATE review_cards SET card = $2, due = $3 WHERE exercise_id = $1", [id, JSON.stringify(next), next.due.toISOString()]);
 }
 
-export type MasteryReport = { score: number; writtenDone: boolean; mastered: boolean };
+export type MasteryReport = { score: number; mastered: boolean };
 
 export async function masteryReport(lessonId: string): Promise<MasteryReport> {
   const lesson = LESSON_BY_ID.get(lessonId)!;
   const required = masteryExercises(lesson);
   const states = await exerciseStates([lessonId]);
-  const auto = required.filter((e) => e.answer.kind !== "written");
-  const written = required.filter((e) => e.answer.kind === "written");
-  const solved = auto.filter((e) => states.get(exerciseId(lessonId, e.key))?.solved).length;
-  const score = auto.length ? solved / auto.length : 1;
-  const writtenDone = written.every((e) => states.get(exerciseId(lessonId, e.key))?.solved);
-  return { score, writtenDone, mastered: score >= MASTERY_THRESHOLD && writtenDone };
+  const solved = required.filter((e) => states.get(exerciseId(lessonId, e.key))?.solved).length;
+  const score = required.length ? solved / required.length : 1;
+  return { score, mastered: score >= MASTERY_THRESHOLD };
 }
 
 /**
- * A lesson is mastered when at least 80% of its check, apply and prove exercises are solved,
- * every written proof or argument has been accepted by Parton (or provisionally accepted while
- * Parton is not connected).
+ * A lesson is mastered when at least 80% of its check and apply exercises are solved.
  */
 export async function evaluateMastery(lessonId: string): Promise<boolean> {
   const report = await masteryReport(lessonId);

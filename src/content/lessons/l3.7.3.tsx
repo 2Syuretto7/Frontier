@@ -272,19 +272,6 @@ assert not np.allclose(Ym, Y)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that for ε ~ N(0, σ²I), E[(y − (x + ε)ᵀw)²] = (y − xᵀw)² + σ²‖w‖².</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the error as r − εᵀw with r = y − xᵀw and expands the square.",
-          "Uses E[ε] = 0 to remove the cross term 2r·E[ε]ᵀw.",
-          "Computes E[(εᵀw)²] = wᵀE[εεᵀ]w = σ²‖w‖², giving the result.",
-        ],
-      },
-    },
-    {
       key: "beta",
       rung: "stretch",
       prompt: <p>In mixup with α = 1, λ is uniform on [0, 1]. What is the probability that the blend gives the first example at least 90% of the weight (λ ≥ 0.9)?</p>,

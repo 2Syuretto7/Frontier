@@ -289,24 +289,6 @@ assert v1 != v2 and estimate_pi(LCG(1), 1000) == v1, 'Draw the points from the g
       },
     },
     {
-      key: "union",
-      rung: "prove",
-      prompt: (
-        <p>
-          Events <M>A</M> and <M>B</M> may happen together. Using relative frequencies, explain why{" "}
-          <M>{"P(A \\text{ or } B) = P(A) + P(B) - P(A \\text{ and } B)"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that adding n_A and n_B counts the trials where both happen twice.",
-          "Writes n_(A or B) = n_A + n_B − n_(A and B).",
-          "Divides by n and passes to the long-run values to get the formula.",
-        ],
-      },
-    },
-    {
       key: "birthday",
       rung: "stretch",
       prompt: (

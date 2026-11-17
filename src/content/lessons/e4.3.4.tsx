@@ -278,23 +278,6 @@ assert holm([0.009, 0.02, 0.013, 0.001, 0.5]) == {0, 1, 2, 3}` },
       },
     },
     {
-      key: "union",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that testing each of k comparisons at threshold <M>{"\\alpha / k"}</M> keeps the probability of at least one
-          false positive at most α, even if the comparisons are not independent.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Defines the event of a false positive for each comparison, each with probability at most α / k.",
-          "Applies the union bound, which needs no independence, to get at most k · α / k = α.",
-        ],
-      },
-    },
-    {
       key: "exact",
       rung: "stretch",
       prompt: (

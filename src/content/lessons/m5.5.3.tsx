@@ -281,25 +281,6 @@ assert np.allclose(z, [1, 1]), 'At a minimum there is no escape direction.'` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if f is <M>{"C^2"}</M>, <M>{"\\nabla f(a) = 0"}</M> and <M>{"H_f(a)"}</M> is positive definite, then a is a
-          strict local minimum. You may use that the smallest eigenvalue of a symmetric matrix depends continuously on its
-          entries.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses Taylor with the Lagrange remainder: f(a + h) − f(a) = ½ hᵀ H(a + sh) h, since the gradient term vanishes.",
-          "Uses continuity of the Hessian and of the smallest eigenvalue to get λ_min(H(a + sh)) ≥ λ/2 > 0 for small ‖h‖.",
-          "Bounds hᵀ H(a + sh) h ≥ (λ/2)‖h‖² > 0 for h ≠ 0 (Rayleigh quotient), concluding f(a + h) > f(a).",
-        ],
-      },
-    },
-    {
       key: "coins",
       rung: "stretch",
       prompt: (

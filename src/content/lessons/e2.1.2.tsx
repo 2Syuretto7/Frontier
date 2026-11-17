@@ -407,39 +407,6 @@ assert q.pop() == 5 and q.moves == 5` },
         ],
       },
     },
-    {
-      key: "counter-proof",
-      rung: "prove",
-      prompt: <p>Using the potential Φ = number of 1 bits, prove that n increments of a binary counter starting at 0 flip at most 2n bits.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes Φ starts at 0 and is never negative.",
-          "If an increment clears t trailing 1s and sets one bit, its actual cost is t + 1 and Φ changes by 1 − t.",
-          "So its amortised cost is (t + 1) + (1 − t) = 2.",
-          "Sums: total actual cost ≤ total amortised cost = 2n, by the potential method.",
-        ],
-      },
-    },
-    {
-      key: "thrash",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Show that a dynamic array which doubles when full and halves when a pop leaves it exactly half full can take Θ(n²) time
-          for some sequence of n operations, and explain why halving at a quarter avoids it.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Builds the array to a power of two m = 2ᵏ items, full, using Θ(m) work.",
-          "Then alternates append (doubling, copying m items) and pop (halving, copying m items), each Θ(m).",
-          "With about n/2 such operations and m ≈ n/2, the total is Θ(n²).",
-          "With the quarter rule, after any resize the array is half full, so at least m/4 operations separate resizes, which pay for the next copy: O(1) amortised.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

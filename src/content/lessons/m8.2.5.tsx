@@ -276,19 +276,6 @@ assert eventually_below(ys, 1, 0.01) == 100 and count_above(ys, 1, 0.01) == 500`
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that a bounded sequence converges if and only if its liminf equals its limsup.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "If aₙ → a, uses that every subsequence (in particular those realising limsup and liminf, or the ε characterisation) tends to a, so both equal a.",
-          "Notes iₙ ≤ aₙ ≤ sₙ for every n, with iₙ = inf of the tail and sₙ = sup of the tail.",
-          "If lim iₙ = lim sₙ = L, applies the squeeze theorem to conclude aₙ → L.",
-        ],
-      },
-    },
-    {
       key: "root",
       rung: "stretch",
       prompt: <p>Let aₙ = (2 + (−1)ⁿ)ⁿ. What is limsup |aₙ|^(1/n)?</p>,

@@ -291,23 +291,6 @@ assert all(a >= b - 1e-12 for a, b in zip(errs, errs[1:]))` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if U is a finite-dimensional subspace of V, then ‖v − P_U v‖ ≤ ‖v − u‖ for every u ∈ U, with equality
-          only when u = P_U v.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes v − u = (v − P_U v) + (P_U v − u) and notes the first term lies in U⊥ and the second in U.",
-          "Applies Pythagoras to get ‖v − u‖² = ‖v − P_U v‖² + ‖P_U v − u‖², and concludes the inequality with equality iff P_U v − u = 0.",
-        ],
-      },
-    },
-    {
       key: "linear",
       rung: "stretch",
       prompt: (

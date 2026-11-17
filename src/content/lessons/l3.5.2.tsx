@@ -287,19 +287,6 @@ assert np.allclose(bn.mean, [1.5, 3.0])` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that if f(αx) = f(x) for all α &gt; 0 and f is differentiable, then ∇f(x) · x = 0. Explain what this means for a weight vector feeding a normalisation layer.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Defines g(α) = f(αx), notes g is constant in α, so g′(1) = 0.",
-          "Computes g′(1) = ∇f(x) · x by the chain rule and concludes it is 0.",
-          "Interprets: the loss gradient with respect to such weights is orthogonal to them, so a gradient step does not shrink them to first order (their norm can only grow or stay, and the step mainly rotates them).",
-        ],
-      },
-    },
-    {
       key: "growth",
       rung: "stretch",
       prompt: <p>A weight vector w with ‖w‖ = 1 receives a gradient step of length 0.5 orthogonal to w. What is ‖w‖ afterwards?</p>,

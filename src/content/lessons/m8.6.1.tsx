@@ -262,19 +262,6 @@ assert g_prime(0) == 0 and abs(g_prime(1 / (100 * math.pi)) + 1) < 1e-9` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove the chain rule: if f is differentiable at c and g at f(c), then (g ∘ f)′(c) = g′(f(c)) f′(c).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes f(x) − f(c) = φ(x)(x − c) and g(y) − g(f(c)) = ψ(y)(y − f(c)) with φ, ψ continuous at c, f(c) (or handles the case f(x) = f(c) another valid way).",
-          "Substitutes y = f(x) to get g(f(x)) − g(f(c)) = ψ(f(x))φ(x)(x − c).",
-          "Uses continuity of f at c to conclude ψ(f(x))φ(x) → ψ(f(c))φ(c) = g′(f(c))f′(c), so this is the derivative.",
-        ],
-      },
-    },
-    {
       key: "cent",
       rung: "stretch",
       prompt: <p>The central difference of x³ at 1 has error exactly h². What is the error for h = 0.05?</p>,

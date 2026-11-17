@@ -264,24 +264,6 @@ assert euler_phi(36) == 12 and euler_phi(1000000000039) == 1000000000038, '10¹�
       },
     },
     {
-      key: "proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove the formula for <M>{"|A \\cup B \\cup C|"}</M> by checking how many times an element lying in exactly one, two
-          or three of the sets is counted on the right-hand side.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "An element in exactly one set is counted once by the single terms and never by intersections.",
-          "An element in exactly two sets is counted 2 − 1 = 1 times.",
-          "An element in all three is counted 3 − 3 + 1 = 1 times, and elements in none contribute 0, so both sides agree.",
-        ],
-      },
-    },
-    {
       key: "hats",
       rung: "stretch",
       prompt: <p>Six people check their hats and get them back at random. What is the probability that exactly two people get their own hat? Give four decimal places.</p>,

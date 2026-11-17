@@ -274,26 +274,6 @@ assert tail('log.txt', 3) == ['line 98', 'line 99', 'line 100'] and tail('log.tx
       },
     },
     {
-      key: "modes",
-      rung: "prove",
-      prompt: (
-        <p>
-          A program appends one line to a log file each time it runs. Its author used mode <C>&quot;w&quot;</C> instead of{" "}
-          <C>&quot;a&quot;</C>. Describe what the log will contain after five runs, and why. Then explain why the file
-          should be closed after writing, and how <C>with</C> guarantees it.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains that mode w empties the file each time it is opened, so after five runs only the last run's line remains.",
-          "Explains that mode a would keep earlier lines and add the new one at the end.",
-          "Explains that written text may be held in memory until the file is closed, so not closing it risks losing data.",
-          "Explains that with closes the file when the block ends, even if an error occurs inside it.",
-        ],
-      },
-    },
-    {
       key: "squares",
       rung: "stretch",
       prompt: <p>In the example that saves and loads numbers, what would be printed if the first loop were <C>for i in range(1, 11):</C>?</p>,

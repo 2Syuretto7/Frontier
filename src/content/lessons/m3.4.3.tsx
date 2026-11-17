@@ -255,24 +255,6 @@ assert any(c) and all(sum(ci * v[k] for ci, v in zip(c, vs)) == 0 for k in range
       },
     },
     {
-      key: "null",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if <M>{"\\mathbf v_1, \\dots, \\mathbf v_k"}</M> are dependent, then one of them is a combination of the
-          others. Then prove that any set containing the zero vector is dependent.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes a non-trivial combination c₁v₁ + … + c_kv_k = 0 and picks an index j with c_j ≠ 0.",
-          "Solves for v_j = −(1/c_j) Σ_{i≠j} c_i v_i.",
-          "For the zero vector, notes that 1·0 plus zero times the others is a non-trivial combination equal to 0.",
-        ],
-      },
-    },
-    {
       key: "subsets",
       rung: "stretch",
       prompt: <p>How many of the seven non-empty subsets of {"{(1, 0), (0, 1), (1, 1)}"} are linearly independent?</p>,

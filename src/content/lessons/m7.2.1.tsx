@@ -308,19 +308,6 @@ assert sum(min_pmf(10, 4).values()) == 1` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that every CDF is right-continuous, and that <M>{"P(X = x) = F(x) - \\lim_{y \\uparrow x}F(y)"}</M>.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "For xₙ decreasing to x, notes the events {X ≤ xₙ} decrease with intersection {X ≤ x}, and uses continuity from above (plus monotonicity of F for general approach from the right).",
-          "For yₙ increasing to x with yₙ < x, notes the events {X ≤ yₙ} increase with union {X < x}, so the left limit is P(X < x).",
-          "Concludes P(X = x) = P(X ≤ x) − P(X < x) by additivity.",
-        ],
-      },
-    },
-    {
       key: "min4",
       rung: "stretch",
       prompt: <p>Four fair dice are rolled. What is the probability that the smallest is exactly 3? Give four decimal places.</p>,

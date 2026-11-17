@@ -267,19 +267,6 @@ assert np.allclose(x, [3, 4]) and N.shape == (2, 0)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that for a linear map T on a finite-dimensional space V, dim V = dim null T + dim range T.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes a basis u₁, …, u_m of null T and extends it to a basis u₁, …, u_m, v₁, …, v_n of V.",
-          "Shows Tv₁, …, Tv_n span range T, since each Tuᵢ = 0.",
-          "Shows Tv₁, …, Tv_n are independent: Σcⱼvⱼ lies in null T, so it is a combination of the uᵢ, and independence of the full basis forces all cⱼ = 0. Concludes dim V = m + n.",
-        ],
-      },
-    },
-    {
       key: "even",
       rung: "stretch",
       prompt: <p>The map p ↦ p(x) − p(−x) on real polynomials of degree at most 6. What is the dimension of its range?</p>,

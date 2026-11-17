@@ -261,19 +261,6 @@ assert abs(x.var() - sgd_noise_var(0.05, 1.0, 1.0)) < 0.004` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that SGD on ½λx² with gradient noise of variance σ² and learning rate η (0 &lt; ηλ &lt; 2) has stationary variance ησ²/(λ(2 − ηλ)).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the update x_{t+1} = (1 − ηλ)x_t − ησξ_t and uses independence of ξ_t from x_t to get V_{t+1} = (1 − ηλ)²V_t + η²σ².",
-          "Notes (1 − ηλ)² < 1 so the recurrence converges to its fixed point (or simply solves for the fixed point as the stationary value).",
-          "Solves V = η²σ²/(1 − (1 − ηλ)²) and simplifies to ησ²/(λ(2 − ηλ)).",
-        ],
-      },
-    },
-    {
       key: "lrfloor",
       rung: "stretch",
       prompt: <p>With λ = 2 and σ = 1, what learning rate gives a stationary variance of 0.01? Give 6 decimal places.</p>,

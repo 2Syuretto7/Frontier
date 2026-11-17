@@ -271,19 +271,6 @@ assert np.allclose(bce_grad(z, y), (p - y) / 6)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that the gradient of −log softmax(z)_y with respect to z is p − e_y, where e_y is the one-hot vector of y.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Rewrites the loss as −z_y + log Σⱼ exp(z_j), or uses the softmax Jacobian ∂p_y/∂z_k = p_y([k = y] − p_k).",
-          "Differentiates correctly: −[k = y] from the first term and exp(z_k)/Σⱼ exp(z_j) = p_k from the second (or −(1/p_y)·p_y([k = y] − p_k)).",
-          "Concludes the k-th component is p_k − [k = y], i.e. the gradient is p − e_y.",
-        ],
-      },
-    },
-    {
       key: "stall",
       rung: "stretch",
       prompt: <p>With p = σ(z), label 1 and loss (p − 1)², what is ∂loss/∂z at z = 0?</p>,

@@ -279,26 +279,6 @@ assert buggy_sort(small) != sorted(small) and len(small) == 3, 'One bubble pass 
       },
     },
     {
-      key: "method",
-      rung: "prove",
-      prompt: (
-        <p>
-          A program that totals a shop&rsquo;s daily sales from a file gives a total that is slightly too high on some days
-          but not others. Describe, step by step, how you would find the bug using the method of this lesson. Be specific
-          about the experiments you would run.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Starts by finding a specific day's file that reproduces the wrong total, and computes the correct total independently.",
-          "Narrows the input to a minimal reproduction, for example by removing rows while the error persists.",
-          "Forms a concrete hypothesis (for example a row counted twice, a header or blank line, or a refund handled wrongly) and a prediction that tests it.",
-          "Tests with probes or tracing, changes one thing at a time, and re-runs the reproduction after the fix.",
-        ],
-      },
-    },
-    {
       key: "lastn",
       rung: "stretch",
       prompt: (

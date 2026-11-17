@@ -239,38 +239,6 @@ assert '|' not in src and 'union' not in src.replace('union_size', ''), 'Use inc
         ],
       },
     },
-    {
-      key: "diff-law",
-      rung: "prove",
-      prompt: <p>Prove that <M>{"A \\setminus (B \\cup C) = (A \\setminus B) \\cap (A \\setminus C)"}</M>.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes membership of the left side as x ∈ A and not (x ∈ B or x ∈ C).",
-          "Uses De Morgan's law to rewrite it as x ∈ A and x ∉ B and x ∉ C.",
-          "Shows this is the same as x ∈ A ∖ B and x ∈ A ∖ C, so the sets are equal (or argues by double inclusion).",
-        ],
-      },
-    },
-    {
-      key: "not-assoc",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Show that set difference is not associative: find sets A, B, C with{" "}
-          <M>{"A \\setminus (B \\setminus C) \\ne (A \\setminus B) \\setminus C"}</M>, and prove that{" "}
-          <M>{"(A \\setminus B) \\setminus C \\subseteq A \\setminus (B \\setminus C)"}</M> always holds.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Gives a concrete example, such as A = B = C = {1}, where the two sides differ, and computes both.",
-          "For the inclusion, takes x in (A ∖ B) ∖ C, so x ∈ A, x ∉ B and x ∉ C.",
-          "Notes that x ∉ B implies x ∉ B ∖ C, so x ∈ A ∖ (B ∖ C).",
-        ],
-      },
-    },
   ],
 
   glimpse: (

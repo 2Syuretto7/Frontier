@@ -252,25 +252,6 @@ def to_celsius(f):
       },
     },
     {
-      key: "literal",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why a computer does what a program says rather than what its author meant. Give an example of an
-          instruction that a person would understand but that is too vague or out of order for a computer, and rewrite it
-          precisely.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains that the computer has no knowledge of the author's intention and follows each instruction exactly.",
-          "Gives an instruction that relies on common sense, unstated context, or a sensible reordering by the reader.",
-          "Rewrites it so that every step, quantity and object is stated and the steps are in an order that works.",
-        ],
-      },
-    },
-    {
       key: "swap3",
       rung: "stretch",
       prompt: (

@@ -320,24 +320,6 @@ assert count_paths((m + 1) ** 2, E, 0, idx(m, m)) == comb(2 * m, m) and count_pa
       },
     },
     {
-      key: "sink",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that every finite DAG with at least one vertex has a sink, and explain how ordering by repeatedly removing sinks
-          gives a topological order when reversed.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Follows outgoing edges from any vertex; finiteness forces a repeat, which would give a directed cycle.",
-          "Concludes some walk must stop, at a vertex with no outgoing edge.",
-          "Explains that removing sinks one at a time and reversing the list puts every edge's tail before its head.",
-        ],
-      },
-    },
-    {
       key: "linear",
       rung: "stretch",
       prompt: <p>How many topological orders does the DAG on {"{1, 2, 3, 4}"} with edges 1 → 3, 1 → 4, 2 → 4 have?</p>,

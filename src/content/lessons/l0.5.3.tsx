@@ -263,26 +263,6 @@ assert paired_bootstrap([0, 1] * 50, [1, 1] * 50, 500, 0) == 1.0 and paired_boot
       },
     },
     {
-      key: "design",
-      rung: "prove",
-      prompt: (
-        <p>
-          You have built a new model and want to claim it is better than the current best at summarising legal documents.
-          Describe how you would test it so that a careful sceptic would accept the claim. Address contamination, selection,
-          baselines and noise.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses fresh test documents created or collected after the training data, or otherwise shown not to be in it (contamination).",
-          "Evaluates on the whole test set, chosen in advance, and reports all results rather than chosen examples (selection).",
-          "Compares against the strongest current method under the same conditions and budget (baselines).",
-          "Uses enough test documents, repeats training runs or reports uncertainty, and checks the gap exceeds the noise (noise).",
-        ],
-      },
-    },
-    {
       key: "quadruple",
       rung: "stretch",
       prompt: <p>By the lesson&rsquo;s rule, how many times more test questions are needed to halve the noise?</p>,
