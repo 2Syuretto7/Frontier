@@ -59,8 +59,10 @@ export default async function CoursePage({ params }: { params: Promise<{ course:
               {ch.lessons.map((l) => {
                 const s = status.get(l.id);
                 const authored = LESSON_BY_ID.has(l.id);
-                const open = authored && (s !== undefined || isUnlocked(GRAPH, l.id, mastered));
-                const state = s === "mastered" ? "mastered" : s === "in_progress" ? "started" : !authored ? "unwritten" : open ? "open" : "locked";
+                const unlocked = s === "mastered" || isUnlocked(GRAPH, l.id, mastered);
+                // A started lesson stays linked even when locked, so its page can list what it now waits on.
+                const open = authored && (s !== undefined || unlocked);
+                const state = s === "mastered" ? "mastered" : !authored ? "unwritten" : !unlocked ? "locked" : s === "in_progress" ? "started" : "open";
                 const [label, tone, icon] = STATE[state];
                 return (
                   <li key={l.id} className={`lesson-row is-${state}`}>
