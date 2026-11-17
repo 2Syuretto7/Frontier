@@ -7,6 +7,8 @@ const PUBLIC = ["/signin", "/signup"];
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   if (PUBLIC.some((p) => pathname === p)) return NextResponse.next();
+  // Scheduled jobs carry Vercel's cron secret instead of a session; the route checks it.
+  if (pathname.startsWith("/api/cron/")) return NextResponse.next();
   const session = await readSession(request.cookies.get(SESSION_COOKIE)?.value);
   if (session) return NextResponse.next();
   const url = request.nextUrl.clone();

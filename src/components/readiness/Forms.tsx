@@ -2,7 +2,8 @@
 
 import { useActionState, useEffect, useRef, useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
-import { addEvidenceAction, addPostingAction, extractSkillsAction, findPostingsAction, type ReadinessState } from "@/app/readiness/actions";
+import { useRouter } from "next/navigation";
+import { addEvidenceAction, addPostingAction, extractSkillsAction, findPostingsAction, scoreSkillsAction, type ReadinessState } from "@/app/readiness/actions";
 import { EVIDENCE_KINDS, POSTINGS_MIN } from "@/lib/readiness/core";
 import { BOARDS } from "@/lib/readiness/sourcing";
 
@@ -116,7 +117,7 @@ const labList = `${LABS.slice(0, -1).join(", ")} and ${LABS[LABS.length - 1]}`;
  */
 export function RefreshPanel({ role, label, primary = true, parton }: { role: string; label: string; primary?: boolean; parton: boolean }) {
   const [target, setTarget] = useState(role);
-  const [step, setStep] = useState<"idle" | "finding" | "reading">("idle");
+  const [step, setStep] = useState<"idle" | "finding" | "reading" | "scoring">("idle");
   const [notes, setNotes] = useState<{ error?: string; done?: string[] }>({});
   const [, startTransition] = useTransition();
   const busy = step !== "idle";
@@ -135,7 +136,14 @@ export function RefreshPanel({ role, label, primary = true, parton }: { role: st
       }
       setStep("reading");
       const read = await extractSkillsAction(undefined);
-      setNotes(read?.error ? { done: [found.done!], error: read.error } : { done: [found.done!, read?.done ?? ""].filter(Boolean) });
+      if (read?.error) {
+        setNotes({ done: [found.done!], error: read.error });
+        setStep("idle");
+        return;
+      }
+      setStep("scoring");
+      const scored = await scoreSkillsAction();
+      setNotes({ done: [found.done!, read?.done ?? "", scored?.done ?? ""].filter(Boolean), error: scored?.error });
       setStep("idle");
     });
   }
@@ -146,7 +154,10 @@ export function RefreshPanel({ role, label, primary = true, parton }: { role: st
         <label htmlFor="rd-target">Your target role</label>
         <textarea id="rd-target" className="input rd-target" rows={2} value={target} onChange={(e) => setTarget(e.target.value)}
           maxLength={300} disabled={busy} />
-        <p className="hint">Parton reads the open roles at {labList}, keeps the ones that match this, and pulls out the skills they ask for.</p>
+        <p className="hint">
+          Parton reads the open roles at {labList}, keeps the ones that match this, pulls out the skills they ask for, and
+          scores each from your passed drills, published projects and mastered lessons.
+        </p>
       </div>
       {notes.done?.map((d) => <p key={d} className="success" role="status">{d}</p>)}
       {notes.error && <p className="error" role="alert">{notes.error}</p>}
@@ -154,8 +165,51 @@ export function RefreshPanel({ role, label, primary = true, parton }: { role: st
       <button type="submit" className={primary ? "btn btn-primary" : "btn"} disabled={busy || !parton} aria-busy={busy}>
         {step === "finding" ? "Reading the labs' job boards… (up to three minutes)"
           : step === "reading" ? "Parton is pulling out the skills… (up to two minutes)"
+          : step === "scoring" ? "Parton is scoring each skill from your evidence… (up to two minutes)"
           : label}
       </button>
     </form>
+  );
+}
+
+/**
+ * Parton's scoring. With `auto`, it starts by itself as soon as the page opens, because something the scores
+ * depend on (a passed drill, a published project, a mastered lesson, a new skill) has changed since the last run.
+ */
+export function ScorePanel({ auto, parton }: { auto: boolean; parton: boolean }) {
+  const router = useRouter();
+  const [state, setState] = useState<ReadinessState>(undefined);
+  const [busy, setBusy] = useState(false);
+  const started = useRef(false);
+
+  async function run() {
+    if (busy) return;
+    setBusy(true);
+    setState(undefined);
+    const result = await scoreSkillsAction();
+    setState(result);
+    setBusy(false);
+    if (!result?.error) router.refresh();
+  }
+
+  useEffect(() => {
+    if (auto && parton && !started.current) {
+      started.current = true;
+      void run();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auto, parton]);
+
+  if (!parton) return null;
+  return (
+    <div className="rd-score">
+      {busy && <p className="hint" role="status">Parton is scoring each skill from your latest evidence… (up to two minutes)</p>}
+      <Status state={state} />
+      {!busy && (
+        <button type="button" className="btn btn-sm btn-ghost" onClick={run}>
+          {auto ? "Score again with Parton" : "Re-score with Parton"}
+        </button>
+      )}
+    </div>
   );
 }

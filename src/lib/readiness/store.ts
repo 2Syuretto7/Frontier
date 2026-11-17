@@ -2,9 +2,29 @@ import "server-only";
 import { query } from "@/lib/db";
 import { PartonError, partonConnected, structured } from "@/lib/parton/claude";
 import {
+  ASSESS_SCHEMA,
+  ASSESS_SYSTEM,
   EXTRACT_SCHEMA,
   EXTRACT_SYSTEM,
   MAX_LEVEL,
+  TARGET_LEVEL,
+  acceptAssessment,
+  assessRequest,
+  drillFound,
+  fingerprint,
+  gapScore,
+  lessonFound,
+  projectFound,
+  recheckDue,
+  sharesOf,
+  skillTrends,
+  supportedLevel,
+  type AssessOutput,
+  type FoundEvidence,
+  type NextOption,
+  type NextStep,
+  type Shares,
+  type Trend,
   POSTINGS_MAX,
   POSTING_CHARS,
   acceptSkills,
@@ -64,6 +84,20 @@ const SCHEMA = [
      skills INTEGER NOT NULL,
      readiness INTEGER
    )`,
+  // Evidence Frontier finds by itself (passed drills, published projects, mastered lessons) is stored with
+  // source 'parton' and a stable ref. The learner can dismiss it; dismissed evidence stays hidden on re-scoring.
+  `ALTER TABLE readiness_evidence ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'learner'`,
+  `ALTER TABLE readiness_evidence ADD COLUMN IF NOT EXISTS ref TEXT`,
+  `ALTER TABLE readiness_evidence ADD COLUMN IF NOT EXISTS dismissed BOOLEAN NOT NULL DEFAULT false`,
+  // Who set each skill's level: 'parton' (Parton's score, not yet confirmed), 'confirmed' (Parton's score, which
+  // the learner confirmed) or 'learner' (the learner chose it). Parton only ever changes a level it set itself.
+  `ALTER TABLE readiness_skills ADD COLUMN IF NOT EXISTS level_source TEXT`,
+  `UPDATE readiness_skills SET level_source = CASE WHEN level > 0 THEN 'learner' ELSE 'parton' END WHERE level_source IS NULL`,
+  `ALTER TABLE readiness_skills ADD COLUMN IF NOT EXISTS suggested_level INTEGER`,
+  `ALTER TABLE readiness_skills ADD COLUMN IF NOT EXISTS suggested_reason TEXT NOT NULL DEFAULT ''`,
+  `ALTER TABLE readiness_skills ADD COLUMN IF NOT EXISTS next_step JSONB`,
+  // Each skill's share of the postings at each check, to show which skills are new or fading.
+  `ALTER TABLE readiness_checks ADD COLUMN IF NOT EXISTS shares JSONB`,
 ];
 
 const shared = globalThis as typeof globalThis & { __frontierReadiness?: Promise<void> };
@@ -86,7 +120,9 @@ async function q<T extends Record<string, unknown>>(text: string, params: unknow
 // ---------------------------------------------------------------------------------------------
 // Reading
 
-export type Evidence = { id: number; kind: string; title: string; url: string | null; addedAt: Date };
+export type Evidence = { id: number; kind: string; title: string; url: string | null; addedAt: Date; auto: boolean };
+
+export type LevelSource = "parton" | "confirmed" | "learner";
 
 export type Skill = {
   id: number;
@@ -100,6 +136,18 @@ export type Skill = {
   level: number;
   kinds: string[];
   evidence: Evidence[];
+  key: string;
+  /** Who set the claimed level. */
+  levelSource: LevelSource;
+  /** Parton's latest score from the evidence, and why, or null before Parton has scored the skill. */
+  suggested: number | null;
+  reason: string;
+  /** The best next step to raise the skill, when it is below Built. */
+  next: NextStep | null;
+  /** How the skill moved since the previous check of postings. */
+  trend: Trend | null;
+  /** How much the skill holds readiness back, 0 to 1. */
+  gap: number;
 };
 
 export type PostingRow = Posting & { url: string | null; addedAt: Date };
@@ -118,35 +166,50 @@ export type Scorecard = {
   /** The role postings are found for, and whether the learner has set it. */
   role: string;
   roleSet: boolean;
+  /** Skills whose level is Parton's score and not yet confirmed. */
+  unconfirmed: number;
+  /** Whether the latest check can be compared with an earlier one for new and fading skills. */
+  compared: boolean;
 };
 
 const date = (v: unknown) => (v instanceof Date ? v : new Date(String(v)));
 
 export async function loadScorecard(): Promise<Scorecard> {
   const [skillRows, evidenceRows, postingRows, checkRows, role] = await Promise.all([
-    q<{ id: number; name: string; area: string; description: string; frequency: number; posting_count: number; quotes: string[]; level: number }>(
-      "SELECT id, name, area, description, frequency, posting_count, quotes, level FROM readiness_skills ORDER BY frequency DESC, name",
+    q<{
+      id: number; key: string; name: string; area: string; description: string; frequency: number; posting_count: number; quotes: string[]; level: number;
+      level_source: string | null; suggested_level: number | null; suggested_reason: string; next_step: NextStep | string | null;
+    }>(
+      `SELECT id, key, name, area, description, frequency, posting_count, quotes, level, level_source, suggested_level, suggested_reason, next_step
+         FROM readiness_skills ORDER BY frequency DESC, name`,
     ),
-    q<{ id: number; skill_id: number; kind: string; title: string; url: string | null; added_at: unknown }>(
-      "SELECT id, skill_id, kind, title, url, added_at FROM readiness_evidence ORDER BY added_at",
+    q<{ id: number; skill_id: number; kind: string; title: string; url: string | null; added_at: unknown; source: string }>(
+      "SELECT id, skill_id, kind, title, url, added_at, source FROM readiness_evidence WHERE NOT dismissed ORDER BY source DESC, added_at, id",
     ),
     q<{ id: number; company: string; role: string; url: string | null; body: string; added_at: unknown }>(
       "SELECT id, company, role, url, body, added_at FROM readiness_postings WHERE archived_at IS NULL ORDER BY added_at, id",
     ),
-    q<{ id: number; at: unknown; postings: number; skills: number; readiness: number | null }>(
-      "SELECT id, at, postings, skills, readiness FROM readiness_checks ORDER BY at DESC",
+    q<{ id: number; at: unknown; postings: number; skills: number; readiness: number | null; shares: Shares | string | null }>(
+      "SELECT id, at, postings, skills, readiness, shares FROM readiness_checks ORDER BY at DESC, id DESC",
     ),
     getRole(),
   ]);
   const evidence = new Map<number, Evidence[]>();
   for (const e of evidenceRows) {
     const list = evidence.get(e.skill_id) ?? [];
-    list.push({ id: e.id, kind: e.kind, title: e.title, url: e.url, addedAt: date(e.added_at) });
+    list.push({ id: e.id, kind: e.kind, title: e.title, url: e.url, addedAt: date(e.added_at), auto: e.source === "parton" });
     evidence.set(e.skill_id, list);
   }
+  const sharesAt = (i: number): Shares | null => {
+    const v = checkRows[i]?.shares;
+    return v == null ? null : typeof v === "string" ? (JSON.parse(v) as Shares) : v;
+  };
+  const trends = skillTrends(sharesAt(1), sharesAt(0));
   const skills: Skill[] = skillRows.map((s) => {
     const ev = evidence.get(s.id) ?? [];
     const kinds = ev.map((e) => e.kind);
+    const level = effectiveLevel(s.level, kinds);
+    const next = typeof s.next_step === "string" ? (JSON.parse(s.next_step) as NextStep) : s.next_step;
     return {
       id: s.id,
       name: s.name,
@@ -156,9 +219,16 @@ export async function loadScorecard(): Promise<Scorecard> {
       postingCount: s.posting_count,
       quotes: Array.isArray(s.quotes) ? s.quotes : [],
       claimed: s.level,
-      level: effectiveLevel(s.level, kinds),
+      level,
       kinds,
       evidence: ev,
+      key: s.key,
+      levelSource: s.level_source === "confirmed" || s.level_source === "learner" ? s.level_source : "parton",
+      suggested: s.suggested_level,
+      reason: s.suggested_reason ?? "",
+      next: next ?? null,
+      trend: trends.get(s.key) ?? null,
+      gap: gapScore(s.frequency, s.posting_count, level),
     };
   });
   const checks = checkRows.map((c) => ({ id: c.id, at: date(c.at), postings: c.postings, skills: c.skills, readiness: c.readiness }));
@@ -176,6 +246,8 @@ export async function loadScorecard(): Promise<Scorecard> {
     parton: partonConnected(),
     role: role ?? DEFAULT_ROLE,
     roleSet: role !== null,
+    unconfirmed: skills.filter((s) => s.frequency > 0 && s.levelSource === "parton" && s.suggested !== null).length,
+    compared: sharesAt(1) !== null && sharesAt(0) !== null,
   };
 }
 
@@ -271,8 +343,8 @@ export async function extractSkills(): Promise<Result> {
       );
     } else {
       const [row] = await q<{ id: number }>(
-        `INSERT INTO readiness_skills (key, name, area, description, frequency, posting_count, quotes)
-         VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb)
+        `INSERT INTO readiness_skills (key, name, area, description, frequency, posting_count, quotes, level_source)
+         VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, 'parton')
          ON CONFLICT (key) DO UPDATE SET area = EXCLUDED.area, description = EXCLUDED.description, frequency = EXCLUDED.frequency,
            posting_count = EXCLUDED.posting_count, quotes = EXCLUDED.quotes, updated_at = now()
          RETURNING id`,
@@ -291,10 +363,11 @@ export async function extractSkills(): Promise<Result> {
   }
 
   const card = await loadScorecard();
-  await q("INSERT INTO readiness_checks (postings, skills, readiness) VALUES ($1, $2, $3)", [
+  await q("INSERT INTO readiness_checks (postings, skills, readiness, shares) VALUES ($1, $2, $3, $4::jsonb)", [
     postings.length,
     card.skills.filter((s) => s.frequency > 0).length,
     card.readiness,
+    JSON.stringify(sharesOf(card.skills, postings.length)),
   ]);
   const fresh = skills.filter((s) => !s.existingKey).length;
   return {
@@ -306,9 +379,32 @@ export async function extractSkills(): Promise<Result> {
 // ---------------------------------------------------------------------------------------------
 // Scores and evidence
 
+/** The learner sets (or corrects) a level. Parton won't change it again; it only suggests. */
 export async function setLevel(skillId: number, level: number) {
   if (!Number.isInteger(level) || level < 0 || level > MAX_LEVEL) return;
-  await q("UPDATE readiness_skills SET level = $2, updated_at = now() WHERE id = $1", [skillId, level]);
+  await q(
+    `UPDATE readiness_skills SET level = $2, level_source = CASE WHEN suggested_level = $2 THEN 'confirmed' ELSE 'learner' END, updated_at = now()
+      WHERE id = $1`,
+    [skillId, level],
+  );
+}
+
+/** The learner confirms Parton's score for one skill, or for every skill when no id is given. */
+export async function confirmLevel(skillId?: number) {
+  if (skillId === undefined) {
+    await q("UPDATE readiness_skills SET level_source = 'confirmed', updated_at = now() WHERE level_source = 'parton' AND suggested_level IS NOT NULL");
+    return;
+  }
+  await q("UPDATE readiness_skills SET level_source = 'confirmed', updated_at = now() WHERE id = $1 AND level_source = 'parton'", [skillId]);
+}
+
+/** The learner takes Parton's newer score in place of the level they had. */
+export async function acceptSuggestion(skillId: number) {
+  await q(
+    `UPDATE readiness_skills SET level = suggested_level, level_source = 'confirmed', updated_at = now()
+      WHERE id = $1 AND suggested_level IS NOT NULL`,
+    [skillId],
+  );
 }
 
 /**
@@ -327,8 +423,10 @@ export async function addEvidence(skillId: number, input: { kind: string; title:
   return { ok: true };
 }
 
+/** Removes the learner's own evidence. Evidence Parton found is dismissed instead, so re-scoring doesn't bring it back. */
 export async function removeEvidence(id: number) {
-  await q("DELETE FROM readiness_evidence WHERE id = $1", [id]);
+  await q("UPDATE readiness_evidence SET dismissed = true WHERE id = $1 AND source = 'parton'", [id]);
+  await q("DELETE FROM readiness_evidence WHERE id = $1 AND source <> 'parton'", [id]);
 }
 
 export async function removeSkill(id: number) {
@@ -339,4 +437,197 @@ export async function removeSkill(id: number) {
 export async function listSkills(): Promise<{ id: number; name: string; key: string }[]> {
   const rows = await q<{ id: number; name: string }>("SELECT id, name FROM readiness_skills ORDER BY frequency DESC, name");
   return rows.map((r) => ({ ...r, key: skillKey(r.name) }));
+}
+
+// ---------------------------------------------------------------------------------------------
+// Evidence found automatically, and Parton's scores
+
+/** What the learner has done in Frontier, as evidence, and what they could do next. Loaded lazily: it reads the curriculum. */
+async function gather(): Promise<{ found: FoundEvidence[]; options: NextOption[] }> {
+  const [{ drillEvidence }, { publishedProjects }, { masteredSet }, { GRAPH }, { isUnlocked }, { DRILLS }] = await Promise.all([
+    import("@/lib/drills"),
+    import("@/lib/projects"),
+    import("@/lib/learning"),
+    import("@/lib/curriculum"),
+    import("@/lib/graph"),
+    import("@/content/drills"),
+  ]);
+  const [passed, projects, mastered] = await Promise.all([drillEvidence(), publishedProjects(), masteredSet()]);
+  const found: FoundEvidence[] = [
+    ...passed.map(drillFound),
+    ...projects.flatMap(projectFound),
+    ...GRAPH.order.filter((id) => mastered.has(id)).map((id) => lessonFound(GRAPH.nodes.get(id)!)),
+  ];
+  const passedIds = new Set(passed.map((d) => d.drillId));
+  const options: NextOption[] = [
+    ...DRILLS.filter((d) => !passedIds.has(d.id)).map((d) => ({
+      ref: `drill:${d.id}`, kind: "drill" as const, title: d.title, detail: `drill on ${d.skills.join(", ")}`, open: true,
+    })),
+    ...GRAPH.order
+      .map((id) => GRAPH.nodes.get(id)!)
+      .filter((n) => n.authored && !mastered.has(n.id))
+      .map((n) => ({ ref: `lesson:${n.id}`, kind: "lesson" as const, title: n.title, detail: n.courseTitle, open: isUnlocked(GRAPH, n.id, mastered) })),
+  ];
+  return { found, options };
+}
+
+/**
+ * The ids of everything Parton's scores depend on: the skills postings ask for, passed drills, published projects,
+ * mastered lessons and the learner's own evidence. Cheap: plain queries, no curriculum.
+ */
+async function currentFingerprint(): Promise<string> {
+  const { drillEvidence } = await import("@/lib/drills");
+  const [skills, own, projects, mastered, drills] = await Promise.all([
+    q<{ key: string }>("SELECT key FROM readiness_skills WHERE frequency > 0"),
+    q<{ id: number }>("SELECT id FROM readiness_evidence WHERE source <> 'parton'"),
+    query<{ id: number }>("SELECT id FROM projects WHERE status = 'published'"),
+    query<{ lesson_id: string }>("SELECT lesson_id FROM progress WHERE status = 'mastered'"),
+    drillEvidence(),
+  ]);
+  if (skills.length === 0) return "";
+  return fingerprint([
+    ...skills.map((s) => `skill:${s.key}`),
+    ...own.map((e) => `own:${e.id}`),
+    ...projects.map((p) => `project:${p.id}`),
+    ...mastered.map((m) => `lesson:${m.lesson_id}`),
+    ...drills.map((d) => `drill:${d.drillId}`),
+  ]);
+}
+
+const SCORED_KEY = "readiness_scored";
+
+/** True when there are skills and something they depend on changed since Parton last scored them. */
+export async function needsScoring(): Promise<boolean> {
+  const [now, rows] = await Promise.all([currentFingerprint(), q<{ value: string }>("SELECT value FROM settings WHERE key = $1", [SCORED_KEY])]);
+  return now !== "" && rows[0]?.value !== now;
+}
+
+/**
+ * Parton scores every skill the postings ask for: it attaches the evidence it finds in Frontier, sets a level from
+ * that evidence (only where the learner hasn't set one themself) and picks the best next step for each.
+ */
+export async function scoreSkills(): Promise<Result> {
+  const print = await currentFingerprint();
+  const skills = await q<{ id: number; key: string; name: string; area: string; description: string; quotes: string[] }>(
+    "SELECT id, key, name, area, description, quotes FROM readiness_skills WHERE frequency > 0 ORDER BY frequency DESC, name",
+  );
+  if (skills.length === 0) return { ok: false, error: "There are no skills to score yet." };
+  const own = await q<{ skill_id: number; kind: string; title: string; url: string }>(
+    "SELECT skill_id, kind, title, url FROM readiness_evidence WHERE source <> 'parton' ORDER BY added_at",
+  );
+  const ownBy = new Map<number, { kind: string; title: string; url: string }[]>();
+  for (const e of own) ownBy.set(e.skill_id, [...(ownBy.get(e.skill_id) ?? []), e]);
+  const { found, options } = await gather();
+
+  let output: AssessOutput;
+  try {
+    output = await structured<AssessOutput>({
+      system: ASSESS_SYSTEM,
+      messages: [{
+        role: "user",
+        content: assessRequest(
+          skills.map((s) => ({ ...s, quotes: Array.isArray(s.quotes) ? s.quotes : [], own: ownBy.get(s.id) ?? [] })),
+          found,
+          options,
+        ),
+      }],
+      schema: ASSESS_SCHEMA,
+      effort: "medium",
+      maxTokens: 32000,
+    });
+  } catch (error) {
+    return { ok: false, error: error instanceof PartonError ? error.message : "Parton ran into a problem. Please try again." };
+  }
+
+  const results = acceptAssessment(
+    output,
+    skills.map((s) => ({ key: s.key, ownKinds: (ownBy.get(s.id) ?? []).map((e) => e.kind) })),
+    found,
+    options,
+  );
+  if (results.length === 0) return { ok: false, error: "Parton's scores didn't match the skills on the scorecard. Please try again." };
+
+  const idByKey = new Map(skills.map((s) => [s.key, s.id]));
+  const foundByRef = new Map(found.map((f) => [f.ref, f]));
+  let attached = 0;
+  for (const r of results) {
+    const skillId = idByKey.get(r.key)!;
+    const prior = await q<{ id: number; ref: string; dismissed: boolean }>(
+      "SELECT id, ref, dismissed FROM readiness_evidence WHERE skill_id = $1 AND source = 'parton'",
+      [skillId],
+    );
+    const priorByRef = new Map(prior.map((p) => [p.ref, p]));
+    // Evidence the learner dismissed doesn't count, so the level is capped again without it.
+    const kept = r.evidence.filter((ref) => !priorByRef.get(ref)?.dismissed);
+    if (kept.length < r.evidence.length) {
+      const kinds = [...kept.map((ref) => foundByRef.get(ref)!.kind), ...(ownBy.get(skillId) ?? []).map((e) => e.kind)];
+      r.level = Math.min(r.level, kinds.length ? supportedLevel(kinds) : 0);
+      r.evidence = kept;
+    }
+    const wanted = new Set(r.evidence);
+    const stale = prior.filter((p) => !p.dismissed && !wanted.has(p.ref)).map((p) => p.id);
+    if (stale.length) await q("DELETE FROM readiness_evidence WHERE id = ANY($1::int[])", [stale]);
+    for (const ref of r.evidence) {
+      const f = foundByRef.get(ref)!;
+      const existing = priorByRef.get(ref);
+      if (existing?.dismissed) continue;
+      attached++;
+      if (existing) await q("UPDATE readiness_evidence SET kind = $2, title = $3, url = $4 WHERE id = $1", [existing.id, f.kind, f.title.slice(0, 160), f.url]);
+      else await q("INSERT INTO readiness_evidence (skill_id, kind, title, url, source, ref) VALUES ($1, $2, $3, $4, 'parton', $5)", [skillId, f.kind, f.title.slice(0, 160), f.url, ref]);
+    }
+    await q(
+      `UPDATE readiness_skills
+          SET suggested_level = $2, suggested_reason = $3, next_step = $4::jsonb,
+              level = CASE WHEN level_source = 'parton' THEN $2 ELSE level END,
+              level_source = CASE WHEN level_source = 'confirmed' AND level <> $2 THEN 'learner' ELSE level_source END,
+              updated_at = now()
+        WHERE id = $1`,
+      [skillId, r.level, r.reason, r.next ? JSON.stringify(r.next) : null],
+    );
+  }
+  await q(
+    "INSERT INTO settings (key, value) VALUES ($1, $2::jsonb) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value",
+    [SCORED_KEY, JSON.stringify(print)],
+  );
+  return { ok: true, message: `Parton scored ${results.length} skills from ${attached} piece${attached === 1 ? "" : "s"} of evidence found in Frontier.` };
+}
+
+/**
+ * The skills holding readiness back most, weakest and most asked for first, each with Parton's suggested next
+ * step. For other features (Drills, Projects) to aim at. Empty when there is no scorecard.
+ */
+export async function readinessGaps(): Promise<{
+  key: string; name: string; area: string; description: string; frequency: number; postingCount: number; level: number; gap: number; next: NextStep | null;
+}[]> {
+  const card = await loadScorecard();
+  return card.skills
+    .filter((s) => s.gap > 0)
+    .sort((a, b) => b.gap - a.gap)
+    .map((s) => ({ key: s.key, name: s.name, area: s.area, description: s.description, frequency: s.frequency, postingCount: s.postingCount, level: s.level, gap: s.gap, next: s.next }));
+}
+
+// ---------------------------------------------------------------------------------------------
+// The scheduled run
+
+export type ScheduledStep = "read" | "found" | "scored" | "nothing";
+
+/**
+ * One step of keeping the scorecard current, run on a schedule several times a night so each step gets its own
+ * time limit: read postings that changed, else find fresh postings when the quarterly re-check is due, else
+ * re-score when new evidence has appeared. Does nothing until the learner has built a scorecard once.
+ */
+export async function runScheduledStep(): Promise<{ step: ScheduledStep; result?: Result }> {
+  if (!partonConnected()) return { step: "nothing" };
+  const card = await loadScorecard();
+  if (card.skills.length === 0) return { step: "nothing" };
+  if (card.stale) return { step: "read", result: await extractSkills() };
+  if (recheckDue(card.lastCheck)) {
+    const { findPostings } = await import("./find");
+    const found = await findPostings(card.role);
+    if (found.openings.length === 0) return { step: "found", result: { ok: false, error: "No matching postings found." } };
+    await replacePostings(found.openings);
+    return { step: "found", result: { ok: true, message: `Found ${found.openings.length} postings.` } };
+  }
+  if (await needsScoring()) return { step: "scored", result: await scoreSkills() };
+  return { step: "nothing" };
 }
