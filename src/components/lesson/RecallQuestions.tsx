@@ -1,6 +1,6 @@
 import "server-only";
 import { recallFor, type RecallItem } from "@/lib/recall";
-import { renderParton } from "@/lib/parton/render";
+import { renderInline, renderParton } from "@/lib/parton/render";
 import { ExerciseCard, type ExerciseView } from "@/components/lesson/ExerciseCard";
 import { Pill } from "@/components/ui/Pill";
 
@@ -12,6 +12,7 @@ function recallView(q: RecallItem): ExerciseView {
     rung: "check",
     kind: a.kind,
     options: a.kind === "choice" ? a.options : undefined,
+    optionsHtml: a.kind === "choice" ? a.options.map(renderInline) : undefined,
     multiple: a.kind === "choice" ? a.correct.length > 1 : undefined,
     variables: a.kind === "expression" ? a.variables : undefined,
     solved: false,

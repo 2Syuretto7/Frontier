@@ -82,7 +82,7 @@ What makes a good recall question:
 Answer keys must be right. Solve each question yourself, carefully, before you write its key.
 - numeric: put the exact value in "number". Use "tolerance" only when the answer is not a short exact number, and then ask for a stated number of decimal places.
 - expression: plain ASCII maths that a small parser reads: + - * / ^, brackets, sin cos tan exp ln log sqrt abs, pi and e, and single-letter variables listed in "variables".
-- choice: three to five distinct options, with every correct index in "correct". Say in the prompt when more than one option may be right.
+- choice: three to five distinct options, with every correct index in "correct". Write any maths in an option in TeX between dollar signs, as in the prompt. Say in the prompt when more than one option may be right.
 Leave the fields of the other kinds empty or zero.`;
 
 /** What the model reads: the earlier lessons, what it must not repeat, and what the learner found hard. */

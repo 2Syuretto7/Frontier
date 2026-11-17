@@ -11,6 +11,8 @@ export type ExerciseView = {
   rung: "check" | "apply" | "stretch";
   kind: "numeric" | "expression" | "choice" | "code";
   options?: string[];
+  /** The options as rendered HTML, for questions whose options carry TeX (recall questions written by Parton). */
+  optionsHtml?: string[];
   multiple?: boolean;
   variables?: string[];
   code?: { starter: string; setup?: string; files?: Record<string, string>; checks: number };
@@ -139,7 +141,9 @@ export function ExerciseCard({ view, context, children, index }: {
               <label key={opt} className={`choice ${picked.includes(i) ? "is-picked" : ""}`}>
                 <input type={view.multiple ? "checkbox" : "radio"} name={view.id} checked={picked.includes(i)}
                   onChange={() => toggle(i)} disabled={locked} />
-                <span>{opt}</span>
+                {view.optionsHtml?.[i] !== undefined
+                  ? <span dangerouslySetInnerHTML={{ __html: view.optionsHtml[i] }} />
+                  : <span>{opt}</span>}
               </label>
             ))}
             {view.multiple && <p className="hint">Select all that apply.</p>}
