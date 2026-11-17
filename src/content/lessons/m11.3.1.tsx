@@ -309,24 +309,6 @@ assert abs(ge_growth(np.array([[1.0, 1.0], [-1.0, 1.0]])) - 2.0) < 1e-12` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that Gaussian elimination with partial pivoting on an n × n invertible matrix has growth factor at most
-          2ⁿ⁻¹.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that the pivot is the largest entry in absolute value in its column, so every multiplier satisfies |l_ik| ≤ 1.",
-          "Shows from the update a_ij ← a_ij − l_ik a_kj that the largest absolute entry at most doubles in one step.",
-          "Concludes, since there are n − 1 elimination steps, that every intermediate entry is at most 2ⁿ⁻¹ max|a_ij|.",
-        ],
-      },
-    },
-    {
       key: "w3",
       rung: "stretch",
       prompt: (
@@ -338,9 +320,6 @@ assert abs(ge_growth(np.array([[1.0, 1.0], [-1.0, 1.0]])) - 2.0) < 1e-12` },
       answer: { kind: "numeric", value: 4, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend what partial pivoting does, why it bounds the multipliers, how the growth factor controls the backward error, and why the 2ⁿ⁻¹ worst case does not stop everyone from relying on it.",
 
   glimpse: (
     <>

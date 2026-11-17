@@ -311,23 +311,6 @@ assert abs(backward_error(np.eye(2), np.array([3.0, 4.0]), np.array([0.0, 4.0]))
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let |δᵢ| ≤ u for i = 1, …, n with nu &lt; 1. Prove that |∏(1 + δᵢ) − 1| ≤ nu/(1 − nu).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Bounds |∏(1 + δᵢ) − 1| by ∏(1 + |δᵢ|) − 1 ≤ (1 + u)ⁿ − 1, for example by expanding the product.",
-          "Shows (1 + u)ⁿ ≤ 1/(1 − nu), for example via (1 + u)ⁿ ≤ e^(nu) and e^(−t) ≥ 1 − t, or by Bernoulli's inequality applied to (1 − u)ⁿ.",
-          "Concludes with 1/(1 − nu) − 1 = nu/(1 − nu).",
-        ],
-      },
-    },
-    {
       key: "eta",
       rung: "stretch",
       prompt: (
@@ -339,9 +322,6 @@ assert abs(backward_error(np.eye(2), np.array([3.0, 4.0]), np.array([0.0, 4.0]))
       answer: { kind: "numeric", value: 0.5, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend the difference between forward and backward error, why a backward stable algorithm is as accurate as the problem's condition number allows, why summing 10⁸ + 1 − 10⁸ to 0 counts as stable, and why elimination with a tiny pivot does not.",
 
   glimpse: (
     <>

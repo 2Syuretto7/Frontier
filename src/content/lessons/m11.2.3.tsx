@@ -341,33 +341,12 @@ assert n == 1000 and abs(q / n - np.var(d)) < 1e-6` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the online log-sum-exp update maintains the invariant: after processing z₁, …, z_k, m = max zᵢ and s =
-          Σ e^(zᵢ − m), so that m + log s = LSE(z₁, …, z_k).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Sets up an induction, checking the first step gives m = z₁ and s = 1 (or starting from m = −∞, s = 0).",
-          "Handles the case z > m: the new maximum is z and s e^(m − z) + 1 equals the sum of e^(zᵢ − z) over all k terms.",
-          "Handles the case z ≤ m: the maximum is unchanged and adding e^(z − m) gives the new sum; concludes m + log s = LSE.",
-        ],
-      },
-    },
-    {
       key: "two",
       rung: "stretch",
       prompt: <p>What is LSE(1000, 999) − 1000? Give four decimals.</p>,
       answer: { kind: "numeric", value: 0.3133, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend why naive log-sum-exp overflows even though the problem is perfectly conditioned, how the max trick and its online version fix it, and how variance summaries from two machines can be merged without cancellation.",
 
   glimpse: (
     <>

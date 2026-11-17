@@ -338,33 +338,12 @@ assert np.allclose(orthogonalise(G, 40, (1.5, -0.5, 0.0)), U @ Vt, atol=1e-6)` }
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let X = UΣVᵀ be a thin SVD and p(x) = ax + bx³ + cx⁵. Prove that aX + b(XXᵀ)X + c(XXᵀ)²X = U p(Σ) Vᵀ, and deduce that
-          if p applied repeatedly sends every singular value of X₀ to 1, then the matrix iteration converges to UVᵀ.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes XXᵀ = UΣ²Uᵀ using VᵀV = I, and hence (XXᵀ)X = UΣ³Vᵀ and (XXᵀ)²X = UΣ⁵Vᵀ (using UᵀU = I).",
-          "Sums the terms to get U p(Σ) Vᵀ, and argues by induction that X_k = U p^(k)(Σ) Vᵀ with the same U and V.",
-          "Concludes that p^(k)(σ_i) → 1 for every i gives X_k → UVᵀ.",
-        ],
-      },
-    },
-    {
       key: "nuc",
       rung: "stretch",
       prompt: <p>What is the largest value of tr(GᵀD) over all D with ‖D‖₂ ≤ 1, for G = [[1, 2], [2, 1]]?</p>,
       answer: { kind: "numeric", value: 4, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend what the polar factor of a matrix is and why it is the steepest descent direction in the spectral norm, why an odd matrix polynomial acts on each singular value separately, and why Muon prefers a quintic that never converges exactly to the cubic that does.",
 
   glimpse: (
     <>

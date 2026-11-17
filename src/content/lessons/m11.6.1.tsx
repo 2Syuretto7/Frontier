@@ -286,32 +286,12 @@ assert abs(m - 1) < 0.05 and abs(v - 2) < 0.3` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let S be k × d with independent N(0, 1/k) entries and x fixed. Prove that E‖Sx‖² = ‖x‖² and Var‖Sx‖² = 2‖x‖⁴/k.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows each (Sx)ᵢ is normal with mean 0 and variance ‖x‖²/k, and that different coordinates are independent.",
-          "Writes ‖Sx‖² = (‖x‖²/k) Σ Zᵢ² with Zᵢ independent standard normal, and gets the mean ‖x‖².",
-          "Uses Var(Z²) = 2 (from E Z⁴ = 3) and independence to get variance (‖x‖⁴/k²)·2k = 2‖x‖⁴/k.",
-        ],
-      },
-    },
-    {
       key: "grow",
       rung: "stretch",
       prompt: <p>By what factor does the JL dimension 4 ln n/(ε²/2 − ε³/3) grow when n goes from 10³ to 10⁶ at fixed ε?</p>,
       answer: { kind: "numeric", value: 2, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend why a random Gaussian projection preserves a squared length on average, why its relative error shrinks like 1/√k, how the union bound turns this into the Johnson–Lindenstrauss lemma, and why the original dimension does not appear.",
 
   glimpse: (
     <>

@@ -305,32 +305,12 @@ assert 0.6 < t < 0.8 and 25.0 < p < 25.5` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let S be real skew-symmetric (Sᵀ = −S). Using that e^(A+B) = e^A e^B when AB = BA, prove that e^S is orthogonal.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows (e^S)ᵀ = e^(Sᵀ), for example by transposing the series term by term.",
-          "Uses Sᵀ = −S to get (e^S)ᵀ = e^(−S).",
-          "Notes S and −S commute, so (e^S)ᵀe^S = e^(−S)e^S = e^0 = I, hence e^S is orthogonal.",
-        ],
-      },
-    },
-    {
       key: "peak",
       rung: "stretch",
       prompt: <p>For A with rows (−1, 100) and (0, −2), what is the largest value over t ≥ 0 of the off-diagonal entry of e^(tA)?</p>,
       answer: { kind: "numeric", value: 25, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend why summing the series or diagonalising can fail to compute e^A, how scaling and squaring avoids both problems, and why a matrix with negative eigenvalues can still make e^(tA) grow for a while.",
 
   glimpse: (
     <>

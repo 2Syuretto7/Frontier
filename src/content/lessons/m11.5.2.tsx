@@ -348,33 +348,12 @@ assert off_diag_ratio(P.T @ A @ P) < 1e-8 and off_diag_ratio(R.T @ R) < 1e-8` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let A be symmetric positive definite and p₀, …, p_(k−1) nonzero and A-conjugate. Prove that φ(x) = ½xᵀAx − bᵀx
-          restricted to their span is minimised at Σ cᵢpᵢ with cᵢ = pᵢᵀb/(pᵢᵀApᵢ).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes a point of the span as x = Σ cᵢpᵢ and uses conjugacy to remove all cross terms in xᵀAx.",
-          "Obtains φ(x) = Σ (½cᵢ² pᵢᵀApᵢ − cᵢ pᵢᵀb), a sum of independent one-variable quadratics.",
-          "Minimises each using pᵢᵀApᵢ > 0 (positive definiteness), giving cᵢ = pᵢᵀb/(pᵢᵀApᵢ).",
-        ],
-      },
-    },
-    {
       key: "k100",
       rung: "stretch",
       prompt: <p>For κ = 100, what real k makes the CG bound 2((√κ − 1)/(√κ + 1))ᵏ equal to 10⁻⁶? Give one decimal.</p>,
       answer: { kind: "numeric", value: 72.3, tolerance: 0.2 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend what conjugate directions are and why they make line searches independent, what CG minimises over the Krylov subspace, why its rate depends on √κ rather than κ, and what changes in floating point.",
 
   glimpse: (
     <>

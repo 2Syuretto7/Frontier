@@ -312,33 +312,12 @@ assert abs(precond_cond(A, np.eye(2)) - np.linalg.cond(A)) < 1e-9` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let A and M = LLᵀ be symmetric positive definite. Prove that M⁻¹A has real positive eigenvalues, the same as those of
-          L⁻¹AL⁻ᵀ.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows L⁻ᵀ(L⁻¹AL⁻ᵀ)Lᵀ = M⁻¹A, so the two matrices are similar and share eigenvalues.",
-          "Shows L⁻¹AL⁻ᵀ is symmetric, so its eigenvalues are real.",
-          "Shows it is positive definite via yᵀL⁻¹AL⁻ᵀy = (L⁻ᵀy)ᵀA(L⁻ᵀy) > 0 for y ≠ 0, so the eigenvalues are positive.",
-        ],
-      },
-    },
-    {
       key: "scaled",
       rung: "stretch",
       prompt: <p>What is the condition number of the Jacobi-scaled version of A with rows (100, 30) and (30, 25)?</p>,
       answer: { kind: "numeric", value: 4, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend what a preconditioner does to the spectrum, why PCG needs only the action of M⁻¹, why Jacobi preconditioning exactly undoes bad units but cannot fix coupling, and how adaptive optimisers are preconditioners.",
 
   glimpse: (
     <>

@@ -302,28 +302,12 @@ assert proj_error(A, power_sketch(A, 6, 2, rng)) < proj_error(A, power_sketch(A,
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Let Q have orthonormal columns. Prove that ‖A − QQᵀA‖_F² = ‖A‖_F² − ‖QᵀA‖_F².</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Works column by column (or with traces), noting QQᵀ is the orthogonal projector onto range(Q), so aⱼ − QQᵀaⱼ is orthogonal to QQᵀaⱼ.",
-          "Applies Pythagoras: ‖aⱼ‖² = ‖QQᵀaⱼ‖² + ‖aⱼ − QQᵀaⱼ‖².",
-          "Uses ‖QQᵀaⱼ‖ = ‖Qᵀaⱼ‖ (since QᵀQ = I) and sums over columns to conclude.",
-        ],
-      },
-    },
-    {
       key: "tail",
       rung: "stretch",
       prompt: <p>A has singular values 10, 5, 1, 1, 1, 1. What is the best possible rank-2 approximation error in the Frobenius norm?</p>,
       answer: { kind: "numeric", value: 2, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend how the randomised SVD finds the dominant subspace from a few random products, why oversampling and power iterations help, and why the final step is exact linear algebra on a small matrix.",
 
   glimpse: (
     <>

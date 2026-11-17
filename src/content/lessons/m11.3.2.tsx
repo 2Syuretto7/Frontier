@@ -327,24 +327,6 @@ assert X.shape == (100000, 2) and np.allclose(X.mean(0), [1.0, -2.0], atol=0.03)
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let A be symmetric positive definite with first diagonal entry a, the rest of its first column w, and trailing
-          block B. Prove that the Schur complement S = B − wwᵀ/a is symmetric positive definite.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes a = e₁ᵀAe₁ > 0, so S is defined, and that S is symmetric because B is and wwᵀ is.",
-          "For y ≠ 0 chooses x = (−wᵀy/a, y), or an equivalent vector, which is nonzero.",
-          "Expands xᵀAx and shows it equals yᵀSy, which is positive since A is positive definite.",
-        ],
-      },
-    },
-    {
       key: "d2",
       rung: "stretch",
       prompt: (
@@ -356,9 +338,6 @@ assert X.shape == (100000, 2) and np.allclose(X.mean(0), [1.0, -2.0], atol=0.03)
       answer: { kind: "numeric", value: 0.75, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend why a positive definite matrix factors as LLᵀ, why Cholesky needs no pivoting, why its failure is a reliable test of positive definiteness, and what jitter does to a kernel matrix.",
 
   glimpse: (
     <>

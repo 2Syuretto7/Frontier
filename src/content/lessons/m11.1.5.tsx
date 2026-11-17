@@ -264,33 +264,12 @@ assert abs(accumulate(3000, 1e-3, 'rn', rng) - 3.0) > 0.5 and abs(accumulate(300
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let a ≤ x ≤ b with a &lt; b adjacent floats. Prove that stochastic rounding satisfies E[SR(x)] = x and Var[SR(x)] =
-          (x − a)(b − x) ≤ (b − a)²/4.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes E[SR(x)] = b(x − a)/(b − a) + a(b − x)/(b − a) and simplifies it to x.",
-          "Computes the variance from the two error values b − x and a − x with their probabilities, simplifying to (x − a)(b − x).",
-          "Bounds the product of the two nonnegative numbers x − a and b − x, whose sum is b − a, by ((b − a)/2)².",
-        ],
-      },
-    },
-    {
       key: "over",
       rung: "stretch",
       prompt: <p>In float16 with round-to-nearest, adding 0.01 to a running sum s with 16 ≤ s &lt; 32 increases s by how much each time?</p>,
       answer: { kind: "numeric", value: 0.015625, tolerance: 0.000001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend why repeatedly adding a tiny increment in low precision with round-to-nearest stalls, how stochastic rounding is unbiased and what its variance is, and why its errors grow like √n rather than n.",
 
   glimpse: (
     <>

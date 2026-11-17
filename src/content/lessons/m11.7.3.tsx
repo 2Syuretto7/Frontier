@@ -330,33 +330,12 @@ assert np.allclose(ns_sign(-2 * np.eye(3), 30), -np.eye(3))` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          For the iteration X_(k+1) = X_k(2I − AX_k) with R_k = I − AX_k, prove that R_(k+1) = R_k², and deduce that if
-          ‖R₀‖ &lt; 1 in a submultiplicative norm then X_k → A⁻¹.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Expands AX_(k+1) = 2AX_k − (AX_k)² and so I − AX_(k+1) = (I − AX_k)².",
-          "Uses induction and submultiplicativity to get ‖R_k‖ ≤ ‖R₀‖^(2^k), which tends to 0.",
-          "Concludes from AX_k = I − R_k that X_k = A⁻¹(I − R_k) → A⁻¹ (A is invertible since ‖I − AX₀‖ < 1).",
-        ],
-      },
-    },
-    {
       key: "slow",
       rung: "stretch",
       prompt: <p>Apply s ← s(3 − s²)/2 starting from s₀ = 0.001. After how many steps does s first exceed 0.5?</p>,
       answer: { kind: "numeric", value: 16, tolerance: 0 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend how Newton–Schulz inverts a matrix with products alone, why its residual squares at each step, why ill-conditioning shows up as a plateau of about 2 log₂κ steps rather than slower final convergence, and how the same idea gives inverse square roots and the matrix sign function.",
 
   glimpse: (
     <>

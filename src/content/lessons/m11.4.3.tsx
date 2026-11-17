@@ -357,33 +357,12 @@ assert abs(slq_trace(mv, 30, lambda t: t ** 2, 6, 4, np.random.default_rng(2)) -
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let A be symmetric and q₁, …, q_k orthonormal with span{"{"}q₁, …, q_j{"}"} = K_j(A, q₁) for each j. Prove that
-          T = QᵀAQ is tridiagonal.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Identifies the (i, j) entry as qᵢᵀAqⱼ.",
-          "Uses qⱼ ∈ K_j to get Aqⱼ ∈ K_(j+1) = span{q₁, …, q_(j+1)}, so the entry vanishes for i > j + 1 by orthonormality.",
-          "Uses the symmetry of A to conclude the entry also vanishes for j > i + 1.",
-        ],
-      },
-    },
-    {
       key: "deg",
       rung: "stretch",
       prompt: <p>The k-point Gauss quadrature rule from 10 Lanczos steps is exact for polynomials up to what degree?</p>,
       answer: { kind: "numeric", value: 19, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend how Lanczos turns a symmetric matrix into a small tridiagonal one using only matrix-vector products, why Ritz values find extreme eigenvalues faster than power iteration, where ghost eigenvalues come from, and how stochastic Lanczos quadrature estimates a Hessian's spectral density.",
 
   glimpse: (
     <>

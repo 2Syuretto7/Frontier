@@ -289,33 +289,12 @@ assert 13.0 < k < 13.5 and d < 6` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let A be invertible, Ax = b with b ≠ 0, and A(x + δx) = b + δb. Prove that ‖δx‖/‖x‖ ≤ ‖A‖‖A⁻¹‖·‖δb‖/‖b‖ for any
-          vector norm and its induced matrix norm.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Derives A δx = δb and hence ‖δx‖ ≤ ‖A⁻¹‖‖δb‖.",
-          "Uses ‖b‖ = ‖Ax‖ ≤ ‖A‖‖x‖ to get 1/‖x‖ ≤ ‖A‖/‖b‖ (noting x ≠ 0 since b ≠ 0).",
-          "Multiplies the two inequalities to obtain the stated bound.",
-        ],
-      },
-    },
-    {
       key: "sub",
       rung: "stretch",
       prompt: <p>What is the relative condition number of computing x − y at x = 1.0, y = 0.99?</p>,
       answer: { kind: "numeric", value: 199, tolerance: 0.01 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend what a condition number measures, why it is a property of the problem rather than the algorithm, why κ(A) = σ₁/σₙ bounds how much a linear system amplifies relative errors, and how many digits you should expect to lose.",
 
   glimpse: (
     <>

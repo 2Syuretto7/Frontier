@@ -325,32 +325,12 @@ assert orth_loss(mgs(A)) < 1e-6 and orth_loss(cgs(A)) > 1e3 * orth_loss(mgs(A))`
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let x ≠ 0, σ = sign(x₁), u = x + σ‖x‖e₁ and H = I − 2uuᵀ/‖u‖². Prove that H is orthogonal and that Hx = −σ‖x‖e₁.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows H is symmetric and HᵀH = H² = I by expanding (I − 2vvᵀ)² with v = u/‖u‖ a unit vector.",
-          "Computes uᵀx = ‖x‖² + σ‖x‖x₁ and ‖u‖² = 2‖x‖² + 2σ‖x‖x₁, so ‖u‖² = 2uᵀx.",
-          "Concludes Hx = x − 2u(uᵀx)/‖u‖² = x − u = −σ‖x‖e₁.",
-        ],
-      },
-    },
-    {
       key: "unorm",
       rung: "stretch",
       prompt: <p>For x = (1, 1, 1, 1), what is ‖u‖² for u = x + sign(x₁)‖x‖e₁?</p>,
       answer: { kind: "numeric", value: 12, tolerance: 0.0001 },
     },
   ],
-
-  teachBack:
-    "Explain to a friend how a Householder reflection zeros a column below the diagonal, why the sign choice matters, and why Householder QR keeps Q orthogonal to working precision while Gram-Schmidt loses orthogonality on ill-conditioned matrices.",
 
   glimpse: (
     <>
