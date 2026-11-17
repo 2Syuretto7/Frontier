@@ -47,3 +47,11 @@ test("protected answers are described for the reviewing pass", () => {
   assert.match(describeAnswer({ kind: "choice", options: ["a", "b", "c"], correct: [0, 2] }), /options are: "a", "c"/);
 });
 
+
+test("inline rendering turns TeX in a choice option into maths without a paragraph", async () => {
+  const { renderInline } = await import("../src/lib/parton/render.ts");
+  const html = renderInline("$(-a)b \\cdot ab = 1$ and <b>");
+  assert.match(html, /class="katex"/);
+  assert.doesNotMatch(html, /\$|<p>/, "no raw dollar signs and no paragraph");
+  assert.match(html, /&lt;b&gt;/);
+});

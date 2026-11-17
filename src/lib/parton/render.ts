@@ -10,6 +10,11 @@ function tex(src: string, display: boolean) {
   }
 }
 
+/** One line of text with inline maths in $...$, bold, italics and code; no paragraph around it. */
+export function renderInline(text: string): string {
+  return inline(text);
+}
+
 function inline(text: string): string {
   // Split out inline maths first so emphasis markers inside TeX are left alone.
   const parts = text.split(/(\$[^$\n]+\$)/g);
