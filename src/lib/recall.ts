@@ -8,6 +8,10 @@ import {
   RECALL_COUNT,
   RECALL_SCHEMA,
   RECALL_SYSTEM,
+  REVIEW_MAX,
+  REVIEW_MIN,
+  assignCards,
+  reviewCount,
   acceptRecall,
   recallRequest,
   type RecallAnswer,
@@ -16,14 +20,18 @@ import {
   type RecallSource,
 } from "./parton/recall";
 
-/** A recall set stays on the page for one sitting: until each question is tried, or for two hours. */
+/** A set stays on the page for one sitting: until each question is tried, or for two hours. */
 const SITTING_HOURS = 2;
 const SOURCE_CHARS = 12000;
 const ASKED_SHOWN = 150;
 
+export { REVIEW_MAX, REVIEW_MIN };
+
 export const RECALL_PREFIX = "recall:";
 
-export type RecallItem = { id: string; prompt: string; sourceTitle: string; answer: RecallAnswer };
+type Purpose = "recall" | "review";
+
+export type RecallItem = { id: string; prompt: string; sourceTitle: string; sourceCourse: string; answer: RecallAnswer };
 export type RecallSet = { questions: RecallItem[]; error?: string };
 
 type Row = { id: number; source_lesson_id: string; prompt: string; answer: RecallAnswer };
@@ -44,49 +52,102 @@ const toItem = (r: Row): RecallItem => ({
   id: `${RECALL_PREFIX}${r.id}`,
   prompt: r.prompt,
   sourceTitle: GRAPH.nodes.get(r.source_lesson_id)?.title ?? r.source_lesson_id,
+  sourceCourse: GRAPH.nodes.get(r.source_lesson_id)?.course ?? "",
   answer: r.answer,
 });
 
-/**
- * The recall questions for this visit to a lesson. Each sitting gets questions Parton has just written;
- * a question is never shown again once it has been tried, and never repeats an earlier recall question
- * or a practice question from the lesson it recalls.
- */
-export async function recallFor(lessonId: string, mastered: Set<string>): Promise<RecallSet> {
-  const sourceIds = recallSources(lessonId, mastered);
-  if (sourceIds.length === 0) return { questions: [] };
-
-  const open = await query<Row>(
+/** The questions of the current sitting that have not been tried yet. */
+async function openSet(purpose: Purpose, lessonId: string | null): Promise<Row[]> {
+  return query<Row>(
     `SELECT id, source_lesson_id, prompt, answer FROM recall_questions
-     WHERE lesson_id = $1 AND attempts = 0 AND created_at > now() - make_interval(hours => $2)
+     WHERE purpose = $1 AND ($2::text IS NULL OR lesson_id = $2) AND attempts = 0 AND NOT retired
+       AND created_at > now() - make_interval(hours => $3)
      ORDER BY id`,
-    [lessonId, SITTING_HOURS],
+    [purpose, lessonId, SITTING_HOURS],
   );
-  if (open.length > 0) return { questions: open.map(toItem) };
+}
 
-  if (!partonConnected()) {
-    return { questions: [], error: "Fresh recall questions are written by Parton, who is not connected yet." };
-  }
+const PARTON_MISSING = "are written by Parton, who is not connected yet.";
+
+/** Runs a generation, turning Parton's failures into a message for the page. */
+async function generate(kind: string, write: () => Promise<Row[]>): Promise<RecallSet> {
+  if (!partonConnected()) return { questions: [], error: `Fresh ${kind} questions ${PARTON_MISSING}` };
   try {
-    const drafts = await writeRecall(lessonId, sourceIds);
-    if (drafts.length === 0) return { questions: [], error: "Parton couldn't write new recall questions this time. Reload the page to try again." };
-    const saved: Row[] = [];
-    for (const d of drafts) {
-      const rows = await query<Row>(
-        `INSERT INTO recall_questions (lesson_id, source_lesson_id, prompt, answer) VALUES ($1, $2, $3, $4)
-         RETURNING id, source_lesson_id, prompt, answer`,
-        [lessonId, d.sourceLessonId, d.prompt, JSON.stringify(d.answer)],
-      );
-      saved.push(rows[0]);
-    }
-    return { questions: saved.map(toItem) };
+    const rows = await write();
+    if (rows.length === 0) return { questions: [], error: `Parton couldn't write new ${kind} questions this time. Reload the page to try again.` };
+    return { questions: rows.map(toItem) };
   } catch (error) {
     if (error instanceof PartonError) return { questions: [], error: `${error.message} Reload the page to try again.` };
     throw error;
   }
 }
 
-async function writeRecall(lessonId: string, sourceIds: string[]): Promise<RecallDraft[]> {
+async function save(purpose: Purpose, lessonId: string | null, drafts: (RecallDraft & { card?: string | null })[]): Promise<Row[]> {
+  const saved: Row[] = [];
+  for (const d of drafts) {
+    const rows = await query<Row>(
+      `INSERT INTO recall_questions (lesson_id, source_lesson_id, prompt, answer, purpose, card_exercise_id)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, source_lesson_id, prompt, answer`,
+      [lessonId ?? d.sourceLessonId, d.sourceLessonId, d.prompt, JSON.stringify(d.answer), purpose, d.card ?? null],
+    );
+    saved.push(rows[0]);
+  }
+  return saved;
+}
+
+/**
+ * The recall questions for this visit to a lesson. Each sitting gets questions Parton has just written;
+ * a question is never shown again once it has been tried, and never repeats an earlier recall or review
+ * question or a practice question from the lesson it recalls.
+ */
+export async function recallFor(lessonId: string, mastered: Set<string>): Promise<RecallSet> {
+  const sourceIds = recallSources(lessonId, mastered);
+  if (sourceIds.length === 0) return { questions: [] };
+  const open = await openSet("recall", lessonId);
+  if (open.length > 0) return { questions: open.map(toItem) };
+  const lessonTitle = GRAPH.nodes.get(lessonId)?.title ?? lessonId;
+  return generate("recall", async () =>
+    save("recall", lessonId, await writeQuestions({ sourceIds, count: RECALL_COUNT, request: { lessonTitle } })),
+  );
+}
+
+/**
+ * A spaced-review session: three to five questions Parton has just written on the ideas that are due.
+ * FSRS still decides which ideas are due; each question stands in for one due card, and the learner's
+ * first answer to it rates that card. Like recall, no question is ever shown twice or repeats an earlier one.
+ */
+export async function reviewSession(): Promise<RecallSet> {
+  // Keep the current sitting only while at least three of its questions are untried. Otherwise the
+  // leftovers are retired, never to be shown again, and a new session is written.
+  const open = await openSet("review", null);
+  if (open.length >= REVIEW_MIN) return { questions: open.slice(0, REVIEW_MAX).map(toItem) };
+  if (open.length > 0) await query("UPDATE recall_questions SET retired = true WHERE id = ANY($1)", [open.map((r) => r.id)]);
+  const due = (
+    await query<{ exercise_id: string; lesson_id: string }>(
+      "SELECT exercise_id, lesson_id FROM review_cards WHERE due <= now() ORDER BY due LIMIT $1",
+      [REVIEW_MAX],
+    )
+  ).filter((c) => LESSON_BY_ID.has(c.lesson_id) && EXERCISES.has(c.exercise_id));
+  if (due.length === 0) return { questions: [] };
+
+  const count = reviewCount(due.length);
+  const sourceIds = [...new Set(due.map((c) => c.lesson_id))];
+  const ideas = due.map((c) => `In ${c.lesson_id}: ${toPlainText(EXERCISES.get(c.exercise_id)!.exercise.prompt)}`);
+  return generate("review", async () => {
+    const drafts = await writeQuestions({ sourceIds, count, request: { review: true, due: ideas } });
+    return save("review", null, assignCards(drafts, due));
+  });
+}
+
+async function writeQuestions({
+  sourceIds,
+  count,
+  request,
+}: {
+  sourceIds: string[];
+  count: number;
+  request: { lessonTitle?: string; review?: boolean; due?: string[] };
+}): Promise<RecallDraft[]> {
   const sources: RecallSource[] = sourceIds.map((id) => {
     const lesson = LESSON_BY_ID.get(id)!;
     const text = [lesson.puzzle, lesson.intuition, lesson.theory].map(toPlainText).join("\n\n");
@@ -116,23 +177,22 @@ async function writeRecall(lessonId: string, sourceIds: string[]): Promise<Recal
   ]);
   const asked = askedRows.map((r) => r.prompt);
   const hard = [
-    ...missedRecall.map((r) => `Missed in an earlier recall: ${r.prompt}`),
+    ...missedRecall.map((r) => `Missed in an earlier recall or review: ${r.prompt}`),
     ...missedPractice.flatMap((r) => {
       const ref = EXERCISES.get(r.exercise_id);
       return ref ? [`Missed more than once in practice: ${toPlainText(ref.exercise.prompt)}`] : [];
     }),
     ...notes.map((n) => `Misconception Parton noted: ${n.body}`),
   ];
-  const lessonTitle = GRAPH.nodes.get(lessonId)?.title ?? lessonId;
 
   const kept: RecallDraft[] = [];
   // Two tries at most: questions that repeat anything, or whose answer key fails its own check, are dropped.
-  for (let round = 0; round < 2 && kept.length < RECALL_COUNT; round++) {
+  for (let round = 0; round < 2 && kept.length < count; round++) {
     const seen = [...asked, ...kept.map((k) => k.prompt)];
-    const want = RECALL_COUNT - kept.length;
+    const want = count - kept.length;
     const output = await structured<RecallOutput>({
       system: RECALL_SYSTEM,
-      messages: [{ role: "user", content: recallRequest({ lessonTitle, sources, asked: seen.slice(0, ASKED_SHOWN), hard, count: want }) }],
+      messages: [{ role: "user", content: recallRequest({ ...request, sources, asked: seen.slice(0, ASKED_SHOWN), hard, count: want }) }],
       schema: RECALL_SCHEMA,
       effort: "medium",
     });
@@ -141,15 +201,22 @@ async function writeRecall(lessonId: string, sourceIds: string[]): Promise<Recal
   return kept;
 }
 
-/** Checks an answer to a recall question and records it. */
-export async function recallAttempt(id: string, input: string): Promise<CheckResult> {
+/**
+ * Checks an answer to a recall or review question and records it. For a review question, the first
+ * answer also returns the due card it stands in for, so the caller can rate it.
+ */
+export async function recallAttempt(id: string, input: string, context: Purpose): Promise<CheckResult & { card?: string }> {
   const n = Number(id.slice(RECALL_PREFIX.length));
   if (!Number.isInteger(n)) return { correct: false, message: "Unknown question." };
-  const rows = await query<{ answer: RecallAnswer }>("SELECT answer FROM recall_questions WHERE id = $1", [n]);
-  if (!rows[0]) return { correct: false, message: "Unknown question." };
+  const rows = await query<{ answer: RecallAnswer; purpose: Purpose }>("SELECT answer, purpose FROM recall_questions WHERE id = $1", [n]);
+  if (!rows[0] || rows[0].purpose !== context) return { correct: false, message: "Unknown question." };
   const result = checkAnswer(rows[0].answer, input);
   if (result.message && !result.correct) return result;
-  await query("UPDATE recall_questions SET attempts = attempts + 1, solved = solved OR $2 WHERE id = $1", [n, result.correct]);
-  await query("INSERT INTO attempt_log (exercise_id, response, correct, context) VALUES ($1, $2, $3, 'recall')", [id, input.slice(0, 4000), result.correct]);
-  return { correct: result.correct, message: result.message };
+  const updated = await query<{ attempts: number; card_exercise_id: string | null }>(
+    "UPDATE recall_questions SET attempts = attempts + 1, solved = solved OR $2 WHERE id = $1 RETURNING attempts, card_exercise_id",
+    [n, result.correct],
+  );
+  await query("INSERT INTO attempt_log (exercise_id, response, correct, context) VALUES ($1, $2, $3, $4)", [id, input.slice(0, 4000), result.correct, context]);
+  const first = updated[0]?.attempts === 1;
+  return { correct: result.correct, message: result.message, card: first ? updated[0].card_exercise_id ?? undefined : undefined };
 }
