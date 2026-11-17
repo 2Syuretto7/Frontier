@@ -73,3 +73,13 @@ Parton is the tutor on every lesson page (`src/lib/parton/`). It needs `ANTHROPI
 - **Memory and repair.** Conversations, hints and noted misconceptions are stored per lesson and fed back to Parton in later lessons that build on them. Questions missed three or more times come back in review after twelve hours instead of a day.
 - **Fresh recall.** The recall questions that open a lesson are written new by Parton for each sitting, on the mastered lessons it builds on (`src/lib/recall.ts`). Every recall question is stored, and a new one is dropped if it repeats an earlier recall question or a practice question from its lesson; a question is never shown again once tried. They lean towards ideas the learner has missed before, and their answer keys are checked on the server like any other exercise. Without Parton, the recall section says so instead of replaying old questions.
 - Model `claude-opus-5-5` with adaptive thinking, streamed, structured JSON output, prompt caching on the lesson context, and server-side refusal fallback (`fallbacks: "default"`).
+
+## Readiness scorecard
+
+`/readiness` (`src/app/readiness/`, `src/lib/readiness/`) scores the learner against what frontier labs actually ask for.
+
+- **Postings.** Paste 10 to 20 current postings for the target role. Parton reads them all and pulls out the skills they keep asking for, with how many postings ask for each and short quotes. Re-reading keeps existing skills (matched by name), their levels and evidence; skills the postings stop asking for are kept but stop counting.
+- **Levels need evidence.** Each skill is scored None, Studied, Practised, Built or Published. Above Studied, a level counts only when evidence backs it: Practised needs any evidence (such as a passed drill), Built a repository or project, Published a write-up plus a repository or project. Evidence is a kind, a title and a link, either a web address or a Frontier path such as `/drills/attention`, so drills and projects can be linked as they arrive (`addEvidence` in `src/lib/readiness/store.ts`).
+- **Readiness** is each skill's counted level out of four, weighted by how many postings ask for it.
+- **Quarterly re-check.** 91 days after Parton last read the postings, the page asks for a fresh set. Starting a check sets the old postings aside; levels and evidence stay. Every read is kept in the history.
+- Its tables are created on first use in `src/lib/readiness/store.ts`, not in `src/lib/db.ts`.
