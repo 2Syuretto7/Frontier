@@ -95,3 +95,28 @@ export async function removeSkillAction(form: FormData) {
   await removeSkill(id(form));
   refresh();
 }
+
+/** Parton scores every skill from the evidence it finds in Frontier, and picks a next step for each. */
+export async function scoreSkillsAction(): Promise<ReadinessState> {
+  await requireOwner();
+  const { scoreSkills } = await import("@/lib/readiness/store");
+  const result = await scoreSkills();
+  if (!result.ok) return { error: result.error };
+  refresh();
+  return { done: result.message, at: Date.now() };
+}
+
+export async function confirmLevelAction(form: FormData) {
+  await requireOwner();
+  const { confirmLevel } = await import("@/lib/readiness/store");
+  const skill = form.get("skill");
+  await confirmLevel(skill === null ? undefined : id(form, "skill"));
+  refresh();
+}
+
+export async function acceptSuggestionAction(form: FormData) {
+  await requireOwner();
+  const { acceptSuggestion } = await import("@/lib/readiness/store");
+  await acceptSuggestion(id(form, "skill"));
+  refresh();
+}

@@ -1,7 +1,20 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
+  ASSESS_SCHEMA,
   EXTRACT_SCHEMA,
+  acceptAssessment,
+  assessRequest,
+  drillFound,
+  fingerprint,
+  gapScore,
+  lessonFound,
+  nextHref,
+  projectFound,
+  sharesOf,
+  skillTrends,
+  type AssessOutput,
+  type NextOption,
   acceptSkills,
   cleanLink,
   daysUntilRecheck,
@@ -99,4 +112,106 @@ test("the extraction request numbers every posting and lists the current skills"
   assert.match(text, /- PyTorch: Writing models in PyTorch\./);
   assert.match(text, /numbered 1 to 2/);
   assert.deepEqual(EXTRACT_SCHEMA.properties.skills.items.required.length, Object.keys(EXTRACT_SCHEMA.properties.skills.items.properties).length);
+});
+
+test("a mastered lesson backs Studied, never more", () => {
+  assert.equal(supportedLevel(["lesson"]), 1);
+  assert.equal(supportedLevel(["lesson", "lesson"]), 1);
+  assert.equal(supportedLevel(["lesson", "drill"]), 2);
+  assert.equal(effectiveLevel(3, ["lesson"]), 1);
+});
+
+test("skills are flagged as new, rising, fading or gone between checks", () => {
+  const shares = sharesOf([{ key: "a", frequency: 8 }, { key: "b", frequency: 2 }, { key: "c", frequency: 0 }], 10);
+  assert.deepEqual(shares, { a: 0.8, b: 0.2 });
+  const trends = skillTrends({ a: 0.5, b: 0.6, d: 0.3, e: 0.4 }, { a: 0.8, b: 0.2, e: 0.45, f: 0.1 });
+  assert.equal(trends.get("a"), "rising");
+  assert.equal(trends.get("b"), "fading");
+  assert.equal(trends.get("d"), "gone");
+  assert.equal(trends.get("e"), undefined); // held steady
+  assert.equal(trends.get("f"), "new");
+  assert.equal(skillTrends(null, { a: 1 }).size, 0);
+});
+
+test("a gap weighs how often a skill is asked for against how far it is from Built", () => {
+  assert.equal(gapScore(10, 10, 0), 1);
+  assert.equal(gapScore(5, 10, 0), 0.5);
+  assert.equal(gapScore(10, 10, 3), 0);
+  assert.equal(gapScore(10, 10, 4), 0);
+  assert.equal(gapScore(0, 10, 0), 0);
+  assert.ok(gapScore(10, 10, 1) > gapScore(10, 10, 2));
+});
+
+test("drills, projects and lessons become evidence with stable refs", () => {
+  const d = drillFound({ drillId: "attention", title: "Causal multi-head attention", skills: ["Transformers"], bestSeconds: 1500, limitMinutes: 30, inTime: true, passes: 2 });
+  assert.equal(d.ref, "drill:attention");
+  assert.equal(d.url, "/drills/attention");
+  assert.match(d.detail, /fastest 25 min against a 30 min limit\./);
+  const p = projectFound({ id: 3, title: "Probe", question: "Does it?", writeupUrl: "https://example.com/post", repoUrl: "https://github.com/me/probe" });
+  assert.deepEqual(p.map((e) => [e.ref, e.kind]), [["project:3", "project"], ["writeup:3", "writeup"]]);
+  assert.equal(lessonFound({ id: "m1.2.3", title: "Eigenvalues", courseTitle: "Linear algebra", chapterTitle: "Spectra" }).url, "/learn/m1.2.3");
+});
+
+test("Parton's scores are kept only for real skills and evidence, and capped by what the evidence backs", () => {
+  const found = [
+    drillFound({ drillId: "attention", title: "Attention", skills: ["Transformers"], bestSeconds: 600, limitMinutes: 30, inTime: true, passes: 1 }),
+    lessonFound({ id: "m1", title: "Matrices", courseTitle: "LA", chapterTitle: "1" }),
+  ];
+  const options: NextOption[] = [
+    { ref: "drill:bpe", kind: "drill", title: "BPE", detail: "", open: true },
+    { ref: "lesson:m2", kind: "lesson", title: "Eigen", detail: "LA", open: false },
+  ];
+  const row = (over: Partial<AssessOutput["skills"][number]>): AssessOutput["skills"][number] => ({
+    skill: "", evidence: [], level: 0, reason: "r", next_kind: "none", next_ref: "", next_title: "", next_why: "", ...over,
+  });
+  const out = acceptAssessment(
+    {
+      skills: [
+        row({ skill: "Transformers", evidence: ["drill:attention", "drill:made-up"], level: 4, next_kind: "project", next_title: "  Does  attention sink? " }),
+        row({ skill: "transformers", level: 1 }), // duplicate
+        row({ skill: "Linear algebra", evidence: ["lesson:m1"], level: 3, next_kind: "lesson", next_ref: "lesson:m2" }),
+        row({ skill: "Tokenisation", level: 2, next_kind: "drill", next_ref: "drill:nope" }),
+        row({ skill: "PyTorch", level: 3, next_kind: "lesson", next_ref: "drill:bpe" }), // kind mismatch
+        row({ skill: "Not on the card", level: 2 }),
+      ],
+    },
+    [
+      { key: "transformers", ownKinds: [] },
+      { key: "linear algebra", ownKinds: [] },
+      { key: "tokenisation", ownKinds: [] },
+      { key: "pytorch", ownKinds: ["repo"] },
+    ],
+    found,
+    options,
+  );
+  assert.deepEqual(out.map((a) => [a.key, a.evidence, a.level, a.next?.kind ?? null]), [
+    ["transformers", ["drill:attention"], 2, "project"],
+    ["linear algebra", ["lesson:m1"], 1, "lesson"],
+    ["tokenisation", [], 0, null],
+    ["pytorch", [], 3, null],
+  ]);
+  assert.equal(out[0].next?.title, "Does attention sink?");
+  assert.equal(nextHref(out[1].next!), "/learn/m2");
+  assert.equal(nextHref({ kind: "drill", ref: "drill:bpe", title: "", why: "" }), "/drills/bpe");
+  assert.equal(nextHref(out[0].next!), "/projects");
+});
+
+test("the scoring request lists skills, evidence and next steps", () => {
+  const text = assessRequest(
+    [{ name: "PyTorch", area: "ML engineering", description: "Writing models.", quotes: ["fluent in PyTorch"], own: [{ kind: "repo", title: "nanoGPT", url: "https://github.com/me/nanogpt" }] }],
+    [lessonFound({ id: "m1", title: "Matrices", courseTitle: "LA", chapterTitle: "1" })],
+    [{ ref: "lesson:m2", kind: "lesson", title: "Eigen", detail: "LA", open: true }],
+  );
+  assert.match(text, /## PyTorch \(ML engineering\)/);
+  assert.match(text, /Repository "nanoGPT"/);
+  assert.match(text, /- lesson:m1: Mastered Matrices/);
+  assert.match(text, /- lesson:m2: Eigen \(LA\) \[open now\]/);
+  const item = ASSESS_SCHEMA.properties.skills.items;
+  assert.equal(item.required.length, Object.keys(item.properties).length);
+});
+
+test("the fingerprint changes with the inputs, not their order", () => {
+  assert.equal(fingerprint(["a", "b"]), fingerprint(["b", "a"]));
+  assert.notEqual(fingerprint(["a", "b"]), fingerprint(["a", "c"]));
+  assert.notEqual(fingerprint(["a"]), fingerprint(["a", "drill:x"]));
 });
