@@ -5,6 +5,8 @@ export type LearnInputs = {
   /** A lesson started but not yet mastered, most recent first. */
   openLesson: LessonNode | null;
   dueReviews: number;
+  /** A review session has been done since the last lesson was begun, so the next step is a lesson. */
+  reviewedSinceLesson?: boolean;
   /** Unlocked, authored, unmastered lessons in curriculum order. */
   frontier: LessonNode[];
   /** Track of the most recently started lesson, to rotate. */
@@ -25,13 +27,14 @@ const REVIEW_THRESHOLD = 1;
 /**
  * The single best next step:
  * 1. finish what is open;
- * 2. reviews that are due;
+ * 2. reviews that are due, unless a review session has just been done: after a review comes a lesson,
+ *    never a second review session in a row;
  * 3. begin the next unlocked lesson, rotating mathematics, machine learning and engineering,
  *    The daily pace is only a suggestion: Learn never stops at it, and the step notes when it is passed.
  */
 export function chooseNextStep(input: LearnInputs): LearnStep {
   if (input.openLesson) return { kind: "continue", lesson: input.openLesson };
-  if (input.dueReviews >= REVIEW_THRESHOLD) return { kind: "review", count: input.dueReviews };
+  if (!input.reviewedSinceLesson && input.dueReviews >= REVIEW_THRESHOLD) return { kind: "review", count: input.dueReviews };
   if (input.frontier.length === 0) return { kind: "rest", reason: "waiting" };
   const pastPace = input.newLessonsToday >= input.pace;
   const start = input.lastTrack ? TRACKS.indexOf(input.lastTrack) + 1 : 0;
@@ -48,7 +51,7 @@ export function describeStep(step: LearnStep): string {
     case "continue":
       return `Continue: ${step.lesson.title}`;
     case "review":
-      return step.count === 1 ? "One question to review" : `${Math.min(step.count, 12)} questions to review`;
+      return `${Math.min(5, Math.max(3, step.count))} new questions to review`;
     case "begin":
       return `Begin: ${step.lesson.title}`;
     case "rest":

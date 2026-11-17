@@ -35,8 +35,12 @@ export async function dueReviewCount(): Promise<number> {
   return rows[0]?.n ?? 0;
 }
 
-export async function nextStep(): Promise<LearnStep> {
-  const [progress, due, pace, today, last] = await Promise.all([
+/**
+ * The next step for the Learn button. `afterReview` is set when the learner leaves a review session:
+ * they go on to a lesson, never straight into another review.
+ */
+export async function nextStep({ afterReview = false }: { afterReview?: boolean } = {}): Promise<LearnStep> {
+  const [progress, due, pace, today, last, reviewed] = await Promise.all([
     loadProgress(),
     dueReviewCount(),
     getPace(),
@@ -44,6 +48,11 @@ export async function nextStep(): Promise<LearnStep> {
       `SELECT count(*)::int AS n FROM progress WHERE (started_at AT TIME ZONE '${TZ}')::date = (now() AT TIME ZONE '${TZ}')::date`,
     ),
     query<{ lesson_id: string }>("SELECT lesson_id FROM progress ORDER BY started_at DESC LIMIT 1"),
+    // Has a review question been answered since the most recent lesson was begun?
+    query<{ reviewed: boolean }>(
+      `SELECT COALESCE((SELECT max(at) FROM attempt_log WHERE context = 'review')
+                       > COALESCE((SELECT max(started_at) FROM progress), '-infinity'::timestamptz), false) AS reviewed`,
+    ),
   ]);
   const mastered = new Set(progress.filter((p) => p.status === "mastered").map((p) => p.lesson_id));
   // The most recent lesson still in progress whose prerequisites are all mastered. A lesson started before
@@ -57,6 +66,7 @@ export async function nextStep(): Promise<LearnStep> {
   return chooseNextStep({
     openLesson: openNode,
     dueReviews: due,
+    reviewedSinceLesson: afterReview || (reviewed[0]?.reviewed ?? false),
     frontier: frontier(GRAPH, mastered),
     lastTrack,
     newLessonsToday: today[0]?.n ?? 0,
