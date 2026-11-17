@@ -38,11 +38,32 @@ export async function extractSkillsAction(_: ReadinessState): Promise<ReadinessS
   return { done: result.message, at: Date.now() };
 }
 
-export async function startNewCheckAction() {
+export type FindState = { error?: string; done?: string; count?: number };
+
+/** Saves the target role, finds current postings for it at every lab, and puts them in place of the old ones. */
+export async function findPostingsAction(role: string): Promise<FindState> {
   await requireOwner();
-  const { startNewCheck } = await import("@/lib/readiness/store");
-  await startNewCheck();
-  refresh();
+  const { setRole, replacePostings } = await import("@/lib/readiness/store");
+  const { findPostings } = await import("@/lib/readiness/find");
+  const { PartonError } = await import("@/lib/parton/claude");
+  const target = String(role ?? "").trim();
+  if (target.length < 3) return { error: "Say which role you are aiming for." };
+  await setRole(target);
+  try {
+    const found = await findPostings(target);
+    if (found.openings.length === 0) return { error: "Parton couldn't find any matching postings. Try describing the role more broadly." };
+    await replacePostings(found.openings);
+    refresh();
+    const labs = found.labs.filter((l) => l.count > 0).map((l) => `${l.lab} ${l.count}`).join(", ");
+    const missed = found.labs.filter((l) => l.count === 0).map((l) => l.lab);
+    return {
+      done: `Found ${found.openings.length} postings (${labs}).${missed.length ? ` None matched or could be read at ${missed.join(", ")}.` : ""}`,
+      count: found.openings.length,
+    };
+  } catch (error) {
+    console.error("Readiness: finding postings failed:", error);
+    return { error: error instanceof PartonError ? error.message : "Finding postings failed. Please try again." };
+  }
 }
 
 export async function setLevelAction(form: FormData) {

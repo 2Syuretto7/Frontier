@@ -8,7 +8,7 @@
 .rd-stat .stat-value { font-size: 36px; }
 
 .rd-due {
-  display: flex; gap: 24px; align-items: center; justify-content: space-between; flex-wrap: wrap;
+  display: grid; gap: 4px;
   border: 1px solid var(--border); border-left: 2px solid var(--accent); border-radius: var(--radius-md); background: var(--accent-soft);
   padding: 18px 20px; margin-bottom: 32px;
 }
@@ -81,7 +81,16 @@
 .rd-table-wrap { overflow-x: auto; margin-bottom: 16px; }
 .rd-history { margin: 0; min-width: 480px; }
 .rd-history td { font-variant-numeric: tabular-nums; }
-.rd-early { display: grid; gap: 10px; justify-items: start; }
+.rd-start { border: 1px solid var(--border); border-left: 2px solid var(--accent); border-radius: var(--radius-md); padding: 20px; margin-bottom: 32px; }
+.rd-start h2 { font-size: 20px; letter-spacing: -0.015em; margin: 0 0 6px; }
+.rd-start p.desc { color: var(--text-muted); font-size: 15px; line-height: 1.6; margin: 0 0 20px; max-width: 40em; }
+.rd-refresh { display: grid; gap: 4px; justify-items: start; }
+.rd-refresh .field { width: 100%; margin-bottom: 12px; }
+.rd-refresh .error, .rd-refresh .success { margin: 0 0 8px; }
+.rd-refresh .btn { white-space: normal; text-align: left; height: auto; min-height: 40px; padding-top: 8px; padding-bottom: 8px; }
+.rd-target { height: auto; padding: 10px 12px; line-height: 1.5; resize: vertical; font-size: 14px; }
+.rd-manual > summary { cursor: pointer; display: inline-block; margin-top: 4px; }
+.rd-manual > summary:hover { color: var(--text); }
 
 @media (max-width: 640px) {
   .rd-summary { grid-template-columns: minmax(0, 1fr); }

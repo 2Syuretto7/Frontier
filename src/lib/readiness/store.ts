@@ -17,6 +17,7 @@ import {
   type ExtractOutput,
   type Posting,
 } from "./core";
+import { DEFAULT_ROLE } from "./sourcing";
 
 /**
  * The readiness scorecard's storage. Its tables are created here, on first use, rather than in db.ts, so the
@@ -114,12 +115,15 @@ export type Scorecard = {
   /** True when postings were added or removed since the last extraction. */
   stale: boolean;
   parton: boolean;
+  /** The role postings are found for, and whether the learner has set it. */
+  role: string;
+  roleSet: boolean;
 };
 
 const date = (v: unknown) => (v instanceof Date ? v : new Date(String(v)));
 
 export async function loadScorecard(): Promise<Scorecard> {
-  const [skillRows, evidenceRows, postingRows, checkRows] = await Promise.all([
+  const [skillRows, evidenceRows, postingRows, checkRows, role] = await Promise.all([
     q<{ id: number; name: string; area: string; description: string; frequency: number; posting_count: number; quotes: string[]; level: number }>(
       "SELECT id, name, area, description, frequency, posting_count, quotes, level FROM readiness_skills ORDER BY frequency DESC, name",
     ),
@@ -132,6 +136,7 @@ export async function loadScorecard(): Promise<Scorecard> {
     q<{ id: number; at: unknown; postings: number; skills: number; readiness: number | null }>(
       "SELECT id, at, postings, skills, readiness FROM readiness_checks ORDER BY at DESC",
     ),
+    getRole(),
   ]);
   const evidence = new Map<number, Evidence[]>();
   for (const e of evidenceRows) {
@@ -169,6 +174,8 @@ export async function loadScorecard(): Promise<Scorecard> {
     readiness: readinessPercent(skills),
     stale: postings.length > 0 && (changed || removed),
     parton: partonConnected(),
+    role: role ?? DEFAULT_ROLE,
+    roleSet: role !== null,
   };
 }
 
@@ -198,9 +205,32 @@ export async function removePosting(id: number) {
   await q("DELETE FROM readiness_postings WHERE id = $1 AND archived_at IS NULL", [id]);
 }
 
-/** Starts a fresh quarterly check: this quarter's postings are set aside, and scores and evidence stay. */
-export async function startNewCheck() {
+/** Sets the current postings aside and stores the ones Parton found in their place. */
+export async function replacePostings(openings: readonly { lab: string; title: string; url: string; text: string }[]) {
   await q("UPDATE readiness_postings SET archived_at = now() WHERE archived_at IS NULL");
+  for (const o of openings) {
+    await q("INSERT INTO readiness_postings (company, role, url, body) VALUES ($1, $2, $3, $4)", [
+      o.lab.slice(0, 120),
+      o.title.slice(0, 160),
+      cleanLink(o.url),
+      o.text.slice(0, POSTING_CHARS),
+    ]);
+  }
+}
+
+// ---------------------------------------------------------------------------------------------
+// The target role
+
+export async function getRole(): Promise<string | null> {
+  const rows = await q<{ value: string }>("SELECT value FROM settings WHERE key = 'readiness_role'");
+  return typeof rows[0]?.value === "string" ? rows[0].value : null;
+}
+
+export async function setRole(role: string) {
+  await q(
+    "INSERT INTO settings (key, value) VALUES ('readiness_role', $1::jsonb) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value",
+    [JSON.stringify(role.trim().slice(0, 300))],
+  );
 }
 
 // ---------------------------------------------------------------------------------------------

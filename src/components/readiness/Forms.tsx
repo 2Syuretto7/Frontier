@@ -1,9 +1,10 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef, useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
-import { addEvidenceAction, addPostingAction, extractSkillsAction, type ReadinessState } from "@/app/readiness/actions";
+import { addEvidenceAction, addPostingAction, extractSkillsAction, findPostingsAction, type ReadinessState } from "@/app/readiness/actions";
 import { EVIDENCE_KINDS, POSTINGS_MIN } from "@/lib/readiness/core";
+import { BOARDS } from "@/lib/readiness/sourcing";
 
 function Submit({ children, pending, className = "btn btn-primary", disabled = false }: { children: React.ReactNode; pending: string; className?: string; disabled?: boolean }) {
   const status = useFormStatus();
@@ -102,6 +103,59 @@ export function EvidenceForm({ skillId }: { skillId: number }) {
       </div>
       <Status state={state} />
       <Submit pending="Adding…" className="btn btn-sm">Add evidence</Submit>
+    </form>
+  );
+}
+
+const LABS = BOARDS.map((b) => b.lab);
+const labList = `${LABS.slice(0, -1).join(", ")} and ${LABS[LABS.length - 1]}`;
+
+/**
+ * The one button that does the work: finds current postings for the target role at every lab, then has Parton
+ * pull out the skills. Two server calls in a row, so neither runs into the time limit.
+ */
+export function RefreshPanel({ role, label, primary = true, parton }: { role: string; label: string; primary?: boolean; parton: boolean }) {
+  const [target, setTarget] = useState(role);
+  const [step, setStep] = useState<"idle" | "finding" | "reading">("idle");
+  const [notes, setNotes] = useState<{ error?: string; done?: string[] }>({});
+  const [, startTransition] = useTransition();
+  const busy = step !== "idle";
+
+  function run(event: React.FormEvent) {
+    event.preventDefault();
+    if (busy) return;
+    setNotes({});
+    setStep("finding");
+    startTransition(async () => {
+      const found = await findPostingsAction(target);
+      if (found.error) {
+        setNotes({ error: found.error });
+        setStep("idle");
+        return;
+      }
+      setStep("reading");
+      const read = await extractSkillsAction(undefined);
+      setNotes(read?.error ? { done: [found.done!], error: read.error } : { done: [found.done!, read?.done ?? ""].filter(Boolean) });
+      setStep("idle");
+    });
+  }
+
+  return (
+    <form onSubmit={run} className="rd-refresh">
+      <div className="field">
+        <label htmlFor="rd-target">Your target role</label>
+        <textarea id="rd-target" className="input rd-target" rows={2} value={target} onChange={(e) => setTarget(e.target.value)}
+          maxLength={300} disabled={busy} />
+        <p className="hint">Parton reads the open roles at {labList}, keeps the ones that match this, and pulls out the skills they ask for.</p>
+      </div>
+      {notes.done?.map((d) => <p key={d} className="success" role="status">{d}</p>)}
+      {notes.error && <p className="error" role="alert">{notes.error}</p>}
+      {!parton && <p className="hint">Parton is not connected, so this can't run yet. Add ANTHROPIC_API_KEY in Vercel.</p>}
+      <button type="submit" className={primary ? "btn btn-primary" : "btn"} disabled={busy || !parton} aria-busy={busy}>
+        {step === "finding" ? "Reading the labs' job boards… (up to three minutes)"
+          : step === "reading" ? "Parton is pulling out the skills… (up to two minutes)"
+          : label}
+      </button>
     </form>
   );
 }

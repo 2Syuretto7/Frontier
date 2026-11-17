@@ -2,11 +2,11 @@ import Link from "next/link";
 import { requireOwner } from "@/lib/auth";
 import { loadScorecard, type Skill } from "@/lib/readiness/store";
 import { LEVELS, POSTINGS_MAX, POSTINGS_MIN, daysUntilRecheck, evidenceLabel, quarterLabel, supportedLevel } from "@/lib/readiness/core";
-import { removeEvidenceAction, removePostingAction, removeSkillAction, setLevelAction, startNewCheckAction } from "./actions";
+import { removeEvidenceAction, removePostingAction, removeSkillAction, setLevelAction } from "./actions";
 import { TopBar } from "@/components/TopBar";
 import { Pill } from "@/components/ui/Pill";
 import { ArrowLeft, Close } from "@/components/ui/Icons";
-import { EvidenceForm, ExtractButton, PostingForm } from "@/components/readiness/Forms";
+import { EvidenceForm, ExtractButton, PostingForm, RefreshPanel } from "@/components/readiness/Forms";
 import "@/components/readiness/readiness.css";
 
 export const dynamic = "force-dynamic";
@@ -30,11 +30,10 @@ export default async function Readiness() {
         <div>
           <h2 id="rd-postings">Job postings</h2>
           <p className="desc">
-            Paste {POSTINGS_MIN} to {POSTINGS_MAX} current postings for your target role at Anthropic, OpenAI, Google DeepMind and
-            similar labs. Parton pulls out the skills they keep asking for.
+            The current postings the scorecard is built from, found by Parton on the labs&apos; own job boards for your target role.
           </p>
         </div>
-        <span className="mono-meta">{card.postings.length} of {POSTINGS_MIN}–{POSTINGS_MAX}</span>
+        <span className="mono-meta">{card.postings.length} posting{card.postings.length === 1 ? "" : "s"}</span>
       </div>
       {card.postings.length > 0 && (
         <ol className="rd-postings">
@@ -58,14 +57,23 @@ export default async function Readiness() {
           ))}
         </ol>
       )}
-      {card.postings.length < POSTINGS_MAX && (
-        <details className="rd-add" open={card.postings.length === 0 || (!hasSkills && card.postings.length < POSTINGS_MIN)}>
-          <summary className="btn btn-sm">Paste a posting</summary>
-          <PostingForm count={card.postings.length} />
+      {hasSkills && !due && (
+        <details className="rd-add">
+          <summary className="btn btn-sm">Refresh postings now</summary>
+          <RefreshPanel role={card.role} label="Find fresh postings and re-score" primary={false} parton={card.parton} />
         </details>
       )}
-      {(card.postings.length > 0 || hasSkills) && (
-        <ExtractButton count={card.postings.length} hasSkills={hasSkills} stale={card.stale || !card.lastCheck} parton={card.parton} />
+      <details className="rd-add rd-manual">
+        <summary className="hint">Or add a posting yourself</summary>
+        {card.postings.length < POSTINGS_MAX
+          ? <PostingForm count={card.postings.length} />
+          : <p className="hint">There are already {POSTINGS_MAX} postings. Remove one first.</p>}
+        {card.stale && hasSkills && (
+          <ExtractButton count={card.postings.length} hasSkills={hasSkills} stale={card.stale} parton={card.parton} />
+        )}
+      </details>
+      {card.stale && !hasSkills && card.postings.length > 0 && (
+        <ExtractButton count={card.postings.length} hasSkills={hasSkills} stale parton={card.parton} />
       )}
     </section>
   );
@@ -106,17 +114,23 @@ export default async function Readiness() {
 
         {due && (
           <section className="rd-due" aria-label="Quarterly re-check">
-            <div>
-              <p><Pill tone="accent" icon="clock">Quarterly re-check due</Pill></p>
-              <p>
-                It has been over three months since Parton last read your postings, and postings change. Set this quarter&apos;s
-                postings aside, paste {POSTINGS_MIN} to {POSTINGS_MAX} fresh ones, and Parton will re-read them. Your scores and
-                evidence stay.
-              </p>
-            </div>
-            <form action={startNewCheckAction}>
-              <button type="submit" className="btn btn-primary">Start the {quarterLabel(new Date())} check</button>
-            </form>
+            <p><Pill tone="accent" icon="clock">Quarterly re-check due</Pill></p>
+            <p>
+              It has been over three months since the postings were last read, and postings change. One click finds this
+              quarter&apos;s postings and re-reads them. Your levels and evidence stay.
+            </p>
+            <RefreshPanel role={card.role} label={`Run the ${quarterLabel(new Date())} re-check`} parton={card.parton} />
+          </section>
+        )}
+
+        {!hasSkills && (
+          <section className="rd-start" aria-label="Get started">
+            <h2>Build your scorecard</h2>
+            <p className="desc">
+              Nothing to paste. Say which role you are aiming for, and Parton finds current postings for it, picks out the
+              skills they keep asking for, and lays them out for you to score.
+            </p>
+            <RefreshPanel role={card.role} label="Find postings and build the scorecard" parton={card.parton} />
           </section>
         )}
 
@@ -155,7 +169,7 @@ export default async function Readiness() {
             <div className="rd-block-head">
               <div>
                 <h2 id="rd-history">History</h2>
-                <p className="desc">Each time Parton read your postings. Re-check every quarter, because postings change.</p>
+                <p className="desc">Each time Parton read the postings. The page asks for a re-check every quarter, because postings change.</p>
               </div>
             </div>
             <div className="rd-table-wrap"><table className="table rd-history">
@@ -172,12 +186,6 @@ export default async function Readiness() {
                 ))}
               </tbody>
             </table></div>
-            {!due && card.postings.length > 0 && (
-              <form action={startNewCheckAction} className="rd-early">
-                <p className="hint">Want to re-check early with a fresh set of postings? This sets the current postings aside; scores and evidence stay.</p>
-                <button type="submit" className="btn btn-sm">Start a fresh check now</button>
-              </form>
-            )}
           </section>
         )}
       </main>
