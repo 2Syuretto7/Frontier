@@ -64,6 +64,15 @@ Every lesson can carry runnable code. Nothing runs on Frontier's servers: Python
   records the result. `npm test` runs every solution and starter against its tests with the local `python3`, so a broken
   exercise fails the build checks. Parton sees the learner's current code, output and error when asked for a hint.
 
+## Drills
+
+Timed, from-scratch implementation drills at `/drills`, the closest thing here to lab coding interviews and take-homes: causal multi-head attention, a byte-level BPE tokeniser, AdamW, an MLP training loop with hand-written backprop, KV-cache inference, a LoRA layer and a basic PPO step, all in NumPy.
+
+- **Content** (`src/content/drills/`). Each drill has a brief, a starter, a reference solution, a time limit in minutes and hidden tests (Python run after the learner's program, with an optional `prelude` of reference code prefixed to each). Add a drill by writing a file and listing it in `index.ts`.
+- **Hidden tests** are sent only when Submit is pressed during an attempt and run in the browser, like code exercises. The reference solution is shown only after an attempt at that drill has ended.
+- **Timing and pass rate** (`src/lib/drills.ts`, table `drill_attempts`, created on first use). The server times each attempt from Start to the submission that passes every test, or to Give up. Starting again while an attempt is open closes it as abandoned. Pass rate is passes over ended attempts; a pass counts as in time when it beats the drill's limit. `drillEvidence()` lists passed drills for the readiness scorecard.
+- **Tests** (`tests/drills.test.ts`). Every solution must pass every hidden test and every starter must fail. Each drill also lists plausible wrong answers (no score scaling, L2 instead of decoupled decay, a cache that never grows, and so on) that its hidden tests must catch.
+
 ## Parton
 
 Parton is the tutor on every lesson page (`src/lib/parton/`). It needs `ANTHROPIC_API_KEY` in Vercel; without it, the panel says so.

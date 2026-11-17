@@ -1147,3 +1147,57 @@ html.has-code-overlay, html.has-code-overlay body { overflow: hidden; }
   .code-run-row .btn { flex: 1 1 auto; justify-content: center; }
   .exercise-body .code-runner { margin-left: -4px; margin-right: -4px; }
 }
+
+/* ---------- Drills ---------- */
+.drill-summary { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.drill-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); border-top: 1px solid var(--border); border-left: 1px solid var(--border); }
+.drill-card { display: flex; flex-direction: column; gap: 8px; padding: 20px; background: var(--bg); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); transition: background var(--fast) var(--ease); }
+.drill-card:hover { background: var(--bg-subtle); }
+.drill-card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--text-faint); }
+.drill-card-title { display: flex; align-items: center; gap: 6px; font-size: 17px; font-weight: 500; letter-spacing: -0.01em; }
+.drill-card-title .chev { color: var(--text-faint); display: inline-flex; transition: transform var(--medium) var(--ease); }
+.drill-card:hover .chev { transform: translateX(3px); }
+.drill-card-summary { font-size: 14px; color: var(--text-muted); line-height: 1.55; }
+.drill-card-skills { font-size: 12px; color: var(--text-faint); }
+.drill-card-stats { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; font-variant-numeric: tabular-nums; }
+.drill-history { margin-top: 48px; }
+.drill-history h2 { font-size: 18px; letter-spacing: -0.01em; margin: 0 0 16px; }
+.drill-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-md); }
+.drill-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.drill-table th { text-align: left; font-weight: 500; color: var(--text-faint); font-size: 12px; padding: 10px 14px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.drill-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.drill-table tr:last-child td { border-bottom: 0; }
+.drill-table a { color: var(--link); }
+.drill-table .num, .drill-attempts .num { font-variant-numeric: tabular-nums; }
+.is-pass { color: var(--success); }
+.is-miss { color: var(--text-faint); }
+.drill-meta-line { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 0; font-size: 14px; font-variant-numeric: tabular-nums; }
+.drill-start { border: 1px dashed var(--border-strong); border-radius: var(--radius-md); padding: 32px 24px; display: grid; gap: 16px; justify-items: start; }
+.drill-start p { margin: 0; line-height: 1.6; }
+.drill-start-summary { font-size: 17px; }
+.drill-solution-link { background: none; border: 0; padding: 0; cursor: pointer; font: inherit; color: var(--link); }
+.drill-timer {
+  position: sticky; top: 60px; z-index: 30; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 10px 14px; margin-bottom: 24px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden;
+}
+.drill-clock { font-family: var(--font-mono); font-size: 20px; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.drill-timer.is-running.is-over .drill-clock { color: var(--danger); }
+.drill-timer-pill { margin-left: auto; }
+.drill-timer-tests { font-size: 13px; }
+.drill-progress { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--overlay); }
+.drill-progress span { display: block; height: 100%; background: var(--accent); transition: width 1s linear; }
+.drill-timer.is-over .drill-progress span { background: var(--danger); }
+.drill-brief { margin-bottom: 24px; }
+.drill-brief .code-block { font-size: 13px; }
+.drill-after { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+.drill-solution { margin-top: 24px; }
+.drill-solution .eyebrow { margin-bottom: 8px; }
+.drill-attempts { list-style: none; margin: 0; padding: 0; border: 1px solid var(--border); border-radius: var(--radius-md); }
+.drill-attempts li { display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 14px; }
+.drill-attempts li:last-child { border-bottom: 0; }
+.drill-attempts li > :first-child { min-width: 140px; }
+@media (max-width: 640px) {
+  .drill-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .drill-list { grid-template-columns: minmax(0, 1fr); }
+  .drill-start { padding: 24px 16px; }
+}

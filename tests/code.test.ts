@@ -1,46 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { spawnSync } from "node:child_process";
-import { mkdtempSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
 import { LESSONS } from "../src/content/lessons/index.ts";
 import { checkAnswer, codeSource, parseCodeSubmission } from "../src/lib/check.ts";
 import type { CodeAnswer } from "../src/lib/types.ts";
-
-const HARNESS = resolve(process.cwd(), "public/python/harness.py");
-
-// Loads the same harness the browser uses, runs one program and its checks, and prints the outcome as JSON.
-const DRIVER = `
-import io, json, sys, runpy
-h = runpy.run_path(sys.argv[1])
-job = json.load(sys.stdin)
-sys.stdout = io.StringIO()
-program = json.loads(h["run_program"](job["code"], job.get("setup") or "", job.get("files") or {}, job.get("stdin") or ""))
-tests = json.loads(h["run_tests"](job["tests"]))
-sys.__stdout__.write(json.dumps({"program": program, "tests": tests, "printed": sys.stdout.getvalue()}))
-`;
-
-type Outcome = {
-  program: { error: string | null; info: { type: string; message: string; line: number | null } | null; figures: string[] };
-  tests: { name: string; passed: boolean; message?: string }[];
-  printed: string;
-};
-
-const python = spawnSync("python3", ["--version"]).status === 0 ? "python3" : null;
-
-function runPython(job: { code: string; setup?: string; files?: Record<string, string>; stdin?: string; tests: { name: string; code: string }[] }): Outcome {
-  const dir = mkdtempSync(join(tmpdir(), "frontier-code-"));
-  try {
-    const out = spawnSync(python!, ["-I", "-c", DRIVER, HARNESS], { input: JSON.stringify(job), cwd: dir, encoding: "utf8", timeout: 60_000 });
-    if (out.status !== 0) throw new Error(out.stderr);
-    return JSON.parse(out.stdout) as Outcome;
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
-  }
-}
-
-const missingModule = (o: Outcome) => o.program.info?.type === "ModuleNotFoundError" ? o.program.info.message : null;
+import { missingModule, python, runPython } from "./python.ts";
 
 test("a code submission is correct only when every named check passed", () => {
   const answer: CodeAnswer = { kind: "code", starter: "", solution: "", tests: [{ name: "a", code: "" }, { name: "b", code: "" }] };
