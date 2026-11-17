@@ -265,9 +265,6 @@ assert [check_host_key(known, 'gpu', 'SHA256:abc'), check_host_key(known, 'cpu',
     },
   ],
 
-  teachBack:
-    "Explain to a friend how SSH key login works, what known_hosts protects against, and how to keep a long job running after you disconnect.",
-
   glimpse: (
     <p>
       Next, Git, which records every change to your code and moves it between your laptop, GitHub and the GPU machine, over the

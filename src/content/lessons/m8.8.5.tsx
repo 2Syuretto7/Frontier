@@ -293,9 +293,6 @@ assert abs(g(0.52) - 0.5) < 1e-9 and abs(g(0.0) - 0.0) < 1e-9` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the statement of universal approximation for one hidden layer, the proof for ReLU through piecewise-linear interpolation, how a smooth non-polynomial activation reaches every polynomial so that Weierstrass applies, and what the theorem leaves unsaid.",
-
   glimpse: (
     <>
       <p>

@@ -295,9 +295,6 @@ assert np.allclose(absorbing_time(P, [1, 2, 3]), [3, 4, 3]), 'A fair walk on 0 â
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a Markov matrix is, why it always has eigenvalue 1, why repeated steps settle into a steady state, and what decides how fast.",
-
   glimpse: (
     <p>
       Next, symmetric matrices, whose eigenvalues are real and whose eigenvectors are perpendicular. Probability returns to

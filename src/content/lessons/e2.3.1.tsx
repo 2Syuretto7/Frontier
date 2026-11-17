@@ -404,9 +404,6 @@ assert (r.p, r.q) == (1, 3)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a hash join attaches labels to examples in linear time, and the two rules a key must follow to live in a dict.",
-
   glimpse: (
     <p>
       The next lesson opens up the table: what happens when keys collide, how full a table may get, and why Python probes rather

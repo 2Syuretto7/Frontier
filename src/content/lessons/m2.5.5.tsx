@@ -310,9 +310,6 @@ for x in [1e-9, -1e-6, 1e-4, 0.01, 0.5, -2, 10]:
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the limit of a quotient of two vanishing functions is decided by their derivatives, using the picture of two graphs that look like straight lines when you zoom in.",
-
   glimpse: (
     <p>
       This completes the uses of derivatives. Next, integrals: area under a curve, built from thin strips. Applying L&rsquo;Hôpital&rsquo;s rule again and again is a clumsy way of comparing the polynomials that best approximate f and g. Taylor series, later in this course, make that comparison directly.

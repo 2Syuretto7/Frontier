@@ -314,9 +314,6 @@ assert abs(v["f"] - 3.0) < 1e-12 and abs(t["f"] - (3.0 + 2.0)) < 1e-12, t` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how dual numbers compute exact derivatives, and why one forward sweep gives the derivative along only one input direction.",
-
   glimpse: (
     <p>
       Forward mode pushes a tangent from the inputs to the outputs. Next, pull a sensitivity from the output back to all the

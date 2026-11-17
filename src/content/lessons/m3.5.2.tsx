@@ -290,9 +290,6 @@ assert np.allclose(Rf, [[0, 1], [1, 0]]) and np.allclose(Rf @ Rf, np.eye(2)), 'R
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to project a vector onto a line or a subspace, why the error must be perpendicular, and why the projection is the closest point.",
-
   glimpse: (
     <p>
       Next, least squares: when Ax = b has no solution, solve for the projection instead. Mathematical Statistics reads linear

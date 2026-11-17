@@ -302,9 +302,6 @@ assert abs(x - 1.0) < 1e-6 and abs(v - 2.0) < 1e-6` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what second-order cone and semidefinite programs are, why a linear constraint with ellipsoidal uncertainty in its coefficients becomes a second-order cone constraint, why norm bounds can be written as matrix inequalities, and how LP, QP, SOCP and SDP nest.",
-
   glimpse: (
     <>
       <p>

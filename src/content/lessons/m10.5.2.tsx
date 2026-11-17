@@ -293,9 +293,6 @@ assert abs(lo - 2.25) < 1e-12 and abs(hi - 9.0) < 1e-12` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what strong convexity adds to convexity, why a strongly convex smooth function is sandwiched between two parabolas, how the lower parabola turns a small gradient into a guarantee about the value and the distance to the minimiser, and what the condition number measures.",
-
   glimpse: (
     <>
       <p>

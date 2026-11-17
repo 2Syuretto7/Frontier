@@ -369,9 +369,6 @@ assert order == ['bad', 'err', 'ok'], 'Run them in alphabetical order of name.'`
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a unit test is, how pytest finds and runs tests, and why deliberately breaking your code is a good way to judge your tests.",
-
   glimpse: (
     <p>
       Choosing cases by hand misses the ones you never thought of. Next, property-based testing: describe what must always be

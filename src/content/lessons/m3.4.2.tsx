@@ -298,9 +298,6 @@ assert col_space_basis(A).shape[1] + null_space_svd(A).shape[1] == 7, 'rank + nu
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the column space and null space of a matrix are, how each answers a question about Ax = b, and how to find the special solutions that span the null space.",
-
   glimpse: (
     <p>
       Next, linear independence: when a set of vectors contains no redundancy, so that the null space of the matrix they form

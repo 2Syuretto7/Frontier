@@ -402,9 +402,6 @@ assert min(errs) < 1e-6` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the two ways of generalising the SVD to three-way arrays, why CP factors can be unique when matrix factors cannot, why a best low-rank CP approximation may not exist, and why truncated HOSVD is within a factor √3 of optimal.",
-
   glimpse: (
     <>
       <p>

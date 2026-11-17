@@ -270,9 +270,6 @@ assert abs(c - 0.95) < 0.01` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the maximum likelihood estimate is approximately normal with variance 1/(nI), how that gives standard errors and Wald intervals, how the delta method transfers them to functions of the parameter, and when the approximation can fail.",
-
   glimpse: (
     <>
       <p>

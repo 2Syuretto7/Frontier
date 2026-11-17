@@ -301,9 +301,6 @@ assert tail('log.txt', 3) == ['line 98', 'line 99', 'line 100'] and tail('log.tx
     },
   ],
 
-  teachBack:
-    "Explain to a friend why programs need files, what the modes r, w and a do, and why files should be opened with a with statement.",
-
   glimpse: (
     <p>
       Next, CSV files, the commonest way to store tables of data as text. In Python, NumPy and the Command Line you will

@@ -343,9 +343,6 @@ assert grad_of(f, [2, -3]) == grad_of(f, [2, -3]) == (-4.0, [-2.0, 2.0])` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why backward() must run the closures in reverse topological order, how a depth-first search finds that order, and why gradients must be zeroed between passes.",
-
   glimpse: (
     <p>
       With a working backward pass, a neuron is a few lines: a weighted sum and a tanh. Next, neurons, layers, a small MLP, and

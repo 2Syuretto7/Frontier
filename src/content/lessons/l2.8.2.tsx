@@ -319,9 +319,6 @@ assert abs(rel - res + unc - ((q - y) ** 2).mean()) < 1e-12 and rel >= 0 and res
     },
   ],
 
-  teachBack:
-    "Explain to a friend what it means for a probabilistic classifier to be calibrated, how a reliability diagram and the ECE measure it, how the Brier score splits into reliability, resolution and uncertainty, and how Platt scaling repairs calibration.",
-
   glimpse: (
     <>
       <p>

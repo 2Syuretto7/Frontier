@@ -427,9 +427,6 @@ except ValueError:
     },
   ],
 
-  teachBack:
-    "Explain to a friend why one send() can arrive as two recv()s, and how a length prefix lets the receiver put messages back together.",
-
   glimpse: (
     <p>
       TCP promised every byte, in order, over a network that loses and reorders packets. Next: how TCP/IP keeps that

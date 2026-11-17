@@ -283,9 +283,6 @@ assert abs(mixture_loglik(x, [1.0], [0.0], [1.0]) - (-np.log(2 * np.pi) - 0.5)) 
     },
   ],
 
-  teachBack:
-    "Explain to a friend the generative story of a Gaussian mixture, how responsibilities follow from Bayes' rule, why the likelihood has no closed-form maximiser and is unbounded with free variances, and what label switching means.",
-
   glimpse: (
     <>
       <p>

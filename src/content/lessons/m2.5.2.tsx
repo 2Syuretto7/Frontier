@@ -350,9 +350,6 @@ assert is_convex(xs, env) and all(e <= y + 1e-12 for e, y in zip(env, ys)), 'The
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the first and second derivatives tell you about the shape of a graph, using the cubic x³ − 3x as your example.",
-
   glimpse: (
     <p>
       Next, optimisation: finding the largest or smallest value of a function. Convexity is one of the most useful ideas in mathematics. In Probability it becomes Jensen&rsquo;s inequality, which compares the average of a convex function with the function of the average, and in Convex Optimisation it is the property that makes every local minimum a global one.

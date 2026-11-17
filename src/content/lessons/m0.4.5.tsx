@@ -272,9 +272,6 @@ assert abs(e_series(10) - math.e) < abs(compound(10 ** 6) - math.e), 'Ten terms 
     },
   ],
 
-  teachBack:
-    "Explain to a friend why compounding more and more often does not make your money grow without limit, and where the number e comes from.",
-
   glimpse: (
     <p>
       This completes exponentials and logarithms. In Calculus, <M>{"e^x"}</M> is the function equal to its own derivative,

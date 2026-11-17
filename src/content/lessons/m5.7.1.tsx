@@ -280,9 +280,6 @@ assert abs(c[0] - 2 / 3) < 1e-3 and abs(c[1] - 0.5) < 1e-9, 'Heavier where x is 
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a double integral is defined from Riemann sums, how it handles regions that are not rectangles, and what it computes when f is a density.",
-
   glimpse: (
     <p>
       Riemann sums define the integral but are slow to compute by hand. Next, Fubini&rsquo;s theorem: a double integral is two

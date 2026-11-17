@@ -290,9 +290,6 @@ assert abs(V2[0] - V[0]) < 1e-9, 'With one action, both methods agree.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the trade-off between exploring and exploiting, using restaurants in a new town, and why an agent trained on rewards can end up doing something you did not intend.",
-
   glimpse: (
     <p>
       This completes the tour of tasks. Next, learning by hand: you will be the learning algorithm, starting with fitting a

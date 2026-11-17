@@ -317,9 +317,6 @@ assert len(steps) == 60 and min(steps) >= 0.5 / 9 and f(x) < 1e-6` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what L-smoothness means, why it puts a parabola above the function at every point, how that gives a guaranteed decrease for each gradient step, why t = 1/L is the natural step, and how backtracking finds a good step without knowing L.",
-
   glimpse: (
     <>
       <p>

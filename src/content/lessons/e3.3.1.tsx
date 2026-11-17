@@ -397,9 +397,6 @@ for S, W, L in [(8, 1, 16), (4, 2, 16), (2, 4, 32), (16, 2, 8)]:
     },
   ],
 
-  teachBack:
-    "Explain to a friend why reading an array in order is fast even though memory is slow, and why two arrays exactly 4 KiB apart can be slow together.",
-
   glimpse: (
     <p>
       A cache only helps programs that reuse what it holds. Next, locality: how loop order, memory layout and tiling decide

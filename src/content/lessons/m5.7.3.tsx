@@ -289,9 +289,6 @@ assert abs(tot - 1) < 1e-3, tot` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why changing variables in a multiple integral needs the absolute Jacobian determinant, using polar coordinates and the Gaussian integral as the example.",
-
   glimpse: (
     <p>
       In two or three dimensions, grids work well. In a hundred they are hopeless. The last lesson asks why, and what

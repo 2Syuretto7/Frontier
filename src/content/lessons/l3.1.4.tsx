@@ -288,9 +288,6 @@ assert units_needed(1.0, 0, 2, 0.5) == 1 and units_needed(8.0, 0, 1, 1e-4) == 10
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a single hidden layer of ReLUs can draw any polygonal line, what the universal approximation theorem promises, and three things it does not promise.",
-
   glimpse: (
     <p>
       Representing a function is half the story; the other half is finding the weights. Next chapter: backpropagation,

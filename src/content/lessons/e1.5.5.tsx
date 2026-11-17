@@ -270,9 +270,6 @@ except ValueError:
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to read an einsum string, which letters are summed, and how to count the work it does.",
-
   glimpse: (
     <p>
       Next, strides: how NumPy finds element (i, j) in memory, and why a transpose costs nothing. Transformers and Language Models

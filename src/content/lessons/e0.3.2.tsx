@@ -293,9 +293,6 @@ print(first_even_multiple(10) + first_even_multiple(30))
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between returning a value and printing it, what None is, and how default and keyword arguments work.",
-
   glimpse: (
     <p>
       Next, scope: which names a function can see, and why a variable inside a function is separate from one outside it. In

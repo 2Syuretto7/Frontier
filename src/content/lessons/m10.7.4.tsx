@@ -319,9 +319,6 @@ assert c @ avg - c.min() <= md_bound(n, 1.0, k) and abs(md_bound(np.e ** 2, 1.0,
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a Bregman divergence is, how mirror descent with the entropy becomes a multiplicative update on the simplex, how the three-point identity gives its convergence bound, and why it beats projected subgradient by a dimension factor.",
-
   glimpse: (
     <>
       <p>

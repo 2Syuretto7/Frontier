@@ -334,9 +334,6 @@ assert np.allclose(o, [0.2, 0.2, 0.6, 0.0]) and len(o) == 4` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a stationary distribution is, why every finite chain has one, why irreducibility makes it unique and equal to the long-run fraction of time, and how detailed balance gives a quick check and the random walk answer d_i/2m.",
-
   glimpse: (
     <>
       <p>

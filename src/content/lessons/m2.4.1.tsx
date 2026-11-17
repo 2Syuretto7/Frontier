@@ -332,9 +332,6 @@ assert abs(complex_step(f, 0.7) - df(0.7)) < 1e-13, 'It works for any analytic f
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the slope of a curve at a single point can be defined as a limit of slopes of secant lines, and why the tangent line is the best straight-line approximation to the curve near that point.",
-
   glimpse: (
     <p>
       Next come the rules that let you differentiate sums, products and quotients without returning to the definition. Differentiable functions are continuous, but continuous functions need not be differentiable, as |x| shows at a single corner; the ReLU function of neural networks has exactly that corner at 0. Real Analysis goes to the extreme: a function, built by Weierstrass, that is continuous everywhere and differentiable nowhere.

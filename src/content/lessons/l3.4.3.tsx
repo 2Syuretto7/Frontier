@@ -282,9 +282,6 @@ assert abs(W2.std() - np.sqrt(2 / 300)) < 0.005` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a dead ReLU is, why it can never recover under gradient descent, how saturation differs, and how to detect and prevent both.",
-
   glimpse: (
     <p>
       Saturation multiplies small factors across layers. Next: vanishing and exploding gradients, the same multiplication

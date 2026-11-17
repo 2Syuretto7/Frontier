@@ -347,9 +347,6 @@ except ValueError:
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between a syntax error and an exception, how try and except let a program recover, and why you should catch only the exceptions you expect.",
-
   glimpse: (
     <p>
       This completes Files and errors. Next, the last chapter: thinking like a programmer, starting with debugging by

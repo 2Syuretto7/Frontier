@@ -426,9 +426,6 @@ assert loss.data < 0.5 * first, (first, loss.data)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a Module base class finds every parameter of a nested model, why it keeps a set of ids, and what a new layer has to write.",
-
   glimpse: (
     <p>
       With parameters() in place, the update rule can leave the training loop. Next: optimisers as objects, from plain SGD to

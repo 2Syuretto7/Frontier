@@ -282,9 +282,6 @@ assert u < 0.01 and abs(p - 0.05) < 0.02` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why two models evaluated on the same benchmark should be compared with a paired analysis, how McNemar's test works, how much pairing reduces the standard error when models agree, and how clustered questions shrink the effective sample size.",
-
   glimpse: (
     <>
       <p>

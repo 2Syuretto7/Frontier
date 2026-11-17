@@ -319,9 +319,6 @@ assert v1 != v2 and estimate_pi(LCG(1), 1000) == v1, 'Draw the points from the g
     },
   ],
 
-  teachBack:
-    "Explain to a friend what it means for a coin to have probability one half of heads, and why a run of five heads does not make tails more likely next.",
-
   glimpse: (
     <p>
       Next, expected value, the long-run average of a number that depends on chance. In Probability, these rules become

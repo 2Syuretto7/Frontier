@@ -272,9 +272,6 @@ assert abs(r['tri']) < 1e-12 and abs(r['cs']) < 1e-12, 'Same direction: both are
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the dot product is computed, why it equals length times length times cosine, and how Cauchy-Schwarz lets us talk about angles in a thousand dimensions.",
-
   glimpse: (
     <p>
       Next, cosine similarity, the dot product with the lengths divided out, which is how search engines and language models

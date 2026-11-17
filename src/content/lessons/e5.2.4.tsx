@@ -335,9 +335,6 @@ assert np.allclose(a.grad, [[0.5, -0.5], [0.0, 0.0]]), a.grad` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why naive softmax cross-entropy produces nan for large logits, how subtracting the maximum fixes it, and why the fused gradient is just p minus the one-hot target.",
-
   glimpse: (
     <p>
       The tensor engine is complete enough to train a real classifier. Next, the structure around it: modules that own their

@@ -307,9 +307,6 @@ assert abs(scale_ratio(a, 2 * a) - 2.0) < 1e-12` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a directional gradient check works, why it is so cheap, and how the shape of the error-versus-h curve separates bugs from rounding.",
-
   glimpse: (
     <p>
       The gradients are right; now, what should they be gradients of? Next chapter: loss functions, starting with squared

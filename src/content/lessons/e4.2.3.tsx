@@ -357,9 +357,6 @@ else:
     },
   ],
 
-  teachBack:
-    "Explain to a friend when to reach for a debugger rather than print statements, and how bisection finds the first bad training step or commit in a handful of tests.",
-
   glimpse: (
     <p>
       Bisection and replay only work if running the same thing twice gives the same result. Next, seeds and determinism: where

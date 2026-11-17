@@ -272,9 +272,6 @@ assert abs(v - 1 / math.sqrt(math.pi * 5e5)) < 1e-9, 'The central probability is
     },
   ],
 
-  teachBack:
-    "Explain to a friend how turning n! into a sum of logarithms gives Stirling's formula, and how it estimates binomial coefficients and entropy.",
-
   glimpse: (
     <p>
       Next, the last lesson of the course: a ladder of growth rates, from log n to n!, and how to compare any two of them.

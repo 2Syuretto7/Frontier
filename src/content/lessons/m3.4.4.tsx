@@ -283,9 +283,6 @@ assert intersection_dim(U, W) == 1 and intersection_dim([[1, 0, 0, 0], [0, 1, 0,
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a basis is, why coordinates in a basis are unique, why every basis of a space has the same size, and how to find bases for the column space and null space.",
-
   glimpse: (
     <p>
       Next, the four fundamental subspaces of a matrix and how their dimensions fit together. Chapter 8 changes basis on

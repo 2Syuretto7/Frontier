@@ -267,9 +267,6 @@ assert abs(a - 20) < 0.5 and abs(b - 2) < 0.3` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between no pooling, complete pooling and partial pooling, how the shrinkage factor depends on the group's noise and the between-group spread, how empirical Bayes estimates that spread, and what the James-Stein result says.",
-
   glimpse: (
     <>
       <p>

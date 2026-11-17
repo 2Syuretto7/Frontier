@@ -279,9 +279,6 @@ assert abs(ratio_test(la, 10 ** 6) - 1) < 1e-5, 'For 1/n² the ratio test gives 
     },
   ],
 
-  teachBack:
-    "Explain to a friend what it means for an infinite sum to converge, why the harmonic series diverges although its terms shrink to zero, and how comparison with integrals decides series like Σ 1/n².",
-
   glimpse: (
     <p>
       Next, series whose terms change sign, where a sum can converge only because of cancellation, and where changing the

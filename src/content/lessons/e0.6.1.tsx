@@ -316,9 +316,6 @@ print(sum(last_n([1, 2, 3, 4, 5], 3)))
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to debug a program by experiment: reproduce, observe, hypothesise, predict and test, and how bisection finds a bug quickly in a long computation.",
-
   glimpse: (
     <p>
       Next, testing by hand: choosing inputs that are likely to reveal bugs before anyone else finds them. Software

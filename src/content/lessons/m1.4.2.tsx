@@ -282,9 +282,6 @@ assert len(c) == 6, 'Divisor sets of 1, 2, 4, 8, 16, 32 form a chain of 6.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to prove that two infinite sets are equal, and the difference between 'is an element of' and 'is a subset of'.",
-
   glimpse: (
     <p>
       Next come the operations that build new sets from old: union, intersection, difference and complement. The subset

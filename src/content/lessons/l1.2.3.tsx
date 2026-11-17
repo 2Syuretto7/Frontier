@@ -270,9 +270,6 @@ assert np.allclose(w, np.r_[m.intercept_, m.coef_]) and abs(w[4] - 1) < 0.1, 'Th
     },
   ],
 
-  teachBack:
-    "Explain to a friend how polynomial features let linear regression fit curves, why the model is still linear in its weights, and why such models are dangerous outside the data.",
-
   glimpse: (
     <p>
       Next, gradient descent, a way to find the best weights by walking downhill, which works even when there is no formula.

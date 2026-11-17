@@ -287,9 +287,6 @@ assert np.allclose(x, [3, 4]) and N.shape == (2, 0)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the null space and range of a linear map are, why their dimensions add up to the dimension of the domain, and what that says about layers that shrink or grow.",
-
   glimpse: (
     <p>
       The null space suggests a construction: treat vectors that differ by a null vector as the same. Next: quotient spaces,

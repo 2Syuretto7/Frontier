@@ -284,9 +284,6 @@ assert abs(taylor_eval(c, 0, 2.0) - math.cos(2.0)) < 1e-8, 'The actual error is 
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a Taylor polynomial is built from derivatives at one point, what the remainder tells you, and why a function can differ from its own Taylor series.",
-
   glimpse: (
     <p>
       This completes sequences and series. The last chapter turns Taylor&rsquo;s theorem into a working tool for estimating

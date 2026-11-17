@@ -318,9 +318,6 @@ assert np.all(q["W1"] == -0.5) and q["b2"] == -1.0` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a delta is, how it is sent backwards through a weight and an activation, and how each weight's gradient follows from it.",
-
   glimpse: (
     <p>
       Doing this one number at a time does not scale. Next: the same equations for a whole layer and a whole batch, as matrix

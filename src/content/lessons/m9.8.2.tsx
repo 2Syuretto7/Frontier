@@ -265,9 +265,6 @@ assert abs(m - 2 / 3.141592653589793 ** 0.5) < 0.03 and abs(s - 2 / 2 ** 0.5) < 
     },
   ],
 
-  teachBack:
-    "Explain to a friend where seed-to-seed variance comes from, why averaging seeds cannot remove the noise of a fixed test set, how to report results over seeds, and why reporting the best seed is biased upwards.",
-
   glimpse: (
     <>
       <p>

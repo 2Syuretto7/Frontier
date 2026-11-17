@@ -326,9 +326,6 @@ assert isinstance(mse(np.ones(3), np.ones(3)), float) and mse(np.ones(3), np.one
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between E[Y | X = x], a number, and E[Y | X], a random variable, how to compute both from a joint table, and why E[h(X)Y | X] = h(X)E[Y | X].",
-
   glimpse: (
     <>
       <p>

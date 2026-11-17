@@ -482,9 +482,6 @@ assert checked > 400` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a stack checks brackets in one pass, and how a ring buffer gives a queue O(1) operations at both ends.",
-
   glimpse: (
     <p>
       Queues drive breadth-first search in the graphs chapter, and stacks drive depth-first search and every recursive

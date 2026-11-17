@@ -321,9 +321,6 @@ for _ in range(50):
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a partial derivative is, how to compute one, and why having both partial derivatives at a point does not guarantee that a function is well behaved there.",
-
   glimpse: (
     <p>
       Next, the derivative as a linear map: the single object that captures how a function changes in every direction at

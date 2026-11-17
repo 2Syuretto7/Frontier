@@ -334,9 +334,6 @@ assert grad_check(f, bad, x) > 0.4, 'A gradient that is twice too big should be 
     },
   ],
 
-  teachBack:
-    "Explain to a friend why tests of numerical code need a tolerance, why it should usually be relative, and why making the step of a finite difference smaller eventually makes the answer worse.",
-
   glimpse: (
     <p>
       Values can be approximately right; shapes must be exactly right. Next, asserting shapes and invariants, so that a

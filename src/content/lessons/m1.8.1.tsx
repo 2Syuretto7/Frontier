@@ -284,9 +284,6 @@ assert a is not None and a == birthday_collision(30, 365, 3) and birthday_collis
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a shepherd with a pile of pebbles is really building a bijection, and why counting in a different order cannot give a different answer.",
-
   glimpse: (
     <p>
       Galileo&rsquo;s matching of numbers with squares is the doorway to infinite sets. The next lesson asks which infinite sets can be matched with the natural numbers, and finds that surprisingly many can. The pigeonhole principle has its own lesson in Discrete Mathematics.

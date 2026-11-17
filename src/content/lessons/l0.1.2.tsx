@@ -258,9 +258,6 @@ def median3(a, b, c):
     },
   ],
 
-  teachBack:
-    "Explain to a friend what data, a model and a loss are, using a prediction problem from your own life, and why the choice of loss changes which prediction is best.",
-
   glimpse: (
     <p>
       Next, the question that makes machine learning hard: a model can have a tiny loss on its training data and still fail

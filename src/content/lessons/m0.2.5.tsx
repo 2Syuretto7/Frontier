@@ -282,9 +282,6 @@ assert 'math' not in inspect.getsource(isqrt) and '**' not in inspect.getsource(
     },
   ],
 
-  teachBack:
-    "Explain to a friend why 2 to the power 0 is 1, not 0, without just quoting a rule. Then explain what 2 to the power one half must be, and why.",
-
   glimpse: (
     <p>
       Next, polynomials and factoring. In the chapter on exponentials, you will ask what <M>{"2^x"}</M> means when{" "}

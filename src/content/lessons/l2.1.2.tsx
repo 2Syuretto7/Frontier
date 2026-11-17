@@ -312,9 +312,6 @@ assert abs(fit_lad(X, y)[0] - 3.0) < 1e-3` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why least squares is maximum likelihood under Gaussian noise, how the noise variance is estimated, what changes when points have different known variances, and why Laplace noise leads to absolute error and robustness to outliers.",
-
   glimpse: (
     <>
       <p>

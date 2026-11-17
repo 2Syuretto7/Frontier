@@ -275,9 +275,6 @@ assert abs(s - math.exp(-1)) <= b < 1e-6, 'Σ(−1)ᵏ⁺¹/(k − 1)! = 1/e.'` 
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between absolute and conditional convergence, and why reordering the terms of 1 − 1/2 + 1/3 − … can change its sum.",
-
   glimpse: (
     <p>
       Next, power series: series whose terms are powers of x, which define functions such as eˣ and sin x by infinite

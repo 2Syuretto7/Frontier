@@ -248,9 +248,6 @@ assert abs(params_for_budget(1.2e22) / N - 10) < 1e-9, 'A hundred times the comp
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a frontier AI lab does, walking through the loop from research to deployment and naming the kinds of people each stage needs.",
-
   glimpse: (
     <p>
       Next, a closer look at the three stages a model passes through: pretraining, post-training and deployment. The

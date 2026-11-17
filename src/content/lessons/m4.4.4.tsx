@@ -305,9 +305,6 @@ assert 123456 in find_all(s, q) and find_all(s, 'acgtacgtacgtacgtacgt') == [i fo
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a hash table does, why collisions cannot be avoided, and why a prime number of buckets spreads patterned keys better than a round number.",
-
   glimpse: (
     <p>
       Data Structures and Algorithms builds hash tables, handles collisions by chaining and open addressing, and uses hashing for

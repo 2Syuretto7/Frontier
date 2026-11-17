@@ -313,9 +313,6 @@ assert abs(imp[0] - (m.score(X[300:], y[300:]) - m.score(Xp, y[300:]))) < 1e-12,
     },
   ],
 
-  teachBack:
-    "Explain to a friend why averaging many deep trees beats one, why the trees must be made different, and what out-of-bag error is.",
-
   glimpse: (
     <p>
       Next, the bias and variance you have now met twice, made precise. Statistical Machine Learning develops bagging and

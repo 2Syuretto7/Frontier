@@ -296,9 +296,6 @@ assert np.allclose(H @ p[1][0] + p[1][1], mlp_forward(X, p))` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a hidden layer does to the data, how two ReLU units compute XOR, and why stacking layers is pointless without an activation function.",
-
   glimpse: (
     <p>
       ReLU is one choice among many: sigmoid, tanh, GELU, SiLU and gated units like SwiGLU. Next: what each looks like, what

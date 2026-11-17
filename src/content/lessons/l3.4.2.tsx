@@ -275,9 +275,6 @@ assert abs(act_second_moment(lambda z: z ** 2) - 3) < 1e-5` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend where the 2 in He initialisation comes from, what Xavier balances, and how to find the right gain for any activation.",
-
   glimpse: (
     <p>
       Even a well-scaled network can lose units: a ReLU that is negative on every input never recovers, and a tanh pushed to

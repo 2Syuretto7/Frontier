@@ -282,9 +282,6 @@ assert abs(t[1]) > 20 and abs(t[2]) < 3.5, 'A real effect has a large t; pure no
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a regression coefficient means when there are several features, why it can change sign when another feature is added, and why it is not a causal effect.",
-
   glimpse: (
     <p>
       Next, polynomial features, which let a linear model fit curves. Mathematical Statistics puts error bars on coefficients,

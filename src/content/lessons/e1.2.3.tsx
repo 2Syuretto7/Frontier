@@ -275,9 +275,6 @@ assert patch([], ['+ new']) == ['new']` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the life of a pull request, what CI adds, and what makes a pull request easy to review.",
-
   glimpse: (
     <p>
       Next, reading history: finding when, why and by whom a line changed. Pinning dependencies, later in this course, keeps CI

@@ -278,9 +278,6 @@ assert np.allclose(newton_step(A, b, np.zeros(2)), np.linalg.solve([[2.0, 1.0], 
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to derive the gradient of a least-squares loss with differentials, and why only the symmetric part of A matters in xᵀAx.",
-
   glimpse: (
     <p>
       Quadratics are the easy case. Next: the gradients of norms, traces and determinants, including the beautiful fact that the

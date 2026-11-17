@@ -310,9 +310,6 @@ assert jacobian_passes(2, 50) == ("forward", 2) and jacobian_passes(7, 7) == ("f
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a derivative through a graph is a sum over paths of products, how reverse mode avoids enumerating the paths, and why training uses reverse mode.",
-
   glimpse: (
     <p>
       Next, the same recurrence applied by hand to a small neural network, one number at a time, to see every gradient

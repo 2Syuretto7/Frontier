@@ -328,9 +328,6 @@ assert all(a2 >= a1 - 1e-12 and b2 <= b1 + 1e-12 for (a1, b1), (a2, b2) in zip(i
     },
   ],
 
-  teachBack:
-    "Explain to a friend the different ways of saying the reals are complete, why nested closed intervals share a point, why an increasing bounded sequence converges to its supremum, and how bisection turns the nested interval property back into the supremum property.",
-
   glimpse: (
     <>
       <p>

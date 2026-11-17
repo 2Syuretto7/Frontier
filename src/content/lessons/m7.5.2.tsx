@@ -312,9 +312,6 @@ assert var_of_combination([1, 2, 3], S3) == 1 + 16 + 81 + 2 * 6` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what covariance and correlation measure, why the correlation is always between −1 and 1, what the best straight-line predictor is and how much variance it explains, and why zero correlation does not mean independence.",
-
   glimpse: (
     <>
       <p>

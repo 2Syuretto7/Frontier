@@ -302,9 +302,6 @@ assert isinstance(dplr_quadform(x, d, U), float)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the Woodbury identity and the matrix determinant lemma, and why they make solves and log-determinants with diagonal-plus-low-rank matrices cost O(nk²) instead of O(n³).",
-
   glimpse: (
     <>
       <p>

@@ -297,9 +297,6 @@ assert chain_costs([2, 3, 4]) == (24, 24)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the Jacobian of a composition is the product of Jacobians, why each must be evaluated at the right point, and why the order of multiplying them matters for cost but not for the answer.",
-
   glimpse: (
     <p>
       To use this in a computer, we write a function as a graph of elementary operations, each with a tiny Jacobian. Chapter 3

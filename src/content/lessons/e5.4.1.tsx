@@ -373,9 +373,6 @@ assert check_op(lambda a, b: a @ b, [(3, 3), (3, 3)])` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a gradient check works, why it uses central differences, relative errors and float64, and why a failure next to a ReLU kink may not be a bug.",
-
   glimpse: (
     <p>
       A gradient check proves the framework agrees with calculus. The next lesson holds it to a stricter standard: agreeing

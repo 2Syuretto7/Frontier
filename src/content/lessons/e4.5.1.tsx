@@ -346,9 +346,6 @@ assert collapse([]) == {}` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why you should profile before optimising, and why making a part of a program a thousand times faster may barely change the total.",
-
   glimpse: (
     <p>
       Time is one resource; memory is the other, and running out of it stops a run outright. Next, memory profiling: where

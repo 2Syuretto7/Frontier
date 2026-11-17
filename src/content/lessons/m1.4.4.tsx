@@ -286,9 +286,6 @@ assert F == [{1, 2}, {2, 3}], 'Do not change the sets you were given.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why infinitely many nested intervals (0, 1/n), none of them empty, have nothing in common.",
-
   glimpse: (
     <p>
       The last lesson on sets builds two new kinds of set from old: the set of all subsets, and the set of all ordered pairs. Unions and intersections of families are the language of open and closed sets in Real Analysis, and of sigma-algebras in Measure-Theoretic Probability.

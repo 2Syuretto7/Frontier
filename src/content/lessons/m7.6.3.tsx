@@ -315,9 +315,6 @@ assert abs(b) < 0.03 and abs(v - 1.0) < 0.05 and abs(m - 1.0) < 0.05` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the conditional mean is the best predictor in mean squared error, what error remains, why the best straight line can be useless when Y depends on X², and how the same algebra splits an estimator's error into bias squared plus variance.",
-
   glimpse: (
     <>
       <p>

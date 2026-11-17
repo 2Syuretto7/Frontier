@@ -302,9 +302,6 @@ for _ in range(30):
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a histogram shows that an average cannot, and why the choice of bin width can change what the histogram seems to say.",
-
   glimpse: (
     <p>
       Next, probability, where relative frequencies in the long run become the chance of an event. In Probability, a

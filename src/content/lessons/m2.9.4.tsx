@@ -246,9 +246,6 @@ assert not dominates(lambda n: math.log(3) + 2 * math.log(n), lambda n: 2 * math
     },
   ],
 
-  teachBack:
-    "Explain to a friend the ladder of growth rates from ln n to n!, why each rung eventually beats the one below, and how log plots make growth rates visible.",
-
   glimpse: (
     <p>
       This completes Calculus. Its ideas run through everything that follows: Multivariable and Matrix Calculus extends

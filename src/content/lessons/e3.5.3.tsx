@@ -429,9 +429,6 @@ for _ in range(50):
     },
   ],
 
-  teachBack:
-    "Explain to a friend how one thread can wait on a thousand network requests at once, and what happens if one coroutine calls time.sleep.",
-
   glimpse: (
     <p>
       Every one of those waits was for a reply from another machine. Next chapter: networking, starting with the socket, the

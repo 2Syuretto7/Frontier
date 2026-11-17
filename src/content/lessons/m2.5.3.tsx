@@ -320,9 +320,6 @@ assert 'return 4' not in src.replace(' ', '').replace('return4', 'return 4'), 'F
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to find the best cut for the box, why the answer must be at a critical point or an endpoint, and why you should check the endpoints.",
-
   glimpse: (
     <p>
       Next, Newton&rsquo;s method, which finds where a derivative, or any function, is zero when algebra cannot. When the quantity depends on several variables tied together by a constraint, Multivariable and Matrix Calculus replaces the single derivative by Lagrange multipliers, and when no formula for the minimum exists, the gradient descent of Optimisation for Deep Learning walks downhill towards it.

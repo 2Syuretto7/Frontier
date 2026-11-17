@@ -277,9 +277,6 @@ def lip_bound(ws):
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a Lipschitz constant is, why Lipschitz functions are uniformly continuous but not conversely, how a derivative bound gives a Lipschitz bound, and why a network's Lipschitz constant is at most the product of its layers' constants.",
-
   glimpse: (
     <>
       <p>

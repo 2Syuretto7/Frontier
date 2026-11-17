@@ -283,9 +283,6 @@ assert np.allclose(w, [1.0]) and step == 1 and np.allclose(curve, [1.0])` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what overfitting and underfitting are, why training error always prefers more flexible models, and what the U-shaped test error curve means.",
-
   glimpse: (
     <p>
       Next, the discipline that keeps test error honest: separate training, validation and test sets. Bias and variance give

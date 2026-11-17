@@ -280,9 +280,6 @@ assert np.allclose(eta, [0, 0, np.log(2)], atol=1e-4)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what an exponential family is, how the Bernoulli, Poisson and categorical distributions fit the form, why the derivatives of the log-partition function give the mean and variance, and why maximum likelihood for these models reduces to matching means.",
-
   glimpse: (
     <>
       <p>

@@ -301,9 +301,6 @@ assert len(p) == 5 and e[3] < 1e-10 and e[2] < e[1] ** 2` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why Newton's method converges quadratically near a minimum, why it can fail far from one, how a Newton step for a GLM becomes a weighted least-squares fit, and where the standard errors come from.",
-
   glimpse: (
     <>
       <p>

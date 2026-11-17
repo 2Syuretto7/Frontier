@@ -263,9 +263,6 @@ assert abs(z_power(0, 10) - 0.05) < 1e-3 and z_power(1, 16) > 0.97` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a hypothesis test is, the difference between type I and type II errors, what size and power mean, why a failure to reject is not evidence for the null, and how sample size controls power.",
-
   glimpse: (
     <>
       <p>

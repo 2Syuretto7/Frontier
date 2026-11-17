@@ -291,9 +291,6 @@ assert 1e9 < sensitivity(H) < 1e11, 'The 8 × 8 Hilbert matrix has condition num
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a linear system cannot have exactly two solutions, how to tell from the reduced form whether a solution exists, and how every solution is one particular solution plus a solution of Ax = 0.",
-
   glimpse: (
     <p>
       Next chapter: matrices as objects in their own right, which can be added, multiplied and inverted. Linear Algebra II

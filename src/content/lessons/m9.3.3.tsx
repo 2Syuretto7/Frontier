@@ -258,9 +258,6 @@ assert t == 1.0 and abs(s - 1) < 0.05` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the score and the Fisher information are, why the score has mean zero, why the information equals the expected curvature of the log-likelihood, and what it says about how precisely a parameter can be estimated.",
-
   glimpse: (
     <>
       <p>

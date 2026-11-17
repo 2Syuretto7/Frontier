@@ -319,9 +319,6 @@ for _ in range(50):
     },
   ],
 
-  teachBack:
-    "Explain to a friend Markov's, Chebyshev's and Jensen's inequalities, how each is proved, when each is tight, and why Jensen makes the KL divergence non-negative.",
-
   glimpse: (
     <>
       <p>

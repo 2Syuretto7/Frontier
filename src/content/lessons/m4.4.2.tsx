@@ -300,9 +300,6 @@ for _ in range(200):
     },
   ],
 
-  teachBack:
-    "Explain to a friend why Euclid's algorithm works, why it is fast, and how running it backwards gives Bézout's identity.",
-
   glimpse: (
     <p>
       Next, modular arithmetic, where Bézout&rsquo;s identity becomes the recipe for dividing modulo n. Euclid&rsquo;s

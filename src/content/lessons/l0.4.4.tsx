@@ -276,9 +276,6 @@ def causal_output(scores, values, i):
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a transformer changed about language models, and how a scaling law lets a lab predict a huge model's loss from small experiments.",
-
   glimpse: (
     <p>
       This completes the short history. Next, what a frontier lab actually does all day. In Transformers and Language Models

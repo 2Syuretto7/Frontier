@@ -318,9 +318,6 @@ assert np.allclose(ml, 0.9 * 0.1 + 0.1 * 0.6) and np.allclose(xl, adam_step(x, g
     },
   ],
 
-  teachBack:
-    "Explain to a friend how Adam makes each parameter's step independent of its gradient scale, and why weight decay has to be applied outside the Adam update.",
-
   glimpse: (
     <p>
       Every optimiser so far used one fixed learning rate. Next: schedules that change it during training, and why almost

@@ -267,9 +267,6 @@ assert abs(m) > 1e6, 'Too large a step makes it blow up.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to decide which of two hand-drawn lines fits some points better, using squares of the errors, and what gradient descent would do instead of you.",
-
   glimpse: (
     <p>
       Next, a model with no formula and no parameters at all: nearest neighbours. In Introduction to Machine Learning you

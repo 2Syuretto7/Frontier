@@ -278,9 +278,6 @@ def wilson_cover(p, n, reps=200000, seed=0):
     },
   ],
 
-  teachBack:
-    "Explain to a friend what coverage means for a confidence interval, how pivots give exact intervals, why intervals and tests are two views of the same thing, and why the Wilson interval beats the Wald interval for small samples near 0 or 1.",
-
   glimpse: (
     <>
       <p>

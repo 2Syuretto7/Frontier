@@ -266,9 +266,6 @@ def r_squared(m, c, xs, ys):
     },
   ],
 
-  teachBack:
-    "Explain to a friend how you would price a flat from past sales with a straight line, what the slope of the line means, and why the line should not be trusted far outside the data.",
-
   glimpse: (
     <p>
       Next, clustering, where there are no labels at all. In Introduction to Machine Learning, you will find the best line

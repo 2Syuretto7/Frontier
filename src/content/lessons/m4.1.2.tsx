@@ -298,9 +298,6 @@ except ValueError:
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between permutations and combinations, and why dividing by r! turns one count into the other.",
-
   glimpse: (
     <p>
       Next, the identities that binomial coefficients satisfy, proved by counting the same set two ways. In Probability, the

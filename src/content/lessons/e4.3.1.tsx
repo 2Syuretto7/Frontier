@@ -343,9 +343,6 @@ assert first_divergence([], [1.0]) == 0` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why setting one global seed is not enough to make a training run reproducible, and what else has to be pinned down.",
-
   glimpse: (
     <p>
       A seed is one of many settings that decide what a run does. Next, configuration management: keeping every setting in one

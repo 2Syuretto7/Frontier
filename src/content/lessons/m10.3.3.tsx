@@ -310,9 +310,6 @@ assert abs(z - 0.5) < 1e-12 and np.allclose(y, [1.0, 2.5]) and abs(v - (c @ x + 
     },
   ],
 
-  teachBack:
-    "Explain to a friend what makes two optimisation problems equivalent, how the epigraph form and auxiliary variables turn absolute values and maxima into linear programs, how a logarithmic change of variables makes geometric programs convex, and how the Charnes–Cooper transform handles a ratio objective.",
-
   glimpse: (
     <>
       <p>

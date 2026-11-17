@@ -497,9 +497,6 @@ assert merge(a, b) is first, 'On a tie, take from a first.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how an LRU cache gets O(1) lookups, updates and evictions by combining a dict with a doubly linked list.",
-
   glimpse: (
     <p>
       Stacks and queues come next, and either arrays or linked lists can carry them. Linked lists return as the chains of a hash

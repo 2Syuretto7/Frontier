@@ -276,9 +276,6 @@ assert abs(v - 0.5 * math.log((4 / 6) / (1 / 3))) < 1e-15, 'The integral of 1/(x
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to split a fraction like 3/((x − 1)(x + 2)) into simple pieces, why that makes it easy to integrate, and how it solves the logistic equation.",
-
   glimpse: (
     <p>
       Next, improper integrals, over infinite intervals or past points where the integrand blows up. Partial fractions return

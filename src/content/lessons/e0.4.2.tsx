@@ -297,9 +297,6 @@ print(c["a"] * 10 + c["n"])
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a dictionary is, how to add, look up and safely look up keys, and why looking up a key is fast.",
-
   glimpse: (
     <p>
       Next, strings, seen as sequences of characters. In Data Structures and Algorithms you will build a hash table yourself

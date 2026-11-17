@@ -283,9 +283,6 @@ assert len(kill_tree(procs, 1)) == 2999, 'Use a stack, not deep recursion, for l
     },
   ],
 
-  teachBack:
-    "Explain to a friend how cp, mv and rm behave, how to read rwxr-xr-x, and what a process and a PID are.",
-
   glimpse: (
     <p>
       Next, connecting commands with pipes and saving them as scripts. Environments later in this course rely on the PATH variable

@@ -363,9 +363,6 @@ for _ in range(1000):
     },
   ],
 
-  teachBack:
-    "Explain to a friend why 0.1 + 0.2 is not exactly 0.3 in a computer, and why a model can still be trained in a 16-bit format.",
-
   glimpse: (
     <p>
       Both integers and floats are bit patterns. Next, operating on the bits directly: masks, shifts and tricks that pack

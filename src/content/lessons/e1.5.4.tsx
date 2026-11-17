@@ -259,9 +259,6 @@ assert Y.tolist() == [[0, 1, 2], [-1, -1, -1]] and X.tolist() == [[0, 1, 2], [3,
     },
   ],
 
-  teachBack:
-    "Explain to a friend which kinds of indexing give views and which give copies, and why a[mask] = 0 still changes a.",
-
   glimpse: (
     <p>
       Next, einsum, a single notation for sums, products and transposes of arrays. Strides, at the end of this chapter, show how a

@@ -299,9 +299,6 @@ assert np.allclose(x2, [0.8, 0.1, 0.1])` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what makes a linear map a projection, how it corresponds to a direct sum, and why only orthogonal projections have norm 1.",
-
   glimpse: (
     <>
       <p>

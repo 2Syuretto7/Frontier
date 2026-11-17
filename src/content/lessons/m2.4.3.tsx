@@ -316,9 +316,6 @@ assert grad_check(fs, dfs, 0.4) < 1e-7, 'Agree with the numerical slope.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the derivative of f(g(x)) is f′(g(x)) times g′(x), using the idea of rates multiplying along a chain.",
-
   glimpse: (
     <p>
       Next, the exponential, the logarithm and the sigmoid, which the chain rule now lets you differentiate. The chain rule also runs backwards as integration by substitution. In Multivariable and Matrix Calculus the derivative becomes a matrix and the chain rule becomes matrix multiplication; backpropagation, in Neural Networks from Scratch and Build a Deep Learning Framework, is that chain rule organised for a computer.

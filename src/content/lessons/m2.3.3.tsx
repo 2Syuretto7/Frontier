@@ -323,9 +323,6 @@ assert x == 3 and v == 3, 'The maximum can be at an end.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the extreme value theorem, and give an example showing why each of its hypotheses is needed.",
-
   glimpse: (
     <p>
       Real Analysis reveals what makes closed, bounded intervals special: they are compact, and continuous functions on compact sets always attain their extremes. Later in this course, optimisation problems will find the extremes that this theorem promises exist, and Convex Optimisation asks the same question in many dimensions. Next, a stronger kind of continuity that holds on such intervals.

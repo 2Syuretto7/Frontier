@@ -282,9 +282,6 @@ assert c == {'same sign': 2, 'opposite': 2}, 'Pairs of an element with itself co
     },
   ],
 
-  teachBack:
-    "Explain to a friend why no number that leaves remainder 3 on division by 4 can be a perfect square, by splitting into cases.",
-
   glimpse: (
     <p>
       Splitting by remainders is the start of modular arithmetic, which Discrete Mathematics builds into a powerful tool, used in hashing. The party puzzle is the smallest case of Ramsey&rsquo;s theorem, which says that complete disorder is impossible in any large enough structure. Next comes proving that something exists, and that it is the only one.

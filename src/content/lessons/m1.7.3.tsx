@@ -312,9 +312,6 @@ assert order(p) == 12 and power(p, 12 * 10 ** 17 + 1) == p and power(p, 10 ** 18
     },
   ],
 
-  teachBack:
-    "Explain to a friend why taking off shoes and socks happens in the reverse order to putting them on, and why only a bijection can be undone.",
-
   glimpse: (
     <p>
       The last lesson on functions asks what a function does to whole sets of inputs, and which inputs land in a given set of outputs. Inverse matrices in Linear Algebra I and inverse functions in Calculus are this lesson put to work, and the generative models of later courses are built from invertible maps that can be run in both directions.

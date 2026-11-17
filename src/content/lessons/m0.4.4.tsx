@@ -283,9 +283,6 @@ finally:
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a slide rule multiplies by adding lengths, and which law of logarithms makes it work.",
-
   glimpse: (
     <p>
       Next, the number <M>e</M> and continuous growth, where a natural base for logarithms appears from compound interest.

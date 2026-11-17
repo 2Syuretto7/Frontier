@@ -295,9 +295,6 @@ assert np.allclose(a[1], b[1]) and a[0].shape == (40, 3) and a[2].shape == (3, 3
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the SVD gives the best low-rank approximation of a matrix, how the discarded singular values measure the error, and why low-rank updates can fine-tune a large model cheaply.",
-
   glimpse: (
     <p>
       This completes Linear Algebra I. Linear Algebra II proves Eckart-Young and studies matrix norms in depth, and Numerical

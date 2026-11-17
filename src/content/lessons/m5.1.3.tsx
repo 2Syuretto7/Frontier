@@ -307,9 +307,6 @@ assert np.allclose(r, (1 + 0.01) ** (np.arange(101) / 2)), 'Each step multiplies
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the velocity of a curve is, why the length of a path does not depend on how fast it is traced, and how gradient descent traces a curve in weight space.",
-
   glimpse: (
     <p>
       Curves vary along one direction at a time. Next, differentiation of functions of several variables begins with partial

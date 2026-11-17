@@ -316,9 +316,6 @@ assert flaky([('c1', 't', 'fail'), ('c2', 't', 'pass')]) == [], 'Failing on one 
     },
   ],
 
-  teachBack:
-    "Explain to a friend what continuous integration does for a shared research repository, and why a fast, reliable check matters more than a thorough but slow or flaky one.",
-
   glimpse: (
     <p>
       With tests and CI in place you can change code with confidence, but first you must find where to change it. Last in this

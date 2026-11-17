@@ -270,9 +270,6 @@ assert abs(m1 - 0.0125) < 0.001 and m2 < m1` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a prior and the likelihood combine into a posterior, why the beta prior gives a beta posterior for a coin, why squared loss leads to the posterior mean, and how the posterior mean compromises between the prior and the data.",
-
   glimpse: (
     <>
       <p>

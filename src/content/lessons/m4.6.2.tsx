@@ -281,9 +281,6 @@ assert monty_exact(3, 1) == Fraction(2, 3) and monty_exact(100, 98) == Fraction(
     },
   ],
 
-  teachBack:
-    "Explain to a friend what P(A | B) means, why a positive result on a good test for a rare disease is usually a false alarm, and what independence says.",
-
   glimpse: (
     <p>
       Probability develops conditional probability, Bayes&rsquo; rule and independence in full. Bayes&rsquo; rule is the engine

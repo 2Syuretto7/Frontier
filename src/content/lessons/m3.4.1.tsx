@@ -286,9 +286,6 @@ assert is_subspace(member, sample, 50, 2), 'Symmetric matrices form a subspace.'
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a subspace is, the quickest ways to show a set is not one, and why the span of any vectors is always a subspace.",
-
   glimpse: (
     <p>
       Next, the two subspaces every matrix carries: the column space, everything Ax can reach, and the null space, everything

@@ -293,9 +293,6 @@ assert comp_slack(c, A, np.array([4.0, 0.0]), np.array([2.0])) and not comp_slac
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the dual problem is, why weak duality always holds, what Slater's condition is and why it closes the gap for convex problems, how LP duality and complementary slackness certify optimality, and how a non-convex problem can leave a gap.",
-
   glimpse: (
     <>
       <p>

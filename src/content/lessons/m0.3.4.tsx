@@ -328,9 +328,6 @@ assert iterate(double, 0, 3) == 3 and iterate(double, 5, 1) == 32, 'Apply f agai
     },
   ],
 
-  teachBack:
-    "Explain to a friend why undoing 'multiply by 9/5 then add 32' means subtracting 32 first. Then explain why squaring cannot be undone on all numbers, and what we do about it.",
-
   glimpse: (
     <p>
       Next, transforming graphs: shifting, stretching and reflecting are compositions with very simple functions. The

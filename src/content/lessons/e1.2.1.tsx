@@ -270,9 +270,6 @@ assert commit_id({'x': 'hi'}, c1, 'm') != c1, 'Same files and message but a diff
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a commit is, what the staging area is for, and what should never be committed.",
-
   glimpse: (
     <p>
       Next, branches, which let several lines of work grow side by side, and merges, which join them. Hashing, the idea behind

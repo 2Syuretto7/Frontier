@@ -306,9 +306,6 @@ assert 2 * math.sqrt(400 / math.pi) - 1.2 < expected_returns(400) < 2 * math.sqr
     },
   ],
 
-  teachBack:
-    "Explain to a friend how first-step analysis turns hitting probabilities and times into linear equations, why the fair gambler's chance is i/N and duration i(N − i), and why a random walk returns for sure in one and two dimensions but not in three.",
-
   glimpse: (
     <>
       <p>

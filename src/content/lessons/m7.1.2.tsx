@@ -326,9 +326,6 @@ assert hypergeom(5, 2, 3, 3) == 0` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend when counting outcomes gives correct probabilities, why Leibniz's unordered pairs of dice were not equally likely, and why collisions among n possible values become likely after about √n draws.",
-
   glimpse: (
     <>
       <p>

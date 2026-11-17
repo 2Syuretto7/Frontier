@@ -330,9 +330,6 @@ assert len(calls) == n and len(set(calls)) == len(calls) and abs(v - 6.4) < 1e-8
     },
   ],
 
-  teachBack:
-    "Explain to a friend what upper and lower sums are, why a function is integrable when they can be squeezed together, and why the function that is 1 on rationals and 0 elsewhere fails.",
-
   glimpse: (
     <p>
       Next, the fundamental theorem of calculus, which turns integration from a limit of sums into the reverse of differentiation. Real Analysis develops this theory in full, with Darboux sums and Lebesgue&rsquo;s exact criterion for which functions are integrable. Measure-Theoretic Probability builds a more powerful integral, which handles even the puzzle&rsquo;s function, and makes expectation an integral.

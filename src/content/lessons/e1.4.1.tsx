@@ -293,9 +293,6 @@ except ImportError:
     },
   ],
 
-  teachBack:
-    "Explain to a friend how Python finds a module to import, how a local file can shadow a library, and what the __main__ guard is for.",
-
   glimpse: (
     <p>
       Next, virtual environments, which give each project its own site-packages so that projects stop fighting over versions.

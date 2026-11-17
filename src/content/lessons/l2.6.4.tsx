@@ -304,9 +304,6 @@ assert abs((kl(Y2) - kl(Y)) / 1e-6 - tsne_grad(P, Y)[2, 1]) < 1e-4` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how t-SNE turns distances into neighbour probabilities with a perplexity, why it uses a heavy-tailed kernel in the embedding, what its gradient does, and which features of a t-SNE or UMAP plot can and cannot be trusted.",
-
   glimpse: (
     <>
       <p>

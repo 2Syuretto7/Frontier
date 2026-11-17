@@ -316,9 +316,6 @@ assert len(trees) == 125 and all(len(t) == 4 and connected(t) for t in trees), '
     },
   ],
 
-  teachBack:
-    "Explain to a friend why every tree on n vertices has n − 1 edges, and why a cheapest network connecting n towns must be a tree.",
-
   glimpse: (
     <p>
       Rooted trees are the shape of search trees, heaps and tries in Data Structures and Algorithms, and decision trees in

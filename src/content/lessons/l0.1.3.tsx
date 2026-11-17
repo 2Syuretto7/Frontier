@@ -261,9 +261,6 @@ def memorises(train_errors, test_errors, tol):
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between memorising and generalising, using the two students, and why a model must be judged on data it has never seen.",
-
   glimpse: (
     <p>
       This completes what learning is. Next, a tour of the tasks machine learning is used for, starting with classification.

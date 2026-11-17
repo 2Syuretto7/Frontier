@@ -283,9 +283,6 @@ assert abs(s - 0.5073) < 0.02 and simulate_birthday(23, 365, 20000, 1) == s, 'Se
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a sample space and an event are, and why a total of 9 with two dice is more likely than a total of 10.",
-
   glimpse: (
     <p>
       Next, conditional probability: how probabilities change when you learn something. Probability builds everything here on

@@ -349,9 +349,6 @@ assert np.allclose(fgsm(np.full(3, 0.5), np.zeros(3), 0.2), 0.5)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the dual of a norm is, why ℓ₁ and ℓ∞ are dual, and how the dual maximiser gives steepest descent and the FGSM attack.",
-
   glimpse: (
     <>
       <p>

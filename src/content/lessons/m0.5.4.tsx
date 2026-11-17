@@ -277,9 +277,6 @@ assert check(7, ths) < 1e-12 and check(12, ths) < 1e-11, 'The identity holds at 
     },
   ],
 
-  teachBack:
-    "Explain to a friend why sin(α + β) is not sin α + sin β, and how the rectangle picture gives the correct formula.",
-
   glimpse: (
     <p>
       This completes geometry and trigonometry. Next, the Cartesian plane, where points become pairs of numbers. In that

@@ -283,9 +283,6 @@ assert np.allclose(x, [1, 1]), 'Among x + y = 2 the shortest is (1, 1).'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the singular value decomposition says, how it splits any matrix into rotate, stretch, rotate, how it is built from the eigenvectors of AᵀA, and why it works for every matrix.",
-
   glimpse: (
     <p>
       Next, the most useful consequence of the SVD: the best low-rank approximation of a matrix. Linear Algebra II derives the

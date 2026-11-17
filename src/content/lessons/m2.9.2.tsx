@@ -284,9 +284,6 @@ for x in [1e-6, 1e-3, 0.4]:
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a smaller step does not always give a better numerical derivative, and why the central difference is more accurate than the forward one.",
-
   glimpse: (
     <p>
       Next, Stirling&rsquo;s formula, an asymptotic approximation to n! that turns counting problems into calculus. Neural

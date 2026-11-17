@@ -308,9 +308,6 @@ assert abs(g - 4 / 9) < 1e-12 and abs(n - 0.16) < 1e-12` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how Nesterov's method differs from heavy ball, why taking the gradient at a look-ahead point allows a proof for all smooth convex functions, how the Lyapunov argument gives the 1/k² rate, and why no gradient method can beat that rate in general.",
-
   glimpse: (
     <>
       <p>

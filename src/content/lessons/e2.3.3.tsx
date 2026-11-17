@@ -425,9 +425,6 @@ assert f.c[0] == 15 and 0 in f, 'A saturated counter must never be decremented: 
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a Bloom filter answers set membership in about ten bits per item, which way its errors go, and how to choose the number of hash functions.",
-
   glimpse: (
     <p>
       MinHash, next, uses hashing to compress a whole set into a short signature from which similarity can be estimated. Data

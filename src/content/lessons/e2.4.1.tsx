@@ -480,9 +480,6 @@ assert t.key == 3 and t.left.key == 2` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a binary search tree answers 'what is the next key after this one?', and why inserting sorted keys ruins it.",
-
   glimpse: (
     <p>
       The next lesson fixes the shape problem with balanced trees, which restore O(log n) worst-case height by rotating as they go.

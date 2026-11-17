@@ -397,9 +397,6 @@ assert call_with_retries(server([201]), 1, 1, 1, slept.append) == (201, 1)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a client should retry a 503 but not a 404, and why retries need both backoff and an idempotency key.",
-
   glimpse: (
     <p>
       That completes the tour of the machine, from bits to networks. Next comes the craft of building research software

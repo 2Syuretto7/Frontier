@@ -310,9 +310,6 @@ assert good.shape == (20000,) and ks_uniform(good) < 0.02 and ks_uniform(bad) > 
     },
   ],
 
-  teachBack:
-    "Explain to a friend how one uniform random number can be turned into a sample from any distribution, why F(X) is uniform when F is continuous, and how that fact lets you check whether probabilistic forecasts are calibrated.",
-
   glimpse: (
     <>
       <p>

@@ -277,9 +277,6 @@ assert wiggle_prime(5)(0) == 5.0 and abs((wiggle(4)(0.3 + h) - wiggle(4)(0.3 - h
     },
   ],
 
-  teachBack:
-    "Explain to a friend why uniform convergence lets a limit pass through an integral but not through a derivative, using the narrowing spike and the fast wiggle, and what extra hypothesis makes term-by-term differentiation valid.",
-
   glimpse: (
     <>
       <p>

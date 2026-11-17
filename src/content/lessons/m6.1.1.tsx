@@ -304,9 +304,6 @@ assert np.allclose(c, [1, 1])` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what makes something a vector space, give three examples that are not arrows, and say why complex scalars guarantee eigenvalues.",
-
   glimpse: (
     <p>
       Spaces matter because of the maps between them. Next: linear maps, why they are determined by what they do to a

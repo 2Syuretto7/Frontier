@@ -307,9 +307,6 @@ assert abs(fenchel_young_gap(f, fs, x, np.exp(x))) < 1e-12 and fenchel_young_gap
     },
   ],
 
-  teachBack:
-    "Explain to a friend the definition of the convex conjugate and its picture with supporting lines, why it is always convex, the Fenchel–Young inequality, the conjugates of a quadratic and of a norm, and why the biconjugate gives back a convex function or its convex envelope.",
-
   glimpse: (
     <>
       <p>

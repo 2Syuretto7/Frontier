@@ -306,9 +306,6 @@ assert np.allclose(H, np.eye(3) / 3 - 1 / 9) and np.allclose(lse_hessian(np.arra
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a differentiable function is convex exactly when its tangent planes lie below its graph, why a zero gradient then means a global minimum, how the Hessian test follows by restricting to lines, and why log-sum-exp is convex.",
-
   glimpse: (
     <>
       <p>

@@ -468,9 +468,6 @@ for _ in range(60):
     },
   ],
 
-  teachBack:
-    "Explain to a friend how beam search sits between picking the likeliest word each time and trying every possible sentence, and why it adds logarithms.",
-
   glimpse: (
     <p>
       Chapter 7 is done. The last chapter turns to strings: finding a pattern in text in linear time, searching a whole genome

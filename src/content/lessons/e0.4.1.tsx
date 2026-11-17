@@ -304,9 +304,6 @@ assert flatten(deep) == list(range(50))` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how list indices and negative indices work, how a slice xs[start:stop:step] picks out items, and why b = a does not copy a list.",
-
   glimpse: (
     <p>
       Next, dictionaries, which look values up by name rather than by position. In Data Structures and Algorithms you will see

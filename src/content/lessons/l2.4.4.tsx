@@ -291,9 +291,6 @@ assert abs(leaf_value(g[m], h[m], 1.0) - 1.0) < 1e-12 and abs(split_score(g, h, 
     },
   ],
 
-  teachBack:
-    "Explain to a friend how gradient boosting fits each tree to the negative gradient of the loss, what the pseudo-residuals are for squared and log loss, how second-order leaf values and split gains are computed, and which settings control overfitting.",
-
   glimpse: (
     <>
       <p>

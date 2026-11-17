@@ -340,9 +340,6 @@ for _ in range(200):
     },
   ],
 
-  teachBack:
-    "Explain to a friend why adding 1 to 127 in an 8-bit signed integer gives −128, and why the same adding circuit works for signed and unsigned numbers.",
-
   glimpse: (
     <p>
       Integers are exact but limited in range. Floating point trades exactness for range: next, how 32 bits hold numbers from

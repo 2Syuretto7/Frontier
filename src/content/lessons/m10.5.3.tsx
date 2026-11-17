@@ -270,9 +270,6 @@ assert 0.75 ** k * 8.0 <= 0.01 < 0.75 ** (k - 1) * 8.0` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why gradient descent on a smooth convex function has error O(1/k), why adding strong convexity makes the error fall geometrically like (1 − 1/κ)ᵏ, and what each rate means for the cost of one more digit of accuracy.",
-
   glimpse: (
     <>
       <p>

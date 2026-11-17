@@ -315,9 +315,6 @@ for _ in range(500):
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a graph is, give three things that graphs model, and prove that the number of people who shook an odd number of hands is even.",
-
   glimpse: (
     <p>
       Next, paths and connectivity: how to tell whether one vertex can reach another. Data Structures and Algorithms stores

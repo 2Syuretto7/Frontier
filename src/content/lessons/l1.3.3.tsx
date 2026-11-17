@@ -250,9 +250,6 @@ assert bayes_threshold(1, 4) == 0.2 and abs(t - 0.2) < 0.03, 'With calibrated pr
     },
   ],
 
-  teachBack:
-    "Explain to a friend the four cells of a confusion matrix, why accuracy misleads when one class is rare, and how the costs of mistakes should set the threshold.",
-
   glimpse: (
     <p>
       Next, precision, recall and the ROC curve, which summarise the confusion matrix in more useful ways. Baselines return

@@ -273,9 +273,6 @@ assert next_token_pairs(*tokens_and_mask([('system', 'be brief')])) == []` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the three stages that turn a text predictor into a deployed assistant, what each stage changes, and one way the feedback stage can go wrong.",
-
   glimpse: (
     <p>
       Next, the last lesson of this course: how to read claims about AI carefully. Pretraining Large Language Models,

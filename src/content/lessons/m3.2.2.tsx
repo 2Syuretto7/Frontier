@@ -305,9 +305,6 @@ assert piv == tuple(range(6)) and Rm == [[int(i == j) for j in range(6)] for i i
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the reduced row echelon form is, how to read every solution of a system from it, and what pivots, free variables and rank mean.",
-
   glimpse: (
     <p>
       Next, the exact conditions under which a system has no solution, one, or infinitely many. Chapter 4 turns the free

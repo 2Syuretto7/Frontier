@@ -290,9 +290,6 @@ print(a * 10 + b)
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a program is, why the order of its lines matters, and what the interpreter does with it.",
-
   glimpse: (
     <p>
       Next, the values a program works with: numbers, text and truth values, and the names that hold them. In Python, NumPy

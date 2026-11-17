@@ -267,9 +267,6 @@ assert 'erf' not in inspect.getsource(norm_cdf), 'Build it yourself.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the area under e^(−x²) can be found exactly although it has no antiderivative, and why that gives the constant in the normal density.",
-
   glimpse: (
     <p>
       Most integrals have no formula at all, Gaussian or not. Next, numerical integration: how to compute them to any

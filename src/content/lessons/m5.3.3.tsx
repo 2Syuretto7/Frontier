@@ -293,9 +293,6 @@ assert a["x"] == 2.0 ** 10, 'With every label 1, the adjoint counts paths: 2 ** 
     },
   ],
 
-  teachBack:
-    "Explain to a friend what an adjoint is, how reverse mode computes all of them in one backward sweep, and why it must keep the values from the forward pass.",
-
   glimpse: (
     <p>
       In matrix language, forward mode multiplies the Jacobian by a vector on the right and reverse mode by a row vector on the

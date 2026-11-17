@@ -528,9 +528,6 @@ for n in range(0, 21):
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a processor that only has jumps and a stack can run a recursive function and come back to the right place.",
-
   glimpse: (
     <p>
       Every load and store in these programs was treated as instant. Next chapter: why reading memory can cost a hundred

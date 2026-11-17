@@ -349,9 +349,6 @@ for bad in [('%d', 1, 2), ('%q', 1)]:
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a C program can overwrite a variable it never mentions, using two arrays next to each other in memory.",
-
   glimpse: (
     <p>
       The overflow worked because name and role sat next to each other at known addresses. Next, addresses as values:

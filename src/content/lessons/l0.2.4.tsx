@@ -284,9 +284,6 @@ assert abs(draws.count('x') / 20000 - 0.7) < 0.02 and abs(draws.count('z') / 200
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a computer can write new sentences by predicting one word at a time, what temperature does, and why fluent text is not necessarily true.",
-
   glimpse: (
     <p>
       Next, decision-making, where a model acts in the world and learns from what happens. In Transformers and Language

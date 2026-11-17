@@ -296,9 +296,6 @@ assert x == [1, 1, 2], 'Strang’s system has solution (1, 1, 2).'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how cofactor expansion works, why the signs alternate like a chessboard, and what Cramer's rule says, together with why it is not used for large systems.",
-
   glimpse: (
     <p>
       Next, what the determinant measures geometrically: the factor by which a matrix scales area and volume. Probability uses

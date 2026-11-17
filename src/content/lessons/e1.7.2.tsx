@@ -288,9 +288,6 @@ assert iqr_outliers(s).tolist() == [False, False, False, False, False, True, Tru
     },
   ],
 
-  teachBack:
-    "Explain to a friend the common ways a data file is messy, how to clean it with a script, and why a missing value is not a zero.",
-
   glimpse: (
     <p>
       Next, SQL: the language that databases have spoken for fifty years, in which the same filters, groups and joins are

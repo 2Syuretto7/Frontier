@@ -335,9 +335,6 @@ assert decimal_digits(lambda q: q < 0 or q * q < 49, 2) == "6.99"` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the rationals have a gap at √2, how a Dedekind cut defines a real number from rationals alone, why the union of a bounded family of cuts is its least upper bound, and how Cauchy sequences give another construction.",
-
   glimpse: (
     <>
       <p>

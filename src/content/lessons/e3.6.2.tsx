@@ -373,9 +373,6 @@ assert bdp_segments(100 * 10 ** 9, 10e-6, 4096) == 31, 'A 100 Gb/s datacentre li
     },
   ],
 
-  teachBack:
-    "Explain to a friend how TCP notices a lost packet, and why it halves its sending rate when it does.",
-
   glimpse: (
     <p>
       With a reliable stream in hand, programs can call each other. Next: HTTP, APIs and remote procedure calls, and what

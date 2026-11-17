@@ -281,9 +281,6 @@ assert inner_best > s and s < 0.6, 'On pure noise, the best inner score is optim
     },
   ],
 
-  teachBack:
-    "Explain to a friend how k-fold cross-validation works, why it beats a single small validation set, and why the best cross-validation score is not an honest final number.",
-
   glimpse: (
     <p>
       Next, ridge and lasso, which give you a dial for bias and variance that cross-validation can set. In large-scale deep

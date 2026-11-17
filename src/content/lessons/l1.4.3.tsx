@@ -321,9 +321,6 @@ assert abs(t - 0.3) < 0.01, 'O(n log n) on 200000 rows.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a decision tree chooses its first question, what Gini impurity measures, and why a very deep tree overfits.",
-
   glimpse: (
     <p>
       Next, random forests, which average hundreds of deliberately varied trees. Statistical Machine Learning derives the CART

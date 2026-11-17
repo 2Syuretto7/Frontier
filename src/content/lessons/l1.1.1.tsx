@@ -301,9 +301,6 @@ assert m[0] < m[1] < m[2] and s[0] > s[2], 'More data: higher accuracy and less 
     },
   ],
 
-  teachBack:
-    "Explain to a friend what it means for a program to learn, using task, experience and performance, and the difference between supervised and unsupervised learning.",
-
   glimpse: (
     <p>
       Next, how to measure performance honestly: training error and test error. Reinforcement learning, the third family,

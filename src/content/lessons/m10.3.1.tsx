@@ -315,9 +315,6 @@ assert np.allclose(x, [0.5, -1.0], atol=1e-8)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what makes an optimisation problem convex, what linear and quadratic programs are, why a bounded LP is solved at a vertex, and how an equality-constrained QP reduces to one linear system.",
-
   glimpse: (
     <>
       <p>

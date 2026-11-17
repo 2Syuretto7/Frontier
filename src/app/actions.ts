@@ -89,32 +89,6 @@ export async function codeTestsAction(exerciseId: string): Promise<{ name: strin
   return answer?.kind === "code" ? answer.tests.map((t) => ({ name: t.name, code: t.code })) : null;
 }
 
-export type TeachBackResponse = {
-  ok: boolean;
-  lessonMastered?: boolean;
-  error?: string;
-  review?: { strength: string; questions: string[] };
-  reviewError?: string;
-};
-
-export async function teachBackAction(lessonId: string, body: string): Promise<TeachBackResponse> {
-  await requireOwner();
-  const { LESSON_BY_ID } = await import("@/lib/curriculum");
-  if (!LESSON_BY_ID.has(lessonId)) return { ok: false, error: "Unknown lesson." };
-  const text = String(body).trim().slice(0, 20000);
-  if (text.split(/\s+/).length < 25) return { ok: false, error: "Write at least a few sentences, about 25 words or more." };
-  const { saveTeachBack } = await import("@/lib/learning");
-  const lessonMastered = await saveTeachBack(lessonId, text);
-  const { PartonError, partonConnected, renderReview, reviewTeachBack } = await import("@/lib/parton");
-  if (!partonConnected()) return { ok: true, lessonMastered };
-  try {
-    return { ok: true, lessonMastered, review: renderReview(await reviewTeachBack(lessonId, text)) };
-  } catch (error) {
-    if (error instanceof PartonError) return { ok: true, lessonMastered, reviewError: error.message };
-    throw error;
-  }
-}
-
 export async function askPartonAction(
   lessonId: string,
   exerciseId: string | null,

@@ -292,9 +292,6 @@ assert abs(np.sum(G * S) + 2.0 * sv[0]) < 1e-10 and abs(np.linalg.svd(S, compute
     },
   ],
 
-  teachBack:
-    "Explain to a friend how Frank-Wolfe uses a linear minimisation instead of a projection, why its iterates stay feasible and sparse, why its gap certifies how far from optimal it is, and how the induction gives the 2LD²/(k + 2) rate.",
-
   glimpse: (
     <>
       <p>

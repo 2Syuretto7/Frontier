@@ -296,9 +296,6 @@ assert np.allclose(similarity_matrix(E), similarity_matrix(D)), 'Scaling a row d
     },
   ],
 
-  teachBack:
-    "Explain to a friend why ranking by dot product favours long vectors, how cosine similarity fixes this, and why normalising vectors makes the two the same.",
-
   glimpse: (
     <p>
       Next, lines and planes described by dot products, which is how a classifier draws its boundary. Deep Learning

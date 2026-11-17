@@ -310,9 +310,6 @@ assert abs(m - em) < 0.15 and abs(v - ev) / ev < 0.05` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why averaging conditional averages gives the overall average, how the total variance splits into the average within-group variance and the variance of the group means, and how this gives the variance of a random sum.",
-
   glimpse: (
     <>
       <p>

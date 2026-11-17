@@ -312,9 +312,6 @@ assert abs(closest_pair(pts) - 1e-9) < 1e-12, 'O(n log n) on 20000 points.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how merge sort works, why its recursion tree has about log₂ n levels each costing n, and what the master theorem says.",
-
   glimpse: (
     <p>
       Data Structures and Algorithms implements merge sort and quicksort and applies divide and conquer widely. The recursion

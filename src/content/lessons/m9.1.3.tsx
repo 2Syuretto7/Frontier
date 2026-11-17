@@ -261,9 +261,6 @@ assert abs(m[0] - 0.25) < 0.01 and abs(m[2] - 0.75) < 0.01` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what order statistics are, how to get the distributions of the maximum and minimum from independence, why the k-th smallest of n uniforms has mean k/(n + 1), and how this solves the tank problem.",
-
   glimpse: (
     <>
       <p>

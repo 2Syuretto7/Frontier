@@ -262,9 +262,6 @@ assert np.allclose(f(x), [3.1, 4.2], atol=1e-10) and s[-1] < s[0]` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the inverse function theorem says, why an invertible derivative makes a map locally invertible, and why the inverse can still fail to exist globally.",
-
   glimpse: (
     <p>
       The same idea, applied to an equation F(x, y) = 0, shows when it defines y as a function of x, and gives that

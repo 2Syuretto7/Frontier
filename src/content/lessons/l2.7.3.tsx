@@ -368,9 +368,6 @@ assert np.allclose(ms[2], full.sum(axis=(0, 1, 3))) and np.allclose(ms[0], full.
     },
   ],
 
-  teachBack:
-    "Explain to a friend why naive inference is exponential, how variable elimination uses distributivity, why the elimination order matters, how sum-product messages give all marginals of a tree at once, and what goes wrong on graphs with loops.",
-
   glimpse: (
     <>
       <p>

@@ -266,9 +266,6 @@ assert abs(a - 0.05) < 0.008 and b > 0.15` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a p-value is and is not, why it is uniformly distributed under the null, how the fraction of false discoveries depends on the prior and the power, and how optional stopping inflates false positives.",
-
   glimpse: (
     <>
       <p>

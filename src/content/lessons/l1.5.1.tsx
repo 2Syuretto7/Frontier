@@ -283,9 +283,6 @@ assert bagging_variance(same, 10, 0) < 1e-3, 'Identical models gain nothing from
     },
   ],
 
-  teachBack:
-    "Explain to a friend what bias and variance are, using the archers, and why the best model is usually not the most flexible one.",
-
   glimpse: (
     <p>
       Next, cross-validation, the practical way to find where bias and variance balance. Statistical Machine Learning shows that

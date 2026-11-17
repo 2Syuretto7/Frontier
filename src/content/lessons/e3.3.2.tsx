@@ -373,9 +373,6 @@ assert best_order(32, 8, 32) == 'ikj', 'With j innermost, B and C are read along
     },
   ],
 
-  teachBack:
-    "Explain to a friend why summing a matrix row by row is faster than column by column in NumPy, even though both add the same numbers.",
-
   glimpse: (
     <p>
       All of this assumed an address names a fixed byte of memory. Next, virtual memory: each process sees its own address

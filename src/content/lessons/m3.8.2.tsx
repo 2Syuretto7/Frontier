@@ -289,9 +289,6 @@ assert are_similar_diagonalisable([[3.0, 1.0], [0.0, 2.0]], np.diag([2.0, 3.0]))
     },
   ],
 
-  teachBack:
-    "Explain to a friend how coordinates change when the basis changes, why a map's matrix becomes B⁻¹AB, and why diagonalisation is just choosing the eigenvector basis.",
-
   glimpse: (
     <p>
       Next, the singular value decomposition, which allows different bases on the input and output sides and so diagonalises

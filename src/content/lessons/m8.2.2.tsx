@@ -325,9 +325,6 @@ assert h[-1] >= 6 and abs(h[2] - 11 / 6) < 1e-12` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a bounded monotone sequence must converge, the three-step recipe for a recursive sequence and why solving for the limit first can mislead, how monotonicity proves e exists, and why Σ1/k² converges while Σ1/k does not.",
-
   glimpse: (
     <>
       <p>

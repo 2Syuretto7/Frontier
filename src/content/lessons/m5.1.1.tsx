@@ -289,9 +289,6 @@ assert n == 0 and np.allclose(out[0], 0), 'A zero gradient stays zero, with no d
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a norm is, how the 1-, 2- and ∞-norms of a vector differ, and why the choice matters for regularisation and gradient clipping.",
-
   glimpse: (
     <p>
       With distance in place, functions of several variables come next: scalar fields such as a loss over many weights, and

@@ -322,9 +322,6 @@ assert abs(np.mean(y) ) < 0.01 and abs(np.std(y) - 1) < 0.01 and 0.48 < np.mean(
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a multivariate normal is, why its distribution is fixed by its mean and covariance, how to evaluate its log-density stably, and why uncorrelated implies independent only for jointly normal variables.",
-
   glimpse: (
     <>
       <p>

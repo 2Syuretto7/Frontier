@@ -353,9 +353,6 @@ assert abs(float(kahan_sum(y)) - exact) <= 0.01, (kahan_sum(y), exact)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why two correct frameworks can disagree in the last digits, how ULPs and rtol/atol tolerances make comparisons fair, and what it takes to match bit for bit.",
-
   glimpse: (
     <p>
       Rounding in the last bit is harmless. Overflow, underflow, nan and −0 are not. Next: the numerical edge cases a framework

@@ -288,9 +288,6 @@ def poisson_deviance(y, mu):
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the three parts of a generalised linear model are, what a canonical link is, why every canonical GLM has gradient Xᵀ(y − μ), and how Poisson regression with an offset models rates.",
-
   glimpse: (
     <>
       <p>

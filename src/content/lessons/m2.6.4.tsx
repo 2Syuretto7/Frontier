@@ -253,9 +253,6 @@ assert abs(v - math.sqrt(math.pi) / 2) < 1e-6, 'x = t/(1 − t) maps [0, 1) onto
     },
   ],
 
-  teachBack:
-    "Explain to a friend why substitution is the chain rule backwards, how to change the limits, and what the factor g′(x) dx does to the area.",
-
   glimpse: (
     <p>
       This completes the chapter on integrals. Next, the techniques that substitution alone cannot handle, starting with

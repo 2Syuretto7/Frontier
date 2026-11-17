@@ -281,9 +281,6 @@ assert r == (9, 234, True)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what Python's seven arithmetic operators do, how precedence decides the order, and how // and % split a number into whole parts and a remainder.",
-
   glimpse: (
     <p>
       Next, getting values into a program from its user and printing results neatly. In Computer Systems you will meet

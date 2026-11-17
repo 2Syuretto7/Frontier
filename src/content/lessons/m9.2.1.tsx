@@ -253,9 +253,6 @@ assert abs(m - 2) < 0.05 and s < 0.15` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the method of moments works, how it gives estimators for the uniform and gamma models, why it is consistent, and the example where it produces an impossible estimate.",
-
   glimpse: (
     <>
       <p>

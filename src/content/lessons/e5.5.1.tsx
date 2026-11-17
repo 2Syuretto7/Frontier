@@ -329,9 +329,6 @@ assert s.buf == [100, 204, 308, 101, 205, 309, 102, 206, 310, 103, 207, 311], s.
     },
   ],
 
-  teachBack:
-    "Explain to a friend how one buffer with shapes, strides and offsets supports transposes, slices and broadcasts without copying, and why a kernel needs both a general strided path and a contiguous fast path.",
-
   glimpse: (
     <p>
       One buffer type, many operations, and soon more than one device. Next: operator dispatch, the table that picks the

@@ -277,9 +277,6 @@ ZeroDivisionError: division by zero
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to read a Python traceback from the bottom up, and why the line where a program crashed may not be the line with the bug.",
-
   glimpse: (
     <p>
       Next, the last lesson of this course: a small project that uses everything so far. In Software Engineering for ML

@@ -366,9 +366,6 @@ assert adjoint_test(lambda x: W @ x, lambda y: 1.001 * (W.T @ y), 6, 4) is False
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the adjoint of a linear map is, why its matrix is the conjugate transpose only in orthonormal bases, and why backpropagation through a linear layer uses the adjoint.",
-
   glimpse: (
     <>
       <p>

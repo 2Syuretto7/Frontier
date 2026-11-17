@@ -261,9 +261,6 @@ assert all(eval(s, {}, dict(zip('abcd', v))) == bool(f(*v)) for v in product([Fa
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a truth table decides whether a formula is a tautology, and why the number of rows doubles with each new letter.",
-
   glimpse: (
     <p>
       Next, logical equivalence: when two different formulas say the same thing. In Discrete Mathematics, the question of how fast tautologies can be recognised leads to the famous problem of P and NP.

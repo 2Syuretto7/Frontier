@@ -305,9 +305,6 @@ assert abs(num - np.sum(gauss_nll_grad(Sig, S) * H)) < 1e-6` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the gradient of det X with respect to one entry is that entry's cofactor, and why the gradient of log det X is the inverse transpose.",
-
   glimpse: (
     <p>
       The most-differentiated function in machine learning is the cross-entropy of a softmax. Next, its gradient, and the

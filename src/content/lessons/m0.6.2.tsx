@@ -320,9 +320,6 @@ def point_line_distance(p, a, b):
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the slope of a line is the same whichever two points you use, and why the shortest path from a point to a line meets it at a right angle.",
-
   glimpse: (
     <p>
       Next, vectors, arrows that can be added and stretched, which give a cleaner language for lines and directions: the

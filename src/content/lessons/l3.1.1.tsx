@@ -297,9 +297,6 @@ assert m[-1] == 0 and np.all(predict(w, F) == y) and margin(w, F, y) > 0.9` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the perceptron learns, why it must stop on separable data, and why XOR defeats it.",
-
   glimpse: (
     <p>
       XOR needed a new feature. A hidden layer of neurons can learn such features itself, and with a smooth activation it can

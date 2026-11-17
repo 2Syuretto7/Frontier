@@ -290,9 +290,6 @@ assert resolve(index, {'x': ''}) is None and resolve({'p': {'1.0.0': {}}}, {'p':
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the same install command can give different results in different months, and how a lock file fixes it.",
-
   glimpse: (
     <p>
       Next, NumPy, the package nearly every other in this field depends on. Its arrays are where Python meets fast numerical

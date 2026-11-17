@@ -291,9 +291,6 @@ assert np.allclose(minibatch_sgd(X, y, 0.05, 30, 16, 0), [1, -2, 3, 0.5], atol=1
     },
   ],
 
-  teachBack:
-    "Explain to a friend how gradient descent finds good weights, what the learning rate does, and why too large a learning rate makes it diverge.",
-
   glimpse: (
     <p>
       This completes Linear regression. Next, classification, starting with logistic regression, which has no formula and

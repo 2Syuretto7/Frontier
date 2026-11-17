@@ -387,9 +387,6 @@ assert abs(F(2.5, y)) < 1e-9 and y > 2.5, 'Stay on the folium of Descartes.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how you can find the slope of a curve like x³ + y³ = 6xy without solving for y, why the chain rule is the key step, and how the same idea differentiates an inverse function.",
-
   glimpse: (
     <p>
       This completes the rules of differentiation. The next chapter puts derivatives to work, starting with the mean value theorem, which links the slope at a point to the change over an interval. Multivariable and Matrix Calculus turns the hidden assumption of this lesson into a theorem: the implicit function theorem says exactly when an equation defines a function.

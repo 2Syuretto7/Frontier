@@ -308,9 +308,6 @@ assert 'np.diag' not in src and 'linalg' not in src, 'Do not build the full matr
     },
   ],
 
-  teachBack:
-    "Explain to a friend how Gaussian elimination turns a system into a triangle, what a pivot is and what a zero pivot means, and why the work grows like n³.",
-
   glimpse: (
     <p>
       Next, elimination pushed all the way to the reduced row echelon form, which reveals every solution at once, including

@@ -311,9 +311,6 @@ assert rational_roots([6, -11, -3, 2]) == [Fraction(-1, 2), Fraction(1, 3), 2], 
     },
   ],
 
-  teachBack:
-    "Explain the idea behind completing the square to someone who only knows how to factorise by spotting numbers. A picture of a square with a corner missing may help.",
-
   glimpse: (
     <p>
       This completes algebra. Next, functions: instead of solving for one value of <M>x</M>, you study how an expression
