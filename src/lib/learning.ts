@@ -8,6 +8,7 @@ import { chooseNextStep, type LearnStep } from "./scheduler";
 import type { Track } from "./types";
 import { PartonError, markWritten, partonConnected } from "./parton";
 import { renderParton } from "./parton/render";
+import { RECALL_PREFIX, recallAttempt } from "./recall";
 
 const scheduler = fsrs({ enable_fuzz: true, request_retention: 0.9 });
 const TZ = "Asia/Kolkata";
@@ -101,11 +102,13 @@ export type AttemptResult = CheckResult & { lessonMastered?: boolean; verdict?: 
 
 /**
  * Checks an answer, records it, and updates mastery and the review schedule.
- * In recall and review, the first attempt of the session decides the review rating.
+ * In review, the first attempt of the session decides the review rating.
  * Written proofs and arguments are marked by Parton against the rubric when Parton is connected;
  * until then they are provisionally accepted on submission.
  */
 export async function attempt(id: string, input: string, context: Context, attemptInSession: number): Promise<AttemptResult> {
+  // Recall questions are written fresh by Parton, so they live in their own table rather than the curriculum.
+  if (id.startsWith(RECALL_PREFIX)) return context === "recall" ? recallAttempt(id, input) : { correct: false, message: "Unknown exercise." };
   const ref = EXERCISES.get(id);
   if (!ref) return { correct: false, message: "Unknown exercise." };
   const written = ref.exercise.answer.kind === "written";
@@ -238,22 +241,6 @@ export async function dueReviews(limit = REVIEW_SESSION_SIZE) {
   const refs = rows.map((r) => EXERCISES.get(r.exercise_id)).filter((r) => r !== undefined);
   // Interleave: alternate lessons rather than grouping one lesson's questions together.
   return refs.sort((a, b) => hash(a.id) - hash(b.id));
-}
-
-/**
- * Two or three recall questions from the lessons this one requires or revisits, if they have been mastered.
- * Repair comes first: questions the learner once struggled with are chosen before the rest.
- */
-export async function recallFor(lessonId: string, mastered: Set<string>) {
-  const sources = GRAPH.edges
-    .filter((e) => e.to === lessonId && (e.kind === "requires" || e.kind === "revisits" || e.kind === "applies"))
-    .map((e) => e.from)
-    .filter((id) => mastered.has(id) && LESSON_BY_ID.has(id));
-  const pool = sources.flatMap((id) => reviewable(LESSON_BY_ID.get(id)!).map((e) => EXERCISES.get(exerciseId(id, e.key))!));
-  const struggled = new Set<string>();
-  for (const id of sources) for (const x of await struggledWith(id, 2)) struggled.add(x);
-  const rank = (r: { id: string }) => (struggled.has(r.id) ? 0 : 1);
-  return pool.sort((a, b) => rank(a) - rank(b) || hash(a.id + lessonId) - hash(b.id + lessonId)).slice(0, 3);
 }
 
 function hash(s: string) {
