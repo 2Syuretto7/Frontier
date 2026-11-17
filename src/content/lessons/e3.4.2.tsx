@@ -373,34 +373,6 @@ for _ in range(40):
         ],
       },
     },
-    {
-      key: "sum",
-      rung: "prove",
-      prompt: <p>For n jobs all ready at time 0 run without preemption in the order with lengths p₁, …, pₙ, show that the total completion time is Σ (n − i + 1)pᵢ, and use this to give a second proof that shortest-first is optimal.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Job i completes at p₁ + … + pᵢ, so the sum of completion times counts pᵢ once for each job at position i or later: n − i + 1 times.",
-          "The coefficients n, n − 1, …, 1 are decreasing in position.",
-          "By the rearrangement inequality, the sum of products is smallest when the largest coefficients multiply the smallest lengths: increasing order of pᵢ.",
-          "Total waiting is total completion minus Σ pᵢ, a constant, so the same order minimises waiting.",
-        ],
-      },
-    },
-    {
-      key: "smith",
-      rung: "stretch",
-      prompt: <p>Each job now has a weight wᵢ &gt; 0 (its importance), and the goal is to minimise Σ wᵢCᵢ, the weighted sum of completion times. Prove that running jobs in increasing order of pᵢ/wᵢ is optimal.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Considers adjacent jobs i then j starting at time t; all other completion times are unaffected by swapping them.",
-          "Order i, j contributes wᵢ(t + pᵢ) + wⱼ(t + pᵢ + pⱼ); order j, i contributes wⱼ(t + pⱼ) + wᵢ(t + pⱼ + pᵢ).",
-          "The difference (i first minus j first) is wⱼpᵢ − wᵢpⱼ, which is positive exactly when pᵢ/wᵢ > pⱼ/wⱼ.",
-          "So any adjacent pair out of ratio order can be swapped without loss, and sorting by pᵢ/wᵢ is optimal; with equal weights it is SJF.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

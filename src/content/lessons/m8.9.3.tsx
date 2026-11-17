@@ -270,19 +270,6 @@ assert abs(picard(lambda y: y, 1.0, 0.001, 1000, 40)[-1] - math.e) < 1e-5` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Let T be a contraction with constant q &lt; 1. Prove that T has at most one fixed point and that every orbit xₙ₊₁ = Txₙ is a Cauchy sequence.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uniqueness: for fixed points x, y, d(x, y) = d(Tx, Ty) ≤ q d(x, y), forcing d(x, y) = 0.",
-          "Shows d(xₖ₊₁, xₖ) ≤ qᵏ d(x₁, x₀) by induction.",
-          "Uses the triangle inequality and a geometric sum to get d(xₘ, xₙ) ≤ qⁿ d(x₁, x₀)/(1 − q) → 0, so the orbit is Cauchy.",
-        ],
-      },
-    },
-    {
       key: "post",
       rung: "stretch",
       prompt: <p>With q = 0.8 and d(xₙ, xₙ₋₁) = 0.01, what does the a posteriori bound give for d(xₙ, x*)?</p>,

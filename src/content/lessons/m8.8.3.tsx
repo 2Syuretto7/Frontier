@@ -268,24 +268,6 @@ assert poly_eval(deriv_coeffs(integ_coeffs(c)), 0.7) == poly_eval(c, 0.7)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove: if <M>{"\\sum a_k x_0^k"}</M> converges for some <M>{"x_0 \\neq 0"}</M>, then <M>{"\\sum a_k x^k"}</M> converges
-          absolutely for every |x| &lt; |x₀|.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes the terms a_k x₀ᵏ tend to 0, so they are bounded by some B.",
-          "Bounds |a_k xᵏ| ≤ B (|x|/|x₀|)ᵏ.",
-          "Concludes by comparison with a convergent geometric series, since |x|/|x₀| < 1.",
-        ],
-      },
-    },
-    {
       key: "sum",
       rung: "stretch",
       prompt: <p>Differentiate the geometric series to evaluate Σ_(k≥1) k/2ᵏ.</p>,

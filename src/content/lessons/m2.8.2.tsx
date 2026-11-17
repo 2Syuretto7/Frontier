@@ -249,25 +249,6 @@ assert abs(ratio_test(la, 10 ** 6) - 1) < 1e-5, 'For 1/n² the ratio test gives 
       },
     },
     {
-      key: "grouping",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the harmonic series diverges by showing that <M>{"S_{2^k} \\ge 1 + k/2"}</M> for every k. Then use the
-          integral test to show the same, and to show that <M>{"S_N"}</M> grows roughly like <M>{"\\ln N"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Groups the terms from 1/(2^(j−1) + 1) to 1/2^j, a block of 2^(j−1) terms each at least 1/2^j.",
-          "Concludes each block sums to at least 1/2, and sums k blocks plus the first term.",
-          "Compares with rectangles under 1/x to show S_N ≥ ∫₁^(N+1) dx/x = ln(N + 1), which is unbounded.",
-          "Notes the upper bound S_N ≤ 1 + ln N from rectangles above the curve, so S_N is close to ln N.",
-        ],
-      },
-    },
-    {
       key: "nhalf",
       rung: "stretch",
       prompt: (

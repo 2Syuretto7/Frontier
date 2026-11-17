@@ -279,25 +279,6 @@ assert piv == tuple(range(6)) and Rm == [[int(i == j) for j in range(6)] for i i
       },
     },
     {
-      key: "infinite",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if a system Ax = b has at least one solution and its RREF has a free variable, then it has infinitely many
-          solutions. Also prove that the rank of an m × n matrix is at most the smaller of m and n.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that each free variable can be set to any value and the pivot variables are then determined by the RREF rows.",
-          "Concludes that different values of a free variable give different solutions, so there are infinitely many.",
-          "Argues that each row has at most one pivot, so r ≤ m.",
-          "Argues that each column has at most one pivot, so r ≤ n.",
-        ],
-      },
-    },
-    {
       key: "ipj",
       rung: "stretch",
       prompt: <p>Find the rank of the 6 × 6 matrix whose entry in row i, column j is i + j.</p>,

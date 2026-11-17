@@ -267,36 +267,6 @@ assert msg == 'many', 'Report several inverses.'` },
         ],
       },
     },
-    {
-      key: "identity",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that there is exactly one real number e such that <M>{"e \\cdot x = x"}</M> for every real number x.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Existence: gives e = 1 and checks 1 · x = x for every x.",
-          "Uniqueness: supposes e and e′ both have the property.",
-          "Applies the property to a suitable x, for instance x = 1, to get e = e′ (or uses e = e · e′ = e′).",
-        ],
-      },
-    },
-    {
-      key: "at-most-one",
-      rung: "stretch",
-      prompt: <p>Prove, without calculus, that <M>{"x^3 + x = 1"}</M> has at most one real solution.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Supposes two different solutions, or shows that a < b implies a³ + a < b³ + b.",
-          "Justifies that a < b implies a³ < b³, for instance by factoring b³ − a³ = (b − a)(a² + ab + b²) and showing the second factor is positive, or by cases on signs.",
-          "Concludes that two different numbers cannot both give 1, so there is at most one solution.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

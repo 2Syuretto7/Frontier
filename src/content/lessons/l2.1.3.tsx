@@ -258,19 +258,6 @@ assert np.allclose(map_laplace(X, y, 4.0), [2.0, 0.0, -1.0]) and np.allclose(map
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that for λ &gt; 0 the minimiser of f(w) = ½(w − z)² + λ|w| over real w is sign(z)·max(|z| − λ, 0).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Handles w > 0: f is differentiable with derivative w − z + λ, giving the candidate z − λ, valid only when z > λ.",
-          "Handles w < 0 symmetrically, giving z + λ when z < −λ.",
-          "Shows that when |z| ≤ λ the minimum is at 0 (f is non-decreasing to the right of 0 and non-increasing to the left), and that these cases combine into the soft threshold.",
-        ],
-      },
-    },
-    {
       key: "shrink",
       rung: "stretch",
       prompt: (

@@ -282,25 +282,6 @@ assert abs(m - 1 / 3) < 0.001 and abs(se - (1 / 180) ** 0.5 / 100000 ** 0.5) < 2
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let <M>{"\\hat\\theta_n"}</M> be the average of n i.i.d. copies of h(X), with <M>{"\\operatorname{Var}(h(X)) = \\sigma^2"}</M>.
-          Prove that <M>{"\\hat\\theta_n"}</M> is unbiased with variance σ²/n, and explain why{" "}
-          <M>{"\\hat\\theta_n \\pm 1.96\\,\\sigma/\\sqrt n"}</M> contains θ with probability close to 0.95 for large n.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses linearity: E[θ̂ₙ] = (1/n)·n·θ = θ.",
-          "Uses independence so variances add: Var(θ̂ₙ) = nσ²/n² = σ²/n.",
-          "Applies the CLT to √n(θ̂ₙ − θ)/σ and rewrites P(|θ̂ₙ − θ| ≤ 1.96σ/√n) ≈ Φ(1.96) − Φ(−1.96) ≈ 0.95.",
-        ],
-      },
-    },
-    {
       key: "anti",
       rung: "stretch",
       prompt: (

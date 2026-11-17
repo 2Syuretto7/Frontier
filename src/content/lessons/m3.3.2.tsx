@@ -281,19 +281,6 @@ assert np.allclose(block_multiply(A, B, 4), A @ B) and np.allclose(block_multipl
       },
     },
     {
-      key: "assoc",
-      rung: "prove",
-      prompt: <p>Prove that (AB)C = A(BC) whenever the shapes allow, by comparing the (i, j) entries of the two sides.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes ((AB)C)_ij = Σ_l (AB)_il c_lj = Σ_l Σ_k a_ik b_kl c_lj.",
-          "Writes (A(BC))_ij = Σ_k a_ik (BC)_kj = Σ_k Σ_l a_ik b_kl c_lj.",
-          "Notes that finite sums can be reordered, so the two double sums are equal.",
-        ],
-      },
-    },
-    {
       key: "chain",
       rung: "stretch",
       prompt: (

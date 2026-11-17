@@ -256,25 +256,6 @@ def digit_count(n):
       },
     },
     {
-      key: "equals",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain the difference between <em>x = x + 1</em> in mathematics and <C>x = x + 1</C> in Python, and describe
-          exactly what Python does when it runs the statement.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that in mathematics the equation is a claim, and it has no solution.",
-          "Explains that in Python = is an instruction to assign, not a statement of equality.",
-          "Describes the order: evaluate the right side using the current value of x, then bind x to the result.",
-          "Notes that x must already have a value, or Python raises an error.",
-        ],
-      },
-    },
-    {
       key: "repeat",
       rung: "stretch",
       prompt: (

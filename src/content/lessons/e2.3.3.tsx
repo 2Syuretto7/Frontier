@@ -390,39 +390,6 @@ assert f.c[0] == 15 and 0 in f, 'A saturated counter must never be decremented: 
         ],
       },
     },
-    {
-      key: "derive",
-      rung: "prove",
-      prompt: (
-        <p>
-          Derive the approximate false positive rate <M>{"(1 - e^{-kn/m})^k"}</M>, stating where you assume independence, and
-          explain why a Bloom filter can never give a false negative.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "A given bit is missed by one hash with probability 1 − 1/m; by all kn hashes with probability (1 − 1/m)^{kn} ≈ e^{−kn/m}.",
-          "A non-member's k positions are uniform and assumed independent of each other and of the fill, each set with probability ≈ 1 − e^{−kn/m}.",
-          "Multiplies to get (1 − e^{−kn/m})^k.",
-          "No false negatives: adding x sets all its bits, and bits are never cleared, so a query for x finds them all set.",
-        ],
-      },
-    },
-    {
-      key: "optimise",
-      rung: "stretch",
-      prompt: <p>Show that for fixed m/n the rate <M>{"(1 - e^{-kn/m})^k"}</M> is minimised at <M>{"k = (m/n)\\ln 2"}</M>, and deduce the bits per item needed for a target rate p.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes q = e^{−kn/m}, so k = −(m/n) ln q and ln p = k ln(1 − q) = −(m/n) ln q ln(1 − q).",
-          "ln q · ln(1 − q) is symmetric in q ↔ 1 − q and maximised at q = 1/2, so ln p is minimised there.",
-          "q = 1/2 gives k = (m/n) ln 2 and p = 2^{−k}.",
-          "Solving p = 2^{−(m/n) ln 2} gives m/n = −ln p / (ln 2)² ≈ 1.44 log₂(1/p).",
-        ],
-      },
-    },
   ],
 
   glimpse: (

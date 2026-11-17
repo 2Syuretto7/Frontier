@@ -264,19 +264,6 @@ assert abs(fit_poisson([4, 4], steps=1) - math.exp(0.6)) < 1e-9` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>With h heads in n Bernoulli(p) flips, prove that p̂ = h/n maximises the likelihood over [0, 1], including the cases h = 0 and h = n.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the log-likelihood h log p + (n − h) log(1 − p) and finds its derivative vanishes only at p = h/n when 0 < h < n.",
-          "Shows this is a maximum, for example by the negative second derivative −h/p² − (n − h)/(1 − p)² or by the sign change of the derivative, noting the likelihood is 0 at p = 0 and p = 1.",
-          "Handles h = 0, where L = (1 − p)^n is decreasing and maximised at 0, and h = n, where L = p^n is maximised at 1.",
-        ],
-      },
-    },
-    {
       key: "inv",
       rung: "stretch",
       prompt: <p>A Poisson sample has mean 3. Using invariance, what is the maximum likelihood estimate of P(X = 0) = e^(−λ)? Give four decimal places.</p>,

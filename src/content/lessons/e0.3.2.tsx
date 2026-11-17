@@ -253,26 +253,6 @@ def indian_format(amount, decimals=2):
       },
     },
     {
-      key: "printreturn",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain the difference between a function that prints its result and one that returns it. Give a short example of
-          something you can do with the second that you cannot do with the first, and explain why returning makes a function
-          easier to test.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains that print shows a value to the person running the program, while return passes the value back to the code that called the function.",
-          "Notes that a printing function returns None, so its result cannot be used in further calculation.",
-          "Gives an example such as adding two results, passing one result into another function, or storing it in a variable.",
-          "Explains that a returned value can be compared automatically with the expected value, while printed output must be read by a person.",
-        ],
-      },
-    },
-    {
       key: "early",
       rung: "stretch",
       prompt: (

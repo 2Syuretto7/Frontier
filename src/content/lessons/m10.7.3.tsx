@@ -263,23 +263,6 @@ assert np.allclose(c[on], 5.0 * np.sign(x[on]), atol=1e-6) and np.all(np.abs(c[~
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Suppose AᵀA = I. Prove that the lasso solution is x*_j = sign(z_j) max(|z_j| − λ, 0), where z = Aᵀb.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses AᵀA = I to rewrite ½‖Ax − b‖² as ½‖x − z‖² plus a constant, so the problem separates over coordinates.",
-          "Solves each scalar problem min ½(x − z)² + λ|x| using the subgradient condition z − x ∈ λ∂|x|.",
-          "Checks the cases: x > 0 gives x = z − λ (needs z > λ), x < 0 gives x = z + λ (needs z < −λ), and x = 0 exactly when |z| ≤ λ.",
-        ],
-      },
-    },
-    {
       key: "one",
       rung: "stretch",
       prompt: <p>A lasso with a single feature a has ‖a‖² = 4, aᵀb = 6 and λ = 2. What is the solution x*?</p>,

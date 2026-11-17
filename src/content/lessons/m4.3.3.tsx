@@ -296,19 +296,6 @@ assert len(trees) == 125 and all(len(t) == 4 and connected(t) for t in trees), '
       },
     },
     {
-      key: "count",
-      rung: "prove",
-      prompt: <p>Prove by induction that every tree on n ≥ 1 vertices has exactly n − 1 edges.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Base case: a single vertex has no edges.",
-          "Uses the existence of a leaf in a tree with at least two vertices.",
-          "Removes the leaf and its edge, notes what is left is still a tree (connected, acyclic), and applies the hypothesis.",
-        ],
-      },
-    },
-    {
       key: "spanning",
       rung: "stretch",
       prompt: <p>How many spanning trees does the cycle <M>{"C_7"}</M> have?</p>,

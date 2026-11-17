@@ -410,37 +410,6 @@ assert time.time() - t0 < 3, 'Use sets and dicts so that each test is O(1).'` },
         ],
       },
     },
-    {
-      key: "geometric",
-      rung: "prove",
-      prompt: <p>Prove that the function <C>count(n)</C> in the reading exercise returns less than 2n for every n ≥ 2.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Identifies the values of i as 1, 2, 4, …, 2ᵏ where 2ᵏ is the largest power of two below n.",
-          "Sums the inner loop counts as the geometric series 1 + 2 + … + 2ᵏ = 2ᵏ⁺¹ − 1.",
-          "Uses 2ᵏ < n to conclude 2ᵏ⁺¹ − 1 < 2n.",
-        ],
-      },
-    },
-    {
-      key: "nlog2n",
-      rung: "stretch",
-      prompt: (
-        <p>
-          The master theorem as stated needs <M>{"f(n) = \\Theta(n^d)"}</M>. Show directly from the recursion tree that{" "}
-          <M>{"T(n) = 2T(n/2) + n\\log_2 n"}</M>, with T(1) = 0 and n a power of 2, is <M>{"\\Theta(n \\log^2 n)"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Level j has 2ʲ subproblems of size n/2ʲ, costing n log₂(n/2ʲ) = n(log₂ n − j) in total.",
-          "Sums over j = 0, …, log₂ n − 1 to get n(L + (L − 1) + … + 1) = n L(L + 1)/2 with L = log₂ n.",
-          "Concludes that this is Θ(n log² n), giving both the upper and the lower bound.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

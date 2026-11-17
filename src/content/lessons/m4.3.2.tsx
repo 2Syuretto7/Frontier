@@ -318,24 +318,6 @@ assert d[0] == 0 and all(x <= i for i, x in enumerate(d)), 'O(m log n) on 20000 
       },
     },
     {
-      key: "equiv",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that &ldquo;there is a walk from u to v&rdquo; is an equivalence relation, and that two different connected
-          components share no vertex.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Reflexive: the walk of length 0. Symmetric: reverse the walk.",
-          "Transitive: concatenate a walk from u to v with a walk from v to w.",
-          "Notes that equivalence classes of any equivalence relation partition the set, so components are disjoint.",
-        ],
-      },
-    },
-    {
       key: "diameter",
       rung: "stretch",
       prompt: <p>The hypercube graph <M>{"Q_6"}</M> has the 64 binary strings of length 6 as vertices, adjacent when they differ in one bit. How many vertices are at distance exactly 3 from 000000?</p>,

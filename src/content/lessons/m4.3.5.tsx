@@ -294,19 +294,6 @@ assert max(greedy_colouring(8, crown, [0, 4, 1, 5, 2, 6, 3, 7])) == 3 and max(gr
       },
     },
     {
-      key: "greedy",
-      rung: "prove",
-      prompt: <p>Prove that a graph with maximum degree Δ can be properly coloured with Δ + 1 colours.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Describes colouring the vertices one at a time in any order.",
-          "Notes that when a vertex is coloured, at most Δ neighbours have colours, blocking at most Δ colours.",
-          "Concludes one of the Δ + 1 colours is always free, so the colouring is proper.",
-        ],
-      },
-    },
-    {
       key: "cycle5",
       rung: "stretch",
       prompt: <p>How many proper colourings of the cycle <M>{"C_5"}</M> use colours from a set of 3?</p>,

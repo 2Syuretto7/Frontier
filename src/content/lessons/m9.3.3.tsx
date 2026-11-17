@@ -238,19 +238,6 @@ assert t == 1.0 and abs(s - 1) < 0.05` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Assuming differentiation under the integral sign is allowed, prove that the score has mean 0 and that its variance equals −E[∂²/∂θ² log f(X; θ)].</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Differentiates ∫ f(x; θ) dx = 1 and uses ∂f/∂θ = s·f to get E[s] = 0.",
-          "Differentiates ∫ s f dx = 0 again, using the product rule and ∂f/∂θ = s·f, to get E[∂s/∂θ] + E[s²] = 0.",
-          "Concludes Var(s) = E[s²] (since E[s] = 0) = −E[∂² log f/∂θ²].",
-        ],
-      },
-    },
-    {
       key: "logit",
       rung: "stretch",
       prompt: <p>For one Bernoulli observation parametrised by the logit η = log(p/(1 − p)), what is the Fisher information I(η) when p = 0.2?</p>,

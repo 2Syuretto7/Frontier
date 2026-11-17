@@ -293,25 +293,6 @@ assert abs(rel - res + unc - ((q - y) ** 2).mean()) < 1e-12 and rel >= 0 and res
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          A binary forecast takes finitely many values v with frequencies w_v, and f_v is the event rate among cases with
-          forecast v. Prove the Murphy decomposition: the mean Brier score equals Σ w_v(v − f_v)² − Σ w_v(f_v − ȳ)² + ȳ(1 − ȳ),
-          where ȳ is the overall event rate.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows that within the group with forecast v the mean of (v − y)² is (v − f_v)² + f_v(1 − f_v), using that y is 0 or 1.",
-          "Shows ȳ(1 − ȳ) = Σ w_v f_v(1 − f_v) + Σ w_v (f_v − ȳ)², by the law of total variance or by direct expansion using ȳ = Σ w_v f_v.",
-          "Combines the two to obtain the stated decomposition.",
-        ],
-      },
-    },
-    {
       key: "bs",
       rung: "stretch",
       prompt: <p>A forecaster has reliability 0.01 and resolution 0.05 on an event with base rate 0.4. What is its mean Brier score?</p>,

@@ -268,24 +268,6 @@ assert np.allclose(Q, [[1, 2], [6, 0]])` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let A₀, A₁, …, A_m be symmetric n-by-n matrices. Prove that {"{"}x ∈ ℝᵐ : A₀ + x₁A₁ + ⋯ + x_mA_m is positive
-          semidefinite{"}"} is convex.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Identifies the set as the preimage of the PSD cone under the affine map F(x) = A₀ + Σ xᵢAᵢ, or works directly with this map.",
-          "Uses F(θx + (1 − θ)y) = θF(x) + (1 − θ)F(y).",
-          "Concludes using convexity of the PSD cone (for example vᵀ(θF(x) + (1 − θ)F(y))v ≥ 0 for every v).",
-        ],
-      },
-    },
-    {
       key: "mu",
       rung: "stretch",
       prompt: <p>Under the perspective map, the midpoint (θ = 0.5) of the segment from (x, 1) to (y, 3) maps to μx + (1 − μ)(y/3). What is μ?</p>,

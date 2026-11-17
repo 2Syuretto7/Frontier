@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { toPlainText } from "../src/lib/parton/plaintext.ts";
 import { renderParton } from "../src/lib/parton/render.ts";
-import { acceptWritten, describeAnswer, MARK_RULES, rungFor, RUNGS } from "../src/lib/parton/prompts.ts";
+import { describeAnswer, rungFor, RUNGS } from "../src/lib/parton/prompts.ts";
 import { lesson as counting } from "../src/content/lessons/m0.1.1.tsx";
 
 test("plain text keeps the lesson's words and its TeX", () => {
@@ -45,18 +45,5 @@ test("the hint ladder climbs one rung per hint and stops at five", () => {
 test("protected answers are described for the reviewing pass", () => {
   assert.equal(describeAnswer({ kind: "numeric", value: 4 }), "The answer is 4.");
   assert.match(describeAnswer({ kind: "choice", options: ["a", "b", "c"], correct: [0, 2] }), /options are: "a", "c"/);
-  assert.match(describeAnswer({ kind: "written", rubric: ["One", "Two"] }), /1\. One\n2\. Two/);
 });
 
-test("written work is read leniently but only complete answers are accepted", () => {
-  const crit = (...met: boolean[]) => met.map((m, i) => ({ criterion: `c${i}`, met: m }));
-  assert.equal(acceptWritten({ criteria: crit(true, true, true, true), accepted: false }, 4), true, "a complete argument is accepted");
-  assert.equal(acceptWritten({ criteria: crit(true, false, true, true), accepted: false }, 4), false, "one missed criterion makes it partial");
-  assert.equal(acceptWritten({ criteria: crit(true, false, true, true), accepted: true }, 4), false, "a partial argument is rejected even if judged accepted");
-  assert.equal(acceptWritten({ criteria: crit(true, true), accepted: true }, 3), false, "every criterion must be judged");
-  assert.equal(acceptWritten({ criteria: crit(true), accepted: true }, 1), true);
-  assert.equal(acceptWritten({ criteria: crit(false), accepted: true }, 1), false);
-  assert.match(MARK_RULES, /reject partial ones/);
-  assert.match(MARK_RULES, /fair, friendly and lenient/);
-  assert.doesNotMatch(MARK_RULES, /Be rigorous/);
-});

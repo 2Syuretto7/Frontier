@@ -305,23 +305,6 @@ assert orth_error(newton_schulz(G, steps=1)) > orth_error(newton_schulz(G, steps
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let T be invertible and P = √(T*T). Prove that S = TP⁻¹ is an isometry, so that T = SP is a polar decomposition.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes P is positive and invertible (T*T is positive definite since T is invertible), so P⁻¹ exists and is self-adjoint.",
-          "Computes S*S = (P⁻¹)*T*TP⁻¹ = P⁻¹P²P⁻¹ = I.",
-          "Concludes S is an isometry (S*S = I) and T = SP.",
-        ],
-      },
-    },
-    {
       key: "nearest",
       rung: "stretch",
       prompt: <p>What is the top-left entry of the orthogonal matrix nearest (in Frobenius norm) to [[3, 0], [4, 5]]? Give 4 decimal places.</p>,

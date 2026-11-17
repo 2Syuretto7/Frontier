@@ -279,24 +279,6 @@ assert h[-1] <= bound(np.sqrt(3), np.sqrt(3), st) and np.all(np.diff(h) <= 0)` }
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove the subgradient method bound: min over i &lt; k of f(x_i) − f* ≤ (R² + G²Σt_i²)/(2Σt_i), where ‖x₀ − x*‖ ≤ R and
-          ‖g_i‖ ≤ G.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Expands ‖x_{i+1} − x*‖² = ‖x_i − x*‖² − 2t_i g_iᵀ(x_i − x*) + t_i²‖g_i‖².",
-          "Uses the subgradient inequality f* ≥ f(x_i) + g_iᵀ(x* − x_i) to bound g_iᵀ(x_i − x*) ≥ f(x_i) − f*, and ‖g_i‖ ≤ G.",
-          "Sums over i, drops the final nonnegative distance, and bounds each gap below by the minimum to conclude.",
-        ],
-      },
-    },
-    {
       key: "mins",
       rung: "stretch",
       prompt: <p>f(x) = |x − 1| + |x + 1|. Using 0 ∈ ∂f(x), find the set of minimisers. What is its length?</p>,

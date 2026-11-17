@@ -255,24 +255,6 @@ assert 'linalg' not in src and ('>>' in src or '// 2' in src or '%' in src or '&
       },
     },
     {
-      key: "pictures",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the row picture and the column picture of Ax agree: the vector whose i-th entry is (row i) · x equals{" "}
-          <M>{"x_1\\mathbf a_1 + \\dots + x_n\\mathbf a_n"}</M>. Then use it to show that <M>{"A\\mathbf e_j"}</M> is column j.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the i-th entry of the column combination as x₁a_i1 + … + xₙa_in.",
-          "Recognises this as the dot product of row i with x, for every i.",
-          "Applies the column picture to x = e_j, where only x_j = 1 is non-zero, giving a_j.",
-        ],
-      },
-    },
-    {
       key: "cost",
       rung: "stretch",
       prompt: <p>How many multiplications does it take to compute Wx for a 4096 × 4096 matrix W?</p>,

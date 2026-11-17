@@ -233,19 +233,6 @@ assert abs(m - 2) < 0.05 and s < 0.15` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>For an iid sample from Uniform(0, θ), prove that 2X̄ is unbiased for θ and converges to θ in probability.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes E[X] = θ/2, so E[2X̄] = θ.",
-          "Computes Var(X) = θ²/12 and hence Var(2X̄) = 4·θ²/(12n) = θ²/(3n).",
-          "Applies Chebyshev's inequality: P(|2X̄ − θ| ≥ ε) ≤ θ²/(3nε²) → 0.",
-        ],
-      },
-    },
-    {
       key: "var",
       rung: "stretch",
       prompt: <p>For Uniform(0, 6) and n = 12, what is the variance of the estimator 2X̄?</p>,

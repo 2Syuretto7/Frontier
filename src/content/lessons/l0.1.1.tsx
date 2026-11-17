@@ -259,26 +259,6 @@ def accuracy(t, x1, y1, x2, y2, x3, y3):
       },
     },
     {
-      key: "argue",
-      rung: "prove",
-      prompt: (
-        <p>
-          Argue for or against this claim: &ldquo;A learned spam filter is always better than a hand-written one.&rdquo;
-          Give at least one consideration on each side, and say what would decide the question for a particular email
-          provider.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Gives an advantage of learning, such as handling many weak signals, adapting as spam changes, or scaling to millions of messages.",
-          "Gives an advantage of rules, such as being readable, checkable, needing no labelled data, or behaving predictably.",
-          "Notes that 'always' is too strong: it depends on the amount of labelled data, how fast spam changes, and the cost of mistakes.",
-          "Names a concrete way to decide, such as measuring both on new messages the provider cares about.",
-        ],
-      },
-    },
-    {
       key: "rule-count",
       rung: "stretch",
       prompt: (

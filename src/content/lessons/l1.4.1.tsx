@@ -269,25 +269,6 @@ assert (knn_cosine(X, y, Xt * 100, 3) == knn_cosine(X, y, Xt, 3)).all(), 'Cosine
       },
     },
     {
-      key: "zero",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that 1-nearest-neighbour has zero training error when the training inputs are distinct. Then explain why this
-          says nothing about its error on new data, using a dataset whose labels are pure coin flips.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Observes that a training point has distance 0 to itself and positive distance to every other training point, so it is its own nearest neighbour.",
-          "Concludes that its prediction is its own label, so every training point is classified correctly.",
-          "Takes labels independent of the inputs, such as fair coin flips, so no rule can beat 50% on new points.",
-          "Concludes that zero training error can coexist with 50% test error, so training error cannot judge k.",
-        ],
-      },
-    },
-    {
       key: "cost",
       rung: "stretch",
       prompt: <p>A brute-force nearest-neighbour search compares the query with each of one million stored points in 100 dimensions, doing one subtraction per coordinate. How many subtractions is that per query?</p>,

@@ -258,19 +258,6 @@ def wilson_cover(p, n, reps=200000, seed=0):
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Suppose that for every θ₀ the acceptance region A(θ₀) defines a level α test of θ = θ₀. Prove that C(x) = {"{θ₀ : x ∈ A(θ₀)}"} is a 1 − α confidence set.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Fixes the true parameter θ and observes that θ ∈ C(X) if and only if X ∈ A(θ).",
-          "Uses the level of the test of θ: P_θ(X ∉ A(θ)) ≤ α.",
-          "Concludes P_θ(θ ∈ C(X)) = P_θ(X ∈ A(θ)) ≥ 1 − α, for every θ.",
-        ],
-      },
-    },
-    {
       key: "zero",
       rung: "stretch",
       prompt: <p>A model makes no errors on 100 independent test cases. Solving (1 − p)^100 = 0.05, what is the one-sided 95% upper bound on its error rate p? Give four decimal places.</p>,

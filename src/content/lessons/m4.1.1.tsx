@@ -244,24 +244,6 @@ for _ in range(30):
       },
     },
     {
-      key: "product",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove the product rule for two stages from the sum rule, and then prove by induction that a set with n elements has
-          <M>{"2^n"}</M> subsets.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Groups the outcomes by the first choice into n₁ disjoint classes, each of size n₂, and applies the sum rule.",
-          "Base case: the empty set has exactly one subset.",
-          "Step: subsets of S ∪ {x} split into those without x and those with x, each in bijection with subsets of S, giving 2 · 2ⁿ.",
-        ],
-      },
-    },
-    {
       key: "divisors",
       rung: "stretch",
       prompt: <p>How many positive divisors does 720 = 2⁴ · 3² · 5 have?</p>,

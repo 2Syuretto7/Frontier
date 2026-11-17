@@ -368,34 +368,6 @@ assert h.largest_free() == 4096` },
         ],
       },
     },
-    {
-      key: "aliasing",
-      rung: "prove",
-      prompt: <p>Explain, in terms of pointers and objects, why <C>grid = [[0] * 3] * 3</C> followed by <C>grid[0][0] = 1</C> changes all three rows in Python, and prove that <C>[[0] * 3 for _ in range(3)]</C> does not.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "[0] * 3 creates one list object; multiplying the outer list copies the pointer to it three times.",
-          "So grid[0], grid[1] and grid[2] are the same object (same id), and a change through one is seen through all.",
-          "The comprehension evaluates [0] * 3 afresh on each iteration, creating three distinct list objects.",
-          "Assigning grid[0][0] changes only the first object's slot, so the other rows are unchanged.",
-        ],
-      },
-    },
-    {
-      key: "frag",
-      rung: "stretch",
-      prompt: <p>Show that a first-fit allocator can fail a request for 2k bytes when half of memory is free, and explain why no allocator that never moves allocated blocks can rule this out.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Gives a sequence: fill memory with k-byte blocks, then free every other one.",
-          "Half of memory is free, but every free block has k bytes, so a 2k request fails.",
-          "Notes that whatever placement policy is used, the program chooses which blocks to free, and can always free alternate ones.",
-          "Concludes that only moving live blocks (compaction, which C pointers forbid) can always repair fragmentation, which garbage-collected runtimes can do.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

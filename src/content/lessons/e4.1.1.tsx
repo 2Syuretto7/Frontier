@@ -337,26 +337,6 @@ assert order == ['bad', 'err', 'ok'], 'Run them in alphabetical order of name.'`
       },
     },
     {
-      key: "absence",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that for any function f from the integers to the integers and any finite set of test inputs T, there is a
-          function g with g ≠ f that agrees with f on every input in T. What does this say about what a passing test suite
-          proves?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Since T is finite and the integers are infinite, there is an integer n not in T.",
-          "Defines g(x) = f(x) for x ≠ n and g(n) = f(n) + 1 (or any other value different from f(n)).",
-          "Checks that g agrees with f on all of T, because n is not in T, and that g ≠ f, because they differ at n.",
-          "Concludes that passing tests cannot prove correctness on an infinite domain; they only rule out the bugs the chosen cases would reveal.",
-        ],
-      },
-    },
-    {
       key: "pairs",
       rung: "stretch",
       prompt: (

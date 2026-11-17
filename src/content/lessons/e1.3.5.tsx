@@ -273,25 +273,6 @@ assert type_errors(Cfg('x', 2, False, (1,))) == ['layers', 'lr']` },
       },
     },
     {
-      key: "factory",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why a dataclass refuses <C>items: list = []</C>, what would go wrong if it allowed it, and how{" "}
-          <C>field(default_factory=list)</C> fixes the problem.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes the default is evaluated once, when the class is defined, producing a single list.",
-          "Explains every instance created without items would share that list, so appending through one instance changes all of them.",
-          "States that default_factory is called anew for each instance, giving each its own empty list.",
-          "Connects this to the mutable default argument trap for functions.",
-        ],
-      },
-    },
-    {
       key: "fields",
       rung: "stretch",
       prompt: <p>How many fields does <C>TrainConfig</C> above have, as reported by <C>len(dataclasses.fields(TrainConfig))</C>?</p>,

@@ -283,18 +283,6 @@ assert isinstance(dplr_quadform(x, d, U), float)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove the Sherman–Morrison formula for (A + uvᵀ)⁻¹, assuming A is invertible and 1 + vᵀA⁻¹u ≠ 0.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Multiplies A + uvᵀ by the proposed inverse and expands into I + uvᵀA⁻¹ minus a fraction.",
-          "Uses that vᵀA⁻¹u = β is a scalar, so u(vᵀA⁻¹u)vᵀA⁻¹ = βuvᵀA⁻¹, and simplifies (1 + β)uvᵀA⁻¹/(1 + β) to get I.",
-        ],
-      },
-    },
-    {
       key: "detlemma",
       rung: "stretch",
       prompt: <p>What is det(diag(1, 2, 4) + 11ᵀ), where 1 = (1, 1, 1)?</p>,

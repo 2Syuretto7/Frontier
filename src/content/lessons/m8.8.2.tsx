@@ -253,23 +253,6 @@ assert wiggle_prime(5)(0) == 5.0 and abs((wiggle(4)(0.3 + h) - wiggle(4)(0.3 - h
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Suppose fₙ and f are integrable on [a, b] and fₙ → f uniformly. Prove that <M>{"\\int_a^b f_n \\to \\int_a^b f"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses linearity and monotonicity of the integral to bound |∫fₙ − ∫f| by ∫|fₙ − f|.",
-          "Bounds ∫|fₙ − f| by (b − a) sup|fₙ − f|.",
-          "Concludes from uniform convergence that this bound tends to 0.",
-        ],
-      },
-    },
-    {
       key: "n2",
       rung: "stretch",
       prompt: <p>Compute ∫₀¹ (1 + x/2)² dx. Give four decimal places.</p>,

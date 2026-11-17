@@ -442,39 +442,6 @@ assert time.time() - t < 4, 'Walk the trie; do not try every end position.'` },
         ],
       },
     },
-    {
-      key: "lpm-proof",
-      rung: "prove",
-      prompt: <p>Prove that walking the trie along the text and remembering the last word end passed finds the longest stored word that is a prefix of the text, and that the walk can stop at the first missing edge.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "The node reached after reading text[:i] spells exactly text[:i], so it is marked as an end if and only if text[:i] is a stored word.",
-          "The walk visits these nodes for i = 1, 2, … in order, so the last marked one passed is the longest stored prefix among those visited.",
-          "If there is no edge for text[i], no stored word starts with text[:i + 1], so no longer prefix of the text is stored, and stopping loses nothing.",
-        ],
-      },
-    },
-    {
-      key: "fewest",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Give a vocabulary and a word for which greedy longest-match tokenisation uses more pieces than necessary, and describe
-          an algorithm using a trie that finds a segmentation with the fewest pieces in O(nL) time, where L is the length of the
-          longest vocabulary entry.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Gives a valid counterexample, such as the vocabulary {a, abc, bcde, d, e} and the word abcde: greedy gives abc + d + e, three pieces, while a + bcde uses two.",
-          "Defines best[i] = fewest pieces for text[i:], with best[n] = 0.",
-          "Computes best[i] = 1 + min over entries text[i:j] found by walking the trie from i, which visits at most L nodes.",
-          "Fills i from n − 1 down to 0 for O(nL) total, and recovers the pieces by storing the choice.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

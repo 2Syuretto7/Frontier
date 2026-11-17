@@ -399,34 +399,6 @@ for _ in range(50):
         ],
       },
     },
-    {
-      key: "batches",
-      rung: "prove",
-      prompt: <p>Prove that n requests of equal duration d, started in order with at most k in flight, finish at exactly ⌈n/k⌉·d.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "The first k start at 0 and finish together at d; by induction, requests (j − 1)k + 1 to jk start at (j − 1)d.",
-          "At time (j − 1)d exactly k slots free up at once, so the next k requests start then and no earlier, because all slots were busy.",
-          "The last request is in group ⌈n/k⌉, which starts at (⌈n/k⌉ − 1)d and ends at ⌈n/k⌉d.",
-          "Notes this is also a lower bound for any schedule with k in flight, since at most k·T units of request time fit in time T and n·d are needed, so ⌈n/k⌉ rounds of d are required.",
-        ],
-      },
-    },
-    {
-      key: "graham",
-      rung: "stretch",
-      prompt: <p>With unequal durations, show that starting requests in order whenever a slot is free gives a makespan at most (Σ durations)/k + max duration, and hence at most twice the best possible.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Considers the request that finishes last, starting at time s; before s all k slots were busy, otherwise it would have started earlier.",
-          "So k·s ≤ the total duration of the other requests, giving s ≤ Σ/k.",
-          "Its finish is s + its duration ≤ Σ/k + max duration.",
-          "Any schedule needs at least max(Σ/k, max duration), so the greedy one is within a factor 2 (Graham's list-scheduling bound).",
-        ],
-      },
-    },
   ],
 
   glimpse: (

@@ -266,25 +266,6 @@ assert len(dW1) == 2 and all(len(r) == 3 for r in dW1) and len(db1) == 2 and len
       },
     },
     {
-      key: "why-now",
-      rung: "prove",
-      prompt: (
-        <p>
-          Backpropagation was known in 1986, but deep learning took off only around 2012. Give a careful explanation of why,
-          naming what changed and why each change mattered.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that large networks need large data to avoid overfitting, and that large labelled data sets such as ImageNet appeared only around 2009.",
-          "Notes that training large networks needs enormous amounts of arithmetic, and that GPUs made this fast and cheap.",
-          "Mentions algorithmic and practical improvements that made deep networks easier to train.",
-          "Concludes that the combination, not any one change, was decisive.",
-        ],
-      },
-    },
-    {
       key: "errors",
       rung: "stretch",
       prompt: (

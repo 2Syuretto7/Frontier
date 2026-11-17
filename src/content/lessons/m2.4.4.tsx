@@ -280,26 +280,6 @@ assert np.allclose(bce_grad(z, y), num, atol=1e-8), 'The gradient is (σ(z) − 
       },
     },
     {
-      key: "softplus",
-      rung: "prove",
-      prompt: (
-        <p>
-          The softplus function is <M>{"s(x) = \\ln(1 + e^x)"}</M>. Show that <M>{"s'(x) = \\sigma(x)"}</M>, and that{" "}
-          <M>{"\\sigma(-x) = 1 - \\sigma(x)"}</M>. Then explain why a chain of n sigmoid layers can shrink a gradient by a
-          factor of at least <M>{"4^n"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Differentiates ln(1 + eˣ) by the chain rule to get eˣ/(1 + eˣ).",
-          "Divides top and bottom by eˣ to obtain 1/(1 + e⁻ˣ) = σ(x).",
-          "Shows σ(−x) = 1/(1 + eˣ) = 1 − σ(x) by putting the two fractions over a common denominator.",
-          "Explains that the chain rule multiplies one factor σ′ ≤ 1/4 per layer, so the product is at most (1/4)ⁿ.",
-        ],
-      },
-    },
-    {
       key: "xx",
       rung: "stretch",
       prompt: <p>What is the derivative of <M>{"x^x"}</M> at <M>{"x = 2"}</M>? Give three decimal places.</p>,

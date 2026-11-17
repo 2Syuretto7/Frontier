@@ -264,25 +264,6 @@ assert np.allclose(absorbing_time(P, [1, 2, 3]), [3, 4, 3]), 'A fair walk on 0 �
       },
     },
     {
-      key: "proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that every Markov matrix has 1 as an eigenvalue. Then show that P maps distributions to distributions: if u has
-          non-negative entries summing to 1, so does Pu.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Observes that each column of P − I sums to 0, so (1, …, 1)(P − I) = 0.",
-          "Concludes the rows of P − I are dependent, so P − I is singular and 1 is an eigenvalue.",
-          "Shows Pu has non-negative entries since P and u do.",
-          "Computes Σ_i (Pu)_i = Σ_j u_j Σ_i p_ij = Σ_j u_j = 1.",
-        ],
-      },
-    },
-    {
       key: "steps",
       rung: "stretch",
       prompt: (

@@ -276,26 +276,6 @@ def is_surjective(outputs, m):
       },
     },
     {
-      key: "range-proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the range of <M>{"f(x) = x^2 + 2x"}</M>, as a function from the reals to the reals, is the set of
-          reals at least <M>{"-1"}</M>. You must show two things: no value is below <M>{"-1"}</M>, and every value{" "}
-          <M>{"y \\ge -1"}</M> is taken.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Rewrites f(x) as (x + 1)² − 1, or equivalent.",
-          "Concludes f(x) ≥ −1 for every x because a square is never negative.",
-          "For a given y ≥ −1, exhibits an input such as x = −1 + √(y + 1).",
-          "Checks that this input gives f(x) = y.",
-        ],
-      },
-    },
-    {
       key: "count",
       rung: "stretch",
       prompt: (

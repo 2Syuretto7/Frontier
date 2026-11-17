@@ -224,25 +224,6 @@ assert bayes_threshold(1, 4) == 0.2 and abs(t - 0.2) < 0.03, 'With calibrated pr
       },
     },
     {
-      key: "explain",
-      rung: "prove",
-      prompt: (
-        <p>
-          A fraud model has 99.5% accuracy on data where 0.5% of transactions are fraudulent. Explain why this number alone
-          tells you almost nothing, and say what you would report instead.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that predicting 'not fraud' for everything also gives 99.5% accuracy.",
-          "Explains that accuracy is dominated by the common class and can hide catching no fraud at all.",
-          "Proposes reporting the confusion matrix, or the fraction of frauds caught and the number of false alarms.",
-          "Mentions comparing against the majority-class baseline and considering the costs of each kind of error.",
-        ],
-      },
-    },
-    {
       key: "cost",
       rung: "stretch",
       prompt: <p>A false alarm costs &#8377;100 and a miss costs &#8377;900. By the lesson&rsquo;s rule, above what probability should the model predict positive?</p>,

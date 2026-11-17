@@ -283,25 +283,6 @@ assert X.shape == (40000, 2) and np.allclose(X.mean(axis=0), [1, -1], atol=0.05)
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Suppose C = U diag(λ₁, …, λ_k, σ², …, σ²) Uᵀ, where U also diagonalises the sample covariance S with eigenvalues
-          λ₁, …, λ_d. Prove that the Gaussian log-likelihood −(n/2)(log det C + tr(C⁻¹S)) + const is maximised over σ² by the
-          mean of λ_(k+1), …, λ_d.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes log det C = Σ_(i≤k) log λᵢ + (d − k) log σ² and tr(C⁻¹S) = k + Σ_(i>k) λᵢ/σ².",
-          "Differentiates with respect to σ² and sets the derivative to zero, obtaining σ² = (1/(d − k)) Σ_(i>k) λᵢ.",
-          "Checks it is a maximum, for example by the sign change of the derivative.",
-        ],
-      },
-    },
-    {
       key: "shrink",
       rung: "stretch",
       prompt: <p>One latent dimension with W = (2, 1, −1)ᵀ, μ = 0 and σ² = 0.5. What is the posterior mean of z at x = (2, 1, −1)? Give four decimal places.</p>,

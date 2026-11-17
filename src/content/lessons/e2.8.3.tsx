@@ -373,34 +373,6 @@ assert time.perf_counter() - start < 15, 'Too slow: only cells within k of the d
         ],
       },
     },
-    {
-      key: "metric",
-      rung: "prove",
-      prompt: <p>Prove that edit distance satisfies the triangle inequality: d(a, c) ≤ d(a, b) + d(b, c).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes an optimal edit sequence from a to b, of length d(a, b), and one from b to c, of length d(b, c).",
-          "Concatenates them into a sequence of single-character edits turning a into c.",
-          "Its length is d(a, b) + d(b, c), and d(a, c) is the minimum over all such sequences.",
-          "Notes symmetry (reverse each edit) and d = 0 only for equal strings, so edit distance is a metric.",
-        ],
-      },
-    },
-    {
-      key: "band",
-      rung: "stretch",
-      prompt: <p>Prove that D[i][j] ≥ |i − j| for every cell, and use it to justify computing only the band |i − j| ≤ k when deciding whether the distance is at most k. What is the cost?</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows any edit sequence between strings of lengths i and j needs at least |i − j| insertions or deletions, since substitutions keep the length.",
-          "Argues that any optimal path to cell (n, m) with value at most k passes only through cells with value at most k.",
-          "Since values never decrease along a path through the table, such a path stays inside |i − j| ≤ k, so cells outside the band can be treated as more than k.",
-          "Gives the cost O(k · min(n, m)) time and O(k) memory per row.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

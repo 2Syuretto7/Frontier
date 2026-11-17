@@ -261,24 +261,6 @@ assert abs(logsumexp(a) - np.log(np.exp(a).sum())) < 1e-12 and abs(logsumexp(a +
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          For distributions p and q on a finite set with q(y) &gt; 0 wherever p(y) &gt; 0, prove that{" "}
-          <M>{"\\mathbb E_p[-\\log q(Y)] \\geq \\mathbb E_p[-\\log p(Y)]"}</M>, with equality only when q = p.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Rewrites the difference of the two sides as Σ p(y) log(p(y)/q(y)) over y with p(y) > 0.",
-          "Applies Jensen's inequality to the concave log to show Σ p log(q/p) ≤ log Σ q ≤ 0.",
-          "Argues the equality case: q/p must be constant on the support of p and the constant must be 1, so q = p.",
-        ],
-      },
-    },
-    {
       key: "uniform",
       rung: "stretch",
       prompt: <p>A model predicts the uniform distribution over 10 classes on every example. What is its average negative log-likelihood per example? Give four decimal places.</p>,

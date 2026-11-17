@@ -304,24 +304,6 @@ assert errs[-1] < errs[0]` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if Ax = b (b ≠ 0, A invertible) and A(x + δx) = b + δb, then ‖δx‖/‖x‖ ≤ ‖A‖‖A⁻¹‖ · ‖δb‖/‖b‖ for any
-          operator norm.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Derives δx = A⁻¹δb and bounds ‖δx‖ ≤ ‖A⁻¹‖‖δb‖.",
-          "Uses ‖b‖ = ‖Ax‖ ≤ ‖A‖‖x‖ to get 1/‖x‖ ≤ ‖A‖/‖b‖.",
-          "Multiplies the two inequalities to obtain the bound.",
-        ],
-      },
-    },
-    {
       key: "steps",
       rung: "stretch",
       prompt: (

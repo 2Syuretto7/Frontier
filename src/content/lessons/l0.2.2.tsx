@@ -234,25 +234,6 @@ def r_squared(m, c, xs, ys):
       },
     },
     {
-      key: "two-points",
-      rung: "prove",
-      prompt: (
-        <p>
-          With only two data points, <M>{"(1, 3)"}</M> and <M>{"(4, 9)"}</M>, find the line <M>{"\\hat y = wx + b"}</M>{" "}
-          with zero squared error, and explain why no other line does as well. Then explain why a zero training error from
-          just two points should not make you confident.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Finds w = 2 and b = 1 from the slope (9 − 3)/(4 − 1) and the point (1, 3).",
-          "Explains that the error is zero only if the line passes through both points, and exactly one line does.",
-          "Notes that any two points can be fitted perfectly, so the fit says nothing about whether the relation is really linear or how noisy it is.",
-        ],
-      },
-    },
-    {
       key: "best-w",
       rung: "stretch",
       prompt: (

@@ -277,43 +277,6 @@ assert grad_check(fs, dfs, 0.4) < 1e-7, 'Agree with the numerical slope.'` },
         ],
       },
     },
-    {
-      key: "even-odd",
-      rung: "prove",
-      prompt: (
-        <p>
-          A function is even if <M>{"f(-x) = f(x)"}</M> for all x, and odd if <M>{"f(-x) = -f(x)"}</M>. Use the chain rule to
-          prove that the derivative of a differentiable even function is odd.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Differentiates both sides of f(−x) = f(x).",
-          "Applies the chain rule on the left to get −f′(−x).",
-          "Concludes f′(−x) = −f′(x), so f′ is odd.",
-        ],
-      },
-    },
-    {
-      key: "flaw",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Give an example of differentiable functions f and g, and a point x, where <M>{"g(x + h) - g(x) = 0"}</M> for
-          infinitely many h arbitrarily close to 0, so that the tempting proof of the chain rule breaks down. Does the chain
-          rule still hold at your point?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Gives an example such as g(x) = x² sin(1/x) with g(0) = 0, at x = 0 (or a constant function).",
-          "Shows g(h) = 0 at h = 1/(nπ), points arbitrarily close to 0.",
-          "Confirms the chain rule still holds there, for example because g′(0) = 0 and the composite's difference quotient tends to 0.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

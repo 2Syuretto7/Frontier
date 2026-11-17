@@ -293,24 +293,6 @@ assert 0 < v1[0] < 1` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          (X, Y) is bivariate normal with means 0, variances <M>{"\\sigma_X^2, \\sigma_Y^2"}</M> and covariance c. Let{" "}
-          <M>{"W = X - (c/\\sigma_Y^2)Y"}</M>. Prove that W is independent of Y, and deduce E[X | Y = y] and Var(X | Y = y).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes Cov(W, Y) = c − (c/σ_Y²)σ_Y² = 0.",
-          "Argues (W, Y) is jointly normal (a linear image of (X, Y)), so zero covariance implies independence.",
-          "Writes X = W + (c/σ_Y²)Y and concludes, given Y = y, mean (c/σ_Y²)y and variance Var(W) = σ_X² − c²/σ_Y².",
-        ],
-      },
-    },
-    {
       key: "three",
       rung: "stretch",
       prompt: <p>X ~ N(0, Σ) with Σ = [[2, 1, 0], [1, 2, 1], [0, 1, 2]]. What is Var(X₁ | X₂, X₃)? Give four decimal places.</p>,

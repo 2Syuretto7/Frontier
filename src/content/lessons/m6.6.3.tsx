@@ -287,19 +287,6 @@ assert np.isclose(conv_spectral_norm(np.array([1.0, -1.0, 0.0, 0.0])), 2.0)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that if an n×n matrix A commutes with the cyclic shift S, then A is circulant.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes AS^k = S^kA for all k (by induction) and that eₖ = S^ke₀.",
-          "Computes column k of A as Aeₖ = AS^ke₀ = S^k(Ae₀), the first column shifted cyclically k places.",
-          "Concludes A = circ(first column of A).",
-        ],
-      },
-    },
-    {
       key: "det",
       rung: "stretch",
       prompt: <p>What is the determinant of the 3×3 circulant circ(1, 1, 0)?</p>,

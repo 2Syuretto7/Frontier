@@ -293,19 +293,6 @@ assert chernoff(b, 40, [0.0, 0.5, 1.0]) == 1.0 and abs(chernoff(binom_dist(10, 0
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that if X and Y are independent and both have MGFs, then <M>{"M_{X+Y}(t) = M_X(t)M_Y(t)"}</M>.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes e^{t(X+Y)} = e^{tX}·e^{tY}.",
-          "Notes that e^{tX} and e^{tY} are independent because they are functions of the independent X and Y.",
-          "Uses E[UV] = E[U]E[V] for independent U, V with finite expectations to conclude.",
-        ],
-      },
-    },
-    {
       key: "z4",
       rung: "stretch",
       prompt: <p>Using the MGF <M>{"e^{t^2/2}"}</M> of the standard normal Z, find E[Z⁴].</p>,

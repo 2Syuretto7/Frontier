@@ -267,24 +267,6 @@ assert abs(np.sum(G * S) + 2.0 * sv[0]) < 1e-10 and abs(np.linalg.svd(S, compute
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Given h_(k+1) ≤ (1 − γ_k)h_k + γ_k²C/2 for all k ≥ 0, with γ_k = 2/(k + 2) and h_k ≥ 0, prove that h_k ≤ 2C/(k + 2) for
-          every k ≥ 1.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Handles the base case: γ₀ = 1 gives h₁ ≤ C/2 ≤ 2C/3.",
-          "In the inductive step substitutes h_k ≤ 2C/(k + 2) and γ_k = 2/(k + 2) to get h_(k+1) ≤ 2C(k + 1)/(k + 2)².",
-          "Uses (k + 1)(k + 3) ≤ (k + 2)² to conclude h_(k+1) ≤ 2C/(k + 3).",
-        ],
-      },
-    },
-    {
       key: "x3",
       rung: "stretch",
       prompt: <p>Frank-Wolfe on f(x) = ½(x − 0.3)² over C = [0, 1], from x₀ = 0, with γ_k = 2/(k + 2). What is x₃?</p>,

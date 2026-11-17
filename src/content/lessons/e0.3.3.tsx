@@ -305,25 +305,6 @@ assert len(h1()) == 2, 'history returns a copy.'` },
       },
     },
     {
-      key: "noglobals",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why a function that receives its inputs as parameters and returns its result is easier to understand,
-          reuse and test than one that reads and changes global variables. Illustrate with a short example of each.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Gives a function that changes a global, and an equivalent one using a parameter and return.",
-          "Explains that the global version can change or depend on state anywhere in the program, so its effect cannot be understood locally.",
-          "Explains that the parameter version's behaviour depends only on its arguments, so it can be reused in other programs.",
-          "Explains that the parameter version can be tested by calling it with chosen values and checking the result, without setting up global state.",
-        ],
-      },
-    },
-    {
       key: "layers",
       rung: "stretch",
       prompt: (

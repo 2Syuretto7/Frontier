@@ -328,24 +328,6 @@ assert abs(float(kahan_sum(y)) - exact) <= 0.01, (kahan_sum(y), exact)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Using fl(a + b) = (a + b)(1 + δ) with |δ| ≤ u, show that summing x₁, …, xₙ left to right has error at most (n − 1)u·Σ|xᵢ|
-          plus terms of order u², and explain why pairwise summation does better.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the computed partial sums with one factor (1 + δₖ) per addition and unrolls them, so each xᵢ is multiplied by at most n − 1 such factors.",
-          "Bounds each product of factors as 1 + θ with |θ| ≤ (n − 1)u + O(u²), and sums to get |error| ≤ (n − 1)u Σ|xᵢ| + O(u²).",
-          "Explains that in pairwise summation each xᵢ passes through only about log₂ n additions, so the bound becomes about u·log₂n·Σ|xᵢ|.",
-        ],
-      },
-    },
-    {
       key: "bits",
       rung: "stretch",
       prompt: <p>How many bits of precision does a float32 significand have, counting the implicit leading 1?</p>,

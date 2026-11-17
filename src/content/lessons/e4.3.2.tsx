@@ -324,25 +324,6 @@ for d, err, word in [
       },
     },
     {
-      key: "assoc",
-      rung: "prove",
-      prompt: (
-        <p>
-          Show with an example that the reading exercise&rsquo;s <C>merge</C> is not associative: <C>merge(merge(a, b), c)</C>{" "}
-          can differ from <C>merge(a, merge(b, c))</C>. Then argue that it is associative when, for every key path, the value
-          is either a dict in every config that has it or a dict in none.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Gives a valid counterexample, typically where a key holds a dict in a and c but a non-dict in b, and computes both sides.",
-          "For the argument, considers a single key and splits into cases by which of a, b, c contain it.",
-          "Shows that for non-dict values both sides take the value from the last config containing the key, and that for dict values both sides merge recursively, so the result follows by induction on depth.",
-        ],
-      },
-    },
-    {
       key: "random",
       rung: "stretch",
       prompt: (

@@ -310,34 +310,6 @@ for _ in range(200):
         ],
       },
     },
-    {
-      key: "overflow",
-      rung: "prove",
-      prompt: <p>Prove that a w-bit signed addition overflows exactly when both operands have the same sign and the result&rsquo;s sign differs from theirs.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "If the signs differ, the true sum lies between the operands, so it is in range and no overflow occurs.",
-          "If both are non-negative and the sum exceeds 2^(w−1) − 1, the stored result is sum − 2^w, which is negative.",
-          "If both are negative and the sum is below −2^(w−1), the stored result is sum + 2^w, which is non-negative.",
-          "Conversely, if the sum is in range the stored result equals it, so its sign matches the operands'.",
-        ],
-      },
-    },
-    {
-      key: "signext",
-      rung: "stretch",
-      prompt: <p>Prove that sign extension preserves the value: if a w-bit pattern represents v in two&rsquo;s complement, copying its top bit into k new high bits gives a (w + k)-bit pattern that also represents v.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Handles a top bit of 0: the new bits are 0 and the value is unchanged.",
-          "With top bit 1, writes the new value with weight −2^(w+k−1) on the new top bit and +2^i on the other copied bits.",
-          "Sums −2^(w+k−1) + 2^(w+k−2) + … + 2^(w−1) = −2^(w−1), the old top bit's weight.",
-          "Concludes the remaining bits contribute the same as before, so the value is v; or argues by induction on k with k = 1.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

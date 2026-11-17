@@ -276,24 +276,6 @@ def gap(a, b, c, d):
       },
     },
     {
-      key: "reverse",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"|a| - |b| \\le |a - b|"}</M> for all real <M>a</M>, <M>b</M>, using the triangle inequality.
-          (Hint: <M>{"a = (a - b) + b"}</M>.)
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes a as (a - b) + b.",
-          "Applies the triangle inequality to get |a| ≤ |a - b| + |b|.",
-          "Rearranges to |a| - |b| ≤ |a - b|.",
-        ],
-      },
-    },
-    {
       key: "two-distances",
       rung: "stretch",
       prompt: <p>How many integers <M>n</M> satisfy <M>{"|n - 5| + |n + 3| = 8"}</M>?</p>,

@@ -253,38 +253,6 @@ assert hasse(A, lambda a, b: b % a == 0) == {(1, 2), (1, 3), (2, 4), (2, 6), (3,
         ],
       },
     },
-    {
-      key: "unique-least",
-      rung: "prove",
-      prompt: <p>Prove that a poset has at most one least element.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Supposes a and b are both least elements.",
-          "Uses that a is least to get a ⪯ b, and that b is least to get b ⪯ a.",
-          "Applies antisymmetry to conclude a = b.",
-        ],
-      },
-    },
-    {
-      key: "finite-minimal",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Prove that every non-empty finite poset has a minimal element. Then show by example that it need not have a least
-          element, and that an infinite poset need not have a minimal element.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Starts from any element and repeatedly steps to a strictly smaller one if possible.",
-          "Argues the process cannot repeat an element (by antisymmetry and transitivity) and so stops, since the poset is finite.",
-          "Gives an example with two minimal elements and no least one, such as {2, 3} under divisibility.",
-          "Gives an infinite example with no minimal element, such as the integers under ≤.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

@@ -271,19 +271,6 @@ assert np.allclose(gd_fit(X, y, 0.3, 5000), np.linalg.lstsq(X, y, rcond=None)[0]
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that any w satisfying XᵀXw = Xᵀy minimises ‖y − Xw‖², and that w + d is also a minimiser if and only if Xd = 0.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Expands RSS(w + d) = RSS(w) − 2dᵀXᵀ(y − Xw) + ‖Xd‖².",
-          "Uses the normal equations to make the cross term vanish, so RSS(w + d) = RSS(w) + ‖Xd‖² ≥ RSS(w).",
-          "Concludes equality holds exactly when ‖Xd‖ = 0, that is Xd = 0.",
-        ],
-      },
-    },
-    {
       key: "rho",
       rung: "stretch",
       prompt: <p>Two standardised features have correlation 0.9, so XᵀX/n = [[1, 0.9], [0.9, 1]]. What is its condition number?</p>,

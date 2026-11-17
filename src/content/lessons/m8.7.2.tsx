@@ -272,19 +272,6 @@ assert thomae(Fraction(3, 9)) == Fraction(1, 3) and thomae(1) == 1 and thomae(0.
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that an increasing function on [a, b] is Riemann integrable.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses a partition into n equal cells and notes that on each cell the supremum is f(x_k) and the infimum f(x_(k−1)).",
-          "Telescopes U − L to (f(b) − f(a))(b − a)/n.",
-          "Chooses n large enough that this is below ε and applies the integrability criterion.",
-        ],
-      },
-    },
-    {
       key: "exp",
       rung: "stretch",
       prompt: <p>For eˣ on [0, 1] with equal cells, what is the smallest n with U − L &lt; 0.01?</p>,

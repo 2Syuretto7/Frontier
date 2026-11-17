@@ -325,24 +325,6 @@ assert d_separated(G, "V", "Z", ["X"]) and d_separated(G, "V", "Y", ["X", "W"]) 
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Suppose p(a, b, c) = p(a) p(c) p(b | a, c), a collider a → b ← c. Prove that a and c are independent, and show by
-          an explicit example that they need not be independent given b.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Sums the factorisation over b, using Σ_b p(b | a, c) = 1, to get p(a, c) = p(a) p(c).",
-          "Gives a concrete conditional p(b | a, c), such as b = a OR c with fair coins, and computes P(a | b) and P(a | b, c) (or p(a, c | b) against p(a | b) p(c | b)).",
-          "Shows the two differ, so a and c are dependent given b.",
-        ],
-      },
-    },
-    {
       key: "sprink",
       rung: "stretch",
       prompt: <p>In the sprinkler network of the code (P(R = 1) = 0.2, P(S = 1) = 0.1, and the table for W), what is P(S = 1 | W = 1)? Give four decimal places.</p>,

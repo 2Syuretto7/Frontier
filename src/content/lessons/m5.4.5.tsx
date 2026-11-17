@@ -276,25 +276,6 @@ assert L < 0.5 * first, (first, L)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that for Y = XW and a scalar loss L with <M>{"\\bar Y = \\nabla_Y L"}</M>,{" "}
-          <M>{"\\nabla_W L = X^\\top \\bar Y"}</M> and <M>{"\\nabla_X L = \\bar Y W^\\top"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes dL = tr(Ȳᵀ dY) and dY = dX W + X dW by the product rule.",
-          "For W: rewrites tr(Ȳᵀ X dW) = tr((XᵀȲ)ᵀ dW) and reads off XᵀȲ.",
-          "For X: cycles tr(Ȳᵀ dX W) = tr(W Ȳᵀ dX) = tr((ȲWᵀ)ᵀ dX) and reads off ȲWᵀ.",
-          "(Alternatively, an index computation ∂L/∂W_jk = Σ_b X_bj Ȳ_bk is complete.)",
-        ],
-      },
-    },
-    {
       key: "flops",
       rung: "stretch",
       prompt: (

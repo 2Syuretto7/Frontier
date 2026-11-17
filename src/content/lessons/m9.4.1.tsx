@@ -243,19 +243,6 @@ assert abs(z_power(0, 10) - 0.05) < 1e-3 and z_power(1, 16) > 0.97` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>For iid N(μ, σ²) data with σ known, prove that the test rejecting μ = 0 when |√n X̄/σ| &gt; z_(α/2) has size α and that its power at any fixed μ ≠ 0 tends to 1 as n → ∞.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that Z = √n X̄/σ is N(√nμ/σ, 1), in particular N(0, 1) under μ = 0.",
-          "Computes the size: P(|Z| > z_(α/2)) = 2Φ(−z_(α/2)) = α under μ = 0.",
-          "Shows the power Φ(−z + s) + Φ(−z − s) with s = √nμ/σ tends to 1 because |s| → ∞, or an equivalent argument.",
-        ],
-      },
-    },
-    {
       key: "n80",
       rung: "stretch",
       prompt: <p>Using n = ((1.96 + 0.8416)/δ)² for the two-sided z-test with σ = 1, how many observations give 80% power at δ = 0.25? Round up to a whole number.</p>,

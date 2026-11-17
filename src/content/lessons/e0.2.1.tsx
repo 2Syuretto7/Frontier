@@ -297,25 +297,6 @@ assert sum(is_right(a, b, c) for a in range(1, 30) for b in range(a, 30) for c i
       },
     },
     {
-      key: "fix",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why the grade program in the exercise above gives every passing student a C, and rewrite it so that 90
-          and above is an A, 70 to 89 a B, 50 to 69 a C, and below 50 an F. Explain why your version is correct for every
-          score.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains that only the first true condition runs, and score >= 50 is true for every passing score, so the later branches are never reached.",
-          "Orders the conditions from the highest threshold down (>= 90, then >= 70, then >= 50), with else giving F.",
-          "Argues that each score reaches the first threshold it meets, which is the right band because all higher thresholds were already false.",
-        ],
-      },
-    },
-    {
       key: "leap",
       rung: "stretch",
       prompt: <p>How many of the years 1900, 2000, 2023 and 2024 are leap years by the rule in the lesson?</p>,

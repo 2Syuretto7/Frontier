@@ -301,19 +301,6 @@ def split_gain(parent, left, right, impurity):
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that splitting n targets into groups of sizes n_L and n_R with means ȳ_L and ȳ_R reduces the sum of squared errors by (n_L n_R/n)(ȳ_L − ȳ_R)².</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Decomposes each group's squared deviations from ȳ into deviations from the group mean plus n_g(ȳ_g − ȳ)², so the fall is n_L(ȳ_L − ȳ)² + n_R(ȳ_R − ȳ)².",
-          "Uses ȳ = (n_Lȳ_L + n_Rȳ_R)/n to write ȳ_L − ȳ = (n_R/n)(ȳ_L − ȳ_R) and ȳ_R − ȳ = −(n_L/n)(ȳ_L − ȳ_R).",
-          "Substitutes and simplifies n_Ln_R²/n² + n_Rn_L²/n² = n_Ln_R/n.",
-        ],
-      },
-    },
-    {
       key: "prune",
       rung: "stretch",
       prompt: <p>An internal node has error R(t) = 0.30 if collapsed, and its subtree has 3 leaves with total error 0.18. At what α does collapsing it become worthwhile?</p>,

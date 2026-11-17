@@ -304,24 +304,6 @@ assert np.allclose(o, [0.2, 0.2, 0.6, 0.0]) and len(o) == 4` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if π satisfies detailed balance for P, then π is stationary, and use this to show that the simple random
-          walk on a connected graph with m edges has stationary distribution <M>{"\\pi_i = d_i/2m"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Sums π_i P_ij = π_j P_ji over i and uses that row j of P sums to 1 to get (πP)_j = π_j.",
-          "For the walk, computes π_i P_ij = (d_i/2m)(1/d_i) = 1/2m for each edge {i, j} and 0 for non-edges, which is symmetric.",
-          "Checks Σ_i d_i/2m = 1 (the degrees sum to 2m), so π is a probability vector, and concludes it is stationary.",
-        ],
-      },
-    },
-    {
       key: "return",
       rung: "stretch",
       prompt: (

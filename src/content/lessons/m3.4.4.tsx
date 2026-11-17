@@ -258,24 +258,6 @@ assert intersection_dim(U, W) == 1 and intersection_dim([[1, 0, 0, 0], [0, 1, 0,
       },
     },
     {
-      key: "extend",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let V have dimension n. Prove that any n independent vectors in V span V, so they form a basis. You may use that every
-          basis has n vectors and that n + 1 vectors in V are always dependent.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Supposes some v in V is not in the span of the n independent vectors.",
-          "Shows the n + 1 vectors, including v, are then independent: in a dependency, the coefficient of v must be 0, and then the original n force the rest to 0.",
-          "Contradicts the fact that n + 1 vectors in an n-dimensional space are dependent.",
-        ],
-      },
-    },
-    {
       key: "poly",
       rung: "stretch",
       prompt: <p>What is the dimension of the space of polynomials p of degree at most 4 with p(0) = 0 and p(1) = 0?</p>,

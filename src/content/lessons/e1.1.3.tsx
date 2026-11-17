@@ -265,25 +265,6 @@ assert codes == [2, 2, 2, 0], 'argparse exits with 2 on errors and 0 for --help.
       },
     },
     {
-      key: "script",
-      rung: "prove",
-      prompt: (
-        <p>
-          Write a script <C>top_cities.sh</C> that takes a CSV file name and a number <C>N</C> as arguments and prints the{" "}
-          <C>N</C> cities with the most orders. Explain each stage, how you make it runnable, and why the arguments are quoted.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Begins with a #!/bin/bash line, and ideally set -euo pipefail.",
-          "Uses a pipeline such as grep -v date \"$1\" | cut -d , -f 2 | sort | uniq -c | sort -rn | head -n \"$2\", explaining each stage.",
-          "Makes it executable with chmod +x and runs it as ./top_cities.sh orders.csv 3.",
-          "Explains that quoting \"$1\" keeps a file name with spaces as a single argument.",
-        ],
-      },
-    },
-    {
       key: "andor",
       rung: "stretch",
       prompt: <p>In this terminal, <C>./city.sh Pune &amp;&amp; echo found || echo none</C> prints how many lines?</p>,

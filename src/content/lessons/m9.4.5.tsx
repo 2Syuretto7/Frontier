@@ -274,19 +274,6 @@ assert abs(f - 0.2) < 0.03 and abs(a - f) < 1e-9` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that Holm&apos;s step-down procedure controls the family-wise error rate at α, for any dependence between the p-values.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Considers the first true null in sorted order, at position j, and notes that at most m − m₀ hypotheses precede it, so j ≤ m − m₀ + 1.",
-          "Concludes its threshold α/(m − j + 1) is at most α/m₀, so any false rejection requires some true-null p-value ≤ α/m₀.",
-          "Applies the union bound over the m₀ true nulls: probability at most m₀ · α/m₀ = α.",
-        ],
-      },
-    },
-    {
       key: "sidak",
       rung: "stretch",
       prompt: <p>For 10 independent tests, what per-test level a gives exactly 1 − (1 − a)^10 = 0.05? Give four decimal places.</p>,

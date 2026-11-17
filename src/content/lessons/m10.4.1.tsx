@@ -262,24 +262,6 @@ assert abs(l - 4.0) < 1e-9 and abs(v - 4.0) < 1e-6` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          For the problem of minimising f₀(x) subject to fᵢ(x) ≤ 0 and hⱼ(x) = 0, prove that the dual function g(λ, ν) =
-          infₓ L(x, λ, ν) is concave and that g(λ, ν) ≤ p* whenever λ ≥ 0.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Observes that L(x, λ, ν) is affine in (λ, ν) for each fixed x, so g, a pointwise infimum of affine functions, is concave.",
-          "For a feasible x̃ and λ ≥ 0, shows Σλᵢfᵢ(x̃) ≤ 0 and Σνⱼhⱼ(x̃) = 0, hence L(x̃, λ, ν) ≤ f₀(x̃).",
-          "Concludes g(λ, ν) ≤ L(x̃, λ, ν) ≤ f₀(x̃) and takes the infimum over feasible x̃ to get g ≤ p*.",
-        ],
-      },
-    },
-    {
       key: "lp",
       rung: "stretch",
       prompt: <p>Minimise x₁ + 2x₂ subject to x₁ + x₂ = 1 and x ≥ 0. What is the optimal value of the dual problem, maximising −bᵀν subject to c + Aᵀν ≥ 0?</p>,

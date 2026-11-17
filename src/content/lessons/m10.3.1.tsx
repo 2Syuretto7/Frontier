@@ -290,24 +290,6 @@ assert np.allclose(x, [0.5, -1.0], atol=1e-8)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let P be positive semidefinite. Suppose x and ν satisfy Px + q + Aᵀν = 0 and Ax = b. Prove that x minimises
-          ½xᵀPx + qᵀx over all points satisfying Ax = b.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that f is convex because P is positive semidefinite, so f(y) ≥ f(x) + ∇f(x)ᵀ(y − x) with ∇f(x) = Px + q.",
-          "For feasible y, uses A(y − x) = 0 and ∇f(x) = −Aᵀν to show ∇f(x)ᵀ(y − x) = −νᵀA(y − x) = 0.",
-          "Concludes f(y) ≥ f(x) for every feasible y.",
-        ],
-      },
-    },
-    {
       key: "proj",
       rung: "stretch",
       prompt: <p>Minimise ½‖x‖² subject to x₁ + 2x₂ = 5. What is the optimal value?</p>,

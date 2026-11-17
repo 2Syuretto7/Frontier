@@ -260,24 +260,6 @@ assert abs(d - 1 / level(a, 0.8)) < 1e-5 and abs(capacity(a, 0.0 + 1e-12) - np.l
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Assume strong duality holds for a problem with dual optimum (λ*, ν*). Prove that the perturbed optimal value
-          satisfies p*(u, v) ≥ p*(0, 0) − λ*ᵀu − ν*ᵀv for all u, v.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Starts from p*(0, 0) = g(λ*, ν*) ≤ L(x, λ*, ν*) for any x, using strong duality and the definition of g.",
-          "For x feasible for the perturbed problem, bounds Σλᵢ*fᵢ(x) ≤ λ*ᵀu (using λ* ≥ 0) and Σνⱼ*hⱼ(x) = ν*ᵀv.",
-          "Rearranges to f₀(x) ≥ p*(0, 0) − λ*ᵀu − ν*ᵀv and takes the infimum over perturbed-feasible x.",
-        ],
-      },
-    },
-    {
       key: "marg",
       rung: "stretch",
       prompt: <p>Water-filling with floors (0, 1) and budget 3. What is the marginal capacity, the rate at which the optimal Σ log(αᵢ + xᵢ) grows with the budget?</p>,

@@ -257,25 +257,6 @@ assert bagging_variance(same, 10, 0) < 1e-3, 'Identical models gain nothing from
       },
     },
     {
-      key: "derive",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove the bias-variance decomposition <M>{"\\mathbb{E}(y - \\hat f_D(x))^2 = \\sigma^2 + \\operatorname{bias}^2 + \\operatorname{var}"}</M>,
-          stating exactly where you use independence and where you use the definition of <M>{"\\bar f"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Splits y − f̂ into ε + (f − f̄) + (f̄ − f̂) and expands the square into three squares and three cross terms.",
-          "Identifies the expectations of the squares as σ², bias² and variance.",
-          "Kills the cross terms with ε using E ε = 0 and the independence of ε from the training data.",
-          "Kills the remaining cross term because f − f̄ is constant in D and E_D(f̄ − f̂) = 0 by definition of f̄.",
-        ],
-      },
-    },
-    {
       key: "bestc",
       rung: "stretch",
       prompt: <p>For the estimator <M>{"c\\,\\bar x"}</M> with <M>{"\\mu = 1"}</M>, <M>{"\\sigma^2 = 4"}</M> and <M>{"n = 4"}</M>, which <M>c</M> minimises the mean squared error?</p>,

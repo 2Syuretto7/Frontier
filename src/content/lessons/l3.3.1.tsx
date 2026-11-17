@@ -259,19 +259,6 @@ assert np.allclose(fit_linear_mse(X, y), [2.0, -1.0, 0.5])` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that the constant c minimising Σᵢ (yᵢ − c)² is the mean of the yᵢ.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Either sets the derivative −2Σ(yᵢ − c) to zero and notes the function is a convex quadratic, or uses the decomposition Σ(yᵢ − ȳ)² + n(ȳ − c)².",
-          "Shows the cross term vanishes (Σ(yᵢ − ȳ) = 0) or solves Σ(yᵢ − c) = 0 to get c = ȳ.",
-          "Concludes ȳ is the unique minimiser (second derivative 2n > 0, or the n(ȳ − c)² term).",
-        ],
-      },
-    },
-    {
       key: "hval",
       rung: "stretch",
       prompt: <p>What is the Huber loss with δ = 1 at residual r = 3?</p>,

@@ -289,24 +289,6 @@ for _ in range(50):
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove Gibbs&apos; inequality: for pmfs p and q on a finite set with all <M>{"q_i > 0"}</M>,{" "}
-          <M>{"\\sum_i p_i\\log(p_i/q_i) \\ge 0"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Introduces a random variable X equal to qᵢ/pᵢ with probability pᵢ (over i with pᵢ > 0), so that −D(p‖q) = E[log X].",
-          "Applies Jensen's inequality for the concave logarithm: E[log X] ≤ log E[X].",
-          "Computes E[X] = Σ_{pᵢ > 0} qᵢ ≤ 1, so log E[X] ≤ 0, and concludes D(p‖q) ≥ 0.",
-        ],
-      },
-    },
-    {
       key: "best",
       rung: "stretch",
       prompt: (

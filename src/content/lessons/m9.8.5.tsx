@@ -321,25 +321,6 @@ assert cv_acc(X, y, 20, leak=True) > 0.85 and cv_acc(X, y, 20) < 0.75` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Units fall into blocks of equal even size, with <M>{"y_i(0) = a_{g(i)} + \\varepsilon_i"}</M> and{" "}
-          <M>{"y_i(1) = y_i(0) + \\tau"}</M>. Prove that if exactly half of each block is treated, the difference in means is{" "}
-          <M>{"\\tau + \\bar\\varepsilon_1 - \\bar\\varepsilon_0"}</M>, so the block effects do not affect it.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Observes that each arm contains the same number of units from every block.",
-          "Writes the treated mean as the average of the a_g plus τ plus the mean ε of the treated units, and the control mean as the same average of a_g plus the mean ε of the controls.",
-          "Subtracts so that the a_g terms cancel, leaving τ + ε̄₁ − ε̄₀.",
-        ],
-      },
-    },
-    {
       key: "spread",
       rung: "stretch",
       prompt: (

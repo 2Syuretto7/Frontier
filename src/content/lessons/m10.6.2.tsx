@@ -283,24 +283,6 @@ assert abs(g - 4 / 9) < 1e-12 and abs(n - 0.16) < 1e-12` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let f be convex and L-smooth, g = ∇f(y) and x⁺ = y − g/L. Prove that for every u, f(x⁺) ≤ f(u) + gᵀ(y − u) −
-          ‖g‖²/(2L).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Applies the descent lemma with step 1/L to get f(x⁺) ≤ f(y) − ‖g‖²/(2L).",
-          "Applies the first-order convexity condition at y: f(u) ≥ f(y) + gᵀ(u − y), so f(y) ≤ f(u) + gᵀ(y − u).",
-          "Combines the two inequalities to obtain the claim for arbitrary u.",
-        ],
-      },
-    },
-    {
       key: "x3",
       rung: "stretch",
       prompt: <p>Run Nesterov&apos;s method on f(x) = x²/2 with the (over-cautious) constant L = 2, from x₀ = 1. What is x₃?</p>,

@@ -264,26 +264,6 @@ assert np.allclose(minibatch_sgd(X, y, 0.05, 30, 16, 0), [1, -2, 3, 0.5], atol=1
       },
     },
     {
-      key: "factor",
-      rung: "prove",
-      prompt: (
-        <p>
-          For <M>{"L(w) = (w - c)^2"}</M>, show that one gradient descent step multiplies the distance to <M>c</M> by{" "}
-          <M>{"1 - 2\\eta"}</M>, and use this to explain what happens for <M>{"\\eta = 0.25"}</M>, <M>{"\\eta = 0.75"}</M>,{" "}
-          <M>{"\\eta = 1"}</M> and <M>{"\\eta = 1.5"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes L'(w) = 2(w − c) and the update w − 2η(w − c).",
-          "Subtracts c to get (1 − 2η)(w − c).",
-          "η = 0.25: factor 0.5, steady approach from one side; η = 0.75: factor −0.5, converges while alternating sides.",
-          "η = 1: factor −1, bounces between two points forever; η = 1.5: factor −2, the distance doubles each step and the method diverges.",
-        ],
-      },
-    },
-    {
       key: "steps",
       rung: "stretch",
       prompt: <p>For <M>{"L(w) = (w - 3)^2"}</M>, starting at <M>{"w = 0"}</M> with <M>{"\\eta = 0.25"}</M>, how many steps are needed before <M>w</M> is within 0.01 of 3?</p>,

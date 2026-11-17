@@ -243,25 +243,6 @@ assert nearest_centre(np.array([[1.0, 2.0], [9.0, 7.0], [5.0, 6.0]]), C).tolist(
       },
     },
     {
-      key: "trap",
-      rung: "prove",
-      prompt: (
-        <p>
-          <C>pred</C> has shape <C>(100, 1)</C> and <C>y</C> has shape <C>(100,)</C>. Explain exactly what{" "}
-          <C>((pred - y) ** 2).mean()</C> computes, why no error is raised, and two ways to fix and guard against it.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Aligns the shapes as (100, 1) and (1, 100), which broadcast to (100, 100).",
-          "Explains the result is the mean over all 10,000 pairs (pred_i − y_j)², not the mean squared error.",
-          "Fixes by reshaping, for example pred.squeeze(-1) or y[:, None], so both have the same shape.",
-          "Guards with an assertion such as assert pred.shape == y.shape before computing the loss.",
-        ],
-      },
-    },
-    {
       key: "eight",
       rung: "stretch",
       prompt: <p>What is the size of axis 1 in the result of combining shapes <C>(8, 1, 6, 1)</C> and <C>(7, 1, 5)</C>?</p>,

@@ -284,19 +284,6 @@ assert np.allclose(c, [1, 1])` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Using only the vector space axioms, prove that 0v = 0 and (−1)v = −v for every vector v.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes 0v = (0 + 0)v = 0v + 0v by distributivity.",
-          "Adds the additive inverse of 0v to both sides (using associativity) to conclude 0v = 0.",
-          "Shows v + (−1)v = (1 + (−1))v = 0v = 0, so (−1)v is the additive inverse of v (and notes inverses are unique, or equivalently that this is what −v denotes).",
-        ],
-      },
-    },
-    {
       key: "rotev",
       rung: "stretch",
       prompt: <p>The rotation of ℝ² by 90° has complex eigenvalues ±i. What is the sum of the squares of its two eigenvalues?</p>,

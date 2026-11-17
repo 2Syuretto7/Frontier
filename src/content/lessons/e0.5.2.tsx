@@ -245,26 +245,6 @@ assert select('s.csv', 'k', 'x') == [{'k': 'x', 'v': '1'}, {'k': 'x', 'v': '3'}]
       },
     },
     {
-      key: "totals",
-      rung: "prove",
-      prompt: (
-        <p>
-          Describe a program that reads <C>marks.csv</C> and writes <C>totals.csv</C>, with a header and one row per student
-          giving the name and the sum of the two marks. Write its lines, and point out every place where a value must be
-          converted between a string and a number.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Opens marks.csv for reading and totals.csv for writing (with newline=\"\"), using with.",
-          "Reads rows with csv.DictReader (or csv.reader, skipping the header).",
-          "Converts both marks with int before adding, because CSV values are strings.",
-          "Writes a header row and one row per student with csv.writer, noting that writerow turns the number back into text.",
-        ],
-      },
-    },
-    {
       key: "diff",
       rung: "stretch",
       prompt: <p>For the marks file, what is the sum over all students of the maths mark minus the physics mark?</p>,

@@ -246,19 +246,6 @@ assert abs(a - 0.05) < 0.008 and b > 0.15` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Let T have a continuous, strictly increasing distribution function F under a simple null, and let p = 1 − F(T). Prove that P(p ≤ α) = α for every α in [0, 1].</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Rewrites the event p ≤ α as F(T) ≥ 1 − α, equivalently T ≥ F⁻¹(1 − α).",
-          "Uses continuity of F to get P(T ≥ F⁻¹(1 − α)) = 1 − F(F⁻¹(1 − α)).",
-          "Concludes this equals 1 − (1 − α) = α, so p is Uniform(0, 1).",
-        ],
-      },
-    },
-    {
       key: "many",
       rung: "stretch",
       prompt: <p>You run 20 independent tests at α = 0.05 and every null is true. What is the probability that at least one test is significant? Give four decimal places.</p>,

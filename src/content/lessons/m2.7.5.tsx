@@ -253,26 +253,6 @@ assert abs(gauss_legendre(math.cos, 0, math.pi / 2, 10) - 1) < 1e-14, 'Ten Gauss
       },
     },
     {
-      key: "trap-error",
-      rung: "prove",
-      prompt: (
-        <p>
-          For <M>{"f(x) = x^2"}</M> on <M>{"[0, 1]"}</M>, show that <M>{"T_n - \\tfrac13 = \\dfrac{1}{6n^2}"}</M>. You may use{" "}
-          <M>{"\\sum_{i=1}^{n} i^2 = \\tfrac{n(n + 1)(2n + 1)}{6}"}</M>. Then explain why the trapezoid rule overestimates
-          the integral of every convex function.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes T_n = (1/n)(Σ_{i=1}^{n−1} i²/n² + ½), or an equivalent form.",
-          "Uses the sum-of-squares formula to simplify to 1/3 + 1/(6n²).",
-          "Notes the error is proportional to 1/n², as the bound predicts.",
-          "Explains that on a convex function each chord lies above the curve, so each trapezoid contains its strip of area.",
-        ],
-      },
-    },
-    {
       key: "howmany",
       rung: "stretch",
       prompt: (

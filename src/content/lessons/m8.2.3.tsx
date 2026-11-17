@@ -288,23 +288,6 @@ assert bw_bisect([1.0, 1.0, -1.0], -2, 2, 1) == (0.0, 2)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that every sequence has a monotone subsequence, and deduce the Bolzano–Weierstrass theorem.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Defines peaks and, if there are infinitely many, takes them in order to get a decreasing subsequence.",
-          "If there are finitely many, starts beyond the last peak and repeatedly uses that a non-peak has a later strictly larger term to build an increasing subsequence.",
-          "Notes a bounded sequence's monotone subsequence is bounded and so converges by the monotone convergence theorem.",
-        ],
-      },
-    },
-    {
       key: "steps",
       rung: "stretch",
       prompt: <p>The bisection proof starts with [−2, 2]. After how many halvings is the interval narrower than 0.01?</p>,

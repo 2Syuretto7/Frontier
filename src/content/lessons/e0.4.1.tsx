@@ -277,26 +277,6 @@ assert flatten(deep) == list(range(50))` },
       },
     },
     {
-      key: "copy",
-      rung: "prove",
-      prompt: (
-        <p>
-          A function is given a list of marks, sorts it with <C>marks.sort()</C> to find the median, and returns the median.
-          Afterwards the caller finds that their own list has been reordered. Explain why, and show two ways to fix the
-          function so that the caller&rsquo;s list is left alone.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains that the parameter refers to the same list object as the caller's variable (aliasing), not a copy.",
-          "Explains that sort changes the list in place, so the caller sees the change.",
-          "Fixes it by sorting a copy, for example ordered = sorted(marks), or marks.copy() or marks[:] before sorting.",
-          "Gives two distinct correct fixes.",
-        ],
-      },
-    },
-    {
       key: "step",
       rung: "stretch",
       prompt: <p>With <C>nums = [3, 1, 4, 1, 5, 9, 2, 6]</C>, what is <C>sum(nums[1:7:2])</C>?</p>,

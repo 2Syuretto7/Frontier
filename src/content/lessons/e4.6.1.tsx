@@ -321,24 +321,6 @@ assert check_docstring(h) == (['p', 'q'], [])` },
       },
     },
     {
-      key: "rot",
-      rung: "prove",
-      prompt: (
-        <p>
-          Argue why an example checked by doctest on every test run cannot silently go out of date while a sentence in a
-          docstring can, and name one kind of claim that a doctest example still cannot check.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that a doctest is executed against the current code, so a change that alters the output makes the test fail.",
-          "Notes that prose is never executed, so nothing fails when it becomes false.",
-          "Names a valid uncheckable kind of claim, such as a statement about all inputs, performance, intent or the reason for a design choice.",
-        ],
-      },
-    },
-    {
       key: "best",
       rung: "stretch",
       prompt: (

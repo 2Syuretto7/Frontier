@@ -230,22 +230,6 @@ def inertia(xs, c0, c1):
       },
     },
     {
-      key: "stops",
-      rung: "prove",
-      prompt: (
-        <p>Explain why k-means must stop after finitely many rounds, whatever the starting centres.</p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Identifies the total squared distance from points to their assigned centres as the quantity tracked.",
-          "Explains that the assign step cannot increase it, because each point moves only to a centre at least as close.",
-          "Explains that the update step cannot increase it, because the mean minimises the total squared distance to a set of points.",
-          "Notes there are finitely many ways to assign points to k clusters, so the total cannot keep strictly falling for ever, and the algorithm stops.",
-        ],
-      },
-    },
-    {
       key: "continue",
       rung: "stretch",
       prompt: <p>Continue the number line example (points 1, 2, 3, 10, 11, 12, centres starting at 2 and 3) until it stops. Where does the first centre end up?</p>,

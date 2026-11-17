@@ -239,24 +239,6 @@ def chebyshev(n, x, delta):
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Suppose |f| ≤ M on [0, 1] and |f(s) − f(x)| &lt; ε whenever |s − x| &lt; δ. Prove that{" "}
-          <M>{"|B_n f(x) - f(x)| < \\varepsilon + M/(2n\\delta^2)"}</M> for every x ∈ [0, 1].
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes Bₙf(x) − f(x) as Σ (f(k/n) − f(x)) w_k(x), using that the binomial weights sum to 1.",
-          "Splits the sum by |k/n − x| < δ, bounding the near terms by ε and the far terms by 2M times P(|Sₙ/n − x| ≥ δ).",
-          "Bounds the probability by Chebyshev's inequality with variance x(1 − x)/n ≤ 1/(4n), giving 2M/(4nδ²) = M/(2nδ²).",
-        ],
-      },
-    },
-    {
       key: "n",
       rung: "stretch",
       prompt: <p>With M = 1 and δ = 0.1, how large must n be for M/(2nδ²) ≤ 0.01?</p>,

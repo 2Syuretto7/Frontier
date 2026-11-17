@@ -316,18 +316,6 @@ assert np.allclose(cayley(np.array([[0.0, -1.0], [1.0, 0.0]])), [[0.0, -1.0], [1
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that every eigenvalue λ of a unitary (or real orthogonal) matrix satisfies |λ| = 1.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes an eigenvector v ≠ 0 with Uv = λv (allowing complex λ and v).",
-          "Uses that U preserves norms (from U*U = I: ‖Uv‖² = ⟨U*Uv, v⟩ = ‖v‖²) to get ‖v‖ = |λ|‖v‖, hence |λ| = 1.",
-        ],
-      },
-    },
-    {
       key: "cayleyangle",
       rung: "stretch",
       prompt: (

@@ -243,25 +243,6 @@ assert r['b'][0] == 1 and r['b'][2] <= 1 + 1e-12 and r['b'][1] < 0.6, 'Even 5 er
       },
     },
     {
-      key: "labels",
-      rung: "prove",
-      prompt: (
-        <p>
-          In an error analysis, 22% of errors turn out to be wrong labels. Explain what fixing those labels would and would not
-          change about the model, and why the analysis must not be done on the test set.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that relabelling the evaluation data raises the measured accuracy without changing the model's behaviour.",
-          "Notes that fixing wrong labels in the training data may genuinely improve the model, since it stops learning from errors.",
-          "Explains that studying test errors leads to changes tailored to those examples, so the test score stops being an honest estimate.",
-          "Concludes that error analysis belongs on validation data, with the test set kept for the final measurement.",
-        ],
-      },
-    },
-    {
       key: "howmany",
       rung: "stretch",
       prompt: <p>How many errors must you review so that the standard error of a share near 0.3 is at most 0.02?</p>,

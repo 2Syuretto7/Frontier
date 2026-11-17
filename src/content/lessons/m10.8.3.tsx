@@ -283,23 +283,6 @@ assert abs(w.sum() - 1) < 1e-9 and w.min() > -1e-9 and np.allclose(w, [0.9, 0.1,
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Show that after the z-update and the dual update of ADMM, 0 ∈ ∂g(z⁺) + Bᵀy⁺, where y⁺ = y + ρ(Ax⁺ + Bz⁺ − c).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "States that z⁺ minimises g(z) + yᵀBz + (ρ/2)‖Ax⁺ + Bz − c‖² (the z-dependent part of the augmented Lagrangian).",
-          "Writes the optimality condition 0 ∈ ∂g(z⁺) + Bᵀy + ρBᵀ(Ax⁺ + Bz⁺ − c), justifying the sum rule for a convex function plus a differentiable one.",
-          "Recognises Bᵀy + ρBᵀ(Ax⁺ + Bz⁺ − c) = Bᵀy⁺ to conclude.",
-        ],
-      },
-    },
-    {
       key: "z2",
       rung: "stretch",
       prompt: (

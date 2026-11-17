@@ -300,24 +300,6 @@ assert np.allclose(np.abs(G), np.abs(Xc @ Vt[:3].T), atol=1e-8)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the span of the top k right singular vectors of the centred data matrix minimises the total squared
-          reconstruction error over all k-dimensional subspaces. You may use Eckart–Young.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the reconstruction error for a subspace W as ‖X_c − X_cP_W‖_F² and notes X_cP_W has rank at most k.",
-          "Applies Eckart–Young to get the lower bound Σⱼ>ₖ σⱼ².",
-          "Shows W = span(v₁, …, vₖ) attains it because X_cV_kV_kᵀ = U_kΣ_kV_kᵀ is the truncated SVD.",
-        ],
-      },
-    },
-    {
       key: "kyfan",
       rung: "stretch",
       prompt: (

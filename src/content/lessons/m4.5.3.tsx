@@ -287,24 +287,6 @@ assert abs(closest_pair(pts) - 1e-9) < 1e-12, 'O(n log n) on 20000 points.'` },
       },
     },
     {
-      key: "induct",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove by strong induction that if T(1) = 0 and T(n) = 2T(n/2) + n for n a power of 2, then{" "}
-          <M>{"T(n) = n\\log_2 n"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Base case n = 1: T(1) = 0 = 1 · log₂ 1.",
-          "Assumes T(n/2) = (n/2) log₂(n/2).",
-          "Computes 2 · (n/2)(log₂ n − 1) + n = n log₂ n.",
-        ],
-      },
-    },
-    {
       key: "sortbound",
       rung: "stretch",
       prompt: <p>Any comparison sort needs at least ⌈log₂(n!)⌉ comparisons in the worst case. What is this for n = 5?</p>,

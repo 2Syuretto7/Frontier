@@ -296,25 +296,6 @@ for r0 in [0.5, 2.0, 3.0]:
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the Jacobian of softmax is <M>{"\\mathrm{diag}(p) - p p^\\top"}</M>, and that each of its rows and columns
-          sums to 0. Explain in one sentence why the row sums must be 0.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Differentiates p_i = e^{z_i}/S with S = Σ e^{z_k} by the quotient rule: ∂p_i/∂z_j = (δ_ij e^{z_i} S − e^{z_i} e^{z_j})/S² = p_i(δ_ij − p_j).",
-          "Writes this as diag(p) − ppᵀ and notes the matrix is symmetric.",
-          "Shows row i sums to p_i − p_i Σ_j p_j = 0 (columns by symmetry).",
-          "Explains the meaning: adding the same constant to every z_j leaves p unchanged, so the derivative along (1, …, 1) is 0 (equivalently Σ p_i = 1 is constant, so columns sum to 0).",
-        ],
-      },
-    },
-    {
       key: "sphere",
       rung: "stretch",
       prompt: (

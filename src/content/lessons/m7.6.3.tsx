@@ -285,24 +285,6 @@ assert abs(b) < 0.03 and abs(v - 1.0) < 0.05 and abs(m - 1.0) < 0.05` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let g(X) = E[Y | X]. Prove that <M>{"E[(Y - g(X))h(X)] = 0"}</M> for every h(X) with finite second moment, and deduce
-          that <M>{"E[(Y - f(X))^2] \\ge E[(Y - g(X))^2]"}</M> for every such f.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Conditions on X and uses taking out what is known: E[(Y − g(X))h(X) | X] = h(X)(E[Y | X] − g(X)) = 0.",
-          "Applies Adam's law to conclude E[(Y − g(X))h(X)] = 0.",
-          "Expands (Y − f) = (Y − g) + (g − f), kills the cross term with h = g − f, and notes E[(g − f)²] ≥ 0.",
-        ],
-      },
-    },
-    {
       key: "shrink",
       rung: "stretch",
       prompt: (

@@ -274,24 +274,6 @@ assert abs(alt_error_bound(lambda k: 1 / k, 9) - 0.1) < 1e-12` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove the alternating series test: if bₖ decreases to 0, then Σ(−1)^(k+1) bₖ converges, and its sum S satisfies
-          |S − Sₙ| ≤ bₙ₊₁.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows the even partial sums increase and the odd partial sums decrease, using bₖ ≥ bₖ₊₁.",
-          "Shows S₂ₙ ≤ S₂ₙ₊₁ with difference b₂ₙ₊₁ → 0 and concludes (by nested intervals or monotone convergence) that both converge to a common S.",
-          "Argues S lies between consecutive partial sums Sₙ and Sₙ₊₁, so |S − Sₙ| ≤ |Sₙ₊₁ − Sₙ| = bₙ₊₁.",
-        ],
-      },
-    },
-    {
       key: "cond",
       rung: "stretch",
       prompt: <p>Cauchy condensation turns Σ 1/k³ into a geometric series. What is its ratio?</p>,

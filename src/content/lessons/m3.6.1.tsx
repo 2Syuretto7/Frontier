@@ -285,24 +285,6 @@ assert np.isfinite(v) and abs(v - np.linalg.slogdet(A)[1]) < 1e-8, 'Sum logs ins
       },
     },
     {
-      key: "rules",
-      rung: "prove",
-      prompt: (
-        <p>
-          Using only the three defining rules, prove that a matrix with two equal rows has determinant 0, and that subtracting a
-          multiple of one row from another does not change the determinant.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Swaps the two equal rows: the matrix is unchanged, but rule 2 gives det A = −det A, so det A = 0.",
-          "Writes the new row j as r_j − ℓr_i and uses linearity in row j to split the determinant into det A − ℓ det A′.",
-          "Notes that A′ has row j equal to row i, so det A′ = 0 and the determinant is unchanged.",
-        ],
-      },
-    },
-    {
       key: "jplusi",
       rung: "stretch",
       prompt: <p>Find the determinant of the 4 × 4 matrix with 2 on the diagonal and 1 everywhere else.</p>,

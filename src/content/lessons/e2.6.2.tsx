@@ -469,34 +469,6 @@ for _ in range(200):
         ],
       },
     },
-    {
-      key: "dfsproof",
-      rung: "prove",
-      prompt: <p>Prove that in a DAG, reversed DFS finishing order is a topological order.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes an edge u → v and shows v finishes before u.",
-          "Case v white when DFS scans the edge: v is explored inside u's call and finishes first.",
-          "Case v black: v has already finished.",
-          "Case v grey is impossible: v would be an ancestor of u, and the edge would close a cycle.",
-        ],
-      },
-    },
-    {
-      key: "unique",
-      rung: "stretch",
-      prompt: <p>Show that a DAG has exactly one topological order if and only if it has a directed path through all its vertices, and give an O(V + E) test using Kahn&rsquo;s algorithm.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "If a Hamiltonian path v₁ → … → vₙ exists, every order must put vᵢ before vᵢ₊₁, so only one order is possible.",
-          "If consecutive vertices in some topological order have no edge between them, swapping them gives a second valid order.",
-          "So the order is unique exactly when each consecutive pair is joined by an edge, which is a path through all vertices.",
-          "Test: run Kahn's algorithm and check the ready set never holds more than one vertex.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

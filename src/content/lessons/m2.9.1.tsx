@@ -251,26 +251,6 @@ assert abs(empirical_exponent(lambda n: count_ops(triple, n), [5, 10, 20, 40]) -
       },
     },
     {
-      key: "rules",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove from the definitions that, as <M>{"x \\to 0"}</M>, if <M>{"f = O(x^a)"}</M> and <M>{"g = O(x^b)"}</M> then{" "}
-          <M>{"fg = O(x^{a+b})"}</M>, and that if <M>{"f = o(x)"}</M> and <M>{"g = o(x)"}</M> then <M>{"f + g = o(x)"}</M>.
-          Then explain why <M>{"O(x^2) - O(x^2) = 0"}</M> is false.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes |f| ≤ C₁|x|ᵃ and |g| ≤ C₂|x|ᵇ near 0 and multiplies to get |fg| ≤ C₁C₂|x|ᵃ⁺ᵇ.",
-          "Writes (f + g)/x = f/x + g/x and uses the sum law for limits to get 0.",
-          "Explains that the two O(x²) terms can be different functions, such as x² and 2x².",
-          "Concludes their difference is O(x²), not 0.",
-        ],
-      },
-    },
-    {
       key: "cubic",
       rung: "stretch",
       prompt: (

@@ -311,43 +311,6 @@ assert is_convex(xs, env) and all(e <= y + 1e-12 for e, y in zip(env, ys)), 'The
         ],
       },
     },
-    {
-      key: "strict",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if <M>{"f'(x) > 0"}</M> for every x in an open interval I, then f is strictly increasing on I. Then use
-          this to prove that <M>{"\\sin x < x"}</M> for every <M>{"x > 0"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes x < y in I and applies the mean value theorem to get f(y) − f(x) = f′(c)(y − x) > 0.",
-          "Considers g(x) = x − sin x, with g(0) = 0 and g′(x) = 1 − cos x ≥ 0.",
-          "Concludes g(x) > 0 for x > 0, for example because g′ > 0 on (0, 2π), and sin x ≤ 1 < x once x > 1.",
-        ],
-      },
-    },
-    {
-      key: "wiggle",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Let <M>{"g(x) = x + 2x^2 \\sin(1/x)"}</M> for <M>{"x \\ne 0"}</M> and <M>{"g(0) = 0"}</M>. Show that{" "}
-          <M>{"g'(0) = 1"}</M>, but that g is not increasing on any open interval containing 0. Why does this not contradict
-          the theorem of this lesson?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes g′(0) from the definition: the quotient is 1 + 2h sin(1/h), which tends to 1.",
-          "Computes g′(x) = 1 + 4x sin(1/x) − 2cos(1/x) for x ≠ 0 and notes it is negative at points such as x = 1/(2nπ), arbitrarily close to 0.",
-          "Explains that the theorem needs f′ > 0 on a whole interval, not at a single point.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

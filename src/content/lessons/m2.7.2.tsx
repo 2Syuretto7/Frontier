@@ -250,25 +250,6 @@ assert abs(v - 0.5 * math.log((4 / 6) / (1 / 3))) < 1e-15, 'The integral of 1/(x
       },
     },
     {
-      key: "logistic",
-      rung: "prove",
-      prompt: (
-        <p>
-          Show that <M>{"\\dfrac{1}{y(1 - y)} = \\dfrac1y + \\dfrac{1}{1 - y}"}</M>, and use it to solve{" "}
-          <M>{"y' = y(1 - y)"}</M> with <M>{"y(0) = \\tfrac12"}</M>, for <M>{"0 < y < 1"}</M>. Identify the solution.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Verifies the decomposition by putting the right side over the common denominator y(1 − y).",
-          "Separates variables and integrates to get ln y − ln(1 − y) = t + C.",
-          "Uses y(0) = ½ to find C = 0.",
-          "Solves y/(1 − y) = eᵗ to get y = 1/(1 + e⁻ᵗ), the sigmoid.",
-        ],
-      },
-    },
-    {
       key: "two",
       rung: "stretch",
       prompt: <p>Evaluate <M>{"\\int_0^1 \\dfrac{x}{(x + 1)(x + 2)}\\,dx"}</M>. Give four decimal places.</p>,

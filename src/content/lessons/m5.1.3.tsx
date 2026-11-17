@@ -277,24 +277,6 @@ assert np.allclose(r, (1 + 0.01) ** (np.arange(101) / 2)), 'Each step multiplies
       },
     },
     {
-      key: "reparam",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if <M>{"\\varphi : [c, d] \\to [a, b]"}</M> is continuously differentiable, increasing and onto, then{" "}
-          <M>{"\\gamma \\circ \\varphi"}</M> has the same arc length as γ.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes the velocity of γ∘φ by the chain rule in each coordinate: γ′(φ(u)) φ′(u).",
-          "Uses φ′(u) ≥ 0 to write its norm as ‖γ′(φ(u))‖ φ′(u).",
-          "Applies the substitution t = φ(u), with φ(c) = a and φ(d) = b, to turn the integral into the length of γ.",
-        ],
-      },
-    },
-    {
       key: "drift",
       rung: "stretch",
       prompt: (

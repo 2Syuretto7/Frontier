@@ -236,19 +236,6 @@ assert abs(delta_at(lambda x: x * x * x, lambda y: y ** (1 / 3), 1, 1, 0, 2) - (
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that a continuous function on [a, b] is uniformly continuous.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Assumes not, and obtains ε₀ and points x_n, y_n with |x_n − y_n| < 1/n and |f(x_n) − f(y_n)| ≥ ε₀.",
-          "Uses Bolzano–Weierstrass (compactness of [a, b]) to get x_{n_k} → x ∈ [a, b], and deduces y_{n_k} → x.",
-          "Uses continuity at x to get f(x_{n_k}) − f(y_{n_k}) → 0, contradicting the bound ε₀.",
-        ],
-      },
-    },
-    {
       key: "omega",
       rung: "stretch",
       prompt: <p>What is the modulus of continuity ω(0.04) of √x on [0, 1]?</p>,

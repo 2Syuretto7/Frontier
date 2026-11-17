@@ -256,24 +256,6 @@ print(x, a * x + b == c * x + d)`}</Code>
       },
     },
     {
-      key: "unique",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if <M>{"a \\neq 0"}</M>, the equation <M>{"ax + b = c"}</M> has exactly one solution. Your proof should
-          show both that a solution exists and that there is no other.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Exhibits the solution x = (c - b)/a and checks that it works (existence).",
-          "Shows that any solution must equal (c - b)/a, for example by applying the balance rules (uniqueness).",
-          "Uses a ≠ 0 explicitly where dividing or multiplying by 1/a.",
-        ],
-      },
-    },
-    {
       key: "coins",
       rung: "stretch",
       prompt: (

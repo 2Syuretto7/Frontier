@@ -311,24 +311,6 @@ assert lo == 0.7 and hi == 1.0 and abs(ind - 0.94) < 1e-12` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove from the axioms that if <M>{"A_1 \\supseteq A_2 \\supseteq \\cdots"}</M> then{" "}
-          <M>{"P(\\bigcap_n A_n) = \\lim_n P(A_n)"}</M>. You may use continuity for increasing sequences.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Passes to complements: the sets Aₙᶜ increase, and by De Morgan their union is (∩ Aₙ)ᶜ.",
-          "Applies continuity from below: P(∪ Aₙᶜ) = lim P(Aₙᶜ).",
-          "Uses P(Eᶜ) = 1 − P(E) on both sides to conclude 1 − P(∩ Aₙ) = 1 − lim P(Aₙ), hence the claim.",
-        ],
-      },
-    },
-    {
       key: "fourcards",
       rung: "stretch",
       prompt: (

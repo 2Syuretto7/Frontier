@@ -322,25 +322,6 @@ for _ in range(30):
       },
     },
     {
-      key: "bound",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if each of n independent random inputs triggers a bug with probability p, and{" "}
-          <M>{"n \\ge \\ln(1/\\delta)/p"}</M>, then the probability that none of them triggers it is at most δ.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "By independence, the probability that all n inputs miss is (1 − p)^n.",
-          "Uses 1 − p ≤ e^(−p), with a reason (for example convexity of e^(−p), or the tangent line at 0).",
-          "Concludes (1 − p)^n ≤ e^(−pn), since both sides are non-negative and raising to the n-th power preserves the inequality.",
-          "Shows e^(−pn) ≤ δ when n ≥ ln(1/δ)/p, since then pn ≥ ln(1/δ).",
-        ],
-      },
-    },
-    {
       key: "dups",
       rung: "stretch",
       prompt: (

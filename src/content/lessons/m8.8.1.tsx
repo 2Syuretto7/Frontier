@@ -245,19 +245,6 @@ def worst_n(xs, eps):
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that if continuous functions fₙ converge uniformly to f on A, then f is continuous on A.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Fixes c and ε, and uses uniform convergence to choose one n with |fₙ(x) − f(x)| < ε/3 for all x.",
-          "Uses continuity of that fₙ at c to choose δ with |fₙ(x) − fₙ(c)| < ε/3 for |x − c| < δ.",
-          "Combines the three terms with the triangle inequality to get |f(x) − f(c)| < ε.",
-        ],
-      },
-    },
-    {
       key: "bump",
       rung: "stretch",
       prompt: <p>At which x does 2nx/(1 + n²x²) reach its maximum on [0, 1] when n = 4?</p>,

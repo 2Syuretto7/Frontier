@@ -299,25 +299,6 @@ assert np.allclose(communality(W, np.array([2.0, 1.0, 4.0])), [0.5, 0.9, 0.5])` 
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let D be a diagonal matrix with positive entries. Prove that if (μ, W, Ψ) maximises the factor-analysis likelihood
-          for data x₁, …, x_N, then (Dμ, DW, DΨD) maximises it for Dx₁, …, Dx_N, and deduce that the communalities are
-          unchanged.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows that the new covariance D(WWᵀ + Ψ)D = (DW)(DW)ᵀ + DΨD is again of factor-analysis form, with DΨD diagonal and positive.",
-          "Shows the log-likelihood of the scaled data at the transformed parameters equals the original log-likelihood minus N log det D, and that the parameter map is a bijection, so maximisers correspond.",
-          "Notes that row i of W scales by dᵢ and ψᵢ by dᵢ², so each communality hᵢ is unchanged.",
-        ],
-      },
-    },
-    {
       key: "postmean",
       rung: "stretch",
       prompt: <p>One factor with W = (2, 1)ᵀ, μ = 0 and Ψ = diag(1, 4). What is the posterior mean of z at x = (2, 1)? Give four decimal places.</p>,

@@ -266,26 +266,6 @@ assert pairs_with_sum(xs, 5) == want` },
       },
     },
     {
-      key: "choose",
-      rung: "prove",
-      prompt: (
-        <p>
-          For each of these, choose a list, tuple, set or dictionary and justify the choice: the order of runners as they
-          cross a finish line; the latitude and longitude of a city; the distinct words used in a book; each student&rsquo;s
-          roll number mapped to their name.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Finish order: a list, because order matters and it grows as runners finish.",
-          "Latitude and longitude: a tuple, because it is a fixed pair of values that belong together.",
-          "Distinct words: a set, because each word should appear once and membership tests should be fast.",
-          "Roll numbers to names: a dictionary, because names are looked up by roll number.",
-        ],
-      },
-    },
-    {
       key: "letters",
       rung: "stretch",
       prompt: <p>What is <C>len(set(&quot;mississippi&quot;) | set(&quot;missouri&quot;))</C>?</p>,

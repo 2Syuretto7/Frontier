@@ -319,34 +319,6 @@ for bad in [('%d', 1, 2), ('%q', 1)]:
         ],
       },
     },
-    {
-      key: "convert",
-      rung: "prove",
-      prompt: <p>Prove that for integers a and b ≠ 0, C&rsquo;s remainder and Python&rsquo;s remainder are equal when a % b is 0 or a and b have the same sign, and otherwise differ by exactly |b|.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes both as a − qb with q the truncated quotient (C) and the floored quotient (Python).",
-          "The quotients agree when the true quotient a/b is an integer or non-negative (same signs).",
-          "Otherwise the true quotient is negative and not an integer, so the floored quotient is the truncated one minus 1.",
-          "Then Python's remainder is C's plus b, so they differ by |b| (and have opposite signs).",
-        ],
-      },
-    },
-    {
-      key: "fast",
-      rung: "stretch",
-      prompt: <p>Summing 10⁸ integers takes about 5 seconds in a Python loop and about 0.05 seconds in C. Explain where the factor of about 100 comes from, naming at least three costs Python pays per iteration that compiled C does not.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Interpretation: Python dispatches each bytecode instruction through the interpreter loop rather than running native instructions.",
-          "Dynamic typing: each + looks up the operand types and the method to call at run time.",
-          "Boxing: each integer is a heap object with a reference count, so results allocate and refcounts change, while C keeps values in registers.",
-          "Mentions that C's compiler can also unroll and vectorise the loop with SIMD instructions, and that NumPy gets C speed by running the loop in C.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

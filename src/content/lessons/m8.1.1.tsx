@@ -310,24 +310,6 @@ assert decimal_digits(lambda q: q < 0 or q * q < 49, 2) == "6.99"` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let 𝒮 be a non-empty set of Dedekind cuts, all contained in a cut B. Prove that the union U of the members of 𝒮 is a
-          cut and that it is the least upper bound of 𝒮 for the order ⊆.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Checks U is non-empty (contains a member of 𝒮) and U ≠ ℚ (U ⊆ B ≠ ℚ).",
-          "Checks downward closure and no largest element, each by passing to a single member A ∈ 𝒮 containing the given element.",
-          "Shows U is an upper bound (A ⊆ U) and the least one (any upper bound C contains every A, hence U ⊆ C).",
-        ],
-      },
-    },
-    {
       key: "steps",
       rung: "stretch",
       prompt: <p>Starting bisection from [1, 2], how many steps are needed before the interval is narrower than 10⁻⁶?</p>,

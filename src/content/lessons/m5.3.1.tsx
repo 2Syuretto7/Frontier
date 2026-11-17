@@ -246,25 +246,6 @@ except ValueError:
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let <M>{"f_0 = x"}</M> and <M>{"f_k = f_{k-1} \\cdot f_{k-1}"}</M>. Prove that the expression tree for{" "}
-          <M>{"f_k"}</M>, in which each use of <M>{"f_{k-1}"}</M> is a separate copy, has <M>{"2^k - 1"}</M> multiplication
-          nodes, while a computational graph needs only k.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Sets up the recurrence T(k) = 2T(k − 1) + 1 with T(0) = 0 for the tree, because f_k's tree is one multiplication with two copies of f_{k−1}'s tree.",
-          "Solves it by induction: 2(2^{k−1} − 1) + 1 = 2^k − 1.",
-          "For the graph, notes each f_j is computed once from the single node f_{j−1}, giving k multiplications.",
-        ],
-      },
-    },
-    {
       key: "tree",
       rung: "stretch",
       prompt: <p>How many multiplication nodes are in the expression tree for <M>{"f_{10}"}</M> in the exercise above?</p>,

@@ -250,20 +250,6 @@ assert check(7, ths) < 1e-12 and check(12, ths) < 1e-11, 'The identity holds at 
       },
     },
     {
-      key: "cos-double-proof",
-      rung: "prove",
-      prompt: <p>Starting from the addition formula for cosine, prove that <M>{"\\cos 2\\theta = 1 - 2\\sin^2\\theta"}</M>.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Sets α = β = θ in the formula for cos(α + β).",
-          "Obtains cos 2θ = cos²θ − sin²θ.",
-          "Uses cos²θ + sin²θ = 1 to replace cos²θ by 1 − sin²θ.",
-          "Simplifies to 1 − 2 sin²θ.",
-        ],
-      },
-    },
-    {
       key: "sin18",
       rung: "stretch",
       prompt: (

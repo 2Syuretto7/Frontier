@@ -240,25 +240,6 @@ assert memory_saving(x, 8) == 4 and memory_saving(x.astype(np.float64), 16) == 4
       },
     },
     {
-      key: "dtype",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why <C>np.float32(16777216) + 1</C> gives 16777216, and use the idea to discuss the trade-off between storing
-          model weights in <C>float32</C> and in a 2-byte format such as <C>bfloat16</C>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains that float32 stores a 24-bit significand, so above 2²⁴ = 16777216 consecutive integers cannot all be represented and the 1 is rounded away.",
-          "Notes that bfloat16 halves memory and bandwidth compared with float32.",
-          "Notes that bfloat16 keeps float32's exponent range but has only 8 bits of significand, so small updates to large weights can be lost.",
-          "Concludes that training often keeps a float32 copy of the weights while computing in bfloat16.",
-        ],
-      },
-    },
-    {
       key: "seven",
       rung: "stretch",
       prompt: <p>How many gigabytes (10⁹ bytes) do the weights of a 7-billion-parameter model take in <C>bfloat16</C>?</p>,

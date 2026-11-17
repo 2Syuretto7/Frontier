@@ -311,24 +311,6 @@ assert 'linalg.qr' not in inspect.getsource(cgs) + inspect.getsource(mgs) + insp
       },
     },
     {
-      key: "iso",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if <M>{"Q^{\\mathsf T}Q = I"}</M>, then Q preserves lengths and angles. Then prove that the product of
-          two orthogonal n × n matrices is orthogonal.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes (Qx)ᵀ(Qy) = xᵀQᵀQy = xᵀy, so dot products are preserved.",
-          "Deduces lengths (x = y) and angles (cosine formula) are preserved.",
-          "Computes (Q₁Q₂)ᵀ(Q₁Q₂) = Q₂ᵀQ₁ᵀQ₁Q₂ = Q₂ᵀQ₂ = I.",
-        ],
-      },
-    },
-    {
       key: "three",
       rung: "stretch",
       prompt: (

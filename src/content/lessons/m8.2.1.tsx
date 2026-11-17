@@ -289,19 +289,6 @@ assert n_for_squeeze(lambda e: 4, lambda e: 2, 1.0) == 4` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that if aₙ → a and bₙ → b, then aₙbₙ → ab.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes |aₙbₙ − ab| ≤ |aₙ||bₙ − b| + |b||aₙ − a| by adding and subtracting aₙb.",
-          "Uses that a convergent sequence is bounded to get |aₙ| ≤ M for all n.",
-          "Chooses N₁, N₂ so that each term is below ε/2 (e.g. |bₙ − b| < ε/(2M), |aₙ − a| < ε/(2(|b| + 1))) and takes N = max(N₁, N₂).",
-        ],
-      },
-    },
-    {
       key: "proofN",
       rung: "stretch",
       prompt: (

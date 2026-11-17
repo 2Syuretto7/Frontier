@@ -267,24 +267,6 @@ assert ok, 'A Jordan block cannot be diagonalised.'` },
       },
     },
     {
-      key: "powers",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if <M>{"A = X\\Lambda X^{-1}"}</M>, then <M>{"A^k = X\\Lambda^kX^{-1}"}</M> for every positive integer k,
-          and that if every |λ| &lt; 1 then <M>{"A^k \\to 0"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses induction: A^(k+1) = A^k A = XΛ^kX⁻¹XΛX⁻¹ = XΛ^(k+1)X⁻¹.",
-          "Notes Λ^k is diagonal with entries λ_i^k.",
-          "If every |λ_i| < 1, each λ_i^k → 0, so Λ^k → 0 and A^k = XΛ^kX⁻¹ → 0, X and X⁻¹ being fixed.",
-        ],
-      },
-    },
-    {
       key: "golden",
       rung: "stretch",
       prompt: <p>Find the larger eigenvalue of [[1, 1], [1, 0]] to three decimal places.</p>,

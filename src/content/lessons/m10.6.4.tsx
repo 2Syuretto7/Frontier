@@ -325,24 +325,6 @@ assert np.allclose(two_loop(np.array([1.0, -2.0]), [], []), [1.0, -2.0])` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let H be symmetric positive definite and sᵀy &gt; 0. Prove that the BFGS update H⁺ = VᵀHV + ρssᵀ, with ρ = 1/(yᵀs) and
-          V = I − ρysᵀ, satisfies H⁺y = s and is positive definite.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes Vy = y − ρy(sᵀy) = 0 and hence H⁺y = ρs(sᵀy) = s.",
-          "Writes zᵀH⁺z = (Vz)ᵀH(Vz) + ρ(sᵀz)² ≥ 0 using H positive definite and ρ > 0.",
-          "Shows equality forces sᵀz = 0, hence Vz = z and zᵀHz = 0, so z = 0.",
-        ],
-      },
-    },
-    {
       key: "trace",
       rung: "stretch",
       prompt: <p>Apply one BFGS update to H = I in two dimensions with s = (1, 0) and y = (2, 0). What is the trace of H⁺?</p>,

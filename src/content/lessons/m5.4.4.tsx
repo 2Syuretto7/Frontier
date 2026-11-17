@@ -270,25 +270,6 @@ assert abs(L - 1000) < 1e-9 and np.allclose(G, [[1.0, -1.0]])` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the gradient of <M>{"\\ell(z, y) = -\\log \\mathrm{softmax}(z)_y"}</M> with respect to z is{" "}
-          <M>{"p - e_y"}</M>, and that its entries sum to 0.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Rewrites ℓ = −z_y + log Σ_k e^{z_k} = lse(z) − z_y.",
-          "Computes ∂ lse/∂z_i = e^{z_i}/Σ_k e^{z_k} = p_i.",
-          "Notes ∂z_y/∂z_i = 1 if i = y and 0 otherwise, so ∇ℓ = p − e_y.",
-          "Sums: Σ_i p_i − 1 = 0.",
-        ],
-      },
-    },
-    {
       key: "hess",
       rung: "stretch",
       prompt: (

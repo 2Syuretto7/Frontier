@@ -268,19 +268,6 @@ assert sum(xs[i:j]) == b and b >= max(xs), 'Kadane on 300000 numbers.'` },
       },
     },
     {
-      key: "proof",
-      rung: "prove",
-      prompt: <p>Prove from the definition that <M>{"2n^2 + 5n = O(n^2)"}</M> and that <M>{"n^2"}</M> is not <M>{"O(n)"}</M>.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Gives explicit constants, for example C = 7 and n₀ = 1, using 5n ≤ 5n² for n ≥ 1.",
-          "For the second part, supposes n² ≤ Cn for all n ≥ n₀.",
-          "Derives n ≤ C for all large n, which fails for n > max(C, n₀).",
-        ],
-      },
-    },
-    {
       key: "factorial",
       rung: "stretch",
       prompt: <p>Is <M>{"\\log_2(n!) = \\Theta(n \\log n)"}</M>? Answer by choosing.</p>,

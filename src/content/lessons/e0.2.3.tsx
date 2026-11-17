@@ -265,26 +265,6 @@ assert count_inversions([3, 1, 2]) == 2 and count_inversions(list(range(10, 0, -
       },
     },
     {
-      key: "offbyone",
-      rung: "prove",
-      prompt: (
-        <p>
-          A loop is meant to add up the numbers from 1 to 10 but is written with <C>range(1, 10)</C>. Show how tracing the
-          first pass, the last pass and the number of passes reveals the bug, and fix it. Then explain why it is worth
-          checking these three things for every loop you write.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Traces the first pass correctly (the loop variable is 1).",
-          "Traces the last pass and finds the loop variable is 9, not 10, so the loop runs 9 times instead of 10.",
-          "Fixes it with range(1, 11).",
-          "Explains that errors in loops cluster at the boundaries, so checking the ends and the count catches the commonest mistakes cheaply.",
-        ],
-      },
-    },
-    {
       key: "mixed",
       rung: "stretch",
       prompt: (

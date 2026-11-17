@@ -27,14 +27,13 @@ export type Course = {
 /** How one lesson relates to another. Only "requires" gates progress. */
 export type LinkKind = "requires" | "parallels" | "foreshadows" | "revisits" | "applies";
 
-/** The four rungs of the practice ladder. */
-export type Rung = "check" | "apply" | "prove" | "stretch";
+/** The three rungs of the practice ladder. */
+export type Rung = "check" | "apply" | "stretch";
 
 export type Answer =
   | { kind: "numeric"; value: number; tolerance?: number }
   | { kind: "expression"; value: string; variables: string[] }
   | { kind: "choice"; options: string[]; correct: number[] }
-  | { kind: "written"; rubric: string[] }
   | CodeAnswer;
 
 /**
@@ -86,5 +85,3 @@ export type LessonContent = {
   practice: Exercise[];
   glimpse: ReactNode;
 };
-
-export const isAutoChecked = (a: Answer) => a.kind !== "written";

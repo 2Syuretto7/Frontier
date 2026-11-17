@@ -232,25 +232,6 @@ def total_line(total):
       },
     },
     {
-      key: "gst",
-      rung: "prove",
-      prompt: (
-        <p>
-          Describe a program that asks for a price and a quantity, adds 18% GST, and prints the total with two decimal
-          places. Write its lines, and explain where and why each conversion between strings and numbers happens.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Reads both answers with input and converts them, for example with float for the price and int for the quantity.",
-          "Explains that input returns strings, so arithmetic on them would fail or repeat text instead of multiplying.",
-          "Computes the total as price times quantity times 1.18 (or adds 18% of the subtotal).",
-          "Prints using an f-string with :.2f, or equivalent rounding, to show two decimal places.",
-        ],
-      },
-    },
-    {
       key: "third",
       rung: "stretch",
       prompt: <p>What number is shown by <C>f&quot;{"{"}7 / 3:.3f{"}"}&quot;</C>?</p>,

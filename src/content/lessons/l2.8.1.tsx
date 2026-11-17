@@ -256,24 +256,6 @@ assert abs(best_binary(lg, 0.35) - 0.35) < 1e-9 and best_binary(abs_score, 0.6) 
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the Brier score Σ_k (q_k − 1[y = k])² is strictly proper: its expected value under y ~ p is uniquely
-          minimised over forecasts q at q = p.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes the expectation of (q_k − 1[y = k])² for each k, using that 1[y = k] has mean p_k and variance p_k(1 − p_k), or by expanding the square.",
-          "Obtains Σ_k (q_k − p_k)² + Σ_k p_k(1 − p_k), with the second sum independent of q.",
-          "Concludes that the minimum is at q = p and is unique because Σ(q_k − p_k)² is zero only there.",
-        ],
-      },
-    },
-    {
       key: "expl",
       rung: "stretch",
       prompt: <p>A coin is fair, but you report (0.8, 0.2). What is your expected log score, in nats? Give four decimal places.</p>,

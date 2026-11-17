@@ -233,25 +233,6 @@ assert Y.tolist() == [[0, 1, 2], [-1, -1, -1]] and X.tolist() == [[0, 1, 2], [3,
       },
     },
     {
-      key: "puzzle",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain what the puzzle&rsquo;s two lines did to <C>data</C>, and rewrite them so that <C>data</C> is untouched. Then
-          explain why NumPy makes slices views rather than copies, despite the risk.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains that data[:100] is a view sharing memory with data.",
-          "Explains that -= modifies in place, so the first 100 rows of data were centred too.",
-          "Rewrites as sample = data[:100].copy(), or sample = data[:100] - data[:100].mean(axis=0).",
-          "Explains views make slicing take constant time and no extra memory, which matters for very large arrays.",
-        ],
-      },
-    },
-    {
       key: "setmask",
       rung: "stretch",
       prompt: <p><C>a = np.arange(10)</C>, then <C>a[a &gt; 5] = 0</C>. What is <C>a.sum()</C>?</p>,

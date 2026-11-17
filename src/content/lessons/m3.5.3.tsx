@@ -250,25 +250,6 @@ assert np.allclose(x, np.polyfit([0, 1, 2], [1, 2, 2], 1)[::-1], atol=1e-5), 'A 
       },
     },
     {
-      key: "min",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if <M>{"A^{\\mathsf T}A\\hat{\\mathbf x} = A^{\\mathsf T}\\mathbf b"}</M>, then{" "}
-          <M>{"\\|A\\mathbf x - \\mathbf b\\|^2 \\ge \\|A\\hat{\\mathbf x} - \\mathbf b\\|^2"}</M> for every x. Do not assume the
-          projection theorem; expand directly.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes Ax − b = A(x − x̂) + (Ax̂ − b).",
-          "Shows the cross term is zero: (A(x − x̂))ᵀ(Ax̂ − b) = (x − x̂)ᵀ(AᵀAx̂ − Aᵀb) = 0.",
-          "Concludes ‖Ax − b‖² = ‖A(x − x̂)‖² + ‖Ax̂ − b‖² ≥ ‖Ax̂ − b‖².",
-        ],
-      },
-    },
-    {
       key: "data",
       rung: "stretch",
       prompt: (

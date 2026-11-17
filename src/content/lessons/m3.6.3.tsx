@@ -254,24 +254,6 @@ assert abs(v - simplex_volume(pts)) < 0.02 and v == monte_carlo_volume(pts, 2000
       },
     },
     {
-      key: "orth",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that an orthogonal matrix Q has det Q = ±1, so it preserves volume. Then explain why a matrix whose determinant
-          is ±1 need not be orthogonal.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes determinants of QᵀQ = I to get det(Qᵀ) det Q = (det Q)² = 1.",
-          "Concludes det Q = ±1 and volumes are preserved.",
-          "Gives a counterexample such as the shear [[1, 1], [0, 1]], which has determinant 1 but changes lengths and angles.",
-        ],
-      },
-    },
-    {
       key: "polar",
       rung: "stretch",
       prompt: (

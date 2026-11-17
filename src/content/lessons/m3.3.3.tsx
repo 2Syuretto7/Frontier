@@ -265,23 +265,6 @@ assert np.allclose(sherman_morrison(np.linalg.inv(A), u, v), np.linalg.inv(A + n
       },
     },
     {
-      key: "unique",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that a matrix has at most one inverse. Then prove that if A is invertible, the only solution of Ax = 0 is x = 0.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Supposes B and C both satisfy BA = AB = I and CA = AC = I.",
-          "Computes B = BI = B(AC) = (BA)C = IC = C.",
-          "For Ax = 0, multiplies by A⁻¹ on the left: x = A⁻¹Ax = A⁻¹0 = 0.",
-        ],
-      },
-    },
-    {
       key: "gj",
       rung: "stretch",
       prompt: <p>Find the inverse of the matrix with rows (1, 0, 0), (2, 1, 0) and (0, 3, 1) by Gauss-Jordan. Give its entry in row 3, column 1.</p>,

@@ -305,18 +305,6 @@ assert np.allclose(nearest_psd(N), N)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that for any linear map S between finite-dimensional inner product spaces, S*S is a positive operator.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows S*S is self-adjoint, using (S*S)* = S*(S*)* = S*S.",
-          "Shows ⟨S*Sv, v⟩ = ⟨Sv, Sv⟩ = ‖Sv‖² ≥ 0 using the defining property of the adjoint.",
-        ],
-      },
-    },
-    {
       key: "repair",
       rung: "stretch",
       prompt: (

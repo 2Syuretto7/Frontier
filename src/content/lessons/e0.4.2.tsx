@@ -261,25 +261,6 @@ assert merge_counts(a, b) == {'x': 2, 'y': 5, 'z': 3} and a == {'x': 2, 'y': 1} 
       },
     },
     {
-      key: "phonebook",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why a dictionary from names to numbers is better than a list of name&ndash;number pairs for a phone book
-          with millions of entries. Then explain why a list cannot be used as a dictionary key while a string can.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains that finding a name in a list of pairs means checking pairs one by one, which takes time proportional to the number of entries.",
-          "Explains that a dictionary jumps almost directly to the value using a hash of the key, so look-up time hardly grows with size.",
-          "Explains that keys are found by their hash, so a key must not change after it is stored.",
-          "Notes that strings cannot be changed while lists can, so a list's hash could become out of date.",
-        ],
-      },
-    },
-    {
       key: "banana",
       rung: "stretch",
       prompt: (

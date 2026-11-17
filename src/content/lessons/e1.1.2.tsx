@@ -256,26 +256,6 @@ assert len(kill_tree(procs, 1)) == 2999, 'Use a stack, not deep recursion, for l
       },
     },
     {
-      key: "stop",
-      rung: "prove",
-      prompt: (
-        <p>
-          A training job you started in the background has stopped improving and you want to stop it without losing its latest
-          checkpoint. Describe, command by command, how you find it and stop it, and explain why you try one signal before the
-          other.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Finds the process and its PID, for example with ps aux | grep train or with top.",
-          "Sends the default TERM signal first with kill PID.",
-          "Explains that TERM can be caught, so the program can save a checkpoint and clean up before exiting.",
-          "Uses kill -9 only if the process ignores TERM, noting that KILL cannot be caught, so nothing is saved.",
-        ],
-      },
-    },
-    {
       key: "perm",
       rung: "stretch",
       prompt: <p>An SSH private key must be readable and writable by its owner and by nobody else. What mode should it have, as three digits?</p>,

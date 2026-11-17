@@ -231,24 +231,6 @@ def f1(tp, fp, fn):
       },
     },
     {
-      key: "explain",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain, with numbers, why a classifier with 99% accuracy can be worse than useless when one class is very rare.
-          Then suggest a better way to report its performance.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Gives a concrete example where the rare class is about 1% or less, so always predicting the common class reaches about 99% accuracy.",
-          "Explains that such a classifier never detects the rare class, which is usually the class we care about.",
-          "Suggests reporting false positives and false negatives separately, or the share of positives caught and the share of alarms that are real.",
-        ],
-      },
-    },
-    {
       key: "real-alarms",
       rung: "stretch",
       prompt: (

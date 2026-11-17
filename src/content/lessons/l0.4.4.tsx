@@ -244,25 +244,6 @@ def causal_output(scores, values, i):
       },
     },
     {
-      key: "straight",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why <M>{"y = a\\,x^{-\\alpha}"}</M> appears as a straight line when plotted with logarithmic scales on both
-          axes, and what the slope of that line is.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes logarithms of both sides: log y = log a − α log x.",
-          "Uses the laws of logarithms: the log of a product is a sum, and the log of a power is the power times the log.",
-          "Notes this is a linear relation between log y and log x, so a straight line on log-log axes.",
-          "Identifies the slope as −α and the intercept as log a.",
-        ],
-      },
-    },
-    {
       key: "predict",
       rung: "stretch",
       prompt: (

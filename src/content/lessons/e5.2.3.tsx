@@ -353,23 +353,6 @@ assert np.allclose(W.grad, X.T @ G) and np.allclose(b.grad, G.sum(axis=0)) and n
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Y = A B with A of shape (m, k) and B of shape (k, n), and G = ∂L/∂Y for a scalar L. Prove that ∂L/∂B = Aᵀ G.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes Yᵢⱼ = Σₖ AᵢₖBₖⱼ and computes ∂Yᵢⱼ/∂Bₚq = Aᵢₚ if j = q, else 0.",
-          "Applies the chain rule: ∂L/∂Bₚq = Σᵢⱼ Gᵢⱼ ∂Yᵢⱼ/∂Bₚq = Σᵢ Aᵢₚ Gᵢq.",
-          "Recognises Σᵢ Aᵢₚ Gᵢq as the (p, q) entry of Aᵀ G (and may check the shape (k, m)(m, n) = (k, n)).",
-        ],
-      },
-    },
-    {
       key: "cost",
       rung: "stretch",
       prompt: (

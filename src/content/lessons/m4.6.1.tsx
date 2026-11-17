@@ -263,19 +263,6 @@ assert abs(s - 0.5073) < 0.02 and simulate_birthday(23, 365, 20000, 1) == s, 'Se
       },
     },
     {
-      key: "union",
-      rung: "prove",
-      prompt: <p>Prove from the definition of P on a finite sample space that <M>{"P(A \\cup B) = P(A) + P(B) - P(A \\cap B)"}</M>.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes P(A) and P(B) as sums of p(ω) over their outcomes.",
-          "Notes outcomes in A ∩ B are counted twice in P(A) + P(B), and others once.",
-          "Subtracts P(A ∩ B) to count each outcome of A ∪ B exactly once.",
-        ],
-      },
-    },
-    {
       key: "fullhouse",
       rung: "stretch",
       prompt: <p>What is the probability that a 5-card hand is a full house (three of one rank and two of another)? Give it to six decimal places.</p>,

@@ -277,24 +277,6 @@ assert abs(x - 1.0) < 1e-6 and abs(v - 2.0) < 1e-6` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let ā ∈ ℝⁿ, P an n-by-k matrix and b a number. Prove that aᵀx ≤ b holds for every a = ā + Pu with ‖u‖₂ ≤ 1 if and
-          only if āᵀx + ‖Pᵀx‖₂ ≤ b.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes (ā + Pu)ᵀx = āᵀx + uᵀ(Pᵀx) and bounds uᵀ(Pᵀx) ≤ ‖Pᵀx‖ by Cauchy–Schwarz for ‖u‖ ≤ 1.",
-          "Shows the bound is attained, by u = Pᵀx/‖Pᵀx‖ when Pᵀx ≠ 0 (and trivially otherwise).",
-          "Concludes that the constraint holds for all such a exactly when it holds at the supremum, giving both directions.",
-        ],
-      },
-    },
-    {
       key: "lm",
       rung: "stretch",
       prompt: <p>Minimise λ_max of [[2 − x, 1], [1, x]] over real x. What is the minimum value?</p>,

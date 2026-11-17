@@ -292,25 +292,6 @@ assert np.all(q["W1"] == -0.5) and q["b2"] == -1.0` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          A hidden unit j has <M>{"h_j = \\sigma(z_j)"}</M> and feeds units k with <M>{"z_k = \\sum_j h_j w_{jk} + b_k"}</M>. Prove
-          that <M>{"\\delta_j = \\sigma'(z_j)\\sum_k w_{jk}\\delta_k"}</M> and that{" "}
-          <M>{"\\partial L/\\partial w_{jk} = h_j\\delta_k"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes z_j influences L only through h_j, and h_j only through the z_k it feeds, then applies the multivariable chain rule.",
-          "Computes ∂h_j/∂z_j = σ′(z_j) and ∂z_k/∂h_j = w_jk to get δ_j = σ′(z_j) Σ_k w_jk δ_k.",
-          "Notes w_jk influences L only through z_k, with ∂z_k/∂w_jk = h_j, giving h_j δ_k.",
-        ],
-      },
-    },
-    {
       key: "deltas",
       rung: "stretch",
       prompt: <p>A network has layer sizes 3, 4, 2 (input, hidden, output). How many deltas does one backward pass compute, one per non-input unit?</p>,

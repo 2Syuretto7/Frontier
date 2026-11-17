@@ -236,24 +236,6 @@ assert abs(m) > 1e6, 'Too large a step makes it blow up.'` },
       },
     },
     {
-      key: "why-square",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why we add up the <em>squared</em> residuals rather than the residuals themselves. Give an example of a
-          clearly bad line whose plain residuals add up to zero.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that positive and negative residuals cancel when added.",
-          "Gives a bad line with residuals summing to zero, for instance a flat line at the mean of the y values through steeply rising data.",
-          "Explains that squaring makes every term non-negative, so the total is zero only for a perfect fit and grows with every miss.",
-        ],
-      },
-    },
-    {
       key: "nudge",
       rung: "stretch",
       prompt: (

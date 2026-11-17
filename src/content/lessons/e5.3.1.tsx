@@ -401,24 +401,6 @@ assert loss.data < 0.5 * first, (first, loss.data)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why <C>parameters()</C>, walking attributes, lists and submodules with a set of seen ids, terminates and
-          lists every reachable Tensor exactly once, provided no module contains itself.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Argues termination: each recursive call goes one level down the containment structure, which has no cycles, so every path is finite.",
-          "Argues completeness: every reachable Tensor is at the end of some path of attributes, list entries and submodules, so the walk visits it.",
-          "Argues no duplicates: the first visit records the id and appends; any later visit sees the id and skips.",
-        ],
-      },
-    },
-    {
       key: "mlp",
       rung: "stretch",
       prompt: <p>How many numbers do the parameters of <C>Sequential(Linear(3, 4), ReLU(), Linear(4, 4), ReLU(), Linear(4, 1))</C> hold?</p>,

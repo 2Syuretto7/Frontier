@@ -249,19 +249,6 @@ def sign_test_p(d):
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Two scores on each unit have equal variance σ² and correlation ρ. Prove that the paired difference has variance 2σ²(1 − ρ), and that an unpaired design needs n/(1 − ρ) units per group to match the precision of n pairs.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Expands Var(b − a) = Var(a) + Var(b) − 2Cov(a, b) with Cov = ρσ², giving 2σ²(1 − ρ).",
-          "States the unpaired difference of means with n′ per group has variance 2σ²/n′, and the paired mean difference has 2σ²(1 − ρ)/n.",
-          "Equates the two and solves n′ = n/(1 − ρ).",
-        ],
-      },
-    },
-    {
       key: "all7",
       rung: "stretch",
       prompt: <p>A new model wins on all 7 datasets. What is the exact one-sided Wilcoxon signed-rank p-value? Give seven decimal places.</p>,

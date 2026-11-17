@@ -388,39 +388,6 @@ assert time.time() - t < 4, 'Both should be linear.'` },
         ],
       },
     },
-    {
-      key: "reversal",
-      rung: "prove",
-      prompt: <p>Prove that reversing a[:k], then a[k:], then the whole array rotates a left by k places, by tracking where the item that starts at index i ends up.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "For i < k: the first reversal sends i to k − 1 − i, and the final reversal sends that to n − 1 − (k − 1 − i) = n − k + i.",
-          "For i ≥ k: the second reversal sends i to k + (n − 1 − i), and the final reversal sends that to n − 1 − (k + n − 1 − i) = i − k.",
-          "Both cases agree with left rotation, which sends i to (i − k) mod n.",
-        ],
-      },
-    },
-    {
-      key: "strides",
-      rung: "stretch",
-      prompt: (
-        <p>
-          A 4096 × 4096 array of 8-byte floats is stored row-major. Cache lines hold 64 bytes. Estimate how many cache lines are
-          loaded when summing it row by row, and when summing it column by column if the cache cannot hold a whole column&rsquo;s
-          worth of lines. Explain the difference.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Row by row reads memory in order: each 64-byte line serves 8 consecutive elements, so about 4096² / 8 ≈ 2.1 million lines.",
-          "Column by column jumps 4096 × 8 = 32 KB between consecutive reads, so each read touches a new line.",
-          "If lines are evicted before the next column reuses them, every element costs a line: about 16.8 million lines, eight times more.",
-          "Concludes that traversal order should match storage order (or that the loops should be swapped or the array transposed).",
-        ],
-      },
-    },
   ],
 
   glimpse: (

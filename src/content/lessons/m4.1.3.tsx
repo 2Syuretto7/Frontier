@@ -257,24 +257,6 @@ assert all(odd_entries(n) == sum(comb(n, k) % 2 for k in range(n + 1)) for n in 
       },
     },
     {
-      key: "chair",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove <M>{"\\sum_{k=0}^{n} k\\binom{n}{k} = n\\,2^{n-1}"}</M> by double counting pairs (committee, chair of the
-          committee) drawn from n people.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Counting committees by size: a committee of k has k choices of chair, giving the sum of k·C(n, k).",
-          "Counting chair first: n choices of chair, then any subset of the other n − 1 people joins, giving n·2ⁿ⁻¹.",
-          "Concludes the two counts of the same set are equal.",
-        ],
-      },
-    },
-    {
       key: "even",
       rung: "stretch",
       prompt: <p>How many subsets of a 12-element set have an even number of elements (including the empty set)?</p>,

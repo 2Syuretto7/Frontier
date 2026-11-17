@@ -286,24 +286,6 @@ assert ts == [1.0, 1.0] and np.allclose(x, 0.0)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Suppose ∇f(x*) = 0, ∇²f(x) ⪰ μI, and ∇²f is M-Lipschitz. Prove that a pure Newton step from x satisfies ‖x⁺ − x*‖ ≤
-          (M/(2μ))‖x − x*‖².
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes x⁺ − x* = H⁻¹(H e − (∇f(x) − ∇f(x*))) with H = ∇²f(x) and e = x − x*.",
-          "Expresses ∇f(x) − ∇f(x*) as ∫₀¹ ∇²f(x* + se)e ds and bounds ‖H − ∇²f(x* + se)‖ ≤ M(1 − s)‖e‖.",
-          "Integrates to get M‖e‖²/2 and uses ‖H⁻¹‖ ≤ 1/μ to conclude.",
-        ],
-      },
-    },
-    {
       key: "cube",
       rung: "stretch",
       prompt: <p>Pure Newton on f(x) = √(1 + x²) from x₀ = 0.9. What is x₃?</p>,

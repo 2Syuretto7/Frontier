@@ -286,19 +286,6 @@ assert np.allclose(boost_score(m, X), [0.5, -1.5])` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Let Z(α) = (1 − ε)e^(−α) + εe^(α) with 0 &lt; ε &lt; ½. Prove that Z is minimised at α = ½ log((1 − ε)/ε) and that the minimum value is 2√(ε(1 − ε)).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Differentiates: Z′(α) = −(1 − ε)e^(−α) + εe^(α), and sets it to zero to get e^(2α) = (1 − ε)/ε.",
-          "Argues this is a minimum (Z″ > 0, Z is convex, or a sign change of Z′).",
-          "Substitutes e^(α) = √((1 − ε)/ε) to get Z = √(ε(1 − ε)) + √(ε(1 − ε)) = 2√(ε(1 − ε)).",
-        ],
-      },
-    },
-    {
       key: "bound",
       rung: "stretch",
       prompt: <p>Ten rounds each have weighted error 0.3. What is the bound ∏ 2√(ε(1 − ε)) on the training error? Give four decimal places.</p>,

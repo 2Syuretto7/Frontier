@@ -310,19 +310,6 @@ assert np.asarray(naive_var([1.0, 2.0])).dtype == np.float32` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that if X and Y are independent with finite variances, then Var(X + Y) = Var(X) + Var(Y).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Expands Var(X + Y) = E[((X − μ_X) + (Y − μ_Y))²] = Var(X) + Var(Y) + 2E[(X − μ_X)(Y − μ_Y)] using linearity.",
-          "Uses independence (of X − μ_X and Y − μ_Y) to write the cross term as E[X − μ_X]·E[Y − μ_Y].",
-          "Notes each factor is 0, so the cross term vanishes.",
-        ],
-      },
-    },
-    {
       key: "distinctvar",
       rung: "stretch",
       prompt: <p>A die is rolled 10 times. What is the variance of the number of different faces that appear? Give four decimal places.</p>,

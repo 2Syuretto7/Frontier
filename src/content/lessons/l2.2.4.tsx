@@ -268,19 +268,6 @@ def poisson_deviance(y, mu):
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>For a GLM with canonical link, log-likelihood Σ(yᵢηᵢ − A(ηᵢ))/φ and ηᵢ = xᵢᵀw, prove that the gradient is Xᵀ(y − μ)/φ and that the log-likelihood is concave in w.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Differentiates each term using ∂ηᵢ/∂w = xᵢ and A′(ηᵢ) = μᵢ to get Σ(yᵢ − μᵢ)xᵢ/φ = Xᵀ(y − μ)/φ.",
-          "Differentiates again to get the Hessian −Σ A″(ηᵢ)xᵢxᵢᵀ/φ.",
-          "Argues A″ ≥ 0 (it is a variance up to φ > 0), so the Hessian is negative semidefinite and the log-likelihood concave.",
-        ],
-      },
-    },
-    {
       key: "dev",
       rung: "stretch",
       prompt: <p>What is the Poisson deviance of one observation y = 3 with fitted mean μ = 1? Give four decimal places.</p>,

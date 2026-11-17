@@ -293,23 +293,6 @@ assert len(steps) == 60 and min(steps) >= 0.5 / 9 and f(x) < 1e-6` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove the descent lemma: if ∇f is L-Lipschitz, then f(y) ≤ f(x) + ∇f(x)ᵀ(y − x) + (L/2)‖y − x‖² for all x, y.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes f(y) − f(x) as the integral of ∇f(x + s(y − x))ᵀ(y − x) over s ∈ [0, 1] and subtracts ∇f(x)ᵀ(y − x).",
-          "Bounds the integrand (∇f(x + s(y − x)) − ∇f(x))ᵀ(y − x) by Ls‖y − x‖² using Cauchy–Schwarz and the Lipschitz condition.",
-          "Integrates Ls from 0 to 1 to get the factor L/2, giving the stated inequality.",
-        ],
-      },
-    },
-    {
       key: "osc",
       rung: "stretch",
       prompt: <p>Run gradient descent on f(x) = 2x² from x₀ = 1 with step t = 0.4. What is x₃?</p>,

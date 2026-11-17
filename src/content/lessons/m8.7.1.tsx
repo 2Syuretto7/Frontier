@@ -256,19 +256,6 @@ assert abs(osc_sum(lambda x: x, partition(0, 2, 4)) - 1) < 1e-12` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that if Q refines P, then L(f, P) ≤ L(f, Q).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Reduces to adding a single point z inside one cell [x_(k−1), x_k] (then inducts on the number of added points).",
-          "Notes the infimum over each sub-cell is at least the infimum m_k over the whole cell, since the sub-cell is a subset.",
-          "Concludes the cell's contribution m_k(x_k − x_(k−1)) is at most the sum of the two new contributions, and the other cells are unchanged.",
-        ],
-      },
-    },
-    {
       key: "ln10",
       rung: "stretch",
       prompt: <p>What is the lower sum of x² on [0, 1] with 10 equal cells?</p>,

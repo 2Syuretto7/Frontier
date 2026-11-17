@@ -265,24 +265,6 @@ assert abs(jacobi_kappa(np.array([[4.0, 2.0], [2.0, 4.0]])) - 3.0) < 1e-12` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that steepest descent with exact line search on a differentiable f produces successive gradients that are
-          orthogonal, and that on f(x) = ½xᵀQx the exact step is t = gᵀg / gᵀQg with g = Qx.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Defines φ(t) = f(x − t∇f(x)) and computes φ′(t) = −∇f(x − t∇f(x))ᵀ∇f(x) by the chain rule.",
-          "Notes φ′(t*) = 0 at the minimising step, which says the new gradient is orthogonal to the old one.",
-          "For the quadratic, expands φ(t) = f(x) − t gᵀg + (t²/2) gᵀQg and solves φ′(t) = 0 to get t = gᵀg / gᵀQg.",
-        ],
-      },
-    },
-    {
       key: "norm3",
       rung: "stretch",
       prompt: <p>Gradient descent on ½xᵀQx with Q = diag(1, 9), step t = 2/(μ + L), starting from (1, 1). What is ‖x₃‖?</p>,

@@ -263,38 +263,6 @@ assert abs(a / b - 2 ** 0.5) < 1e-11, 'The near misses approach √2.'` },
         ],
       },
     },
-    {
-      key: "largest",
-      rung: "prove",
-      prompt: <p>Prove by contradiction that there is no largest even integer.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Assumes, for contradiction, that some even integer N is the largest.",
-          "Considers N + 2 and shows it is even.",
-          "Notes N + 2 > N, contradicting the assumption, and concludes.",
-        ],
-      },
-    },
-    {
-      key: "root-three",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Prove that <M>{"\\sqrt 3"}</M> is irrational. You may use the result of the previous lesson&rsquo;s stretch
-          exercise: if 3 divides <M>{"n^2"}</M>, then 3 divides n.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Assumes √3 = a/b in lowest terms, with b ≠ 0.",
-          "Derives a² = 3b², so 3 divides a², so 3 divides a; writes a = 3c.",
-          "Derives b² = 3c², so 3 divides b.",
-          "Notes that 3 divides both a and b, contradicting lowest terms.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

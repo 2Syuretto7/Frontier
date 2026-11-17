@@ -267,25 +267,6 @@ assert edges.tolist() == [1, 3, 5] and b.tolist() == [0, 0, 1, 1, 1], 'A value e
       },
     },
     {
-      key: "invariance",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that rescaling one feature as <M>{"x_j \\mapsto a x_j + b"}</M> with <M>{"a \\ne 0"}</M> does not change the
-          predictions of least squares with an intercept, and explain why the same is false for ridge regression.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows that each linear model in the old feature equals one in the new feature, with w_j' = w_j / a and an adjusted intercept, and vice versa.",
-          "Concludes the two feature sets give the same set of prediction functions, so the least-squares minimiser gives the same predictions.",
-          "Notes the ridge penalty on w_j' corresponds to a penalty a²w_j'² in the old parametrisation, so the trade-off changes.",
-          "Concludes the ridge solution, and its predictions, depend on the units.",
-        ],
-      },
-    },
-    {
       key: "zstretch",
       rung: "stretch",
       prompt: <p>Training values are 2, 4, 6 and 8. Using the population standard deviation, what is the standardised value of a new point 10? Give three decimal places.</p>,

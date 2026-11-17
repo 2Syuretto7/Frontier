@@ -304,34 +304,6 @@ assert gray_inverse(gray(big)) == big` },
         ],
       },
     },
-    {
-      key: "grayproof",
-      rung: "prove",
-      prompt: <p>Prove that gray(n) = n XOR (n &gt;&gt; 1) and gray(n + 1) differ in exactly one bit.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes n as a prefix P, a 0 at position j, then j ones, so n + 1 is P, a 1 at j, then j zeros.",
-          "Computes that n and n + 1 differ exactly in bits 0 to j.",
-          "Observes bit i of gray(n) is bit i of n XOR bit i + 1 of n, so gray changes at bit i only if exactly one of bits i and i + 1 of n changes.",
-          "Bits 0 to j all change, so only bit j (where bit j + 1 is unchanged) changes in the Gray code: exactly one bit.",
-        ],
-      },
-    },
-    {
-      key: "subsetproof",
-      rung: "stretch",
-      prompt: <p>Prove that starting from sub = mask and repeating sub = (sub − 1) &amp; mask visits every subset of mask exactly once, in decreasing order, before reaching 0.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes every value produced is a subset of mask because of the AND.",
-          "Shows (sub − 1) & mask is the largest subset of mask smaller than sub: sub − 1 is the largest integer below sub, and clearing non-mask bits from it, which are only in its low trailing part, gives the largest subset below it.",
-          "Concludes the sequence is strictly decreasing and skips no subset.",
-          "Counts 2^popcount(mask) subsets including the final 0.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

@@ -264,24 +264,6 @@ assert abs(schedule(50, 8, 12, 200)[-1] - ss) < 1e-9 and abs(ss - 50 / (1 - 0.5 
       },
     },
     {
-      key: "sum-proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Using the doubling-and-subtracting trick, prove that <M>{"1 + 3 + 9 + \\cdots + 3^{n-1} = \\dfrac{3^n - 1}{2}"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Names the sum S and multiplies it by 3.",
-          "Writes 3S = 3 + 9 + … + 3ⁿ and lines it up against S.",
-          "Subtracts to get 3S − S = 3ⁿ − 1.",
-          "Divides by 2 to conclude S = (3ⁿ − 1)/2.",
-        ],
-      },
-    },
-    {
       key: "fold",
       rung: "stretch",
       prompt: (

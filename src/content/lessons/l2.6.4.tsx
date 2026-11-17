@@ -279,24 +279,6 @@ assert abs((kl(Y2) - kl(Y)) / 1e-6 - tsne_grad(P, Y)[2, 1]) < 1e-4` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Using the gradient formula ∂KL/∂yᵢ = 4 Σⱼ (pᵢⱼ − qᵢⱼ) wᵢⱼ (yᵢ − yⱼ), prove that the gradients of all the points sum
-          to zero, and deduce that a plain gradient-descent step leaves the centroid of the embedding unchanged.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that the coefficient mᵢⱼ = (pᵢⱼ − qᵢⱼ)wᵢⱼ is symmetric in i and j, because P, Q and the kernel are all symmetric.",
-          "Pairs the (i, j) and (j, i) terms, mᵢⱼ(yᵢ − yⱼ) + mⱼᵢ(yⱼ − yᵢ) = 0, so the double sum is zero (or argues equivalently, for example by translation invariance of the cost).",
-          "Deduces that each step moves the points by vectors summing to zero, so their mean is unchanged.",
-        ],
-      },
-    },
-    {
       key: "twopt",
       rung: "stretch",
       prompt: <p>A point has squared distances 1 and 2 to its two neighbours, and σ = 1/√2. What is its perplexity? Give four decimal places.</p>,

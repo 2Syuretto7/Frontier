@@ -238,26 +238,6 @@ assert commit_id({'x': 'hi'}, c1, 'm') != c1, 'Same files and message but a diff
       },
     },
     {
-      key: "staging",
-      rung: "prove",
-      prompt: (
-        <p>
-          You spent a morning fixing a data-loading bug and, along the way, renaming variables in three unrelated files. Explain
-          how you would use the staging area to turn this into good commits, and why that is better than one commit of
-          everything.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Stages only the files, or parts of files, for the bug fix, checks them with git diff --staged, and commits with a message explaining the fix.",
-          "Then stages and commits the renames separately, with their own message.",
-          "Explains that focused commits can be reviewed, reverted or found by bisect independently.",
-          "Notes that a single mixed commit hides the real fix among unrelated changes.",
-        ],
-      },
-    },
-    {
       key: "birthday",
       rung: "stretch",
       prompt: (

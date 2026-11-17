@@ -269,42 +269,6 @@ assert all(a > b for a, b in zip(prof, prof[1:])), '1/x needs smaller and smalle
         ],
       },
     },
-    {
-      key: "sqrt",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"\\sqrt{x}"}</M> is uniformly continuous on <M>{"[0, \\infty)"}</M>. (Hint: first show{" "}
-          <M>{"|\\sqrt{x} - \\sqrt{y}| \\le \\sqrt{|x - y|}"}</M>.)
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Proves the hint, for example by assuming x ≥ y and squaring √x ≤ √y + √(x − y).",
-          "Chooses δ = ε².",
-          "Concludes |x − y| < δ gives |√x − √y| < ε for all x, y ≥ 0.",
-        ],
-      },
-    },
-    {
-      key: "square-line",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Prove that <M>{"x^2"}</M> is not uniformly continuous on the real line. Explain in words what goes wrong, and why the
-          theorem about closed intervals does not apply.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes ε = 1 and an arbitrary δ > 0.",
-          "Chooses points such as x = n and y = n + δ/2 with n large, so that |x² − y²| = nδ + δ²/4 ≥ 1.",
-          "Explains that the graph grows ever steeper, and that the real line is not a closed, bounded interval.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

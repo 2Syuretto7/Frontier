@@ -277,19 +277,6 @@ assert flag_layers([1e-3, 0.5, 1e-6], lo=1e-5, hi=0.1) == [(1, "too large"), (2,
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that scaling the loss by c &gt; 0 and the SGD learning rate by 1/c leaves every layer's update-to-weight ratio unchanged.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes the gradient of cL is c∇L by linearity of differentiation.",
-          "Shows the update (η/c)(c∇L) equals the original η∇L.",
-          "Concludes ‖ΔW‖/‖W‖ is unchanged since the weights are the same.",
-        ],
-      },
-    },
-    {
       key: "steps",
       rung: "stretch",
       prompt: <p>If every step changes a layer's weights by a fraction 10⁻³ in the same direction, by roughly what factor have the weights changed after 1000 steps? Give 3 decimal places.</p>,

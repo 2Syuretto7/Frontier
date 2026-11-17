@@ -343,24 +343,6 @@ assert np.allclose(ms[2], full.sum(axis=(0, 1, 3))) and np.allclose(ms[0], full.
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          For a chain x₁ − x₂ − x₃ with p(x) ∝ φ₁(x₁)φ₂(x₂)φ₃(x₃)ψ₁₂(x₁, x₂)ψ₂₃(x₂, x₃), prove that p(x₂) ∝ φ₂(x₂) m₁(x₂)
-          m₃(x₂), where m₁(x₂) = Σ_(x₁) φ₁(x₁)ψ₁₂(x₁, x₂) and m₃(x₂) = Σ_(x₃) φ₃(x₃)ψ₂₃(x₂, x₃).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the unnormalised marginal of x₂ as the double sum over x₁ and x₃ of the full product.",
-          "Takes φ₂(x₂) out and uses distributivity to split the double sum into the product of a sum over x₁ and a sum over x₃, because no factor contains both.",
-          "Identifies the two sums as m₁ and m₃ and notes that the proportionality constant is the normaliser Z, independent of x₂.",
-        ],
-      },
-    },
-    {
       key: "post",
       rung: "stretch",
       prompt: <p>In the chain of the code (P(A) = (0.6, 0.4), and the tables P(B | A) and P(C | B)), what is P(A = 1 | C = 0)? Give four decimal places.</p>,

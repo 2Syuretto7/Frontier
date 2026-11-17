@@ -235,19 +235,6 @@ assert ok, '{{∅}} has one element but is not 1.'` },
       },
     },
     {
-      key: "empty-not",
-      rung: "prove",
-      prompt: <p>Explain carefully why <M>{"\\varnothing \\ne \\{\\varnothing\\}"}</M>, using only what it means for sets to have elements.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that ∅ has no elements.",
-          "Notes that {∅} has exactly one element, namely ∅.",
-          "Concludes that since one has an element and the other does not, they are different sets.",
-        ],
-      },
-    },
-    {
       key: "von-neumann",
       rung: "stretch",
       prompt: (

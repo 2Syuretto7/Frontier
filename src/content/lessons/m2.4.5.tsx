@@ -349,42 +349,6 @@ assert abs(F(2.5, y)) < 1e-9 and y > 2.5, 'Stay on the folium of Descartes.'` },
         ],
       },
     },
-    {
-      key: "radius",
-      rung: "prove",
-      prompt: (
-        <p>
-          Use implicit differentiation to show that at every point <M>{"(a, b)"}</M> of the circle{" "}
-          <M>{"x^2 + y^2 = r^2"}</M> with <M>{"b \\ne 0"}</M>, the tangent is perpendicular to the radius from the origin.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Differentiates to get 2x + 2y y′ = 0, so the slope at (a, b) is −a/b.",
-          "Notes that the radius to (a, b) has slope b/a (or handles a = 0 separately).",
-          "Shows the product of the slopes is −1, or argues with direction vectors, so the lines are perpendicular.",
-        ],
-      },
-    },
-    {
-      key: "second",
-      rung: "stretch",
-      prompt: (
-        <p>
-          On the circle <M>{"x^2 + y^2 = 25"}</M>, find <M>{"y''"}</M> in terms of y alone, by differentiating{" "}
-          <M>{"y' = -x/y"}</M> again. What does the sign of your answer say about the shape of the top and bottom halves?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Differentiates −x/y with the quotient rule to get −(y − x y′)/y².",
-          "Substitutes y′ = −x/y and uses x² + y² = 25 to reach y″ = −25/y³.",
-          "Notes that y″ < 0 on the top half (bending down) and y″ > 0 on the bottom half (bending up).",
-        ],
-      },
-    },
   ],
 
   glimpse: (

@@ -264,25 +264,6 @@ assert np.allclose(J, np.kron(np.eye(2), B.T), atol=1e-6)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove the product rule <M>{"d(XY) = dX\\,Y + X\\,dY"}</M>, and use it to derive{" "}
-          <M>{"d(X^{-1}) = -X^{-1}\\,dX\\,X^{-1}"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Expands (X + dX)(Y + dY) − XY = dX Y + X dY + dX dY and argues dX dY is second order (bounded by ‖dX‖‖dY‖).",
-          "Keeps the order of factors, noting matrices need not commute.",
-          "Differentiates X X⁻¹ = I to get dX X⁻¹ + X d(X⁻¹) = 0.",
-          "Solves by multiplying on the left by X⁻¹ to get d(X⁻¹) = −X⁻¹ dX X⁻¹.",
-        ],
-      },
-    },
-    {
       key: "count",
       rung: "stretch",
       prompt: (

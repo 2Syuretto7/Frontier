@@ -245,25 +245,6 @@ assert expand('*.py', names) == ['a.py', 'b.py'] and expand('.*', names) == ['.e
       },
     },
     {
-      key: "explain",
-      rung: "prove",
-      prompt: (
-        <p>
-          A friend says absolute paths are always better because they work from anywhere. Give one situation where an absolute path
-          is the right choice and one where a relative path is better, and explain why in each case.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains that an absolute path names the same place whatever the current directory, so it suits fixed locations such as a shared dataset directory or a log file named in a configuration.",
-          "Explains that a relative path is interpreted from the current directory, so it keeps working when a whole project folder is moved or copied to another machine.",
-          "Gives a concrete example of each, such as /data/imagenet for a dataset and data/train.csv inside a project.",
-          "Notes that a relative path silently means something else if the command runs from a different directory.",
-        ],
-      },
-    },
-    {
       key: "root",
       rung: "stretch",
       prompt: <p>You are in <C>/home/asha</C>. Which path names the same directory as <C>/home/asha/projects</C>? Select all that apply.</p>,

@@ -266,19 +266,6 @@ assert total_cost(act, y, 2.0, 5.0, 0.5) == 7.5` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>For a binary label with P(Y = 1 | x) = p and costs c_FP, c_FN &gt; 0 for false positives and false negatives, prove that predicting 1 has lower expected cost than predicting 0 exactly when p &gt; c_FP/(c_FP + c_FN).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes the expected cost of predicting 1 as (1 − p)c_FP, since it errs only when Y = 0.",
-          "Computes the expected cost of predicting 0 as p·c_FN.",
-          "Rearranges (1 − p)c_FP < p·c_FN to p > c_FP/(c_FP + c_FN), using that c_FP + c_FN > 0.",
-        ],
-      },
-    },
-    {
       key: "q90",
       rung: "stretch",
       prompt: <p>The predictive distribution is exponential with rate 1. Which action minimises the expected pinball loss with τ = 0.9? Give four decimal places.</p>,

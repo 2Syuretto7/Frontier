@@ -271,19 +271,6 @@ assert abs(leaf_value(g[m], h[m], 1.0) - 1.0) < 1e-12 and abs(split_score(g, h, 
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>For a leaf with gradient sum G, Hessian sum H ≥ 0 and penalty λ &gt; 0, prove that Gw + ½(H + λ)w² is minimised at w* = −G/(H + λ) with minimum value −½G²/(H + λ).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes the function is a parabola in w with positive leading coefficient (H + λ)/2, so it has a unique minimum.",
-          "Sets the derivative G + (H + λ)w to zero to get w* = −G/(H + λ).",
-          "Substitutes to get −G²/(H + λ) + ½G²/(H + λ) = −½G²/(H + λ).",
-        ],
-      },
-    },
-    {
       key: "obj",
       rung: "stretch",
       prompt: <p>A leaf has G = −3, H = 2 and λ = 1. By how much does its Newton value change the approximate objective, −½G²/(H + λ)?</p>,

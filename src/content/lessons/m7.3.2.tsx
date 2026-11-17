@@ -292,19 +292,6 @@ assert abs(min_rate([0.5], 400000, seed=3) - 0.5) < 0.01` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that for the standard normal Z and any t &gt; 0, <M>{"P(Z > t) \\le \\frac{1}{t\\sqrt{2\\pi}}e^{-t^2/2}"}</M>.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes P(Z > t) = ∫ from t to ∞ of φ(x) dx with φ(x) = e^(−x²/2)/√(2π).",
-          "Uses x/t ≥ 1 on the range of integration to bound the integrand by (x/t)φ(x).",
-          "Evaluates ∫ from t to ∞ of xφ(x) dx = φ(t) (antiderivative −φ), giving φ(t)/t.",
-        ],
-      },
-    },
-    {
       key: "series",
       rung: "stretch",
       prompt: (

@@ -283,19 +283,6 @@ assert ls_grad(np.array([[g + 2, 0.0, 0.0]]), np.array([0]), 0.1)[0, 0] > 0` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that the label-smoothed loss with ε &gt; 0 is minimised at a finite logit gap, and find it.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes ℓ = −Σ q_k z_k + log Σ exp(z_j) using Σ q_k = 1, and finds the gradient p − q.",
-          "Argues the minimum is where p = q (convexity of log-sum-exp, or the loss tends to +∞ as the gap grows since q_y < 1).",
-          "Derives the gap z_y − z_k = log(q_y/q_k) = log((1 − ε + ε/K)/(ε/K)), finite because ε > 0.",
-        ],
-      },
-    },
-    {
       key: "floor",
       rung: "stretch",
       prompt: <p>With K = 2 and ε = 0.2, what is the smallest possible label-smoothed loss (natural log)? Hint: it is the entropy of q.</p>,

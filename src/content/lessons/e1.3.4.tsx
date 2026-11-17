@@ -273,26 +273,6 @@ assert q.peek(7) is None and next(q) is None and q.peek(7) == 5, 'None is a real
       },
     },
     {
-      key: "lines",
-      rung: "prove",
-      prompt: (
-        <p>
-          Write a generator <C>read_batches(path, size)</C> that yields lists of up to <C>size</C> lines from a file too large
-          for memory. Explain how much memory it needs, why the file is opened with <C>with</C>, and what happens to the last,
-          short batch.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Opens the file with with open(path) as f, and iterates over f line by line.",
-          "Accumulates lines in a list and yields it when it reaches size, then starts a new list.",
-          "After the loop, yields the final partial batch if it is not empty.",
-          "Explains that memory holds one batch at a time, and that with closes the file even if the consumer stops early or an error occurs.",
-        ],
-      },
-    },
-    {
       key: "next",
       rung: "stretch",
       prompt: <p><C>it = iter([1, 2, 3])</C>, then <C>next(it)</C>. What is <C>len(list(it))</C>?</p>,

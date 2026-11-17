@@ -289,25 +289,6 @@ def point_line_distance(p, a, b):
       },
     },
     {
-      key: "perp-proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the lines <M>{"ax + by = c"}</M> and <M>{"bx - ay = d"}</M> are perpendicular whenever <M>a</M> and{" "}
-          <M>b</M> are both nonzero.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Finds the slope of the first line as −a/b, using b ≠ 0.",
-          "Finds the slope of the second line as b/a, using a ≠ 0.",
-          "Multiplies the slopes to get −1.",
-          "Concludes by the perpendicularity criterion, noting neither line is vertical or horizontal.",
-        ],
-      },
-    },
-    {
       key: "bisector",
       rung: "stretch",
       prompt: (

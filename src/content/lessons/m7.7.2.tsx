@@ -249,24 +249,6 @@ assert abs(z.mean()) < 0.02 and abs(z.std() - 1) < 0.02 and abs(frac_below(z, 1.
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let <M>{"Y_1, Y_2, \\dots"}</M> be i.i.d. with mean 0, variance 1 and an MGF M that exists near 0. Show that the MGF of{" "}
-          <M>{"Z_n = (Y_1 + \\dots + Y_n)/\\sqrt n"}</M> tends to <M>{"e^{t^2/2}"}</M>, and say why this proves the CLT for them.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses independence to write M_{Z_n}(t) = M(t/√n)^n.",
-          "Expands M(s) = 1 + s²/2 + o(s²) from mean 0 and variance 1, and shows (1 + t²/2n + o(1/n))^n → e^{t²/2} (for example via logs).",
-          "Identifies e^{t²/2} as the N(0, 1) MGF and invokes the continuity theorem to get convergence in distribution.",
-        ],
-      },
-    },
-    {
       key: "cc",
       rung: "stretch",
       prompt: (

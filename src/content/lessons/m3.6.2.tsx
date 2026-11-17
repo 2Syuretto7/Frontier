@@ -270,25 +270,6 @@ assert x == [1, 1, 2], 'Strang’s system has solution (1, 1, 2).'` },
       },
     },
     {
-      key: "proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove Cramer&rsquo;s rule: if det A ≠ 0 and Ax = b, then <M>{"x_j = \\det B_j / \\det A"}</M>. You may use
-          det(AB) = det A det B.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Defines X_j as the identity with column j replaced by x.",
-          "Checks AX_j = B_j column by column: Ae_k is column k of A, and Ax = b.",
-          "Computes det X_j = x_j, for instance by expanding along row j or noting X_j is triangular after reordering.",
-          "Takes determinants: det A · x_j = det B_j, and divides by det A ≠ 0.",
-        ],
-      },
-    },
-    {
       key: "terms",
       rung: "stretch",
       prompt: <p>How many terms does the big formula have for a 5 × 5 determinant?</p>,

@@ -261,24 +261,6 @@ assert np.allclose(Rf, [[0, 1], [1, 0]]) and np.allclose(Rf @ Rf, np.eye(2)), 'R
       },
     },
     {
-      key: "props",
-      rung: "prove",
-      prompt: (
-        <p>
-          For A with independent columns, let <M>{"P = A(A^{\\mathsf T}A)^{-1}A^{\\mathsf T}"}</M>. Prove that{" "}
-          <M>{"P^2 = P"}</M> and <M>{"P^{\\mathsf T} = P"}</M>, and that I − P is also a projection.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Multiplies P·P and cancels the middle (AᵀA)(AᵀA)⁻¹ = I to get P.",
-          "Transposes using (XYZ)ᵀ = ZᵀYᵀXᵀ and the symmetry of AᵀA (so its inverse is symmetric) to get P.",
-          "Computes (I − P)² = I − 2P + P² = I − P and notes (I − P)ᵀ = I − P.",
-        ],
-      },
-    },
-    {
       key: "dist",
       rung: "stretch",
       prompt: (

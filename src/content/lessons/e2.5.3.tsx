@@ -422,39 +422,6 @@ assert med[-1] == statistics.median_low(xs) and len(med) == 50000` },
         ],
       },
     },
-    {
-      key: "expected",
-      rung: "prove",
-      prompt: <p>Prove that quickselect with a uniformly random pivot makes O(n) comparisons in expectation.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Defines a good pivot as one whose rank is in the middle half, so the kept side has at most 3/4 of the items.",
-          "Notes a random pivot is good with probability at least 1/2, so on average at most 2 partitions pass before the size drops by a factor 3/4.",
-          "Bounds each partition by a constant times the current size, at most (3/4)ʲ n in phase j.",
-          "Sums the geometric series, giving at most a constant times n in expectation.",
-        ],
-      },
-    },
-    {
-      key: "mom",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Show that median of medians with groups of 5 runs in O(n) in the worst case, and explain why the same argument fails
-          with groups of 3.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows at least about 3n/10 items are no greater than the pivot (and likewise no smaller), so the kept side has at most about 7n/10 items.",
-          "Writes T(n) ≤ T(n/5) + T(7n/10) + cn and proves T(n) ≤ 10cn by induction, since 1/5 + 7/10 = 9/10 < 1.",
-          "With groups of 3 the pivot beats only about n/3 items, giving T(n) ≤ T(n/3) + T(2n/3) + cn.",
-          "Since 1/3 + 2/3 = 1, that recurrence gives Θ(n log n), not O(n).",
-        ],
-      },
-    },
   ],
 
   glimpse: (

@@ -260,19 +260,6 @@ assert np.allclose(eta, [0, 0, np.log(2)], atol=1e-4)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>For a one-parameter exponential family f(x; η) = h(x) exp(ηT(x) − A(η)), prove that A′(η) = E[T(X)]. You may differentiate under the integral sign.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses normalisation: ∫ h(x) exp(ηT(x) − A(η)) dx = 1, or equivalently e^(A(η)) = ∫ h(x) e^(ηT(x)) dx.",
-          "Differentiates with respect to η under the integral, obtaining ∫ (T(x) − A′(η)) f(x; η) dx = 0 or the equivalent.",
-          "Concludes E[T(X)] − A′(η) = 0, using ∫ f = 1.",
-        ],
-      },
-    },
-    {
       key: "exp",
       rung: "stretch",
       prompt: <p>The exponential distribution λe^(−λx) has T(x) = x, η = −λ and A(η) = −log(−η). Using A″, what is Var X when λ = 0.5?</p>,

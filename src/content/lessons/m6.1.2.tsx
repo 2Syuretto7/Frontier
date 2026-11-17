@@ -297,19 +297,6 @@ assert np.allclose(D @ integration_matrix(3), np.vstack([np.eye(4), np.zeros((1,
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that if v₁, …, vₙ is a basis of V and w₁, …, wₙ are any vectors of W, there is exactly one linear map T: V → W with Tvⱼ = wⱼ for all j.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Defines T(Σcⱼvⱼ) = Σcⱼwⱼ and notes it is well defined because coordinates in a basis are unique.",
-          "Checks T is linear, using that the coordinates of u + v and av are c + d and ac.",
-          "Shows uniqueness: any linear S with Svⱼ = wⱼ agrees with T on every Σcⱼvⱼ by linearity.",
-        ],
-      },
-    },
-    {
       key: "dimpoly",
       rung: "stretch",
       prompt: <p>What is the dimension of the space of linear maps from the polynomials of degree at most 3 to those of degree at most 2?</p>,

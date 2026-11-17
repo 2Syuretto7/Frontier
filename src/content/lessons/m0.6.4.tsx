@@ -258,25 +258,6 @@ assert all(abs(z ** 4 - complex(3, 4)) < 1e-12 for z in rs) and min(abs(a - b) f
       },
     },
     {
-      key: "conjugate-proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the conjugate of a product is the product of the conjugates: <M>{"\\overline{zw} = \\bar z\\, \\bar w"}</M>{" "}
-          for all complex numbers <M>z</M> and <M>w</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes z = a + bi and w = c + di.",
-          "Computes zw = (ac − bd) + (ad + bc)i, so its conjugate is (ac − bd) − (ad + bc)i.",
-          "Computes (a − bi)(c − di) = (ac − bd) − (ad + bc)i.",
-          "Observes that the two agree.",
-        ],
-      },
-    },
-    {
       key: "square-root",
       rung: "stretch",
       prompt: (

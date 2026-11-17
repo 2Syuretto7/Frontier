@@ -280,19 +280,6 @@ for _ in range(200):
       },
     },
     {
-      key: "coprime",
-      rung: "prove",
-      prompt: <p>Prove that if gcd(a, b) = 1 and a | bc, then a | c.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses Bézout to write ax + by = 1.",
-          "Multiplies by c: acx + bcy = c.",
-          "Notes a divides both terms on the left, so a | c.",
-        ],
-      },
-    },
-    {
       key: "fibworst",
       rung: "stretch",
       prompt: <p>Among all pairs a ≥ b with b ≤ 100, Euclid&rsquo;s algorithm takes the most steps on consecutive Fibonacci numbers. What is the largest Fibonacci number at most 100?</p>,

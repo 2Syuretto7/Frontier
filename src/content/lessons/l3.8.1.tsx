@@ -276,19 +276,6 @@ assert diagnose([0.5, 0.1, 0.001], 10) == "bad init"` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that a K-class softmax with all logits equal gives cross-entropy log K for any label, and explain what a first loss far above log K indicates.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows equal logits give pₖ = 1/K for every class (the common factor cancels in the softmax).",
-          "Concludes −log p_y = log K for every label, so the mean loss is log K.",
-          "Explains a much larger first loss means the initial logits are large and confidently wrong, e.g. a badly scaled initialisation or output layer.",
-        ],
-      },
-    },
-    {
       key: "mixfloor",
       rung: "stretch",
       prompt: <p>The softmax-over-batch bug, on a batch of 8 with label counts 4, 2 and 2. What is the lowest achievable loss? Give 4 decimal places.</p>,

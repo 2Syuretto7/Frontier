@@ -257,25 +257,6 @@ assert np.allclose(x, [1, 1]), 'Among x + y = 2 the shortest is (1, 1).'` },
       },
     },
     {
-      key: "orth",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let <M>{"\\mathbf v_1, \\dots, \\mathbf v_r"}</M> be orthonormal eigenvectors of <M>{"A^{\\mathsf T}A"}</M> with
-          positive eigenvalues <M>{"\\sigma_i^2"}</M>. Prove that the vectors <M>{"\\mathbf u_i = A\\mathbf v_i/\\sigma_i"}</M>{" "}
-          are orthonormal and lie in the column space of A.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes u_iᵀu_j = v_iᵀAᵀAv_j / (σ_iσ_j) = σ_j² v_iᵀv_j / (σ_iσ_j).",
-          "Uses orthonormality of the v's to get 0 for i ≠ j and σ_i²/σ_i² = 1 for i = j.",
-          "Notes u_i = A(v_i/σ_i) is A times a vector, so it lies in C(A).",
-        ],
-      },
-    },
-    {
       key: "shear",
       rung: "stretch",
       prompt: <p>Find the largest singular value of the shear [[1, 1], [0, 1]] to three decimal places.</p>,

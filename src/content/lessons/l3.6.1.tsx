@@ -267,19 +267,6 @@ assert abs(conv_factor(1.0, eta, 0.0) - 99 / 101) < 1e-9 and abs(conv_factor(100
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that gradient descent with learning rate η on L(x) = ½Σλᵢxᵢ² (all λᵢ &gt; 0) converges from every starting point if and only if η &lt; 2/λ_max.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Derives the per-coordinate update xᵢ ← (1 − ηλᵢ)xᵢ, so xᵢ after t steps is (1 − ηλᵢ)ᵗ times its start.",
-          "States convergence for every start requires and is implied by |1 − ηλᵢ| < 1 for all i, i.e. 0 < ηλᵢ < 2.",
-          "Concludes the binding condition is the largest curvature: η < 2/λ_max (with η > 0).",
-        ],
-      },
-    },
-    {
       key: "mom100",
       rung: "stretch",
       prompt: <p>For κ = 100, what is the optimal heavy-ball momentum β = ((√κ − 1)/(√κ + 1))²? Give 4 decimal places.</p>,

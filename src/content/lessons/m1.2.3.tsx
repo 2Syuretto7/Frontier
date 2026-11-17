@@ -233,24 +233,6 @@ assert all(negate(negate(f)) == f for f in fs), 'Negating twice gives the formul
       },
     },
     {
-      key: "second-law",
-      rung: "prove",
-      prompt: (
-        <p>
-          Taking the law <M>{"\\neg \\forall x\\, P(x) \\equiv \\exists x\\, \\neg P(x)"}</M> as known for every predicate,
-          prove that <M>{"\\neg \\exists x\\, P(x) \\equiv \\forall x\\, \\neg P(x)"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Applies the known law to the predicate ¬P, getting ¬∀x ¬P(x) ≡ ∃x ¬¬P(x).",
-          "Uses double negation to simplify ¬¬P(x) to P(x).",
-          "Negates both sides and cancels the double negation to reach ¬∃x P(x) ≡ ∀x ¬P(x).",
-        ],
-      },
-    },
-    {
       key: "limit",
       rung: "stretch",
       prompt: (

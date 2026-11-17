@@ -262,25 +262,6 @@ assert units_needed(1.0, 0, 2, 0.5) == 1 and units_needed(8.0, 0, 1, 1e-4) == 10
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the piecewise-linear function through <M>{"(x_0, y_0), \\dots, (x_n, y_n)"}</M> equals{" "}
-          <M>{"y_0 + s_0\\,\\operatorname{relu}(x - x_0) + \\sum_{i=1}^{n-1}(s_i - s_{i-1})\\,\\operatorname{relu}(x - x_i)"}</M>{" "}
-          on <M>{"[x_0, x_n]"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Checks the value at x₀: every ReLU term is 0, giving y₀.",
-          "Computes the slope on (x_k, x_{k+1}): exactly the units with i ≤ k are active, and the coefficients telescope to s_k.",
-          "Concludes equality from continuity, equal starting value and equal slope on every piece (for example by integrating the slope).",
-        ],
-      },
-    },
-    {
       key: "grid",
       rung: "stretch",
       prompt: <p>A grid with 10 points per axis covers the unit cube in d = 10 dimensions. How many grid points is that?</p>,

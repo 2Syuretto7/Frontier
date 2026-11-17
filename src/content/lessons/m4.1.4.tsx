@@ -282,23 +282,6 @@ assert 850 < lis_length(a) < 940, 'About 2√n for random data, in O(n log n).'`
       },
     },
     {
-      key: "handshake",
-      rung: "prove",
-      prompt: (
-        <p>
-          At a party of n ≥ 2 people, some shake hands. Prove that two people shook the same number of hands.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes each person shook between 0 and n − 1 hands, which is n possible values.",
-          "Observes that 0 and n − 1 cannot both occur: someone who shook everyone's hand rules out someone who shook none.",
-          "So n people take at most n − 1 values, and pigeonhole gives two with the same count.",
-        ],
-      },
-    },
-    {
       key: "square",
       rung: "stretch",
       prompt: (

@@ -275,25 +275,6 @@ assert abs(ecdf_max_gap(np.array([0.25, 0.75]), lambda t: t) - 0.25) < 1e-12` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let <M>{"X_1, \\dots, X_n"}</M> be i.i.d. with mean μ and variance σ². Prove that{" "}
-          <M>{"P(|\\bar X_n - \\mu| > \\varepsilon) \\le \\sigma^2/(n\\varepsilon^2)"}</M>, and conclude the weak law of large
-          numbers.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows E[X̄ₙ] = μ by linearity.",
-          "Shows Var(X̄ₙ) = σ²/n, using independence (or uncorrelatedness) so the variances add, and the 1/n² scaling.",
-          "Applies Chebyshev to X̄ₙ and notes the bound tends to 0 as n → ∞ for each fixed ε.",
-        ],
-      },
-    },
-    {
       key: "exact",
       rung: "stretch",
       prompt: <p>For 10 fair coin tosses, compute exactly P(|X̄₁₀ − 0.5| &gt; 0.05). Give four decimal places.</p>,

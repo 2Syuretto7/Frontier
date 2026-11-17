@@ -295,25 +295,6 @@ assert abs(t - 0.3) < 0.01, 'O(n log n) on 200000 rows.'` },
       },
     },
     {
-      key: "pure",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if no two training points have the same input but different labels, a decision tree grown without a depth
-          limit reaches zero training error. Then explain why a depth limit is usually imposed anyway.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Argues that any impure node contains two points with different labels and hence different inputs, so they differ in some feature.",
-          "Notes a threshold between their values of that feature splits the node into two non-empty children.",
-          "Concludes, since each split strictly reduces the number of points per node, that splitting must end with every leaf pure, so every training point is classified correctly.",
-          "Explains that the final splits fit noise, isolating single points, so test error rises; a depth limit or minimum leaf size controls this overfitting.",
-        ],
-      },
-    },
-    {
       key: "entropy",
       rung: "stretch",
       prompt: <p>What is the entropy, in bits, of a node with 6 points of one class and 4 of the other? Give three decimal places.</p>,

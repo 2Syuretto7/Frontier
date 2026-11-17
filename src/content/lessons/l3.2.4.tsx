@@ -282,24 +282,6 @@ assert abs(scale_ratio(a, 2 * a) - 2.0) < 1e-12` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Show that for a smooth L and unit vector v, the central difference <M>{"(L(\\theta + hv) - L(\\theta - hv))/2h"}</M>{" "}
-          tends to <M>{"\\nabla L(\\theta) \\cdot v"}</M>, with error <M>{"O(h^2)"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Introduces φ(t) = L(θ + tv) and uses the chain rule to get φ′(0) = ∇L(θ)·v.",
-          "Expands φ(±h) by Taylor's theorem to third order, so the difference is 2hφ′(0) + O(h³).",
-          "Divides by 2h to conclude the error is O(h²).",
-        ],
-      },
-    },
-    {
       key: "spot",
       rung: "stretch",
       prompt: <p>A spot check of 20 entries plus one directional check: how many loss evaluations in total?</p>,

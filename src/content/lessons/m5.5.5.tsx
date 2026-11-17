@@ -249,25 +249,6 @@ assert abs((V(B + 1e-5) - V(B - 1e-5)) / 2e-5 - shadow_price(a, B)) < 1e-6` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let a be a local maximum of f on the curve <M>{"\\{g = 0\\}"}</M> in <M>{"\\mathbb R^2"}</M>, with{" "}
-          <M>{"\\nabla g(a) \\ne 0"}</M>. Assuming the curve has a differentiable parametrisation γ(t) with γ(0) = a and{" "}
-          <M>{"\\gamma'(0) \\ne 0"}</M>, prove that <M>{"\\nabla f(a) = \\lambda\\nabla g(a)"}</M> for some λ.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Differentiates g(γ(t)) = 0 to get ∇g(a) · γ′(0) = 0.",
-          "Notes f(γ(t)) has a local maximum at t = 0, so ∇f(a) · γ′(0) = 0 by the chain rule.",
-          "Concludes both gradients are perpendicular to the non-zero vector γ′(0) in ℝ², so they are parallel; since ∇g(a) ≠ 0, ∇f(a) = λ∇g(a).",
-        ],
-      },
-    },
-    {
       key: "price",
       rung: "stretch",
       prompt: (

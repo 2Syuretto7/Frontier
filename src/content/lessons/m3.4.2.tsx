@@ -268,24 +268,6 @@ assert col_space_basis(A).shape[1] + null_space_svd(A).shape[1] == 7, 'rank + nu
       },
     },
     {
-      key: "sub",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the column space of an m × n matrix is a subspace of <M>{"\\mathbb R^m"}</M>, and that the set of
-          solutions of Ax = b is a subspace only when b = 0.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows 0 = A0 is in C(A), and that Ax + Ay = A(x + y) and c(Ax) = A(cx) lie in C(A).",
-          "For b ≠ 0, notes that x = 0 gives A0 = 0 ≠ b, so the solution set does not contain 0.",
-          "For b = 0, identifies the solution set as N(A), which is a subspace.",
-        ],
-      },
-    },
-    {
       key: "special",
       rung: "stretch",
       prompt: (

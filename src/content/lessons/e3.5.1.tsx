@@ -438,45 +438,6 @@ assert lock_order([[A('d'), A('c'), R('c'), A('b'), R('b'), R('d')], [A('a'), R(
         ],
       },
     },
-    {
-      key: "lost",
-      rung: "prove",
-      prompt: <p>Two threads each run load, add 1, store on x = 0 without a lock. Prove that the final x is 2 exactly when one thread&rsquo;s store comes before the other thread&rsquo;s load, and hence that exactly 2 of the 20 interleavings are correct.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "If A's store precedes B's load, B loads 1 and stores 2 (A's store is earlier and B's store is last), so x = 2; symmetrically for B before A.",
-          "Otherwise both loads come before both stores, so both registers hold 0 + 1 = 1 and both stores write 1: x = 1.",
-          "A's store before B's load forces all three A steps before all three B steps (program order): only AAABBB.",
-          "Likewise only BBBAAA for the other case, so 2 of 20 interleavings give 2.",
-        ],
-      },
-    },
-    {
-      key: "peterson",
-      rung: "stretch",
-      prompt: (
-        <>
-          <Code>{`# thread i (0 or 1); j = 1 - i; flag = [False, False]; turn shared
-flag[i] = True
-turn = j
-while flag[j] and turn == j:
-    pass                      # wait
-# critical section
-flag[i] = False`}</Code>
-          <p>Prove that Peterson&rsquo;s algorithm never lets both threads into the critical section at once, assuming each line is atomic and memory is sequentially consistent.</p>
-        </>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Supposes both are inside; both set their flags to True before entering, and neither has cleared it.",
-          "turn holds a single value; say the last write to turn was by thread 0, setting turn = 1, after thread 1 had written turn = 0.",
-          "Then thread 0 entered only after reading flag[1] false or turn = 0; flag[1] was already True and turn stayed 1, so thread 0 could not have passed its loop: contradiction.",
-          "Notes that on real hardware stores can be reordered, so the algorithm needs memory barriers, which is why practical locks use atomic instructions.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

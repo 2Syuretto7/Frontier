@@ -245,24 +245,6 @@ assert 0.75 ** k * 8.0 <= 0.01 < 0.75 ** (k - 1) * 8.0` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let f be L-smooth and μ-strongly convex. Prove that gradient descent with t = 1/L satisfies f(x_k) − f* ≤ (1 −
-          μ/L)ᵏ(f(x₀) − f*).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses the descent lemma at t = 1/L to get f(x_{k+1}) ≤ f(x_k) − ‖∇f(x_k)‖²/(2L).",
-          "Uses the PL inequality ‖∇f(x)‖² ≥ 2μ(f(x) − f*) from strong convexity to replace the gradient term.",
-          "Concludes f(x_{k+1}) − f* ≤ (1 − μ/L)(f(x_k) − f*) and iterates by induction.",
-        ],
-      },
-    },
-    {
       key: "run5",
       rung: "stretch",
       prompt: <p>Gradient descent on f(x, y) = (x² + 4y²)/2 with t = 1/4, starting from (1, 0). What is f after 5 steps?</p>,

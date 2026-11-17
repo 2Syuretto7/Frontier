@@ -498,34 +498,6 @@ for n in range(0, 21):
         ],
       },
     },
-    {
-      key: "gcdproof",
-      rung: "prove",
-      prompt: <p>Prove that the subtractive GCD loop (replace the larger of a and b by their difference until they are equal) halts for positive a and b, and that it halts with both equal to gcd(a, b).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Invariant: gcd(a, b) is unchanged by replacing a by a − b, since any common divisor of a and b divides a − b and conversely.",
-          "Both values stay positive, because only the strictly larger one is reduced by the smaller.",
-          "Termination: a + b is a positive integer that strictly decreases each step, so the loop stops.",
-          "At the end a = b, and gcd(a, a) = a, so the common value is the gcd of the original pair.",
-        ],
-      },
-    },
-    {
-      key: "steps",
-      rung: "stretch",
-      prompt: <p>The subtractive GCD can take very many steps. Give inputs below 1000 that make it take more than 900 subtractions, and explain how adding a single remainder instruction would bound the steps by a multiple of the number of digits.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Gives a pair such as (999, 1), which needs 998 subtractions.",
-          "Notes repeated subtraction of b from a is exactly computing a mod b, one step per multiple removed.",
-          "With a mod instruction each step is Euclid's algorithm, and every two steps at least halve the larger number.",
-          "Concludes the step count is O(log min(a, b)), proportional to the number of digits (Lamé's theorem: Fibonacci pairs are worst).",
-        ],
-      },
-    },
   ],
 
   glimpse: (

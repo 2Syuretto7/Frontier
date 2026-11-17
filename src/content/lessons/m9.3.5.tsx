@@ -250,19 +250,6 @@ assert abs(c - 0.95) < 0.01` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove the delta method: if √n(Tₙ − θ) converges in distribution to N(0, σ²) and g is differentiable at θ, then √n(g(Tₙ) − g(θ)) converges to N(0, g′(θ)²σ²). You may use Slutsky&apos;s theorem.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes g(Tₙ) − g(θ) = (g′(θ) + rₙ)(Tₙ − θ) with rₙ → 0 as Tₙ → θ, from the definition of the derivative or a mean value argument.",
-          "Shows Tₙ → θ in probability (since √n(Tₙ − θ) is bounded in probability), so rₙ → 0 in probability.",
-          "Applies Slutsky to √n(g(Tₙ) − g(θ)) = (g′(θ) + rₙ)·√n(Tₙ − θ) to get the N(0, g′(θ)²σ²) limit.",
-        ],
-      },
-    },
-    {
       key: "mean",
       rung: "stretch",
       prompt: <p>An exponential sample of size 25 has rate λ = 2. Using the delta method on μ = 1/λ, what is the asymptotic standard error of the MLE 1/λ̂ of the mean?</p>,

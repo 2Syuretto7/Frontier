@@ -304,19 +304,6 @@ assert path == [0, 0, 1, 1] and abs(lp - np.log(0.5 * 0.9 * 0.6 * 0.9 * 0.4 * 0.
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove the forward recursion α_t(j) = (Σᵢ α_(t−1)(i)·A_ij)·B(j, x_t), where α_t(j) = p(x_1, …, x_t, z_t = j), stating which independence assumptions of the HMM you use.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes α_t(j) as a sum over i of p(x_1, …, x_(t−1), z_(t−1) = i, z_t = j, x_t) and factorises it by the chain rule.",
-          "Uses the Markov property (z_t depends on the past only through z_(t−1)) and that x_t depends only on z_t, to identify the factors A_ij and B(j, x_t).",
-          "Identifies the remaining factor as α_(t−1)(i) and concludes the recursion.",
-        ],
-      },
-    },
-    {
       key: "two",
       rung: "stretch",
       prompt: (

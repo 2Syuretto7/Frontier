@@ -249,26 +249,6 @@ assert inv == [Fraction((-1) ** k, math.factorial(k)) for k in range(12)] and se
       },
     },
     {
-      key: "leibniz",
-      rung: "prove",
-      prompt: (
-        <p>
-          Derive the power series of <M>{"\\arctan x"}</M> about 0 by integrating a geometric series term by term, and state
-          its radius. The series also converges at <M>{"x = 1"}</M>, to arctan 1 (a fact proved in Real Analysis). Use it to
-          write π as an infinite series, and explain why that series is a poor way to compute π.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes 1/(1 + t²) = Σ (−1)ⁿ t²ⁿ for |t| < 1 as a geometric series with ratio −t².",
-          "Integrates from 0 to x to get arctan x = Σ (−1)ⁿ x^(2n+1)/(2n + 1), with radius 1.",
-          "Puts x = 1 and uses arctan 1 = π/4 to get π = 4(1 − 1/3 + 1/5 − …).",
-          "Notes by the alternating series bound that the error after N terms is about 4/(2N + 3), so a million terms give only about six digits.",
-        ],
-      },
-    },
-    {
       key: "ln2",
       rung: "stretch",
       prompt: (

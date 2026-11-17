@@ -265,25 +265,6 @@ assert np.allclose(similarity_matrix(E), similarity_matrix(D)), 'Scaling a row d
       },
     },
     {
-      key: "dist",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that for unit vectors <M>{"\\|\\mathbf u - \\mathbf v\\|^2 = 2 - 2\\cos(\\mathbf u, \\mathbf v)"}</M>, and
-          explain why this means a nearest-neighbour search by Euclidean distance on normalised vectors returns the same
-          ranking as a search by cosine similarity.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Expands ‖u − v‖² = u·u − 2u·v + v·v.",
-          "Uses u·u = v·v = 1 and u·v = cos(u, v) for unit vectors.",
-          "Observes that 2 − 2c decreases as c increases, so smaller distance means larger cosine and the orders agree.",
-        ],
-      },
-    },
-    {
       key: "enc",
       rung: "stretch",
       prompt: (

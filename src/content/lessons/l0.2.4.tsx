@@ -253,25 +253,6 @@ assert abs(draws.count('x') / 20000 - 0.7) < 0.02 and abs(draws.count('z') / 200
       },
     },
     {
-      key: "memory",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why a model that looks only at the previous word cannot reliably finish the sentence &ldquo;The keys to the
-          old cabinet ___ on the table&rdquo; with &ldquo;are&rdquo; rather than &ldquo;is&rdquo;. What would the model need
-          to see?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that the previous word, 'cabinet', is singular, so a one-word model would favour 'is'.",
-          "Explains that the verb must agree with 'keys', several words earlier.",
-          "Concludes that the model needs to use words further back than one, ideally the whole sentence.",
-        ],
-      },
-    },
-    {
       key: "count-pairs",
       rung: "stretch",
       prompt: (

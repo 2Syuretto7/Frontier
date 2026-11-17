@@ -460,34 +460,6 @@ assert single_linkage(chain, 2) == [[0, 1, 2, 3, 4], [5]], 'Single linkage follo
         ],
       },
     },
-    {
-      key: "cycle",
-      rung: "prove",
-      prompt: <p>Prove the cycle property: if e is the unique heaviest edge on some cycle, then no minimum spanning tree contains e.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Supposes an MST T contains e and removes it, splitting T into two parts and defining a cut.",
-          "Notes that the rest of the cycle joins e's endpoints, so some other cycle edge f crosses that cut.",
-          "T − e + f is a spanning tree.",
-          "Its weight is w(T) − w(e) + w(f) < w(T), since e is the unique heaviest edge on the cycle, contradicting minimality.",
-        ],
-      },
-    },
-    {
-      key: "unique",
-      rung: "stretch",
-      prompt: <p>Prove that if all edge weights are distinct, the minimum spanning tree is unique, and show by example that with repeated weights it need not be.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Supposes two different MSTs T₁ and T₂ and takes the lightest edge e in exactly one of them, say T₁.",
-          "Adds e to T₂, creating a cycle that contains some edge f not in T₁.",
-          "Argues w(f) > w(e) using distinct weights and the choice of e, so T₂ + e − f is lighter than T₂, a contradiction.",
-          "Gives an example such as a triangle with all three weights equal, which has three MSTs.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

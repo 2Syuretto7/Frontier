@@ -257,44 +257,6 @@ assert abs(errs[0] - (0.46875 - 1 / 3)) < 1e-15, 'Right sum with 4 strips is 0.4
         ],
       },
     },
-    {
-      key: "cubes",
-      rung: "prove",
-      prompt: (
-        <p>
-          Using <M>{"\\sum_{k=1}^n k^3 = \\left(\\frac{n(n+1)}{2}\\right)^2"}</M>, find the limit of the right-endpoint
-          sums for <M>{"x^3"}</M> on <M>{"[0, 1]"}</M>, and explain why it is the area under the curve.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes R_n = (1/n⁴) Σ k³ and substitutes the formula.",
-          "Simplifies to (1 + 1/n)²/4 and finds the limit 1/4.",
-          "Notes that the left sums differ by 1/n and that, as x³ is increasing, the area lies between the left and right sums, so it is 1/4.",
-        ],
-      },
-    },
-    {
-      key: "fermat",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Fermat found the area under <M>{"x^2"}</M> on <M>{"[0, b]"}</M> with unequal pieces. Fix q with{" "}
-          <M>{"0 < q < 1"}</M>, and use the points <M>{"b, bq, bq^2, bq^3, \\ldots"}</M>, which crowd towards 0. Using the
-          right end of each piece, sum the infinitely many rectangles as a geometric series, and let{" "}
-          <M>{"q \\to 1"}</M>. Do you get <M>{"b^3/3"}</M>?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the k-th piece as [bq^(k+1), bq^k], of width bq^k(1 − q), with height (bq^k)².",
-          "Sums the series b³(1 − q) Σ q^(3k) = b³(1 − q)/(1 − q³) = b³/(1 + q + q²).",
-          "Lets q → 1 to get b³/3.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

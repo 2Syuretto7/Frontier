@@ -282,24 +282,6 @@ assert abs(fenchel_young_gap(f, fs, x, np.exp(x))) < 1e-12 and fenchel_young_gap
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          For any function f on ℝⁿ, prove that its conjugate f*(y) = sup over x of (yᵀx − f(x)) is convex, that f(x) + f*(y)
-          ≥ xᵀy for all x and y, and that f**(x) ≤ f(x).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows f* is convex as a pointwise supremum of the affine functions y ↦ yᵀx − f(x), or verifies the chord inequality directly.",
-          "Derives Fenchel–Young from f*(y) ≥ yᵀx − f(x) for the particular x.",
-          "Rearranges Fenchel–Young to xᵀy − f*(y) ≤ f(x) for every y and takes the supremum over y to get f**(x) ≤ f(x).",
-        ],
-      },
-    },
-    {
       key: "q",
       rung: "stretch",
       prompt: <p>For f(x) = ½xᵀQx with Q = diag(4, 1), what is f*(2, 1)?</p>,

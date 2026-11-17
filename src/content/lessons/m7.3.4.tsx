@@ -303,24 +303,6 @@ assert isinstance(convolve_density(e, e, 1.0, 0, 1), float)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let X have a continuous density <M>{"f_X"}</M>, and let g be strictly increasing and differentiable with
-          differentiable inverse h. Prove that Y = g(X) has density <M>{"f_X(h(y))h'(y)"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes the CDF: F_Y(y) = P(g(X) ≤ y) = P(X ≤ h(y)) = F_X(h(y)), using that g is increasing.",
-          "Differentiates with the chain rule: F_Y′(y) = F_X′(h(y))·h′(y) = f_X(h(y))h′(y).",
-          "Notes this derivative is non-negative and that a CDF whose derivative exists (and integrates back to it) has that derivative as a density.",
-        ],
-      },
-    },
-    {
       key: "lnmean",
       rung: "stretch",
       prompt: <p>X ~ N(0, 1). What is E[e^X]? Give four decimal places.</p>,

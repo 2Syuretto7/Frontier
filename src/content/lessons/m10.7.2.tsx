@@ -280,23 +280,6 @@ assert np.allclose(ph(x1 - t * gg(x1), t), x1, atol=1e-8) and abs(F(x2) - F(x1))
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let h be closed and convex. Using p = prox_λh(u) ⇔ (u − p)/λ ∈ ∂h(p), prove that ‖prox_λh(u) − prox_λh(v)‖ ≤ ‖u − v‖.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Proves monotonicity of ∂h: (a − b)ᵀ(p − q) ≥ 0 for a ∈ ∂h(p), b ∈ ∂h(q), by adding the two subgradient inequalities.",
-          "Applies it with a = (u − p)/λ and b = (v − q)/λ to get ‖p − q‖² ≤ (u − v)ᵀ(p − q).",
-          "Uses Cauchy–Schwarz and divides by ‖p − q‖ (handling the case p = q) to conclude.",
-        ],
-      },
-    },
-    {
       key: "env",
       rung: "stretch",
       prompt: <p>The Moreau envelope of h(x) = |x| with λ = 1, evaluated at v = 3, is min over x of |x| + (x − 3)²/2. What is it?</p>,

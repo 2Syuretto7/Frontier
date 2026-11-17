@@ -318,26 +318,6 @@ def larger(a, b, c, d):
       },
     },
     {
-      key: "test",
-      rung: "prove",
-      prompt: (
-        <p>
-          Using the equality test, prove that if <M>{"\\tfrac{a}{b} = \\tfrac{c}{d}"}</M> and <M>{"\\tfrac{c}{d} = \\tfrac{e}{f}"}</M>{" "}
-          (with <M>b</M>, <M>d</M>, <M>f</M> nonzero), then <M>{"\\tfrac{a}{b} = \\tfrac{e}{f}"}</M>. Explain where you use
-          the fact that <M>d</M> is not zero.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Translates both hypotheses with the test: ad = bc and cf = de.",
-          "Combines them to get adf = bcf = bde, or an equivalent chain.",
-          "Cancels d, explicitly using that d is not zero, to reach af = be.",
-          "Concludes a/b = e/f by the test.",
-        ],
-      },
-    },
-    {
       key: "telescope",
       rung: "stretch",
       prompt: (

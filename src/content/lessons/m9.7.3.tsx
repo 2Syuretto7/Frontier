@@ -273,19 +273,6 @@ assert abs(bayes_predict(x, y, 3.0, 1.0) - 0.898) < 2e-3` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>With a uniform prior on p and h heads in n flips (0 &lt; h &lt; n), prove that the posterior mode of η = log(p/(1 − p)) corresponds to p = (h + 1)/(n + 2), so MAP is not invariant to reparametrisation.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Applies the change of variables: the density of η is π(p | x)·|dp/dη| with dp/dη = p(1 − p).",
-          "Obtains a density in η proportional to p^(h+1)(1 − p)^(n−h+1), and maximises it (in p, since η ↦ p is increasing) at (h + 1)/(n + 2).",
-          "Compares with the mode h/n of the density in p and notes they differ in general.",
-        ],
-      },
-    },
-    {
       key: "lam",
       rung: "stretch",
       prompt: <p>In linear regression with noise variance σ² = 1, a N(0, τ²) prior on each coefficient with τ² = 0.25 makes the MAP estimate ridge regression with which λ (penalty λ‖β‖² added to the sum of squares)?</p>,

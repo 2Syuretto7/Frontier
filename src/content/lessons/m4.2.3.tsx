@@ -259,24 +259,6 @@ assert partitions_distinct(10) == 10 and all(partitions_distinct(n) == odd_parts
       },
     },
     {
-      key: "derive",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let <M>{"a_0 = 1"}</M> and <M>{"a_n = 2a_{n-1}"}</M> for n ≥ 1. Use the generating function <M>{"A(x)"}</M> to show{" "}
-          <M>{"A(x) = 1/(1 - 2x)"}</M> and hence <M>{"a_n = 2^n"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Multiplies the recurrence by xⁿ and sums over n ≥ 1 to get A(x) − 1 = 2x A(x).",
-          "Solves for A(x) = 1/(1 − 2x).",
-          "Expands 1/(1 − 2x) as a geometric series with coefficients 2ⁿ and reads off aₙ.",
-        ],
-      },
-    },
-    {
       key: "change",
       rung: "stretch",
       prompt: <p>In how many ways can you make 50 rupees from 1-, 2-, 5- and 10-rupee coins?</p>,

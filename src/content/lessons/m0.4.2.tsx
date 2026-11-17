@@ -251,24 +251,6 @@ assert abs(b - math.exp(math.log(4) / 2)) < 1e-9, 'Use the least-squares slope, 
       },
     },
     {
-      key: "decreasing",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if <M>{"0 < b < 1"}</M> and <M>{"m < n"}</M> are whole numbers, then <M>{"b^m > b^n"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes bⁿ = bᵐ · bⁿ⁻ᵐ, or an equivalent factorisation.",
-          "Argues that bⁿ⁻ᵐ is a product of at least one factor between 0 and 1, so it lies between 0 and 1.",
-          "Uses that bᵐ is positive, so multiplying it by a number less than 1 makes it smaller.",
-          "Concludes bᵐ > bⁿ.",
-        ],
-      },
-    },
-    {
       key: "compare",
       rung: "stretch",
       prompt: <p>Without a calculator, which is larger: <M>{"2^{300}"}</M> or <M>{"3^{200}"}</M>?</p>,

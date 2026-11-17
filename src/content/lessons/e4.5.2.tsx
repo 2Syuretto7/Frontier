@@ -277,25 +277,6 @@ assert leaks([{'x': 1}, {'y': 2}, {'x': 3, 'y': 4}]) == [], 'A site missing from
       },
     },
     {
-      key: "sqrt",
-      rung: "prove",
-      prompt: (
-        <p>
-          With checkpointing every k layers in an L-layer network, memory is about <M>{"L/k + k"}</M> layers&rsquo; worth.
-          Explain where each term comes from, and prove that the minimum over k &gt; 0 is <M>{"2\\sqrt L"}</M>, at{" "}
-          <M>{"k = \\sqrt L"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains L/k as the stored block inputs and k as the activations of the one block being recomputed during backward.",
-          "Minimises, by calculus (derivative −L/k² + 1 = 0) or by AM–GM (L/k + k ≥ 2√(L/k · k)), finding k = √L.",
-          "Evaluates the minimum as 2√L.",
-        ],
-      },
-    },
-    {
       key: "sixty4",
       rung: "stretch",
       prompt: <p>For a 64-layer network, how many layers&rsquo; worth of activations does the best checkpointing schedule keep, in this model?</p>,

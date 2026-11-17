@@ -287,42 +287,6 @@ assert -0.002 < lo <= 0 and 1 <= hi < 1.002, 'With many samples the range is nea
         ],
       },
     },
-    {
-      key: "one-root",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"x^3 + x - 1 = 0"}</M> has exactly one real solution.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses the intermediate value theorem, for example on [0, 1], to show there is at least one solution.",
-          "Supposes there are two solutions and applies Rolle's theorem to get a point where 3c² + 1 = 0.",
-          "Notes that 3c² + 1 > 0 always, a contradiction, so there is exactly one.",
-        ],
-      },
-    },
-    {
-      key: "cauchy",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Let f and g be continuous on <M>{"[a, b]"}</M> and differentiable inside. Apply Rolle&rsquo;s theorem to{" "}
-          <M>{"h(x) = (f(b) - f(a))\\,g(x) - (g(b) - g(a))\\,f(x)"}</M> to prove that there is a c in <M>{"(a, b)"}</M> with{" "}
-          <M>{"(f(b) - f(a))\\,g'(c) = (g(b) - g(a))\\,f'(c)"}</M>. Which choice of g gives back the mean value theorem?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Checks that h(a) = h(b), for instance by expanding both to f(b)g(a) − f(a)g(b).",
-          "Applies Rolle's theorem to get h′(c) = 0, which is the stated equation.",
-          "Notes that g(x) = x gives the mean value theorem.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

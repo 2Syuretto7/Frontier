@@ -343,34 +343,6 @@ assert best_order(32, 8, 32) == 'ikj', 'With j innermost, B and C are read along
         ],
       },
     },
-    {
-      key: "transpose",
-      rung: "prove",
-      prompt: <p>B = Aᵀ is computed for n × n row-major matrices, with b elements per line, b dividing n, and a cache of fewer than n lines. Show that the obvious double loop incurs about n² + n²/b misses, and prove that processing b × b tiles one at a time, with a cache of at least 2b lines, incurs about 2n²/b.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Naive loop over i then j: A is read along rows (about n²/b misses) and B is written down columns, one line per element.",
-          "Since the cache holds fewer than n lines, a column's lines are evicted before the next column reuses them, so B costs about n² misses.",
-          "In a tile, A's b rows span b lines and B's b rows span b lines: 2b lines, which fit, so each line is loaded once per tile.",
-          "There are (n/b)² tiles, each costing 2b misses, giving 2n²/b in all: a factor of about b/2 fewer.",
-        ],
-      },
-    },
-    {
-      key: "matmul",
-      rung: "stretch",
-      prompt: <p>For large n, with b elements per line and a cache too small to hold a column&rsquo;s worth of lines of B, estimate the misses of the i-j-k and i-k-j orders of matrix multiplication to leading order, and explain the ratio.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "i-j-k: inner loop over k reads A[i][k] along a row (n³/b misses) and B[k][j] down a column (n³ misses); C[i][j] stays in cache.",
-          "Total for i-j-k about n³(1 + 1/b).",
-          "i-k-j: inner loop over j reads B[k][j] and C[i][j] along rows, about n³/b misses each; A[i][k] is fixed in the inner loop.",
-          "Total for i-k-j about 2n³/b, so the ratio is about (b + 1)/2, roughly 4.5 for 8 doubles per 64-byte line, before counting hardware prefetching.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

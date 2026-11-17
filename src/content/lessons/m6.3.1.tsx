@@ -313,19 +313,6 @@ for lam in r:
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that eigenvectors of an operator corresponding to distinct eigenvalues are linearly independent.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Supposes dependence and takes the smallest k with vₖ in the span of v₁, …, vₖ₋₁ (or argues by induction on m), writing vₖ = Σ aⱼvⱼ.",
-          "Applies T and subtracts λₖ times the relation to get Σ aⱼ(λⱼ − λₖ)vⱼ = 0.",
-          "Uses independence of the earlier vectors and distinctness of the eigenvalues to get all aⱼ = 0, hence vₖ = 0, a contradiction.",
-        ],
-      },
-    },
-    {
       key: "krylov",
       rung: "stretch",
       prompt: (

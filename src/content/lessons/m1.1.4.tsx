@@ -238,19 +238,6 @@ assert a['implication'] == 2 and a['contrapositive'] == 2 and a['converse'] is N
       },
     },
     {
-      key: "contra-proof",
-      rung: "prove",
-      prompt: <p>Prove that a conditional and its converse are not equivalent, and that the converse and inverse are equivalent.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Exhibits a row, P false and Q true, where P → Q is true but Q → P is false.",
-          "Writes the inverse ¬P → ¬Q and identifies it as the contrapositive of the converse Q → P.",
-          "Uses the equivalence of a conditional with its contrapositive, or a truth table, to show the inverse and converse agree.",
-        ],
-      },
-    },
-    {
       key: "iff",
       rung: "stretch",
       prompt: (

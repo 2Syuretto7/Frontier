@@ -244,26 +244,6 @@ assert np.isnan(g.loc['N', '01']) and g.loc['N', '02'] == 50 and g.loc['N', '03'
       },
     },
     {
-      key: "hash",
-      rung: "prove",
-      prompt: (
-        <p>
-          Describe how to compute a group-by sum over <C>n</C> rows in one pass using a dictionary, and state its running time.
-          Then explain why <C>df.apply(f, axis=1)</C> is much slower than the equivalent column arithmetic, even though both
-          touch every row once.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Describes keeping a dictionary from key to running total and adding each row's amount to its key's entry.",
-          "States the time is O(n), assuming dictionary operations take constant time on average.",
-          "Explains that apply calls a Python function per row, paying interpreter overhead and boxing each value.",
-          "Explains that column arithmetic runs one compiled loop over a contiguous typed array.",
-        ],
-      },
-    },
-    {
       key: "meanofmeans",
       rung: "stretch",
       prompt: (

@@ -276,19 +276,6 @@ assert np.allclose(H @ p[1][0] + p[1][1], mlp_forward(X, p))` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that an MLP with no activation functions, of any depth, computes an affine function of its input.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows two affine layers compose to an affine map: (xW₁ + b₁)W₂ + b₂ = x(W₁W₂) + (b₁W₂ + b₂).",
-          "Extends to L layers by induction (the first L − 1 layers are affine by hypothesis, and one more layer keeps it affine).",
-          "Identifies the resulting weight W₁W₂⋯W_L (and bias) or states the conclusion that depth adds nothing without nonlinearity.",
-        ],
-      },
-    },
-    {
       key: "pieces",
       rung: "stretch",
       prompt: <p>A network with one input, one hidden layer of 5 ReLU units and a linear output is piecewise linear in its input. At most how many linear pieces can it have?</p>,

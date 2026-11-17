@@ -292,37 +292,6 @@ assert abs(r - 0.3) < 1e-6 and 15 <= len(calls) <= 25, 'Bisection needs about lo
         ],
       },
     },
-    {
-      key: "unique",
-      rung: "prove",
-      prompt: <p>Prove that a set can have at most one supremum.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Supposes s and t are both suprema of S.",
-          "Uses that t is an upper bound and s is least to get s ≤ t, and symmetrically t ≤ s.",
-          "Concludes s = t (by trichotomy or antisymmetry).",
-        ],
-      },
-    },
-    {
-      key: "sum-sup",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Let A and B be non-empty sets bounded above, and let <M>{"A + B = \\{a + b : a \\in A, b \\in B\\}"}</M>. Prove that{" "}
-          <M>{"\\sup(A + B) = \\sup A + \\sup B"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows sup A + sup B is an upper bound of A + B.",
-          "Given ε > 0, finds a in A and b in B within ε/2 of sup A and sup B (the approximation property).",
-          "Concludes that a + b > sup A + sup B − ε, so the approximation property holds for A + B.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

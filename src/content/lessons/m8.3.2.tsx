@@ -294,19 +294,6 @@ assert cauchy_product([1, 2, 3], [4, 5, 6]) == [4, 13, 28]` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that if Σ aₖ converges absolutely to S, then every rearrangement also converges to S.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Chooses N with the absolute tail beyond N below ε/2 (so also |S_N − S| < ε/2).",
-          "Chooses M so the first M rearranged indices include 1, …, N, and notes T_m − S_N for m ≥ M consists only of terms with index above N.",
-          "Bounds |T_m − S_N| by the absolute tail and concludes |T_m − S| < ε for m ≥ M.",
-        ],
-      },
-    },
-    {
       key: "twoone",
       rung: "stretch",
       prompt: (

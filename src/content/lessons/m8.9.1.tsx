@@ -257,19 +257,6 @@ assert abs(d_one(lambda x: 1, lambda x: 3, 0, 2, 7) - 4) < 1e-12` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that if ‖·‖ is a norm on a vector space V, then d(u, v) = ‖u − v‖ is a metric on V.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows d(u, v) ≥ 0 with equality iff u = v, from the definiteness of the norm.",
-          "Shows symmetry using ‖−w‖ = |−1|‖w‖ = ‖w‖.",
-          "Proves the triangle inequality by writing u − w = (u − v) + (v − w) and applying the norm's triangle inequality.",
-        ],
-      },
-    },
-    {
       key: "d2",
       rung: "stretch",
       prompt: <p>The spike of height 1 and half-width w has d₂ distance √(2w/3) from 0. What is it for w = 0.06?</p>,

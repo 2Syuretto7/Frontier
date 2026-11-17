@@ -240,25 +240,6 @@ for _ in range(30):
       },
     },
     {
-      key: "tradeoff",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why lowering a classifier&rsquo;s threshold can never decrease its recall, and why it usually decreases its
-          precision. Describe a situation where you would prefer high recall and one where you would prefer high precision.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that lowering the threshold only adds positive predictions, so true positives cannot fall while the number of actual positives is fixed; hence recall cannot decrease.",
-          "Explains that the newly added predictions have lower scores and are more often negatives, so precision usually falls.",
-          "Gives a high-recall situation, such as screening for a serious disease where misses are costly.",
-          "Gives a high-precision situation, such as a spam filter where wrongly blocking real mail is costly.",
-        ],
-      },
-    },
-    {
       key: "auc",
       rung: "stretch",
       prompt: <p>Positives score 0.8, 0.5 and 0.4; negatives score 0.6, 0.3. What is the AUC, computed by counting pairs? Give two decimal places.</p>,

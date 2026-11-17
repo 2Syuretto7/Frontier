@@ -246,25 +246,6 @@ assert abs(balance_after(1000, 0.1, pay, 1) - (1100 - pay)) < 1e-9, 'Add interes
       },
     },
     {
-      key: "arith-proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the sum of the first <M>n</M> terms of an arithmetic sequence with first term <M>a</M> and difference{" "}
-          <M>d</M> is <M>{"\\tfrac{n}{2}\\big(2a + (n-1)d\\big)"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the sum forwards, from a to a + (n − 1)d, and backwards.",
-          "Adds the two lines term by term and shows each pair is 2a + (n − 1)d.",
-          "Counts n pairs, so twice the sum is n(2a + (n − 1)d).",
-          "Divides by 2.",
-        ],
-      },
-    },
-    {
       key: "recurring",
       rung: "stretch",
       prompt: (

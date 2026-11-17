@@ -295,24 +295,6 @@ assert abs(strong_gap(f, 4.0, x, y, 0.3)) < 1e-12 and strong_gap(f, 5.0, x, y, 0
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let f be convex on a convex set. Prove that every local minimum of f is a global minimum, and that if f is
-          strictly convex it has at most one global minimiser.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Assumes a local minimum x and a point y with f(y) < f(x), and considers z = (1 − θ)x + θy for small θ > 0, which lies in the domain and near x.",
-          "Uses convexity to get f(z) ≤ (1 − θ)f(x) + θf(y) < f(x), contradicting local minimality.",
-          "For uniqueness, takes two minimisers x ≠ y with value p and shows strict convexity gives f((x + y)/2) < p, a contradiction.",
-        ],
-      },
-    },
-    {
       key: "m",
       rung: "stretch",
       prompt: <p>What is the largest m for which f(x) = 3x² is m-strongly convex on ℝ?</p>,

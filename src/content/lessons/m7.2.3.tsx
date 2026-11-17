@@ -304,19 +304,6 @@ assert abs(expected_distinct(4, 3) - exact) < 1e-12` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that if X takes values in {"{0, 1, 2, …}"}, then <M>{"E[X] = \\sum_{k \\ge 1}P(X \\ge k)"}</M>.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes P(X ≥ k) = Σ_{x ≥ k} P(X = x), so the right side is a double sum over pairs 1 ≤ k ≤ x.",
-          "Justifies exchanging the order of summation (all terms non-negative).",
-          "Notes that for each x the number of k with 1 ≤ k ≤ x is x, giving Σ x P(X = x) = E[X].",
-        ],
-      },
-    },
-    {
       key: "empty",
       rung: "stretch",
       prompt: <p>20 balls are thrown independently and uniformly into 10 boxes. What is the expected number of empty boxes? Give four decimal places.</p>,

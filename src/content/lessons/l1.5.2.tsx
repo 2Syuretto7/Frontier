@@ -255,25 +255,6 @@ assert inner_best > s and s < 0.6, 'On pure noise, the best inner score is optim
       },
     },
     {
-      key: "nested",
-      rung: "prove",
-      prompt: (
-        <p>
-          You try 200 settings and report the best 5-fold cross-validation accuracy as your model&rsquo;s accuracy. Explain why
-          this number is biased upwards, and describe a procedure that gives an honest estimate.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that each cross-validation score is a noisy estimate, so the maximum of 200 of them tends to be one whose noise happened to be favourable.",
-          "Concludes that the reported score overstates how the chosen model will do on new data.",
-          "Describes keeping a final test set untouched until selection is finished, or nested cross-validation with selection inside each outer training split.",
-          "States that the honest estimate must score the whole selection procedure on data it never influenced.",
-        ],
-      },
-    },
-    {
       key: "folds",
       rung: "stretch",
       prompt: <p>103 examples are split into 10 folds as evenly as possible. How many folds hold 11 examples?</p>,

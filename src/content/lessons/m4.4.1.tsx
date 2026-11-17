@@ -284,19 +284,6 @@ def divisors(n):
       },
     },
     {
-      key: "sumprove",
-      rung: "prove",
-      prompt: <p>Prove that if a | b and a | c then a | (b − c), and use it to show that consecutive integers n and n + 1 have no common divisor greater than 1.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes b = ak and c = al, so b − c = a(k − l).",
-          "Applies this to n + 1 and n: any common divisor d divides 1.",
-          "Concludes d = 1 (for positive d).",
-        ],
-      },
-    },
-    {
       key: "divisors",
       rung: "stretch",
       prompt: <p>What is the sum of all positive divisors of 360?</p>,

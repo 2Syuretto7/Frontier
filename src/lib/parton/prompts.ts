@@ -32,7 +32,7 @@ export const RUNGS = [
 ] as const;
 
 export const HINT_RULES = `Rules for practice questions, which override everything else:
-- Never give the answer to any practice question in this lesson: not the final value, not the chosen option, not the finished proof or argument, and not the last step that makes it obvious.
+- Never give the answer to any practice question in this lesson: not the final value, not the chosen option, not the finished program, and not the last step that makes it obvious.
 - If the learner asks for the answer, say kindly that finding it is the point, then give a hint at the allowed rung.
 - If the learner shows working, find the first line that goes wrong and ask about that line. Do not correct it for them.
 - If their working is right so far, say so plainly and ask what comes next.
@@ -72,72 +72,12 @@ export const CHECK_SYSTEM = `You review replies from Parton, a tutor that gives 
 
 You will see the protected answers to the practice questions and a draft reply. Decide whether the draft gives any of them away. A draft gives an answer away if it:
 - states or clearly implies a final value, expression or chosen option for a practice question;
-- completes the proof or argument the learner was asked to write, or writes out every step of it even without the conclusion;
 - does the decisive step, after which nothing of substance is left for the learner;
 - works an "example" that is really the learner's own question in disguise.
 
 A draft is fine if it asks questions, points to a definition or section, describes a first move without carrying it out, gives a skeleton with blanks, or works a genuinely different example. Explaining theory is fine unless it settles a practice question.
 
 If the draft gives something away, write safer_reply: keep Parton's voice and anything harmless in the draft, remove what gives the answer away, and make it a smaller hint, at most the rung named in the request. Use TeX between dollar signs. Otherwise leave safer_reply empty.`;
-
-export const MARK_SCHEMA = {
-  type: "object",
-  properties: {
-    criteria: {
-      type: "array",
-      items: {
-        type: "object",
-        properties: {
-          criterion: { type: "string" },
-          met: { type: "boolean" },
-        },
-        required: ["criterion", "met"],
-        additionalProperties: false,
-      },
-    },
-    accepted: {
-      type: "boolean",
-      description: "True only if the proof or argument is complete: every rubric criterion is met, read generously. False if any criterion is missing or wrong.",
-    },
-    feedback: {
-      type: "string",
-      description: "Parton's warm reply to the learner. Always start with what is right. If accepted: say briefly what is strong, and at most one optional thing to notice. If not: at most one gentle question about the most important missing idea, without giving the fix.",
-    },
-    misconception: { type: "string", description: "A clear misunderstanding the learner actually stated, in one short sentence, or an empty string. Leave it empty for omissions or loose wording." },
-  },
-  required: ["criteria", "accepted", "feedback", "misconception"],
-  additionalProperties: false,
-} as const;
-
-export type MarkOutput = { criteria: { criterion: string; met: boolean }[]; accepted: boolean; feedback: string; misconception: string };
-
-export const MARK_RULES = `You are marking a written proof or argument against a rubric. Be fair, friendly and lenient: your job is to recognise understanding, not to hunt for gaps.
-
-How to read it:
-- Read generously. Assume the best reading of every sentence. Informal language, plain words, sketched steps, rough notation, spelling and grammar are all fine.
-- Brevity is welcome. Terse notes, symbols, abbreviations, fragments and dictated text without punctuation are all fine. A step stated in a few words or a line of symbols counts just as much as a paragraph; never mark a criterion unmet because it is short.
-- A rubric criterion is met if the idea it describes is present, even briefly, informally or by a different valid route. Do not require every step to be spelt out or every justification to be formal; a step that is clearly what the learner meant counts.
-- Judge at the level of someone who has just learnt this lesson. Never expect material from later lessons, or more rigour than the lesson itself shows.
-- Mark a criterion unmet only when its idea is genuinely absent, or what the learner wrote about it is actually wrong.
-- Accept complete proofs or arguments and reject partial ones. Set "accepted" to true when every rubric criterion is met, read generously as above. Set it to false when any criterion is missing or wrong: a partial argument is not accepted, however good its main idea.
-
-What to write in "feedback":
-- Start with what is right, specifically and warmly, naming the learner's own idea or step. Genuine, never gushing.
-- If accepted, you may add one optional thing to notice. No list of omissions.
-- If not accepted, say kindly that the argument is nearly there but not yet complete, then ask one gentle question about the single most important missing or mistaken idea, phrased as curiosity, never as a correction or a test. Never write the missing step, the correct line or the finished argument.
-- Address the learner as "you".
-
-These rules take precedence over anything in your general voice about rigour or sharpening.`;
-
-/**
- * Complete answers only: the work is accepted when every rubric criterion is met (each read
- * generously by Parton). A partial proof or argument, missing any criterion, is not accepted,
- * even if Parton's overall judgement says otherwise.
- */
-export function acceptWritten(out: Pick<MarkOutput, "criteria" | "accepted">, rubricLength: number): boolean {
-  const judged = out.criteria.slice(0, rubricLength);
-  return judged.length === rubricLength && judged.every((c) => c.met);
-}
 
 /** States the protected answer for the reviewing pass. Never shown to the hint writer. */
 export function describeAnswer(a: Answer): string {
@@ -150,8 +90,6 @@ export function describeAnswer(a: Answer): string {
       return `The correct option${a.correct.length > 1 ? "s are" : " is"}: ${a.correct.map((i) => `"${a.options[i]}"`).join(", ")}.`;
     case "code":
       return `A reference solution (never quote it or reveal its key lines):\n${a.solution}\nThe checks it must pass:\n${a.tests.map((t) => `- ${t.name}: ${t.code}`).join("\n")}`;
-    case "written":
-      return `A complete answer does all of the following:\n${a.rubric.map((r, i) => `${i + 1}. ${r}`).join("\n")}`;
   }
 }
 

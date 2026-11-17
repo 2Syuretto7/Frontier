@@ -397,34 +397,6 @@ except ValueError:
         ],
       },
     },
-    {
-      key: "escape",
-      rung: "prove",
-      prompt: <p>Messages are framed by ending each with a newline byte. To allow newlines inside messages, the sender replaces each backslash by two backslashes and each newline by a backslash followed by n, before adding the terminator. Prove that the receiver can always recover the original messages.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "After escaping, an encoded message contains no raw newline byte, so the first newline in the stream ends the first message; repeat for the rest.",
-          "Decoding reads the encoded message left to right: a backslash always starts a two-byte escape (\\\\ or \\n), and any other byte stands for itself.",
-          "This decoding is well defined because every backslash in the encoding was produced as the first byte of an escape pair, so pairs never overlap.",
-          "Decoding inverts encoding byte by byte, so each original message is recovered exactly.",
-        ],
-      },
-    },
-    {
-      key: "nagle",
-      rung: "stretch",
-      prompt: <p>A client sends a small request header and then the small body in a second send, then waits for the reply. On some systems each request takes about 40 ms extra. Explain the interaction between Nagle&rsquo;s algorithm and delayed acknowledgements that causes this, and give two fixes.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Nagle's algorithm holds back a small segment while earlier sent data is still unacknowledged, to avoid flooding the network with tiny packets.",
-          "The server's TCP delays its acknowledgement (often up to 40 ms) hoping to piggyback it on a reply, but it cannot reply until it has the body.",
-          "So the body waits for the ACK and the ACK waits for the timer: a stall of the delayed-ACK timeout on every request.",
-          "Fixes: send header and body in one call (or use writev), or set TCP_NODELAY on the socket; either counts.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

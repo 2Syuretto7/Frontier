@@ -83,8 +83,8 @@ export const lesson: LessonContent = {
 
       <Example title="square roots without a calculator">
         <p>
-          For <M>{"f(x) = \\sqrt{x}"}</M>, the derivative at 4 is <M>{"1/(2\\sqrt{4}) = 1/4"}</M> (you will prove the formula
-          in the practice). So <M>{"\\sqrt{4.1} \\approx 2 + 0.1 \\cdot \\tfrac14 = 2.025"}</M>. The true value is 2.02485…,
+          For <M>{"f(x) = \\sqrt{x}"}</M>, the derivative at 4 is <M>{"1/(2\\sqrt{4}) = 1/4"}</M> (multiply the difference
+          quotient top and bottom by <M>{"\\sqrt{x + h} + \\sqrt{x}"}</M> to see why). So <M>{"\\sqrt{4.1} \\approx 2 + 0.1 \\cdot \\tfrac14 = 2.025"}</M>. The true value is 2.02485…,
           an error of about 0.00015, far smaller than the step 0.1.
         </p>
       </Example>
@@ -291,42 +291,6 @@ assert abs(v - math.e) < 1e-15 * math.e, 'The complex step is exact to rounding.
 f = lambda x: cmath.sin(x) * cmath.exp(x * x)
 df = lambda x: math.cos(x) * math.exp(x * x) + math.sin(x) * 2 * x * math.exp(x * x)
 assert abs(complex_step(f, 0.7) - df(0.7)) < 1e-13, 'It works for any analytic f.'` },
-        ],
-      },
-    },
-    {
-      key: "sqrt",
-      rung: "prove",
-      prompt: (
-        <p>
-          Use the definition to show that <M>{"\\dfrac{d}{dx}\\sqrt{x} = \\dfrac{1}{2\\sqrt{x}}"}</M> for <M>{"x > 0"}</M>.
-          (Multiply the top and bottom of the difference quotient by <M>{"\\sqrt{x + h} + \\sqrt{x}"}</M>.)
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the difference quotient (√(x + h) − √x)/h.",
-          "Rationalises to get 1/(√(x + h) + √x).",
-          "Takes the limit using continuity of the square root, to get 1/(2√x).",
-        ],
-      },
-    },
-    {
-      key: "x-sin",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Let <M>{"f(x) = x^2 \\sin(1/x)"}</M> for <M>{"x \\ne 0"}</M> and <M>{"f(0) = 0"}</M>. Show that{" "}
-          <M>{"f'(0)"}</M> exists and find it. Is the same true for <M>{"g(x) = x \\sin(1/x)"}</M>, with <M>{"g(0) = 0"}</M>?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the difference quotient for f at 0 as h sin(1/h).",
-          "Uses the squeeze theorem to show it tends to 0, so f′(0) = 0.",
-          "For g, the quotient is sin(1/h), which has no limit, so g is not differentiable at 0 (though it is continuous).",
         ],
       },
     },

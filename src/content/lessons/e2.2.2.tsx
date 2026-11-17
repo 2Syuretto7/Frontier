@@ -456,45 +456,6 @@ assert merge(a, b) is first, 'On a tie, take from a first.'` },
         ],
       },
     },
-    {
-      key: "start",
-      rung: "prove",
-      prompt: (
-        <p>
-          In Floyd&rsquo;s algorithm, slow and fast first meet after i steps, where λ divides i and i ≥ μ. Prove that a pointer
-          starting at the head and a pointer starting at the meeting point, both moving one step at a time, meet after exactly
-          μ steps, at the start of the cycle.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "The meeting point is i − μ steps around the cycle from its start.",
-          "After μ more steps the second pointer is i steps around from the start, which is the start itself because λ divides i.",
-          "After μ steps the first pointer has just reached the start of the cycle.",
-          "Neither pointer is at the start before step μ (the head pointer is still on the tail), so this is their first meeting on the cycle's start.",
-        ],
-      },
-    },
-    {
-      key: "xor",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Explain how to traverse a doubly linked list in both directions while storing only one link field per node, by storing
-          the bitwise XOR of the previous and next node addresses. What do you need to start a traversal, and what do you lose?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Stores link = addr(prev) XOR addr(next) in each node, with 0 for a missing neighbour.",
-          "Knowing the previous address p and the current node, the next address is link XOR p, since p XOR p = 0.",
-          "Starts from an end with p = 0, and traverses backwards by starting at the other end the same way.",
-          "Loses the ability to step from a node given only a pointer to it, and it breaks garbage collectors and debuggers that follow pointers.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

@@ -248,38 +248,6 @@ assert c == {'same sign': 2, 'opposite': 2}, 'Pairs of an element with itself co
         ],
       },
     },
-    {
-      key: "absolute",
-      rung: "prove",
-      prompt: <p>Prove that for all real numbers x and y, <M>{"|xy| = |x|\\,|y|"}</M>.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Splits into cases by the signs of x and y, covering every possibility.",
-          "In each case, computes both sides using the definition of absolute value.",
-          "Notes that both sides agree in every case and concludes.",
-        ],
-      },
-    },
-    {
-      key: "party",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Write out the party proof in full: among any six people, some three all know each other or some three are all
-          strangers. Then show that five people are not enough, by describing an arrangement of five with neither.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Picks one person and argues that at least three of the other five are all acquaintances of that person, or all strangers.",
-          "Handles the case of three acquaintances: either two of them know each other, giving a triangle with the chosen person, or they are three mutual strangers.",
-          "Handles the other case by symmetry, explaining why it is the same argument.",
-          "For five people, gives an arrangement such as five people in a circle, each knowing only the two neighbours, and checks it has no such three.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

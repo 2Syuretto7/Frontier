@@ -319,25 +319,6 @@ assert len(ps) == 9592 and ps[-1] == 99991, 'There are 9592 primes below 100000;
       },
     },
     {
-      key: "forever",
-      rung: "prove",
-      prompt: (
-        <p>
-          Give an example of a <C>while</C> loop that never ends, explain why it never ends, and fix it. Then explain in
-          general how you can convince yourself that a <C>while</C> loop will stop.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Gives a loop whose condition stays true forever, for example because the variable in the condition is never changed.",
-          "Explains why the condition is checked and found true on every pass.",
-          "Fixes it so that each pass changes the variable towards making the condition false.",
-          "States the general argument: identify a quantity that changes on every pass and must eventually make the condition false (for example a whole number that decreases and cannot go below a bound).",
-        ],
-      },
-    },
-    {
       key: "breakcont",
       rung: "stretch",
       prompt: (

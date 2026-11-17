@@ -289,19 +289,6 @@ assert np.allclose(explained_ratio(vals), [0.6, 0.8, 0.9, 1.0]) and choose_k(val
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>For centred data with covariance S and a d-by-k matrix W with orthonormal columns, prove that the mean squared reconstruction error (1/n)Σ‖xᵢ − WWᵀxᵢ‖² equals tr(S) − tr(WᵀSW).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes WWᵀ is the orthogonal projection onto the column space of W, so the residual xᵢ − WWᵀxᵢ is orthogonal to WWᵀxᵢ.",
-          "Applies Pythagoras: ‖xᵢ‖² = ‖WWᵀxᵢ‖² + ‖xᵢ − WWᵀxᵢ‖², with ‖WWᵀxᵢ‖ = ‖Wᵀxᵢ‖.",
-          "Averages over i, identifying (1/n)Σ‖xᵢ‖² = tr(S) and (1/n)Σ‖Wᵀxᵢ‖² = tr(WᵀSW).",
-        ],
-      },
-    },
-    {
       key: "sv",
       rung: "stretch",
       prompt: <p>A centred data matrix with 100 rows has singular values 20 and 10. What fraction of the variance does the first principal component explain?</p>,

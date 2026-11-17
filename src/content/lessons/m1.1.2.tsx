@@ -235,20 +235,6 @@ assert all(eval(s, {}, dict(zip('abcd', v))) == bool(f(*v)) for v in product([Fa
       },
     },
     {
-      key: "puzzle-proof",
-      rung: "prove",
-      prompt: <p>Prove, without writing out all eight rows, that <M>{"(P \\to Q) \\vee (Q \\to R)"}</M> is a tautology.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Splits into two cases according to whether Q is true or false.",
-          "If Q is true, shows P → Q is true, so the disjunction is true.",
-          "If Q is false, shows Q → R is true, so the disjunction is true.",
-          "Concludes that the formula is true in every row.",
-        ],
-      },
-    },
-    {
       key: "count-formulas",
       rung: "stretch",
       prompt: (

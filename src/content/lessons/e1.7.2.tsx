@@ -257,25 +257,6 @@ assert iqr_outliers(s).tolist() == [False, False, False, False, False, True, Tru
       },
     },
     {
-      key: "script",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why the cleaning should be a script run on the raw file rather than edits made by hand in a spreadsheet. Then
-          give an example showing that removing duplicates before tidying text gives a different result from tidying first.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Says a script can be rerun on new or corrected raw data and produces the same output every time.",
-          "Says a script records every decision, so others can review it, and the raw file is never lost.",
-          "Gives two records that differ only in spacing or capitals, which deduplication misses if run first.",
-          "Concludes that after tidying they become identical, so tidying first removes the duplicate.",
-        ],
-      },
-    },
-    {
       key: "pairs",
       rung: "stretch",
       prompt: (

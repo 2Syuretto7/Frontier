@@ -269,25 +269,6 @@ assert throttle(ev, 100) == [(0, 1), (100, 3), (230, 6)] and throttle(ev, 0) == 
       },
     },
     {
-      key: "forking",
-      rung: "prove",
-      prompt: (
-        <p>
-          You explore a validation set interactively, trying many slices, and find one slice where the new model is 5 points
-          better. Explain why this finding is weaker than it looks, and describe a procedure that would make it trustworthy.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Explains that trying many slices makes it likely that some slice looks good by chance alone.",
-          "Notes that the slice was chosen using the same data that measured the gain, so the estimate is biased upwards.",
-          "Proposes fixing the slice definition in code and measuring it on held-out data not used during exploration.",
-          "Mentions recording what was tried, or correcting for the number of comparisons.",
-        ],
-      },
-    },
-    {
       key: "calib",
       rung: "stretch",
       prompt: (

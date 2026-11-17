@@ -314,18 +314,6 @@ assert is_orthogonal_projection(2 * np.eye(2), np.eye(2)) is False` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that if U is a finite-dimensional subspace of an inner product space V, then V = U ⊕ U⊥.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows V = U + U⊥: with an orthonormal basis e₁, …, eₘ of U, writes v = u + w with u = Σ⟨v, eⱼ⟩eⱼ, and checks ⟨w, eₖ⟩ = 0 for each k, hence w ∈ U⊥.",
-          "Shows U ∩ U⊥ = {0}: a vector in both satisfies ⟨x, x⟩ = 0, so x = 0; hence the sum is direct.",
-        ],
-      },
-    },
-    {
       key: "weighted",
       rung: "stretch",
       prompt: (

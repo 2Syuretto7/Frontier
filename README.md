@@ -65,11 +65,10 @@ Every lesson can carry runnable code. Nothing runs on Frontier's servers: Python
 
 ## Parton
 
-Parton is the tutor on every lesson page (`src/lib/parton/`). It needs `ANTHROPIC_API_KEY` in Vercel; without it, the panel says so and written work is provisionally accepted on submission.
+Parton is the tutor on every lesson page (`src/lib/parton/`). It needs `ANTHROPIC_API_KEY` in Vercel; without it, the panel says so.
 
 - **Hints, never answers.** The model that writes a hint never sees the answers. A second, separate pass sees the answers and the draft and rewrites any reply that gives one away (twice at most, then a safe fallback hint).
 - **A five-rung ladder** per question: a question back, a pointer, a nudge, a skeleton with blanks, a parallel worked example. Each ask on the same question climbs one rung.
-- **Marking.** Written proofs and arguments are marked against their rubric; the work counts towards mastery only when every criterion is met. Feedback points to the failing line and asks a question about it.
 - **Memory and repair.** Conversations, hints and noted misconceptions are stored per lesson and fed back to Parton in later lessons that build on them. Questions missed three or more times come back in review after twelve hours instead of a day.
 - **Fresh recall.** The recall questions that open a lesson are written new by Parton for each sitting, on the mastered lessons it builds on (`src/lib/recall.ts`). Every recall question is stored, and a new one is dropped if it repeats an earlier recall question or a practice question from its lesson; a question is never shown again once tried. They lean towards ideas the learner has missed before, and their answer keys are checked on the server like any other exercise. Without Parton, the recall section says so instead of replaying old questions.
 - Model `claude-opus-5-5` with adaptive thinking, streamed, structured JSON output, prompt caching on the lesson context, and server-side refusal fallback (`fallbacks: "default"`).

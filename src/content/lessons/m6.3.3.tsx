@@ -343,18 +343,6 @@ assert is_normal(np.diag([1.0, 2.0, 3.0])) is True` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that eigenvectors of a self-adjoint operator with distinct eigenvalues are orthogonal.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes Tu = λu, Tv = μv with λ ≠ μ and computes λ⟨u, v⟩ = ⟨Tu, v⟩ = ⟨u, Tv⟩ = μ̄⟨u, v⟩ (= μ⟨u, v⟩, using that μ is real).",
-          "Concludes (λ − μ)⟨u, v⟩ = 0, hence ⟨u, v⟩ = 0 since λ ≠ μ.",
-        ],
-      },
-    },
-    {
       key: "exp",
       rung: "stretch",
       prompt: <p>A = [[2, 1], [1, 2]]. What is the off-diagonal entry of the matrix exponential e^A? Give 4 decimal places.</p>,

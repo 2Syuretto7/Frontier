@@ -281,19 +281,6 @@ assert len(p) == 5 and e[3] < 1e-10 and e[2] < e[1] ** 2` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>For a canonical-link GLM with gradient of the NLL −Xᵀ(y − μ) and Hessian XᵀVX, prove that the Newton step from w equals (XᵀVX)⁻¹XᵀVz with z = Xw + V⁻¹(y − μ).</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the Newton update w + (XᵀVX)⁻¹Xᵀ(y − μ).",
-          "Rewrites w as (XᵀVX)⁻¹XᵀVXw so both terms share the factor (XᵀVX)⁻¹.",
-          "Combines XᵀVXw + Xᵀ(y − μ) = XᵀV(Xw + V⁻¹(y − μ)) = XᵀVz, giving the stated form.",
-        ],
-      },
-    },
-    {
       key: "se",
       rung: "stretch",
       prompt: <p>An intercept-only logistic regression on 100 examples, 25 of them positive. What is the standard error of the fitted intercept, 1/√(n p̂(1 − p̂))? Give four decimal places.</p>,

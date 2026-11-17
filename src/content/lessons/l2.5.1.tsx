@@ -263,19 +263,6 @@ assert abs(mixture_loglik(x, [1.0], [0.0], [1.0]) - (-np.log(2 * np.pi) - 0.5)) 
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that for a one-dimensional mixture of two Gaussians with free variances, the log-likelihood of a dataset x₁, …, xₙ can be made arbitrarily large.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Places one component's mean at a data point x₁ and fixes the other component with positive weight at finite parameters.",
-          "Bounds every point's log-density below by the log of the fixed component's contribution, a finite constant independent of σ₁.",
-          "Shows the extra contribution at x₁ is at least log(π₁/(σ₁√(2π))), which tends to +∞ as σ₁ → 0, so the total does too.",
-        ],
-      },
-    },
-    {
       key: "perm",
       rung: "stretch",
       prompt: <p>A mixture with 4 distinct components has how many parameter settings that give exactly the same likelihood by relabelling?</p>,

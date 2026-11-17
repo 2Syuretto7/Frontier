@@ -267,19 +267,6 @@ assert abs(bisect_value(lambda x: x, -1, 1, 0.3) - 0.3) < 1e-8` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that a connected set A ⊆ ℝ is an interval.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Argues by contraposition: assumes a, b ∈ A and a < c < b with c ∉ A.",
-          "Uses the open sets (−∞, c) and (c, ∞), noting they cover A because c ∉ A and are disjoint.",
-          "Notes a lies in the first and b in the second, so A is disconnected, a contradiction.",
-        ],
-      },
-    },
-    {
       key: "halvings",
       rung: "stretch",
       prompt: (

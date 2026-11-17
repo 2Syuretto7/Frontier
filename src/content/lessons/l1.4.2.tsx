@@ -240,26 +240,6 @@ assert acc[0] > 0.97 and acc[0] > acc[1] > acc[2] and acc[2] < 0.75, 'Noise dime
       },
     },
     {
-      key: "sixth",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that for independent <M>{"U, V"}</M> uniform on <M>{"[0, 1]"}</M>, <M>{"\\mathbb{E}(U - V)^2 = 1/6"}</M>. Deduce the
-          expected squared distance between two independent uniform points in <M>{"[0, 1]^d"}</M>, and say why this growth alone
-          does not make nearest neighbours fail.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes E[U²] = 1/3 and E[U] = 1/2, and uses independence for E[UV] = 1/4.",
-          "Expands E(U − V)² = 1/3 − 2·(1/4) + 1/3 = 1/6.",
-          "Uses linearity of expectation over the d coordinates to get d/6.",
-          "Explains that all distances growing together is harmless; the problem is that their spread shrinks relative to their size, so near and far become indistinguishable.",
-        ],
-      },
-    },
-    {
       key: "edge100",
       rung: "stretch",
       prompt: <p>In 100 dimensions, what edge length must a sub-cube have to hold 1% of the volume of the unit cube? Give three decimal places.</p>,

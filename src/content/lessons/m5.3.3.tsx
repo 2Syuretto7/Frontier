@@ -263,24 +263,6 @@ assert a["x"] == 2.0 ** 10, 'With every label 1, the adjoint counts paths: 2 ** 
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the reverse-mode recursion gives <M>{"\\bar v_j"}</M> equal to the sum, over all directed paths from{" "}
-          <M>{"v_j"}</M> to the output, of the product of the edge labels along the path.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Sets up induction in reverse topological order, with base case the output (adjoint 1, one empty path with product 1).",
-          "Observes that every path from j to the output begins with exactly one edge j → i to a child i, followed by a path from i.",
-          "Uses the induction hypothesis for each child and multiplies by the edge label, then sums over children, matching the recursion.",
-        ],
-      },
-    },
-    {
       key: "paths",
       rung: "stretch",
       prompt: (

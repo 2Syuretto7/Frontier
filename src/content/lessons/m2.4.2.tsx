@@ -298,43 +298,6 @@ assert derivative(f, 0.5) == 3 * ((0.5 - 1) * (0.5 + 2)) ** 2 * (2 * 0.5 + 1), '
         ],
       },
     },
-    {
-      key: "recip",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove from the definition that if g is differentiable at x and <M>{"g(x) \\ne 0"}</M>, then{" "}
-          <M>{"(1/g)'(x) = -g'(x)/g(x)^2"}</M>. Then deduce the quotient rule.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the difference quotient as −(g(x + h) − g(x)) / (h g(x + h) g(x)).",
-          "Uses continuity of g at x to get g(x + h) → g(x), noting g(x + h) ≠ 0 for small h.",
-          "Takes the limit to get −g′(x)/g(x)².",
-          "Applies the product rule to f · (1/g) and simplifies to (f′g − fg′)/g².",
-        ],
-      },
-    },
-    {
-      key: "leibniz",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Find and prove a formula for <M>{"(fg)''"}</M>, the second derivative of a product, and then guess the formula for
-          the n-th derivative. What does it resemble?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Differentiates f′g + fg′ with the product rule to get f″g + 2f′g′ + fg″.",
-          "Guesses the general Leibniz rule with binomial coefficients.",
-          "Notes the resemblance to the binomial theorem, and ideally sketches an induction.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

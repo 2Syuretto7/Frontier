@@ -287,27 +287,6 @@ assert win == 'a' and spent == 3, 'Ties keep the earlier configuration.'` },
       },
     },
     {
-      key: "argue",
-      rung: "prove",
-      prompt: (
-        <p>
-          Suppose a score depends on hyperparameter <M>a</M> only, and you have a budget of <M>{"m^2"}</M> runs over two
-          hyperparameters <M>{"a, b"}</M>. Compare how many distinct values of <M>a</M> an <M>{"m \\times m"}</M> grid and{" "}
-          <M>{"m^2"}</M> uniform random trials test, and use the theorem above to explain what this means for finding a good{" "}
-          <M>a</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes the grid tests only m distinct values of a, each repeated m times.",
-          "Notes that m² independent uniform draws are distinct with probability 1, so random search tests m² values of a.",
-          "Applies the theorem: the chance of a value in the best fraction q is 1 − (1 − q)^(m²) for random search, while the grid succeeds only if one of its m fixed values happens to lie in the good region.",
-          "Concludes that random search wastes none of its budget on the irrelevant hyperparameter.",
-        ],
-      },
-    },
-    {
       key: "halving",
       rung: "stretch",
       prompt: <p>Successive halving starts 81 configurations and keeps the best third after each round until one remains. Counting a configuration once in each round it takes part in, how many runs is that in total?</p>,

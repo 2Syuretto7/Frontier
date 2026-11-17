@@ -244,25 +244,6 @@ except ValueError:
       },
     },
     {
-      key: "cost",
-      rung: "prove",
-      prompt: (
-        <p>
-          Write the attention-score einsum as explicit nested loops, explain why it performs <M>{"b h q k d"}</M> multiply-adds,
-          and say how the count grows when the sequence length doubles.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes loops over b, h, q and k for the output, with an inner loop over d accumulating Q[b,h,q,d] * K[b,h,k,d].",
-          "Explains each of the b·h·q·k output entries needs d multiply-adds, giving b·h·q·k·d in total.",
-          "Notes that q and k both equal the sequence length, so doubling it multiplies the work by four.",
-          "Connects this to the quadratic cost of attention in sequence length.",
-        ],
-      },
-    },
-    {
       key: "cube",
       rung: "stretch",
       prompt: <p>How many multiply-adds does <C>&quot;ij,jk-&gt;ik&quot;</C> perform when <C>i</C>, <C>j</C> and <C>k</C> are each 1,000?</p>,

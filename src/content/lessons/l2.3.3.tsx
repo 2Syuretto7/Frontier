@@ -273,24 +273,6 @@ assert F.shape == (3, 20000) and abs(C[0, 0] - 1) < 0.05 and abs(C[0, 1] - np.ex
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          With one observation y = f(x) + ε, ε ~ N(0, σ²), and f ~ GP(0, k), derive the posterior mean and variance of f(x*)
-          from the bivariate normal distribution of (y, f(x*)).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "States that (y, f(x*)) is bivariate normal with mean 0, Var(y) = k(x, x) + σ², Cov(y, f(x*)) = k(x, x*) and Var(f(x*)) = k(x*, x*).",
-          "Applies the conditional normal formula to get the mean k(x, x*)·y/(k(x, x) + σ²).",
-          "Gets the variance k(x*, x*) − k(x, x*)²/(k(x, x) + σ²) and notes it does not depend on y.",
-        ],
-      },
-    },
-    {
       key: "var",
       rung: "stretch",
       prompt: <p>One noiseless observation at x = 0, RBF kernel with s² = 1 and ℓ = 1. What is the posterior variance at x = 1? Give four decimal places.</p>,

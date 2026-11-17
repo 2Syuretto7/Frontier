@@ -154,8 +154,8 @@ export const lesson: LessonContent = {
         </p>
       </Theorem>
       <p>
-        This is the fact you use whenever you solve <M>{"(x - 2)(x - 3) = 0"}</M> by setting each bracket to zero. You will
-        prove it in the practice. It explains the visualisation: in the integers modulo 6, <M>{"2 \\cdot 3 = 0"}</M>, so they
+        This is the fact you use whenever you solve <M>{"(x - 2)(x - 3) = 0"}</M> by setting each bracket to zero. It
+        follows from the inverse axiom: if <M>{"a \\ne 0"}</M>, multiply both sides by <M>{"a^{-1}"}</M>. It explains the visualisation: in the integers modulo 6, <M>{"2 \\cdot 3 = 0"}</M>, so they
         cannot form a field.
       </p>
 
@@ -406,42 +406,6 @@ assert abs(kahan_sum(xs) - math.fsum(xs)) < 1e-6, 'Kahan is accurate for mixed m
           { name: "no builtins", code: `import inspect
 src = inspect.getsource(kahan_sum) + inspect.getsource(pairwise_sum)
 assert 'sum(' not in src.replace('naive_sum(', '').replace('pairwise_sum(', '').replace('kahan_sum(', ''), 'Write the loops yourself.'` },
-        ],
-      },
-    },
-    {
-      key: "no-zero-div",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove from the field axioms (and the theorem that <M>{"a \\cdot 0 = 0"}</M>) that if <M>{"ab = 0"}</M>, then{" "}
-          <M>{"a = 0"}</M> or <M>{"b = 0"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Considers the case a ≠ 0 (the case a = 0 being immediate).",
-          "Multiplies both sides of ab = 0 by the inverse of a.",
-          "Uses associativity, the inverse and identity axioms, and a · 0 = 0 to conclude b = 0.",
-        ],
-      },
-    },
-    {
-      key: "composite",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Let n be a whole number with <M>{"n = rs"}</M>, where <M>{"1 < r, s < n"}</M>. Prove that the integers modulo n do
-          not form a field.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that r and s are non-zero modulo n, since they lie strictly between 0 and n.",
-          "Notes that rs = n is 0 modulo n.",
-          "Uses the no-zero-divisors theorem (or directly the inverse of r) to reach a contradiction.",
         ],
       },
     },

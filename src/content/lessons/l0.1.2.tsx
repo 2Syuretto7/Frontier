@@ -89,7 +89,8 @@ export const lesson: LessonContent = {
           With squared error, the best constant is the mean of the data,{" "}
           <M>{"\\tfrac{22 + 25 + 27 + 30 + 31 + 34 + 45}{7} = \\tfrac{214}{7} \\approx 30.6"}</M> minutes. With absolute
           error it is the median, 30. The 45-minute delivery pulls the mean up but barely moves the median. The lesson on averages in the mathematics track proves the
-          first fact; the second is in the practice below.
+          first fact. For the second, move the constant a little away from the median: it gets further from more points than
+          it gets closer to, so the total absolute error rises.
         </p>
       </Example>
 
@@ -222,25 +223,6 @@ def median3(a, b, c):
           { name: "mean", code: `assert mean3(1, 2, 9) == 4.0 and mean3(3, 3, 3) == 3.0, 'Add the three and divide by 3.'` },
           { name: "median", code: `assert median3(1, 2, 9) == 2 and median3(9, 1, 2) == 2 and median3(5, 5, 1) == 5 and median3(-1, 7, 3) == 3, 'Total minus the largest minus the smallest.'` },
           { name: "outlier", code: `assert mean3(1, 2, 1000) > 300 and median3(1, 2, 1000) == 2, 'One outlier drags the mean but not the median.'` },
-        ],
-      },
-    },
-    {
-      key: "median",
-      rung: "prove",
-      prompt: (
-        <p>
-          For the data 1, 2, 10, explain why the constant 2 has a smaller total absolute error than any other constant. Hint:
-          what happens to the total when you move the constant a little to the left or right of 2?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes the total absolute error at 2: 1 + 0 + 8 = 9.",
-          "Notes that moving right from 2 increases the distance to two points (1 and 2) and decreases it to one (10), so the total rises.",
-          "Notes that moving left from 2 increases the distance to two points (2 and 10) and decreases it to one (1), so the total rises.",
-          "Concludes 2, the median, is the minimum.",
         ],
       },
     },

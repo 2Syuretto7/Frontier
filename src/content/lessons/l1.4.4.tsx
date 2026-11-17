@@ -287,25 +287,6 @@ assert abs(imp[0] - (m.score(X[300:], y[300:]) - m.score(Xp, y[300:]))) < 1e-12,
       },
     },
     {
-      key: "derive",
-      rung: "prove",
-      prompt: (
-        <p>
-          Derive the formula for the variance of an average of <M>B</M> predictors with common variance <M>{"\\sigma^2"}</M> and
-          pairwise correlation <M>{"\\rho"}</M>. Use it to explain why a random forest restricts the features at each split.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the variance of the sum as the sum of all pairwise covariances.",
-          "Counts B diagonal terms σ² and B(B − 1) off-diagonal terms ρσ².",
-          "Divides by B² and simplifies to ρσ² + (1 − ρ)σ²/B.",
-          "Explains that the ρσ² term does not shrink with B, so reducing the correlation between trees, by restricting features, is what lowers it further.",
-        ],
-      },
-    },
-    {
       key: "vote",
       rung: "stretch",
       prompt: <p>Twenty-five independent voters are each right with probability 0.6. What is the probability that the majority is right? Give three decimal places.</p>,

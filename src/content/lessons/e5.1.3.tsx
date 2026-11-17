@@ -389,24 +389,6 @@ assert all(abs(p.data - q.data) < 1e-12 for p, q in zip(m1.parameters(), m2.para
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let g be the gradient of the loss L at the current parameters θ, with g ≠ 0. Explain why the update θ ← θ − lr·g
-          lowers the loss when lr is small enough, and why it need not when lr is large.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses the first-order Taylor expansion: L(θ − lr·g) = L(θ) − lr·‖g‖² + o(lr) (or a bound on the second-order term).",
-          "Notes ‖g‖² > 0, so for small enough lr the negative first-order term dominates the remainder and the loss decreases.",
-          "Explains that for large lr the remainder (curvature) term can dominate, so the step can overshoot and increase the loss.",
-        ],
-      },
-    },
-    {
       key: "mnist",
       rung: "stretch",
       prompt: <p>How many parameters does <C>MLP(784, [128, 10])</C>, a classic first network for 28 × 28 digit images, have?</p>,

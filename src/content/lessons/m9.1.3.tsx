@@ -241,19 +241,6 @@ assert abs(m[0] - 0.25) < 0.01 and abs(m[2] - 0.75) < 0.01` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that the maximum of n iid observations with CDF F has CDF F(x)ⁿ, and deduce the density of the maximum of n uniforms on [0, 1].</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that the maximum is at most x if and only if every observation is at most x.",
-          "Uses independence to write that probability as the product F(x)ⁿ.",
-          "For uniforms, F(x) = x on [0, 1], so the CDF is xⁿ and the density is nxⁿ⁻¹ on [0, 1].",
-        ],
-      },
-    },
-    {
       key: "tank",
       rung: "stretch",
       prompt: <p>Five tanks are captured and the largest serial number is 60. What does the unbiased estimator m(1 + 1/k) − 1 give for the number of tanks?</p>,

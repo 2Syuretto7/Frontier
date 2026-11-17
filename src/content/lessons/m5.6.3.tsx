@@ -265,26 +265,6 @@ assert abs(L - 0.5) < 1e-12 and abs(g - (-0.5)) < 1e-12, 'x = 1, dx/dlam = -0.5,
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let <M>{"x^*(\\theta) = T(x^*(\\theta), \\theta)"}</M> with T a <M>{"C^1"}</M> map and{" "}
-          <M>{"\\|\\partial_x T\\| < 1"}</M> at the fixed point. Assuming x* is differentiable, prove that{" "}
-          <M>{"\\partial x^*/\\partial\\theta = (I - \\partial_x T)^{-1}\\partial_\\theta T"}</M>, and explain why the inverse
-          exists.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Differentiates the identity x*(θ) = T(x*(θ), θ) by the chain rule: Dx* = ∂_xT · Dx* + ∂_θT.",
-          "Rearranges to (I − ∂_xT) Dx* = ∂_θT.",
-          "Shows I − ∂_xT is invertible since ‖∂_xT‖ < 1: if (I − ∂_xT)v = 0 then ‖v‖ = ‖∂_xT v‖ < ‖v‖ unless v = 0 (or via the Neumann series).",
-        ],
-      },
-    },
-    {
       key: "lin",
       rung: "stretch",
       prompt: <p>For T(x, θ) = θx + 1 with |θ| &lt; 1, what is <M>{"dx^*/d\\theta"}</M> at θ = 0.5?</p>,

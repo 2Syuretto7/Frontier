@@ -307,24 +307,6 @@ assert not segment_test(ring, np.array([0.8, 0.0]), np.array([-0.8, 0.0])) and s
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let ‖·‖ be any norm on ℝⁿ. Prove that the ball {"{"}x : ‖x − c‖ ≤ r{"}"} is convex, and that the set{" "}
-          {"{"}(x, t) : ‖x‖ ≤ t{"}"} is a convex cone.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "For the ball, writes θx + (1 − θ)y − c = θ(x − c) + (1 − θ)(y − c) and bounds its norm by θr + (1 − θ)r = r using the triangle inequality and homogeneity.",
-          "For the cone, shows closure under scaling by λ ≥ 0, using ‖λx‖ = λ‖x‖ ≤ λt.",
-          "Shows closure under nonnegative combinations: ‖θ₁x + θ₂y‖ ≤ θ₁‖x‖ + θ₂‖y‖ ≤ θ₁t + θ₂s.",
-        ],
-      },
-    },
-    {
       key: "cara",
       rung: "stretch",
       prompt: <p>By Carathéodory&apos;s theorem, at most how many of the given points are needed to write any point of the convex hull of a finite set in ℝ³ as a convex combination?</p>,

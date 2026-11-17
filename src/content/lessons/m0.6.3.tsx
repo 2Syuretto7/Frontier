@@ -260,25 +260,6 @@ assert all(abs(a - b) < 1e-12 for a, b in zip(vs[0], (1, 0))) and all(abs(a - b)
       },
     },
     {
-      key: "expand",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"|u + v|^2 = |u|^2 + 2\\, u\\cdot v + |v|^2"}</M> for all vectors <M>u</M> and <M>v</M> in the plane.
-          What does this say when <M>u</M> and <M>v</M> are perpendicular?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes |u + v|² as (u₁ + v₁)² + (u₂ + v₂)².",
-          "Expands each square.",
-          "Regroups the terms as (u₁² + u₂²) + 2(u₁v₁ + u₂v₂) + (v₁² + v₂²).",
-          "Identifies the groups as |u|², 2u·v and |v|², and notes that for perpendicular vectors this is Pythagoras.",
-        ],
-      },
-    },
-    {
       key: "triangle-angle",
       rung: "stretch",
       prompt: (

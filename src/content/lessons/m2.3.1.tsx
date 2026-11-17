@@ -252,41 +252,6 @@ assert abs(a - 1) < 0.02, 'sin is Lipschitz: exponent 1.'` },
         ],
       },
     },
-    {
-      key: "prove-abs",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove from the epsilon-delta definition that <M>{"f(x) = |x|"}</M> is continuous at every real number a.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Lets ε > 0 be given and chooses δ = ε.",
-          "Uses the reverse triangle inequality: ||x| − |a|| ≤ |x − a|.",
-          "Concludes |x − a| < δ implies ||x| − |a|| < ε.",
-        ],
-      },
-    },
-    {
-      key: "one-point",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Let <M>{"f(x) = x"}</M> for rational x and <M>{"f(x) = 0"}</M> for irrational x. Prove carefully that f is not
-          continuous at <M>{"a = 1"}</M>. (You may use that every interval contains both rationals and irrationals.)
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes f(1) = 1 and chooses a specific ε, such as 1/2.",
-          "For any δ > 0, picks an irrational x with |x − 1| < δ.",
-          "Shows |f(x) − f(1)| = 1 ≥ ε, so no δ works.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

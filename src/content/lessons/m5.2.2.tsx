@@ -278,24 +278,6 @@ assert np.allclose(d_inverse(np.eye(2) * 2, np.eye(2)), -0.25 * np.eye(2))` },
       },
     },
     {
-      key: "cols",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that if f is differentiable at a, the j-th column of <M>{"Df(a)"}</M> is the vector of partial derivatives{" "}
-          <M>{"\\partial f/\\partial x_j(a)"}</M>, and that f is continuous at a.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Substitutes h = t e_j into the definition and lets t → 0 to show the difference quotient in direction e_j tends to L e_j.",
-          "Concludes the partial derivative exists and equals the j-th column of L.",
-          "For continuity, bounds ‖f(a + h) − f(a)‖ by ‖L h‖ plus the remainder, and notes both tend to 0 as h → 0.",
-        ],
-      },
-    },
-    {
       key: "det",
       rung: "stretch",
       prompt: (

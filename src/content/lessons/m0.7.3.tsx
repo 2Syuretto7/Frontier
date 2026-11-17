@@ -240,20 +240,6 @@ def tiles(n):
       },
     },
     {
-      key: "odd-induction",
-      rung: "prove",
-      prompt: <p>Prove by induction that <M>{"1 + 3 + 5 + \\cdots + (2n - 1) = n^2"}</M> for every whole number <M>{"n \\ge 1"}</M>.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Checks the base case n = 1: both sides are 1.",
-          "States the inductive hypothesis: the formula holds for n = k.",
-          "Adds the next odd number, 2(k + 1) − 1 = 2k + 1, to get k² + 2k + 1.",
-          "Recognises this as (k + 1)², and concludes by induction.",
-        ],
-      },
-    },
-    {
       key: "regions",
       rung: "stretch",
       prompt: (

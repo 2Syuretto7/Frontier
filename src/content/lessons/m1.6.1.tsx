@@ -238,43 +238,6 @@ assert {b for a, b in E if a == 1} == {1, 2, 5} and {b for a, b in E if a == 4} 
         ],
       },
     },
-    {
-      key: "sym-trans",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let R be a symmetric and transitive relation on A, and suppose every element of A is related to at least one
-          element. Prove that R is reflexive.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes an arbitrary a in A and some b with a R b.",
-          "Uses symmetry to get b R a.",
-          "Uses transitivity on a R b and b R a to get a R a.",
-          "Concludes that R is reflexive, noting where the extra hypothesis was used.",
-        ],
-      },
-    },
-    {
-      key: "count-sym",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Show that a set with n elements has <M>{"2^{n(n+1)/2}"}</M> symmetric relations. Explain your counting carefully.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that a symmetric relation is fixed by deciding the pairs (a, a) and each unordered pair {a, b} with a ≠ b.",
-          "Counts n diagonal pairs and n(n − 1)/2 unordered pairs of distinct elements.",
-          "Adds these to get n(n + 1)/2 independent yes-or-no choices.",
-          "Concludes there are 2^(n(n+1)/2) symmetric relations.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

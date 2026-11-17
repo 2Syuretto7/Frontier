@@ -237,19 +237,6 @@ assert rb_eff(1.0, 50) > rb_eff(1.0, 5)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove the Cramér-Rao bound Var(T) ≥ ψ′(θ)²/(nI(θ)) for an unbiased estimator T of ψ(θ), assuming differentiation under the integral sign is allowed.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Lets S be the sample score and notes E[S] = 0 and Var(S) = nI(θ).",
-          "Differentiates E[T] = ψ(θ) under the integral to obtain ψ′(θ) = E[TS] = Cov(T, S).",
-          "Applies Cauchy-Schwarz, Cov(T, S)² ≤ Var(T) Var(S), and rearranges to the bound.",
-        ],
-      },
-    },
-    {
       key: "s2eff",
       rung: "stretch",
       prompt: <p>For a normal sample of size n = 11 with both parameters unknown, what is the efficiency of S² for σ²? Give four decimal places.</p>,

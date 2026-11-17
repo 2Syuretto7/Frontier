@@ -260,24 +260,6 @@ assert abs(V2[0] - V[0]) < 1e-9, 'With one action, both methods agree.'` },
       },
     },
     {
-      key: "different",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain two ways in which learning from rewards differs from learning from labelled examples, using a game such as
-          chess as your example.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that no one supplies the correct move: the agent sees only a reward such as winning or losing.",
-          "Notes that rewards are delayed: a move's value shows up only at the end of the game, so credit must be assigned back to earlier moves.",
-          "Or notes that the agent's own choices determine which positions, and so which data, it ever sees.",
-        ],
-      },
-    },
-    {
       key: "regret",
       rung: "stretch",
       prompt: (

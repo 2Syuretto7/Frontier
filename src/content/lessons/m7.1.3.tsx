@@ -302,24 +302,6 @@ assert oA == 0.78 and oB == 0.826 and all(gA[g] > gB[g] for g in gA) and oA < oB
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that for a fixed event B with P(B) &gt; 0, the function <M>{"A \\mapsto P(A \\mid B)"}</M> satisfies the
-          axioms of probability.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows P(A | B) ≥ 0 and P(Ω | B) = P(Ω ∩ B)/P(B) = 1.",
-          "For disjoint A₁, A₂, …, notes the sets Aₙ ∩ B are disjoint and (∪ Aₙ) ∩ B = ∪ (Aₙ ∩ B).",
-          "Applies countable additivity of P and divides by P(B) to get P(∪ Aₙ | B) = Σ P(Aₙ | B).",
-        ],
-      },
-    },
-    {
       key: "ruin49",
       rung: "stretch",
       prompt: <p>With win probability 0.49 per bet, starting at ₹50, what is the probability of reaching ₹100 before ₹0? Give four decimal places.</p>,

@@ -260,24 +260,6 @@ assert P[:, 1].max() > 3.15 and P[-1, 0] < 1.0, 'The tracer passes the top of th
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Assuming the implicit function theorem gives a differentiable g with <M>{"F(x, g(x)) = 0"}</M>, derive{" "}
-          <M>{"Dg = -D_yF^{-1} D_xF"}</M>. Explain where invertibility of <M>{"D_yF"}</M> is used.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Differentiates the identity F(x, g(x)) = 0 with the chain rule, treating x ↦ (x, g(x)) as a composition.",
-          "Gets D_xF + D_yF · Dg = 0, with the shapes m × n, m × m and m × n.",
-          "Multiplies by D_yF⁻¹, which exists by hypothesis, to solve for Dg.",
-        ],
-      },
-    },
-    {
       key: "sphere",
       rung: "stretch",
       prompt: (

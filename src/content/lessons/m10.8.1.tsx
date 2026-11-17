@@ -274,24 +274,6 @@ assert abs(first_order_gap(g, np.array([0.5, 0.5]), [np.array(p) for p in [(0.0,
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Suppose the map x ↦ x − t∇f(x) is a contraction with factor q &lt; 1 and x* minimises f over the closed convex set
-          C. Prove that projected gradient descent satisfies ‖x_(k+1) − x*‖ ≤ q‖x_k − x*‖.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows x* = P_C(x* − t∇f(x*)), from the optimality condition and the characterisation of projection.",
-          "Uses nonexpansiveness of P_C to bound ‖x_(k+1) − x*‖ by ‖(x_k − t∇f(x_k)) − (x* − t∇f(x*))‖.",
-          "Applies the contraction property to conclude ‖x_(k+1) − x*‖ ≤ q‖x_k − x*‖.",
-        ],
-      },
-    },
-    {
       key: "box",
       rung: "stretch",
       prompt: <p>Minimise ½‖x − c‖² over the box [0, 1]² with c = (3, −1). What is the optimal value?</p>,

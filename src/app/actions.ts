@@ -66,8 +66,6 @@ export type CheckResponse = {
   correct: boolean;
   message?: string;
   lessonMastered?: boolean;
-  verdict?: "accepted" | "revise" | "pending";
-  feedbackHtml?: string;
 };
 
 export async function checkExerciseAction(

@@ -301,24 +301,6 @@ assert hypergeom(5, 2, 3, 3) == 0` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          k values are drawn uniformly and independently from n. Prove that the probability that some two of them are equal
-          is at most k(k − 1)/(2n).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the event as the union over the k(k−1)/2 pairs i < j of the events Eᵢⱼ = {draw i equals draw j}.",
-          "Shows P(Eᵢⱼ) = 1/n, for example by counting: n of the n² equally likely values of the pair agree.",
-          "Applies the union bound to get at most (k(k−1)/2)·(1/n) = k(k−1)/(2n).",
-        ],
-      },
-    },
-    {
       key: "hash32",
       rung: "stretch",
       prompt: <p>What is the smallest number of independent uniform 32-bit values for which the probability of a repeat is at least 1/2?</p>,

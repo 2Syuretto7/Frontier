@@ -255,44 +255,6 @@ assert abs(f - 4 / 16) < 0.015, f'Expected about 0.25, got {f}.'` },
         ],
       },
     },
-    {
-      key: "relation-count",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why there are <M>{"n^m"}</M> functions from a set with m elements to a set with n elements, and use this to
-          explain why there is exactly one function from the empty set to any set.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that a function is fixed by choosing one image for each element of the domain.",
-          "Uses the multiplication principle to get n · n · … · n = nᵐ.",
-          "Sets m = 0 to get n⁰ = 1.",
-          "Identifies the one function as the empty set of pairs, which satisfies the definition vacuously.",
-        ],
-      },
-    },
-    {
-      key: "mod-defined",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Let <M>{"[a]"}</M> be the class of a under congruence modulo 6. Is <M>{"[a] \\mapsto [2a]"}</M> a well-defined
-          function on the classes modulo 6? What about <M>{"[a] \\mapsto [a]"}</M> into the classes modulo 4? Prove or
-          disprove each.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "For the first, assumes a ≡ b (mod 6) and shows 2a ≡ 2b (mod 6), so it is well defined.",
-          "For the second, finds a counterexample such as 0 ≡ 6 (mod 6) but 0 ≢ 6 (mod 4).",
-          "Explains that well-definedness means the output does not depend on the chosen representative.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

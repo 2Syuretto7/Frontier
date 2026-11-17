@@ -269,25 +269,6 @@ assert [round(x, 9) for x, _ in pts] == [-3, -2, -1, 0, 1, 2, 3] and [y for _, y
       },
     },
     {
-      key: "even-proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Suppose <M>f</M> and <M>g</M> are both odd functions on the reals. Prove that their product{" "}
-          <M>{"h(x) = f(x)g(x)"}</M> is even, and say what this means for the graph of <M>h</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes h(−x) = f(−x)g(−x).",
-          "Uses oddness to write this as (−f(x))(−g(x)).",
-          "Concludes h(−x) = f(x)g(x) = h(x), so h is even.",
-          "States that the graph of h is symmetric in the y-axis.",
-        ],
-      },
-    },
-    {
       key: "abs-equation",
       rung: "stretch",
       prompt: (

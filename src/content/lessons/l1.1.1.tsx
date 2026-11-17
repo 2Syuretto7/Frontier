@@ -269,26 +269,6 @@ assert m[0] < m[1] < m[2] and s[0] > s[2], 'More data: higher accuracy and less 
       },
     },
     {
-      key: "tep",
-      rung: "prove",
-      prompt: (
-        <p>
-          A hospital wants a system that reads chest X-rays and flags those needing urgent review. Specify the task, the
-          experience and the performance measure precisely, and explain one way a badly chosen performance measure could make
-          the system harmful.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Task: classify each X-ray as urgent or not urgent (or score its urgency).",
-          "Experience: past X-rays labelled by radiologists, ideally checked against later outcomes.",
-          "Performance: a measure that weighs missed urgent cases against false alarms, evaluated on X-rays not used for training, ideally from other hospitals.",
-          "Explains a failure, such as plain accuracy rewarding a system that never flags anything when urgent cases are rare.",
-        ],
-      },
-    },
-    {
       key: "pixels",
       rung: "stretch",
       prompt: (

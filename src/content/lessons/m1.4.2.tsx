@@ -248,38 +248,6 @@ assert len(c) == 6, 'Divisor sets of 1, 2, 4, 8, 16, 32 form a chain of 6.'` },
         ],
       },
     },
-    {
-      key: "transitive",
-      rung: "prove",
-      prompt: <p>Prove that if <M>{"A \\subseteq B"}</M> and <M>{"B \\subseteq C"}</M>, then <M>{"A \\subseteq C"}</M>.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Takes an arbitrary element x of A.",
-          "Uses A ⊆ B to get x ∈ B, then B ⊆ C to get x ∈ C.",
-          "Concludes that every element of A is in C, so A ⊆ C.",
-        ],
-      },
-    },
-    {
-      key: "four-six",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Let A be the set of multiples of 4 and B the set of multiples of 6, among the integers. Prove that{" "}
-          <M>{"\\{\\, n : 4 \\mid n \\text{ and } 6 \\mid n \\,\\}"}</M> equals the set of multiples of 12.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Proves that every multiple of 12 is a multiple of both 4 and 6.",
-          "For the other inclusion, takes n divisible by 4 and 6, writes n = 4a, and uses 3 | n (from 6 | n) to deduce 3 | a, since 3 does not divide 4.",
-          "Concludes n = 12b for some integer b.",
-          "States that both inclusions hold, so the sets are equal.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

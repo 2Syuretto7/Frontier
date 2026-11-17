@@ -339,25 +339,6 @@ assert guilty_layers([slightly, shift, relu, double], ref, [1.0], tol=1e-12) == 
       },
     },
     {
-      key: "nothing",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that a classifier that outputs the same probability vector p for every input has average cross-entropy at least{" "}
-          <M>{"H(q)"}</M>, where q holds the label frequencies, with equality at p = q. Conclude what a loss stuck at{" "}
-          <M>{"\\ln K"}</M> on balanced data suggests.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the average loss as minus the sum over k of q_k ln p_k.",
-          "Shows that the loss minus H(q) is the sum of q_k ln(q_k / p_k) and that this is non-negative, by Jensen's inequality, Gibbs' inequality or a Lagrange multiplier argument, with equality at p = q.",
-          "Notes that for balanced classes H(q) = ln K, so a loss stuck there is what a model that ignores its input achieves.",
-        ],
-      },
-    },
-    {
       key: "freq",
       rung: "stretch",
       prompt: (

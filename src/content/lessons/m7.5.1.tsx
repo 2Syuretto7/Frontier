@@ -315,24 +315,6 @@ assert np.all(r2 <= 1 + 1e-12) and abs(np.mean(r2 <= 0.25) - 0.25) < 0.005 and a
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Suppose (X, Y) has joint density f(x, y) = g(x)h(y) for all real x, y, with g, h ≥ 0. Prove that X and Y are
-          independent.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes the marginals: f_X(x) = g(x)∫h and f_Y(y) = h(y)∫g.",
-          "Uses ∫∫ f = (∫g)(∫h) = 1 to show f_X(x)f_Y(y) = g(x)h(y)(∫g)(∫h) = f(x, y).",
-          "Concludes P(X ∈ A, Y ∈ B) = ∫_A f_X · ∫_B f_Y = P(X ∈ A)P(Y ∈ B) for all intervals (or sets) A, B.",
-        ],
-      },
-    },
-    {
       key: "xplusy",
       rung: "stretch",
       prompt: <p>(X, Y) has joint density x + y on [0, 1]². What is P(X + Y ≤ 1)? Give four decimal places.</p>,

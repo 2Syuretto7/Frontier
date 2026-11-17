@@ -249,44 +249,6 @@ for m in range(5):
         ],
       },
     },
-    {
-      key: "bij-proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"f : \\mathbb{R} \\setminus \\{1\\} \\to \\mathbb{R} \\setminus \\{1\\}"}</M>,{" "}
-          <M>{"f(x) = \\dfrac{x + 1}{x - 1}"}</M>, is a bijection.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Checks that f(x) is never 1, so f really maps into ℝ ∖ {1}.",
-          "Proves injectivity: from f(a) = f(b), cross-multiplies and simplifies to a = b.",
-          "Proves surjectivity: solves y = (x + 1)/(x − 1) to get x = (y + 1)/(y − 1), and checks x ≠ 1.",
-          "Concludes that f is a bijection.",
-        ],
-      },
-    },
-    {
-      key: "same-size",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Let A and B be finite sets with <M>{"|A| = |B|"}</M>, and <M>{"f : A \\to B"}</M>. Prove that f is injective if and
-          only if it is surjective. Show by an example that this fails for <M>{"f : \\mathbb{N} \\to \\mathbb{N}"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "If f is injective, its image has |A| = |B| elements, so it is all of B.",
-          "If f is surjective but not injective, the image has fewer than |A| elements, contradicting that it is all of B.",
-          "Gives an infinite counterexample, such as n ↦ n + 1 (injective, not surjective).",
-          "Comments that this difference between finite and infinite sets is the theme of the cardinality chapter.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

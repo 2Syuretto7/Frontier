@@ -222,26 +222,6 @@ assert abs(v - math.sqrt(math.pi) / 2) < 1e-6, 'x = t/(1 − t) maps [0, 1) onto
       },
     },
     {
-      key: "odd",
-      rung: "prove",
-      prompt: (
-        <p>
-          A function is odd if <M>{"f(-x) = -f(x)"}</M> for all x. Use the substitution <M>{"u = -x"}</M> to prove that{" "}
-          <M>{"\\int_{-a}^a f(x)\\,dx = 0"}</M> for every continuous odd f. What does the analogous argument give for an even
-          function, with <M>{"f(-x) = f(x)"}</M>?
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Splits the integral at 0 into the parts over [−a, 0] and [0, a].",
-          "Substitutes u = −x in the first part, with du = −dx and limits a to 0, to get ∫₀ᵃ f(−u) du.",
-          "Uses oddness to show this equals −∫₀ᵃ f(u) du, so the two parts cancel.",
-          "States that for even f the integral over [−a, a] is twice the integral over [0, a].",
-        ],
-      },
-    },
-    {
       key: "linear",
       rung: "stretch",
       prompt: (

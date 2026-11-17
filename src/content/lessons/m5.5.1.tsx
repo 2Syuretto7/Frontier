@@ -263,25 +263,6 @@ assert abs(p - 2) < 1e-9, 'For a quadratic the first-order error is exactly C s^
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          For <M>{"C^2"}</M> f and g(t) = f(a + th), prove that <M>{"g''(t) = h^\\top H_f(a + th) h"}</M>, and deduce that{" "}
-          <M>{"f(a + h) = f(a) + \\nabla f(a)^\\top h + \\tfrac12 h^\\top H_f(a + sh)h"}</M> for some s in (0, 1).
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes g′(t) = Σ_i ∂_i f(a + th) h_i by the chain rule.",
-          "Differentiates again, applying the chain rule to each ∂_i f(a + th), to get Σ_{i,j} ∂_j ∂_i f(a + th) h_i h_j = hᵀ H h.",
-          "Applies one-variable Taylor with Lagrange remainder: g(1) = g(0) + g′(0) + ½ g″(s).",
-          "Substitutes g(0), g′(0), g″(s) to obtain the stated formula.",
-        ],
-      },
-    },
-    {
       key: "x2y",
       rung: "stretch",
       prompt: (

@@ -277,39 +277,6 @@ assert order(p) == 12 and power(p, 12 * 10 ** 17 + 1) == p and power(p, 10 ** 18
         ],
       },
     },
-    {
-      key: "comp-inj",
-      rung: "prove",
-      prompt: <p>Prove that if <M>{"f : A \\to B"}</M> and <M>{"g : B \\to C"}</M> are both injective, then <M>{"g \\circ f"}</M> is injective.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Assumes g(f(a₁)) = g(f(a₂)).",
-          "Uses injectivity of g to get f(a₁) = f(a₂).",
-          "Uses injectivity of f to get a₁ = a₂.",
-          "Concludes that g ∘ f is injective.",
-        ],
-      },
-    },
-    {
-      key: "gf-inj",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Prove that if <M>{"g \\circ f"}</M> is injective then f must be injective, but g need not be. Give an explicit
-          example for the second part.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Assumes f(a₁) = f(a₂), applies g, and uses injectivity of g ∘ f to get a₁ = a₂.",
-          "Gives an example where g ∘ f is injective but g is not, such as A = {1}, B = {1, 2}, C = {1}.",
-          "Checks the example carefully.",
-          "Explains that g only needs to be injective on the image of f.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

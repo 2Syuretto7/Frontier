@@ -275,41 +275,6 @@ assert check_limit(lambda x: x * x, 3, 9) and check_limit(lambda x: math.sin(x) 
         ],
       },
     },
-    {
-      key: "prove-square",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove from the definition that <M>{"\\lim_{x \\to 3} x^2 = 9"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Factorises |x² − 9| = |x − 3| |x + 3|.",
-          "Restricts to |x − 3| < 1 to get |x + 3| < 7.",
-          "Chooses δ = min(1, ε/7) or similar.",
-          "Checks that 0 < |x − 3| < δ gives |x² − 9| < ε.",
-        ],
-      },
-    },
-    {
-      key: "reciprocal",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Prove from the definition that <M>{"\\lim_{x \\to 2} \\dfrac{1}{x} = \\dfrac{1}{2}"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes |1/x − 1/2| = |x − 2| / (2|x|).",
-          "Restricts to |x − 2| < 1 to get |x| > 1, so the expression is less than |x − 2| / 2.",
-          "Chooses δ = min(1, 2ε) or similar, and checks the conclusion.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

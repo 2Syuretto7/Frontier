@@ -285,24 +285,6 @@ assert good.shape == (20000,) and ks_uniform(good) < 0.02 and ks_uniform(bad) > 
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let F be a continuous, strictly increasing CDF with inverse <M>{"F^{-1}"}</M>, and U ~ Uniform(0, 1). Prove that{" "}
-          <M>{"X = F^{-1}(U)"}</M> has CDF F, and that F(X) is uniform.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses that F is strictly increasing to show F⁻¹(U) ≤ x if and only if U ≤ F(x).",
-          "Concludes P(X ≤ x) = P(U ≤ F(x)) = F(x), since U is uniform and F(x) is in [0, 1].",
-          "Notes F(X) = F(F⁻¹(U)) = U, which is uniform (or proves P(F(X) ≤ u) = u directly).",
-        ],
-      },
-    },
-    {
       key: "pareto",
       rung: "stretch",
       prompt: <p>By inversion, which sample does u = 0.9 give for the Pareto distribution with F(x) = 1 − 1/x² for x ≥ 1? Give four decimal places.</p>,

@@ -310,24 +310,6 @@ assert np.allclose(a.grad, [[0.5, -0.5], [0.0, 0.0]]), a.grad` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that lse(z − c·1) = lse(z) − c for any constant c, and use it to explain why subtracting the maximum logit
-          gives the same loss while no exponent exceeds 1.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes log Σ exp(zⱼ − c) = log (e^(−c) Σ exp(zⱼ)) = lse(z) − c.",
-          "Applies it with c = max z: lse(z) = m + lse(z − m), and z_y − m shifts the same way, so lse(z) − z_y is unchanged.",
-          "Notes every zⱼ − m ≤ 0, so each exp(zⱼ − m) ≤ 1 (and the largest is exactly 1, so the sum is at least 1 and its log is finite).",
-        ],
-      },
-    },
-    {
       key: "limit",
       rung: "stretch",
       prompt: <p>What is the largest integer x for which <C>np.exp(float(x))</C> is finite in float64?</p>,

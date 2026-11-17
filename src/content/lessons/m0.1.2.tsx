@@ -311,25 +311,6 @@ def multiple_below(a, b):
       },
     },
     {
-      key: "neg-neg",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"(-a)b = -(ab)"}</M> for all integers <M>a</M>, <M>b</M>. You may use the laws of arithmetic and
-          part (1) of the rule of signs. Name the law behind each step.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Rewrites -a as (-1)a, citing part (1) of the rule of signs.",
-          "Regroups ((-1)a)b as (-1)(ab) using associativity.",
-          "Concludes (-1)(ab) = -(ab), again citing part (1).",
-          "Every step names the law or result it uses.",
-        ],
-      },
-    },
-    {
       key: "alternating",
       rung: "stretch",
       prompt: <p>Compute <M>{"(-1)^1 + (-1)^2 + (-1)^3 + \\cdots + (-1)^{101}"}</M>.</p>,

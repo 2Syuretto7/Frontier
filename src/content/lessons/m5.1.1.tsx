@@ -259,24 +259,6 @@ assert n == 0 and np.allclose(out[0], 0), 'A zero gradient stays zero, with no d
       },
     },
     {
-      key: "compare",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"\\|x\\|_2 \\le \\|x\\|_1 \\le \\sqrt n \\, \\|x\\|_2"}</M> for every x in <M>{"\\mathbb R^n"}</M>, and
-          give a non-zero vector for which each inequality is an equality.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Squares the 1-norm and notes the cross terms 2|x_i||x_j| are non-negative, giving the first inequality.",
-          "Applies Cauchy–Schwarz to (|x_1|, …, |x_n|) and (1, …, 1) to get the second.",
-          "Gives equality cases: a vector with one non-zero entry for the first, and a vector with all |x_i| equal for the second.",
-        ],
-      },
-    },
-    {
       key: "cube",
       rung: "stretch",
       prompt: (

@@ -246,44 +246,6 @@ assert verify_proof(steps) == (0, 37), 'Check every n from −50 to 50.'` },
         ],
       },
     },
-    {
-      key: "rewrite",
-      rung: "prove",
-      prompt: (
-        <p>
-          Rewrite this as a well-written proof: &ldquo;2a·2b = 4ab, 4 | 4ab ✓&rdquo;. The claim is that the product of two
-          even integers is divisible by 4.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "States the claim and introduces the two even integers with letters.",
-          "Unpacks evenness as m = 2a and n = 2b for integers a and b.",
-          "Computes mn = 4ab and notes that ab is an integer.",
-          "Concludes in words that 4 divides mn, by the definition of divides.",
-        ],
-      },
-    },
-    {
-      key: "fix",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Find the correct version of the claim &ldquo;if <M>{"x^2 = x"}</M> then <M>{"x = 1"}</M>&rdquo; for real numbers x, and
-          prove it carefully, using cases.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "States the corrected claim: if x² = x, then x = 0 or x = 1.",
-          "Rewrites the equation as x(x − 1) = 0.",
-          "Uses that a product of real numbers is zero only if a factor is zero, giving two cases.",
-          "Writes the proof in sentences, with a clear conclusion.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

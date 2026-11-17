@@ -255,26 +255,6 @@ assert abs(t[1]) > 20 and abs(t[2]) < 3.5, 'A real effect has a large t; pure no
       },
     },
     {
-      key: "flip",
-      rung: "prove",
-      prompt: (
-        <p>
-          Explain why the coefficient of rooms can be large and positive in a model with rooms alone, but negative in a model
-          with both size and rooms, using the same data. Then explain why neither coefficient tells you what knocking down a
-          wall would do to a flat&rsquo;s price.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that rooms and size are strongly correlated, so with rooms alone, the rooms coefficient also captures the effect of size.",
-          "Explains that with size included, the rooms coefficient compares flats of equal size, where more rooms means smaller rooms.",
-          "Explains that a regression on observed sales describes association among features as they occur together, not the effect of intervening.",
-          "Notes that answering the renovation question would need an experiment or causal reasoning about what else changes.",
-        ],
-      },
-    },
-    {
       key: "standard",
       rung: "stretch",
       prompt: <p>In the model above, size has a standard deviation of 25 m² in the data. By how many lakh does the prediction change for a one-standard-deviation increase in size, rooms fixed?</p>,

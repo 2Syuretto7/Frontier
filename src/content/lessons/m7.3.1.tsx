@@ -299,19 +299,6 @@ assert np.allclose(ecdf(u ** 2, np.array([0.25, 0.49])), [0.5, 0.7], atol=0.01)`
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that if X has a density f, then P(X = x) = 0 for every real x, and hence its CDF is continuous.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Bounds P(X = x) ≤ P(x − h ≤ X ≤ x) = ∫ from x − h to x of f, for every h > 0.",
-          "Argues the integral tends to 0 as h → 0 (for example, continuity of the integral, or dominated/monotone convergence, or continuity of probability along decreasing events).",
-          "Concludes P(X = x) = 0, and since the jump of F at x equals P(X = x), F has no jumps; being right-continuous, it is continuous.",
-        ],
-      },
-    },
-    {
       key: "beta",
       rung: "stretch",
       prompt: <p>X has density 6x(1 − x) on [0, 1]. What is P(1/4 &lt; X &lt; 3/4)? Give four decimal places.</p>,

@@ -280,25 +280,6 @@ assert time.time() - t < 5 and len(d) == 201, 'Convolve; never list 6⁴⁰ outc
       },
     },
     {
-      key: "indicator",
-      rung: "prove",
-      prompt: (
-        <p>
-          Use linearity to prove that the expected number of sixes in <M>n</M> rolls of a fair die is{" "}
-          <M>{"\\tfrac{n}{6}"}</M>. Define the random variables you use.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Defines Sᵢ = 1 if roll i is a six and 0 otherwise, for i = 1, …, n.",
-          "Computes E[Sᵢ] = 1·(1/6) + 0·(5/6) = 1/6.",
-          "Writes the number of sixes as S₁ + ⋯ + Sₙ and applies linearity of expectation.",
-          "Concludes the expectation is n/6.",
-        ],
-      },
-    },
-    {
       key: "first-six",
       rung: "stretch",
       prompt: (

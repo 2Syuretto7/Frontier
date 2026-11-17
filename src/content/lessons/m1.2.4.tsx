@@ -240,24 +240,6 @@ assert best_delta(lambda x: 1 / x, xs, 0.5) < best_delta(lambda x: 1 / x, xs[50:
       },
     },
     {
-      key: "direction",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that <M>{"\\exists y\\, \\forall x\\, R(x, y)"}</M> implies <M>{"\\forall x\\, \\exists y\\, R(x, y)"}</M>{" "}
-          for any relation R, and give an example of your own showing the converse can fail.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Fixes a y₀ that works for every x, then takes an arbitrary x.",
-          "Observes that y₀ itself witnesses ∃y R(x, y), and concludes ∀x ∃y R(x, y).",
-          "Gives a relation and domain where every x has some partner but no single y works for all x, and checks both claims.",
-        ],
-      },
-    },
-    {
       key: "negate-three",
       rung: "stretch",
       prompt: <p>Which is equivalent to <M>{"\\neg\\, \\forall x\\, \\exists y\\, \\forall z\\, R(x, y, z)"}</M>?</p>,

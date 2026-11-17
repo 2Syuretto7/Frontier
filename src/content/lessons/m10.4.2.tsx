@@ -268,24 +268,6 @@ assert comp_slack(c, A, np.array([4.0, 0.0]), np.array([2.0])) and not comp_slac
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          For the LP pair minimise cᵀx subject to Ax = b, x ≥ 0 and maximise bᵀy subject to Aᵀy ≤ c, prove that cᵀx ≥ bᵀy for
-          every feasible x and y, and that if cᵀx = bᵀy then both x and y are optimal.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes cᵀx − bᵀy = cᵀx − yᵀAx = xᵀ(c − Aᵀy) using Ax = b.",
-          "Notes each term xₖ(c − Aᵀy)ₖ is nonnegative because x ≥ 0 and Aᵀy ≤ c, giving weak duality.",
-          "Argues that if the values are equal then no feasible x′ has smaller cost (it would be below bᵀy) and no feasible y′ has larger value, so both are optimal.",
-        ],
-      },
-    },
-    {
       key: "lstar",
       rung: "stretch",
       prompt: <p>For the non-convex problem in the code, g(λ) = 2λ − λ²/4 for λ ≤ 1/8 and 0.5 − 2λ − λ²/4 for λ ≥ 1/8. What is d*? Give four decimal places.</p>,

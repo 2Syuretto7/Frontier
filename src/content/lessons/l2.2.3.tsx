@@ -279,19 +279,6 @@ assert np.allclose(softmax_grad(X, Y, W) + 0.01 * W, 0, atol=1e-6) and np.allclo
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Suppose some w has wᵀxᵢ &gt; 0 for every positive example and wᵀxᵢ &lt; 0 for every negative one. Prove that the logistic negative log-likelihood has no minimiser.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes each term of the NLL as log(1 + exp(−sᵢ vᵀxᵢ)) with sᵢ = ±1, which is strictly positive for every finite v.",
-          "Shows that at v = cw each term tends to 0 as c → ∞ because sᵢwᵀxᵢ > 0, so the infimum is 0.",
-          "Concludes that since every finite v gives a strictly positive value, the infimum 0 is not attained and no minimiser exists.",
-        ],
-      },
-    },
-    {
       key: "post",
       rung: "stretch",
       prompt: <p>Classes N(0, 1) and N(2, 1) with P(y = 1) = 0.25. What is P(y = 1 | x = 2)? Give four decimal places.</p>,

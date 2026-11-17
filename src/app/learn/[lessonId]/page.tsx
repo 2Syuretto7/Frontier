@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { requireOwner } from "@/lib/auth";
 import { EXERCISES, GRAPH, LESSON_BY_ID, exerciseId } from "@/lib/curriculum";
 import { connections, isUnlocked } from "@/lib/graph";
-import { exerciseStates, masteredSet, masteryReport, startLesson } from "@/lib/learning";
+import { evaluateMastery, exerciseStates, masteredSet, masteryReport, startLesson } from "@/lib/learning";
 import { toView } from "@/lib/views";
 import { TopBar } from "@/components/TopBar";
 import { ExerciseCard } from "@/components/lesson/ExerciseCard";
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lessonId:
   const { lessonId } = await params;
   return { title: GRAPH.nodes.get(lessonId)?.title ?? "Lesson" };
 }
-// Parton marks written work with careful thought; give those requests room.
+// Parton thinks carefully over hints and fresh recall questions; give those requests room.
 export const maxDuration = 300;
 
 const SECTIONS = [
@@ -76,6 +76,8 @@ export default async function LessonPage({ params }: { params: Promise<{ lessonI
     masteryReport(lessonId),
     conversation(lessonId),
   ]);
+  // Lessons that were waiting only on written proofs (since removed) are mastered on the next visit.
+  if (report.mastered && !mastered.has(lessonId)) await evaluateMastery(lessonId);
   const connected = partonConnected();
   const links = connections(GRAPH, lessonId);
   const sections = SECTIONS.filter(([id]) => id !== "recall" || hasRecall);
@@ -84,7 +86,6 @@ export default async function LessonPage({ params }: { params: Promise<{ lessonI
     const label = <>{n.title} <span className="muted">· {n.course}</span></>;
     return <li key={id}>{LESSON_BY_ID.has(id) ? <Link href={`/learn/${id}`}>{label}</Link> : label}</li>;
   };
-  const required = lesson.practice.filter((e) => e.rung !== "stretch");
 
   return (
     <div className="shell">
@@ -134,9 +135,8 @@ export default async function LessonPage({ params }: { params: Promise<{ lessonI
           <section id="practice" className="lesson-section">
             <h2><StepChip id="practice" sections={sections} />Practice</h2>
             <p className="section-lede">
-              Mastery needs at least 80 percent of the check, apply and prove questions, and every written proof or argument accepted by Parton.
-              Stretch questions are optional. So far: {Math.round(report.score * 100)} percent solved
-              {required.some((e) => e.answer.kind === "written") && <>, written work {report.writtenDone ? "accepted" : "not yet accepted"}</>}.
+              Mastery needs at least 80 percent of the check and apply questions. Stretch questions are optional.
+              So far: {Math.round(report.score * 100)} percent solved.
             </p>
             {lesson.practice.map((e, i) => {
               const ref = EXERCISES.get(exerciseId(lessonId, e.key))!;

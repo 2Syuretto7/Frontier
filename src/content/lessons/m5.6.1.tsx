@@ -237,24 +237,6 @@ assert np.allclose(f(x), [3.1, 4.2], atol=1e-10) and s[-1] < s[0]` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Assuming f has a differentiable local inverse g near f(a), prove that{" "}
-          <M>{"J_g(f(a)) = J_f(a)^{-1}"}</M>, and explain why this forces <M>{"\\det J_f(a) \\ne 0"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Differentiates g(f(x)) = x at x = a by the chain rule: J_g(f(a)) J_f(a) = I.",
-          "Concludes J_f(a) is invertible with inverse J_g(f(a)) (also using f(g(y)) = y, or that a one-sided inverse of a square matrix is two-sided).",
-          "Notes an invertible matrix has non-zero determinant, so a differentiable inverse is impossible where det J_f = 0.",
-        ],
-      },
-    },
-    {
       key: "pre",
       rung: "stretch",
       prompt: <p>How many points (x, y) satisfy <M>{"(x^2 - y^2, 2xy) = (1, 0)"}</M>?</p>,

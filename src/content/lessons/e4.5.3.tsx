@@ -302,24 +302,6 @@ assert vals == [i * i for i in range(50)] and 0 <= most < 50` },
       },
     },
     {
-      key: "graham",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that dynamic scheduling of tasks on p workers finishes by <M>{"\\frac1p\\sum_i t_i + \\max_i t_i"}</M>, and
-          deduce that it is within a factor of 2 of the best possible schedule.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Considers the task that finishes last and its start time s, and argues that no worker was idle before s.",
-          "Deduces p·s is at most the total time of the other tasks, so s + t_j is at most the average load plus t_j.",
-          "Notes that any schedule takes at least the average load and at least the longest task, so the bound is at most twice the optimum.",
-        ],
-      },
-    },
-    {
       key: "last",
       rung: "stretch",
       prompt: <p>Twelve tasks of 1 second are followed by one of 12 seconds, on 4 workers with dynamic scheduling. When does everything finish?</p>,

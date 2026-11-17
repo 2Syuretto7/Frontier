@@ -278,25 +278,6 @@ assert 'math.sin' not in src and 'math.cos' not in src, 'Use the series.'` },
       },
     },
     {
-      key: "supplement",
-      rung: "prove",
-      prompt: (
-        <p>
-          Using the unit circle, prove that <M>{"\\sin(\\pi - \\theta) = \\sin\\theta"}</M> and{" "}
-          <M>{"\\cos(\\pi - \\theta) = -\\cos\\theta"}</M> for every angle <M>{"\\theta"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Locates the point for π − θ as the result of turning half a turn and then back by θ.",
-          "Explains that this point is the mirror image of the point for θ in the vertical axis.",
-          "Notes that reflection in the vertical axis keeps the height and changes the sign of the horizontal coordinate.",
-          "Reads off both equations from the coordinates.",
-        ],
-      },
-    },
-    {
       key: "moving-point",
       rung: "stretch",
       prompt: (

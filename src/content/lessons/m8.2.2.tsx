@@ -300,19 +300,6 @@ assert h[-1] >= 6 and abs(h[2] - 11 / 6) < 1e-12` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Let a₁ = 0 and aₙ₊₁ = √(2 + aₙ). Prove that (aₙ) converges and find its limit.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Proves by induction that aₙ < 2 (bounded above) and aₙ < aₙ₊₁ (increasing).",
-          "Concludes by the monotone convergence theorem that aₙ → L for some L.",
-          "Passes to the limit in aₙ₊₁² = 2 + aₙ to get L² = 2 + L and uses L ≥ 0 to conclude L = 2.",
-        ],
-      },
-    },
-    {
       key: "limit",
       rung: "stretch",
       prompt: (

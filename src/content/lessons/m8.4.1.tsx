@@ -293,19 +293,6 @@ assert c == [(0, 1, True, True), (3, math.inf, True, False)] and is_closed(c)` }
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>Prove that a set O ⊆ ℝ is open if and only if its complement is closed.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Assuming O open, takes a limit point x of Oᶜ and argues x cannot be in O (a neighbourhood inside O would miss Oᶜ), so x ∈ Oᶜ.",
-          "Assuming Oᶜ closed, takes x ∈ O and argues x is not a limit point of Oᶜ.",
-          "Concludes some neighbourhood of x misses Oᶜ, hence lies in O, so O is open.",
-        ],
-      },
-    },
-    {
       key: "iso",
       rung: "stretch",
       prompt: <p>How many isolated points does A = {"{1/n : 1 ≤ n ≤ 10}"} ∪ [2, 3] have?</p>,

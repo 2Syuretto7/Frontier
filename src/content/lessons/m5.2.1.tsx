@@ -291,24 +291,6 @@ for _ in range(50):
       },
     },
     {
-      key: "disc",
-      rung: "prove",
-      prompt: (
-        <p>
-          Let <M>{"f(x, y) = xy/(x^2 + y^2)"}</M> away from the origin and f(0, 0) = 0. Prove that both partial derivatives exist
-          at the origin, and that f is not continuous there.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes f(h, 0) = f(0, h) = 0, so both difference quotients are 0 and both partials at the origin are 0.",
-          "Shows f = 1/2 along y = x (or another non-zero value along another line), so f(t, t) does not tend to f(0, 0) = 0.",
-          "Concludes that f is not continuous at the origin even though both partials exist.",
-        ],
-      },
-    },
-    {
       key: "schwarz",
       rung: "stretch",
       prompt: (

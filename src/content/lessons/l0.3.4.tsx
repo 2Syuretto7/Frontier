@@ -244,25 +244,6 @@ assert sum((predict_proba(w, b, x) > 0.5) == bool(y) for x, y in data) < 4, 'But
       },
     },
     {
-      key: "xor-proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that no single step neuron computes XOR. Hint: write the four conditions XOR imposes on <M>{"w_1, w_2, b"}</M>,
-          then add two of them.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Writes the conditions: (0,0) needs b ≤ 0; (1,1) needs w₁ + w₂ + b ≤ 0; (1,0) needs w₁ + b > 0; (0,1) needs w₂ + b > 0.",
-          "Adds the two strict inequalities to get w₁ + w₂ + 2b > 0.",
-          "Adds the two other inequalities to get w₁ + w₂ + 2b ≤ 0.",
-          "Concludes the two cannot both hold, so no weights and bias work.",
-        ],
-      },
-    },
-    {
       key: "xor-net",
       rung: "stretch",
       prompt: (

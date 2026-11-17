@@ -284,25 +284,6 @@ assert jacobian_passes(2, 50) == ("forward", 2) and jacobian_passes(7, 7) == ("f
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that the adjoint recurrence <M>{"\\bar v = \\sum_w \\bar w\\,\\partial w/\\partial v"}</M> over the children w of
-          v, with <M>{"\\bar L = 1"}</M>, gives for every node the sum over all paths from it to L of the product of the local
-          derivatives.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Sets up induction in reverse topological order, with base case L (one empty path, product 1).",
-          "For node v, splits the paths from v to L by their first edge v → w, each giving ∂w/∂v times a path from w to L.",
-          "Applies the hypothesis to each child w and sums, matching the recurrence.",
-        ],
-      },
-    },
-    {
       key: "cost",
       rung: "stretch",
       prompt: <p>A function maps ℝ³ to ℝ⁵⁰⁰. What is the fewest passes of forward or reverse mode that give its full Jacobian?</p>,

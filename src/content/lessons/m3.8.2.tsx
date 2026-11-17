@@ -260,23 +260,6 @@ assert are_similar_diagonalisable([[3.0, 1.0], [0.0, 2.0]], np.diag([2.0, 3.0]))
       },
     },
     {
-      key: "sim",
-      rung: "prove",
-      prompt: (
-        <p>
-          Prove that A and <M>{"B^{-1}AB"}</M> have the same eigenvalues, and describe how their eigenvectors are related.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Computes det(B⁻¹AB − λI) = det(B⁻¹(A − λI)B) = det(A − λI), so the characteristic polynomials agree.",
-          "Alternatively, if Ax = λx then (B⁻¹AB)(B⁻¹x) = B⁻¹Ax = λB⁻¹x.",
-          "Concludes the eigenvectors of B⁻¹AB are B⁻¹ times those of A: the same vectors in new coordinates.",
-        ],
-      },
-    },
-    {
       key: "newmat",
       rung: "stretch",
       prompt: (

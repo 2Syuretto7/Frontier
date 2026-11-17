@@ -285,42 +285,6 @@ assert x == 3 and v == 3, 'The maximum can be at an end.'` },
         ],
       },
     },
-    {
-      key: "bounded-proof",
-      rung: "prove",
-      prompt: (
-        <p>
-          Give an example of a function on <M>{"[0, 1]"}</M> that is defined at every point but is not bounded. Explain which
-          step of the boundedness theorem&rsquo;s proof breaks down for your example.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Gives a valid example, such as f(x) = 1/x for x > 0 and f(0) = 0.",
-          "Checks that it is unbounded on [0, 1].",
-          "Identifies the failure of continuity at a point, which is exactly where the proof used continuity to bound f near s.",
-        ],
-      },
-    },
-    {
-      key: "image",
-      rung: "stretch",
-      prompt: (
-        <p>
-          Combine the intermediate and extreme value theorems to prove: if f is continuous on <M>{"[a, b]"}</M>, then the set
-          of its values <M>{"\\{f(x) : a \\le x \\le b\\}"}</M> is a closed, bounded interval <M>{"[m, M]"}</M>.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Uses the extreme value theorem to get m = f(c) and M = f(d) attained.",
-          "Shows every value lies in [m, M].",
-          "Applies the intermediate value theorem on the interval between c and d to show every value in [m, M] is attained.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

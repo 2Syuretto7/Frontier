@@ -221,25 +221,6 @@ assert b['PATH'] == '/two/bin:/usr/bin' and b['VIRTUAL_ENV'] == '/two' and deact
       },
     },
     {
-      key: "debug",
-      rung: "prove",
-      prompt: (
-        <p>
-          A teammate says &ldquo;I ran pip install torch but import torch still fails.&rdquo; Describe the commands you would run
-          to diagnose the problem, what each tells you, and the fix.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Runs which python (and which pip) to see which interpreter and installer are being used.",
-          "Runs python -c \"import sys; print(sys.executable, sys.path)\" or python -m pip show torch to see where torch was installed.",
-          "Identifies the mismatch: pip belonged to a different Python or environment from the one running the script.",
-          "Fixes by activating the project environment and installing with python -m pip install torch, or by using uv add and uv run.",
-        ],
-      },
-    },
-    {
       key: "count",
       rung: "stretch",
       prompt: <p>You work on 4 projects, each needing a different version of the same library. How many virtual environments do you need so that all 4 run, at minimum?</p>,

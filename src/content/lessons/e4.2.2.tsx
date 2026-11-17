@@ -285,26 +285,6 @@ assert shrink_config({'width': 7}, lambda c: c['width'] >= 7) == {'width': 7}` }
       },
     },
     {
-      key: "minimal",
-      rung: "prove",
-      prompt: (
-        <p>
-          Suppose the failure is monotone: if a list fails, every list containing it fails too. Prove that the one-at-a-time
-          loop in the first reading exercise ends with a 1-minimal failing list. Then give an example showing that without
-          monotonicity it can end with a list from which one item can still be removed.
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Notes that the current list always fails, because a trial replaces it only when the trial fails.",
-          "Notes that every remaining item x was tested once, when the list was some L containing the final list F, and L without x passed.",
-          "Uses monotonicity: if F without x failed, its superset L without x would fail too, a contradiction, so removing any single item from F passes.",
-          "Gives a valid non-monotone counterexample, such as a failure that needs an even number of items or that needs one item absent, and traces the loop to show a removable item is left.",
-        ],
-      },
-    },
-    {
       key: "flaky",
       rung: "stretch",
       prompt: (

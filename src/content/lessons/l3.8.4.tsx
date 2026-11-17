@@ -268,19 +268,6 @@ assert isinstance(m, float) and isinstance(se, float)` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: <p>With aᵢ = μ_a + sᵢ + eᵢ and bᵢ = μ_b + sᵢ + fᵢ (sᵢ, eᵢ, fᵢ independent, variances σ_s², σ², σ²), prove that the mean of the paired differences has variance 2σ²/n, while comparing means from independent seeds gives 2(σ_s² + σ²)/n.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Shows aᵢ − bᵢ = μ_a − μ_b + eᵢ − fᵢ, so the shared seed term cancels and each difference has variance 2σ².",
-          "Uses independence across i to get variance 2σ²/n for the mean of n differences.",
-          "For independent seeds, each arm's mean has variance (σ_s² + σ²)/n and the two are independent, so the variance of the difference is 2(σ_s² + σ²)/n.",
-        ],
-      },
-    },
-    {
       key: "nseeds",
       rung: "stretch",
       prompt: <p>Run-to-run noise has σ = 0.004 (after pairing). How many paired seeds are needed for the standard error of the mean difference, √(2σ²/n), to be at most 0.001? Give the smallest whole number.</p>,

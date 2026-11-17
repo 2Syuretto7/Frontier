@@ -238,34 +238,6 @@ assert sum(z) == 10 ** 6 and len(z) <= 15` },
         ],
       },
     },
-    {
-      key: "chocolate-proof",
-      rung: "prove",
-      prompt: <p>Prove by strong induction that a bar of n squares always needs exactly <M>{"n - 1"}</M> breaks.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Checks the base case n = 1: no breaks are needed.",
-          "Assumes the claim for all bars with fewer than n squares.",
-          "Considers the first break, splitting the bar into pieces of a and b squares with a + b = n and a, b ≥ 1.",
-          "Uses the hypothesis to count 1 + (a − 1) + (b − 1) = n − 1 breaks, and concludes.",
-        ],
-      },
-    },
-    {
-      key: "fib-lower",
-      rung: "stretch",
-      prompt: <p>Prove that <M>{"F_n \\ge (3/2)^{n-2}"}</M> for every <M>{"n \\ge 1"}</M>, where <M>{"F_1 = F_2 = 1"}</M>.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Checks both base cases: F₁ = 1 ≥ (3/2)⁻¹ and F₂ = 1 ≥ (3/2)⁰.",
-          "For k ≥ 3, uses the two previous cases to get Fₖ ≥ (3/2)ᵏ⁻³ + (3/2)ᵏ⁻⁴.",
-          "Shows (3/2)ᵏ⁻³ + (3/2)ᵏ⁻⁴ = (3/2)ᵏ⁻⁴ · (5/2) ≥ (3/2)ᵏ⁻⁴ · (9/4) = (3/2)ᵏ⁻².",
-          "Concludes by strong induction.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

@@ -386,34 +386,6 @@ assert find_races(E) == [(0, 4), (3, 4)], 'Thread 2 never synchronised with anyo
         ],
       },
     },
-    {
-      key: "vc",
-      rung: "prove",
-      prompt: <p>Prove that if event a happens before event b (by program order, release-to-acquire, and transitivity), then V(a) ≤ V(b) elementwise and V(a) ≠ V(b), for the vector clocks defined in this lesson.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Clocks never decrease: each step only ticks an entry or takes a maximum.",
-          "Program order: a thread's clock at b is at least its clock at a, and its own entry has been ticked at least once more.",
-          "Release to acquire: the lock stores V(a) at the release, and the acquire takes the maximum with it and ticks, so V(a) ≤ V(b) with V(b) larger in the acquiring thread's entry.",
-          "Transitivity: ≤ is transitive and strictness is preserved along a chain, giving the result by induction on the length of the chain.",
-        ],
-      },
-    },
-    {
-      key: "two",
-      rung: "stretch",
-      prompt: <p>Two threads each run <C>x = x + 1</C> (load, add, store) 1000 times on a shared x = 0, with no lock. Prove that the final x can be as small as 2, and that it cannot be 1.</p>,
-      answer: {
-        kind: "written",
-        rubric: [
-          "Construction: A loads 0; B runs 999 full increments (x = 999); A stores 1; B loads 1; A runs its remaining 999 increments (x = 1000); B stores 2.",
-          "Checks that this is a valid interleaving in which each thread executes exactly 1000 increments.",
-          "Lower bound: every store writes a loaded value plus 1, and x starts at 0, so every stored value is at least 1 and once any store has happened x ≥ 1 forever.",
-          "The final value is written by the last store, made by some thread in its 1000th increment; that increment's load comes after the same thread's 999th store, so it reads at least 1 and the final value is at least 2.",
-        ],
-      },
-    },
   ],
 
   glimpse: (

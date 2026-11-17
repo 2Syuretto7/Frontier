@@ -293,23 +293,6 @@ assert abs(a - 2 / 3) < 1e-12 and abs(b - 1) < 1e-12` },
       },
     },
     {
-      key: "prove",
-      rung: "prove",
-      prompt: (
-        <p>
-          Using the nested interval property, prove that no sequence <M>{"(x_n)"}</M> contains every real number in [0, 1].
-        </p>
-      ),
-      answer: {
-        kind: "written",
-        rubric: [
-          "Constructs nested closed intervals I₁ ⊇ I₂ ⊇ … with x_n ∉ I_n, for example by choosing a closed third that misses x_n (justifying that one exists).",
-          "Applies the nested interval property to obtain x in every I_n.",
-          "Concludes x ≠ x_n for each n because x ∈ I_n and x_n ∉ I_n, so the list misses x.",
-        ],
-      },
-    },
-    {
       key: "cantor",
       rung: "stretch",
       prompt: <p>What total length is removed from [0, 1] in the first three stages of building the Cantor set? Give four decimal places.</p>,
