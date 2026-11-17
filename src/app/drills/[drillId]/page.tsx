@@ -2,13 +2,18 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireOwner } from "@/lib/auth";
 import { DRILL_BY_ID } from "@/content/drills";
-import { attemptsFor, canSeeSolution, inTime, openAttempt, summarise } from "@/lib/drills";
+import { attemptsFor, canSeeSolution, drillPlan, inTime, openAttempt, sessionFor, summarise, variantsFor } from "@/lib/drills";
+import { levelInfo } from "@/lib/drill-plan";
+import { hintsFor } from "@/lib/parton/drills";
+import { partonConnected } from "@/lib/parton/claude";
 import { TopBar } from "@/components/TopBar";
 import { DrillSession } from "@/components/drills/DrillSession";
 import { ArrowLeft } from "@/components/ui/Icons";
 import { clock, percent } from "@/components/drills/format";
 
 export const dynamic = "force-dynamic";
+// Parton writes drill variants and hints from this page's server actions, which can take a minute or two.
+export const maxDuration = 300;
 
 export async function generateMetadata({ params }: { params: Promise<{ drillId: string }> }) {
   const { drillId } = await params;
@@ -20,8 +25,15 @@ export default async function DrillPage({ params }: { params: Promise<{ drillId:
   const { drillId } = await params;
   const drill = DRILL_BY_ID.get(drillId);
   if (!drill) notFound();
-  const [open, attempts, solution] = await Promise.all([openAttempt(drill.id), attemptsFor(drill.id), canSeeSolution(drill.id)]);
+  const [open, attempts, solution, plan, variants] = await Promise.all([
+    openAttempt(drill.id), attemptsFor(drill.id, 200), canSeeSolution(drill.id), drillPlan(), variantsFor(drill.id),
+  ]);
   const stats = summarise(drill.id, attempts);
+  const [session, hints] = open ? await Promise.all([sessionFor(open), hintsFor(open.id)]) : [null, []];
+  const pick = plan.queue.find((p) => p.drillId === drill.id)!;
+  const info = levelInfo(pick.level);
+  const used = variants.filter((v) => attempts.some((a) => a.variantId === v.id && a.finishedAt));
+  const titleOf = (id: number | null) => (id ? variants.find((v) => v.id === id)?.title : null);
 
   return (
     <div className="shell">
@@ -35,14 +47,23 @@ export default async function DrillPage({ params }: { params: Promise<{ drillId:
             <span><span className="muted">Best</span> {stats.bestSeconds !== null ? clock(stats.bestSeconds) : "None yet"}</span>
             <span><span className="muted">Pass rate</span> {stats.finished ? `${percent(stats.passRate)} of ${stats.finished}` : "None yet"}</span>
             <span><span className="muted">In time</span> {stats.passesInTime}</span>
+            <span><span className="muted">Next level</span> {pick.level} of 4, {info.name}</span>
           </p>
         </header>
 
         <DrillSession
-          drill={{ id: drill.id, title: drill.title, summary: drill.summary, minutes: drill.minutes, starter: drill.starter, setup: drill.setup, testCount: drill.tests.length }}
+          drill={{ id: drill.id, title: drill.title, summary: drill.summary }}
+          upcoming={{
+            level: pick.level, levelName: info.name, about: info.about, limitMinutes: pick.limitMinutes, testCount: drill.tests.length,
+            variant: info.editor === "variant", reason: pick.kind === "open" ? null : pick.reason, watch: pick.watch,
+            passedBefore: stats.passes > 0,
+          }}
           initial={open}
+          initialSession={session}
+          initialHints={hints}
           serverNow={Date.now()}
           solutionAvailable={solution}
+          parton={partonConnected()}
         >
           {drill.brief}
         </DrillSession>
@@ -56,8 +77,23 @@ export default async function DrillPage({ params }: { params: Promise<{ drillId:
                   <span className={a.outcome === "passed" ? "is-pass" : "is-miss"}>
                     {a.outcome === "passed" ? (inTime(a) ? "Passed in time" : "Passed over time") : a.outcome === "gave_up" ? "Gave up" : "Abandoned"}
                   </span>
-                  <span className="num">{clock(a.seconds ?? 0)}</span>
+                  <span className="num">{clock(a.seconds ?? 0)}<span className="muted"> / {a.limitMinutes}:00</span></span>
+                  <span className="mono-tag">Level {a.level}{a.variantId ? ` · ${titleOf(a.variantId) ?? "variant"}` : ""}</span>
                   <span className="muted">{a.bestPassed} of {a.totalTests} tests, {a.submissions} {a.submissions === 1 ? "submit" : "submits"}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {used.length > 0 && (
+          <section className="drill-history" aria-labelledby="variants">
+            <h2 id="variants">Variants you have taken</h2>
+            <ul className="drill-attempts">
+              {used.map((v) => (
+                <li key={v.id}>
+                  <span>{v.title}</span>
+                  <span className="muted">{v.twist}</span>
                 </li>
               ))}
             </ul>
