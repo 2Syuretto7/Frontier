@@ -13,6 +13,28 @@ import { VOICE } from "./prompts";
 
 export const RECALL_COUNT = 3;
 
+/** A review session shows at least three and at most five new questions. */
+export const REVIEW_MIN = 3;
+export const REVIEW_MAX = 5;
+
+/** How many review questions to write for this many due ideas: one each, between three and five. */
+export const reviewCount = (due: number) => Math.min(REVIEW_MAX, Math.max(REVIEW_MIN, due));
+
+/**
+ * Each review question stands in for one due card from its own lesson, earliest due first, so the
+ * learner's first answer rates that card. Questions beyond the due cards rate nothing.
+ */
+export function assignCards<D extends { sourceLessonId: string }>(
+  drafts: D[],
+  due: { exercise_id: string; lesson_id: string }[],
+): (D & { card: string | null })[] {
+  const unclaimed = [...due];
+  return drafts.map((d) => {
+    const i = unclaimed.findIndex((c) => c.lesson_id === d.sourceLessonId);
+    return { ...d, card: i >= 0 ? unclaimed.splice(i, 1)[0].exercise_id : null };
+  });
+}
+
 /** The answer kinds a generated question may use: the ones the server can check on its own. */
 export type RecallAnswer = Extract<Answer, { kind: "numeric" | "expression" | "choice" }>;
 
@@ -70,7 +92,7 @@ export type RecallOutput = {
 
 export const RECALL_SYSTEM = `${VOICE}
 
-Right now you are not giving hints. You are writing short recall questions that open a lesson: quick retrieval practice on earlier lessons the learner has already mastered, so the old ideas are fresh before the new one.
+Right now you are not giving hints. You are writing short recall questions: quick retrieval practice on earlier lessons the learner has already mastered, either at the start of a new lesson or in a spaced-review session.
 
 What makes a good recall question:
 - It is new. Never reuse, reword or lightly change a question the learner has already seen: not a practice question from the earlier lesson, and not any recall question listed as already asked. Change the idea being tested, the situation or the numbers in a real way.
@@ -88,19 +110,27 @@ Leave the fields of the other kinds empty or zero.`;
 /** What the model reads: the earlier lessons, what it must not repeat, and what the learner found hard. */
 export function recallRequest({
   lessonTitle,
+  review = false,
   sources,
   asked,
   hard,
+  due = [],
   count = RECALL_COUNT,
 }: {
-  lessonTitle: string;
+  lessonTitle?: string;
+  /** A spaced-review session on the Review page, rather than recall at the start of a lesson. */
+  review?: boolean;
   sources: RecallSource[];
   asked: string[];
   hard: string[];
+  /** For review: the ideas that are due, as the practice questions that first taught them. */
+  due?: string[];
   count?: number;
 }): string {
   const parts = [
-    `The learner is about to start the lesson "${lessonTitle}". Write ${count} new recall questions on the earlier lessons below.`,
+    review
+      ? `The learner is doing spaced review on the Review page, not starting a lesson. Write ${count} new review questions on the earlier lessons below. Each tests one of the ideas that are due, listed at the end, with a genuinely new question.`
+      : `The learner is about to start the lesson "${lessonTitle}". Write ${count} new recall questions on the earlier lessons below.`,
     ...sources.map((s) =>
       [
         `# Earlier lesson ${s.id}: "${s.title}"`,
@@ -108,8 +138,9 @@ export function recallRequest({
         `## Its practice questions (already seen; do not reuse)\n${s.practice.map((p) => `- ${p}`).join("\n") || "- none"}`,
       ].join("\n\n"),
     ),
-    `# Recall questions already asked (never repeat or rephrase any of these)\n${asked.map((p) => `- ${p}`).join("\n") || "- none yet"}`,
+    `# Recall and review questions already asked (never repeat or rephrase any of these)\n${asked.map((p) => `- ${p}`).join("\n") || "- none yet"}`,
   ];
+  if (due.length) parts.push(`# Ideas due for review (test the same idea in a new way; never reuse these questions)\n${due.map((p) => `- ${p}`).join("\n")}`);
   if (hard.length) parts.push(`# Ideas the learner has found hard\n${hard.map((p) => `- ${p}`).join("\n")}`);
   parts.push(`Use only these lesson ids for source_lesson_id: ${sources.map((s) => s.id).join(", ")}.`);
   return parts.join("\n\n");

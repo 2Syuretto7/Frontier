@@ -1,10 +1,12 @@
 import "server-only";
-import { recallFor, type RecallItem } from "@/lib/recall";
+import { recallFor, reviewSession, type RecallItem } from "@/lib/recall";
 import { renderInline, renderParton } from "@/lib/parton/render";
 import { ExerciseCard, type ExerciseView } from "@/components/lesson/ExerciseCard";
 import { Pill } from "@/components/ui/Pill";
+import { Check } from "@/components/ui/Icons";
+import Link from "next/link";
 
-/** What the browser may see of a recall question: never the answer. */
+/** What the browser may see of a recall or review question: never the answer. */
 function recallView(q: RecallItem): ExerciseView {
   const a = q.answer;
   return {
@@ -40,6 +42,48 @@ export function RecallLoading() {
   return (
     <p className="hint" role="status">
       <Pill tone="accent" icon="spin">Writing</Pill> Parton is writing new recall questions for you.
+    </p>
+  );
+}
+
+/** A spaced-review session: three to five questions Parton has just written on the ideas that are due. */
+export async function ReviewQuestions() {
+  const { questions, error } = await reviewSession();
+  if (questions.length === 0) {
+    if (error) return <p className="hint">{error}</p>;
+    return (
+      <div className="empty">
+        <p><span className="pill pill-success"><Check size={12} />All caught up</span></p>
+        <p>Nothing is due. Each idea will come back, as a new question, just before you would forget it.</p>
+        <Link href="/map" className="btn">Browse the map</Link>
+      </div>
+    );
+  }
+  return (
+    <>
+      <p className="lede">
+        {questions.length} new question{questions.length > 1 ? "s" : ""} on earlier ideas, mixed together. Your first answer to
+        each decides when that idea returns.
+      </p>
+      {questions.map((q, i) => (
+        <div key={q.id}>
+          <p className="eyebrow review-source">From {q.sourceTitle}{q.sourceCourse ? ` · ${q.sourceCourse}` : ""}</p>
+          <ExerciseCard view={recallView(q)} context="review" index={i + 1}>
+            <div className="parton-prose" dangerouslySetInnerHTML={{ __html: renderParton(q.prompt) }} />
+          </ExerciseCard>
+        </div>
+      ))}
+      <div className="review-done">
+        <Link href="/" className="btn btn-primary">Done for now</Link>
+      </div>
+    </>
+  );
+}
+
+export function ReviewLoading() {
+  return (
+    <p className="hint" role="status">
+      <Pill tone="accent" icon="spin">Writing</Pill> Parton is writing new review questions for you.
     </p>
   );
 }

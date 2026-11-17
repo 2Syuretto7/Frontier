@@ -102,6 +102,10 @@ const SCHEMA = [
    )`,
   `CREATE INDEX IF NOT EXISTS recall_questions_lesson ON recall_questions (lesson_id, created_at)`,
   `CREATE INDEX IF NOT EXISTS recall_questions_source ON recall_questions (source_lesson_id)`,
+  // Review questions are written fresh too, in the same table, so neither ever repeats the other.
+  `ALTER TABLE recall_questions ADD COLUMN IF NOT EXISTS purpose TEXT NOT NULL DEFAULT 'recall'`,
+  `ALTER TABLE recall_questions ADD COLUMN IF NOT EXISTS card_exercise_id TEXT`,
+  `ALTER TABLE recall_questions ADD COLUMN IF NOT EXISTS retired BOOLEAN NOT NULL DEFAULT false`,
 ];
 
 async function createRunner(): Promise<Runner> {
