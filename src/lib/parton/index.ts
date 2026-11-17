@@ -11,9 +11,13 @@ import {
   HINT_RULES,
   HINT_SCHEMA,
   RUNGS,
+  OVER_TO_YOU,
+  OVER_TO_YOU_RUNG,
+  SOLUTION_RUNG,
   VOICE,
   describeAnswer,
   rungFor,
+  solutionAllowed,
   type CheckOutput,
   type HintOutput,
 } from "./prompts";
@@ -81,9 +85,11 @@ export function lessonBrief(lessonId: string): string {
   return brief;
 }
 
-function protectedAnswers(lessonId: string): string {
+/** The answers the give-away check protects, leaving out a question whose worked solution is allowed. */
+function protectedAnswers(lessonId: string, except: string | null = null): string {
   const lesson = LESSON_BY_ID.get(lessonId)!;
   return lesson.practice
+    .filter((e) => exerciseId(lessonId, e.key) !== except)
     .map((e) => {
       const ref = EXERCISES.get(exerciseId(lessonId, e.key))!;
       return `${exerciseText(ref)}\nProtected answer: ${describeAnswer(e.answer)}`;
@@ -110,8 +116,9 @@ async function note(lessonId: string, exercise: string | null, kind: "misconcept
 // ---------------------------------------------------------------------------------------------
 // The give-away check. A separate pass that sees the answers and judges only the draft.
 
-async function guard(draft: string, answers: string, maxRung: number): Promise<string> {
+async function guard(draft: string, answers: string, maxLevel: string): Promise<string> {
   let reply = draft;
+  if (!answers.trim()) return reply;
   for (let pass = 0; pass < 2; pass++) {
     const verdict = await structured<CheckOutput>({
       system: CHECK_SYSTEM,
@@ -120,7 +127,7 @@ async function guard(draft: string, answers: string, maxRung: number): Promise<s
       maxTokens: 6000,
       messages: [{
         role: "user",
-        content: `Protected answers:\n${answers}\n\nIf you rewrite, go no further than: ${RUNGS[maxRung - 1]}\n\nDraft reply:\n<<<\n${reply}\n>>>`,
+        content: `Protected answers:\n${answers}\n\nIf you rewrite, go no further than: ${maxLevel}\n\nDraft reply:\n<<<\n${reply}\n>>>`,
       }],
     });
     if (!verdict.gives_away) return reply;
@@ -167,20 +174,22 @@ export async function askParton(lessonId: string, exercise: string | null, messa
      ) recent ORDER BY at, id`,
     [lessonId],
   );
-  const previousHints = ref
-    ? (await query<{ n: number }>("SELECT count(*)::int AS n FROM parton_messages WHERE exercise_id = $1 AND role = 'parton'", [ref.id]))[0].n
+  // How far Parton has already nudged on this question. Over-to-you replies (rung 0) do not count.
+  const highestRung = ref
+    ? (await query<{ n: number }>("SELECT coalesce(max(rung), 0)::int AS n FROM parton_messages WHERE exercise_id = $1 AND role = 'parton'", [ref.id]))[0].n
     : 0;
-  const rung = ref ? rungFor(previousHints) : 2;
+  const rung = ref ? rungFor(highestRung) : 2;
+  const mayGiveSolution = ref ? solutionAllowed(highestRung) : false;
 
   const context: string[] = [];
   if (ref) {
-    const state = (await query<{ solved: boolean }>("SELECT solved FROM exercise_state WHERE exercise_id = $1", [ref.id]))[0];
+    const solved = Boolean((await query<{ solved: boolean }>("SELECT solved FROM exercise_state WHERE exercise_id = $1", [ref.id]))[0]?.solved);
     const attempts = await query<{ response: string; correct: boolean }>(
       "SELECT response, correct FROM attempt_log WHERE exercise_id = $1 ORDER BY at DESC LIMIT 5",
       [ref.id],
     );
     context.push(`The learner is asking about ${exerciseLabel(ref)}.`);
-    context.push(state?.solved ? "They have already solved it; they may want to understand it better. Still do not state the answer." : "They have not solved it yet.");
+    context.push(solved ? "They have already solved it; they may want to understand it better." : "They have not solved it yet.");
     if (attempts.length) {
       context.push(`Their recent attempts, newest first:\n${attempts.map((a) => `- ${attemptText(ref, a.response)} (${a.correct ? "correct" : "not correct"})`).join("\n")}`);
       const misses = attempts.filter((a) => !a.correct).length;
@@ -190,11 +199,20 @@ export async function askParton(lessonId: string, exercise: string | null, messa
       context.push(`Their code in the editor right now:\n<<<\n${editor.source}\n>>>`);
       if (editor.error) context.push(`Their last run stopped with this error:\n${editor.error}`);
       else if (editor.output) context.push(`Their last run printed:\n${editor.output}`);
-      context.push("Point to a line of their code and ask a question about it. Never write the corrected code for them.");
+      context.push(mayGiveSolution
+        ? "If you nudge, point to a line of their code and ask a question about it. Write corrected code only as part of a worked solution, if you give one."
+        : "If you nudge, point to a line of their code and ask a question about it. Do not write the corrected code for them.");
     }
-    context.push(`This is hint number ${previousHints + 1} on this question. Allowed level: ${RUNGS[rung - 1]} Go no further than this level.`);
+    context.push(`First judge whether the learner can solve this question on their own.`);
+    context.push(`If they can: ${OVER_TO_YOU}`);
+    context.push(`If they cannot: nudge them towards the solution with a hint. Allowed level: ${RUNGS[rung - 1]} Go no further than this level.`);
+    if (mayGiveSolution) {
+      context.push(`Every rung of the hint ladder has already been given on this question, so a worked solution is now allowed. Still prefer a hint: give the solution only if you judge another hint will not be enough. The reference answer, for a solution only (never let it leak into a hint):\n${describeAnswer(ref.exercise.answer)}`);
+    } else {
+      context.push("A worked solution is not allowed yet for this question: not every rung of the hint ladder has been given.");
+    }
   } else {
-    context.push("The learner is asking a general question, not tied to one practice question. If it does touch a practice question, give at most a rung 2 hint.");
+    context.push("The learner is asking a general question, not tied to one practice question. If it does touch a practice question, judge whether they can solve it on their own: if they can, do not nudge them towards the solution; if they cannot, give at most a rung 2 hint.");
   }
   const notes = await notesFor(lessonId);
   if (notes.length) context.push(`Your earlier notes on this learner's misunderstandings (revisit them if relevant):\n${notes.map((n) => `- ${n}`).join("\n")}`);
@@ -214,14 +232,17 @@ export async function askParton(lessonId: string, exercise: string | null, messa
       maxTokens: 12000,
       messages,
     });
-    const reply = await guard(draft.reply, protectedAnswers(lessonId), rung);
+    const solution = Boolean(ref && mayGiveSolution && draft.gives_solution && !draft.learner_can_solve);
+    const overToYou = Boolean(ref && draft.learner_can_solve);
+    const storedRung = solution ? SOLUTION_RUNG : overToYou ? OVER_TO_YOU_RUNG : rung;
+    const reply = await guard(draft.reply, protectedAnswers(lessonId, solution ? ref!.id : null), overToYou ? OVER_TO_YOU : RUNGS[rung - 1]);
     const q = await query<MessageRow>(
       "INSERT INTO parton_messages (lesson_id, exercise_id, role, body) VALUES ($1, $2, 'user', $3) RETURNING id, role, body, rung, exercise_id",
       [lessonId, ref?.id ?? null, message],
     );
     const r = await query<MessageRow>(
       "INSERT INTO parton_messages (lesson_id, exercise_id, role, body, rung) VALUES ($1, $2, 'parton', $3, $4) RETURNING id, role, body, rung, exercise_id",
-      [lessonId, ref?.id ?? null, reply, ref ? rung : null],
+      [lessonId, ref?.id ?? null, reply, ref ? storedRung : null],
     );
     await note(lessonId, ref?.id ?? null, "misconception", draft.misconception);
     return { ok: true, question: toMessage(q[0]), reply: toMessage(r[0]) };

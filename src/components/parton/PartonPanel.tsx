@@ -5,6 +5,7 @@ import { askPartonAction } from "@/app/actions";
 import { Pill } from "@/components/ui/Pill";
 import { Close, Send } from "@/components/ui/Icons";
 import { workspaces } from "@/components/code/runtime";
+import { OVER_TO_YOU_RUNG, SOLUTION_RUNG } from "@/lib/parton/prompts";
 
 export type PanelMessage = { id: number | string; role: "user" | "parton"; html: string; rung: number | null; exerciseLabel: string | null };
 
@@ -17,6 +18,12 @@ const STARTERS = [
 ];
 
 const RUNG_NAMES = ["", "A question back", "A pointer", "A nudge", "A skeleton", "A parallel example"];
+
+function partonLabel(rung: number): string {
+  if (rung === OVER_TO_YOU_RUNG) return "Over to you";
+  if (rung === SOLUTION_RUNG) return "Worked solution";
+  return `Hint ${rung} of 5 · ${RUNG_NAMES[rung]}`;
+}
 
 export function PartonPanel({ lessonId, lessonTitle, initial, connected }: {
   lessonId: string;
@@ -122,7 +129,7 @@ export function PartonPanel({ lessonId, lessonTitle, initial, connected }: {
             <Close />
           </button>
         </header>
-        <p className="parton-sub"><span className="mono-tag">Hints, never answers</span><span>{lessonTitle}</span></p>
+        <p className="parton-sub"><span className="mono-tag">More hints, fewer solutions</span><span>{lessonTitle}</span></p>
 
         <div className="parton-list" ref={listRef}>
           {!connected && (
@@ -133,7 +140,7 @@ export function PartonPanel({ lessonId, lessonTitle, initial, connected }: {
           )}
           {connected && messages.length === 0 && (
             <div className="parton-empty">
-              <p>Ask anything about this lesson. For practice questions, I give hints, not answers. Show your working for better hints.</p>
+              <p>Ask anything about this lesson. For practice questions, if I think you can solve it yourself, I leave it to you. If I think you are stuck, I give hints, and a worked solution only when every hint has not been enough. Show your working so I can judge better.</p>
               <div className="parton-starters">
                 {STARTERS.map((t) => (
                   <button key={t} type="button" tabIndex={open ? 0 : -1}
@@ -146,10 +153,10 @@ export function PartonPanel({ lessonId, lessonTitle, initial, connected }: {
           )}
           {messages.map((m) => (
             <div key={m.id} className={`parton-msg parton-msg-${m.role}`}>
-              {(m.exerciseLabel || m.rung) && (
+              {(m.exerciseLabel || m.rung !== null) && (
                 <p className="parton-msg-meta">
                   {m.role === "user" && m.exerciseLabel}
-                  {m.role === "parton" && m.rung ? `Hint ${m.rung} of 5 · ${RUNG_NAMES[m.rung]}` : null}
+                  {m.role === "parton" && m.rung !== null ? partonLabel(m.rung) : null}
                 </p>
               )}
               <div className="parton-prose" dangerouslySetInnerHTML={{ __html: m.html }} />
