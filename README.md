@@ -64,6 +64,23 @@ Every lesson can carry runnable code. Nothing runs on Frontier's servers: Python
   records the result. `npm test` runs every solution and starter against its tests with the local `python3`, so a broken
   exercise fails the build checks. Parton sees the learner's current code, output and error when asked for a hint.
 
+## Projects
+
+The Projects page (`src/app/projects/`) turns study into published work. Each project moves through six fixed
+stages: question, plan, experiments, lab notebook, write-up and public repository (`src/lib/pipeline.ts` holds the
+rules, `src/lib/projects.ts` the storage).
+
+- **One project at a time.** A new project cannot start until the open one is published or killed. A unique index on
+  open projects enforces this in the database as well as in the app.
+- **Each stage has a bar to clear** before Move on works: a question with a reason it matters, a plan with a kill
+  criterion decided in advance, at least one experiment with its result (and none left open), three lab notebook
+  entries, a public https link to the write-up with a summary of findings, and a public repository. A stage's fields
+  are frozen once the project moves past it, so the write-up is judged against what you set out to do.
+- **Publishing checks the links.** Both links must open for someone who is not signed in; a private or missing GitHub
+  repository is refused.
+- **Killing needs a post-mortem** of at least 50 words. Killed projects and their post-mortems stay on the Projects page.
+- `publishedProjects()` in `src/lib/projects.ts` lists the portfolio, with links, for other pages to cite as evidence.
+
 ## Parton
 
 Parton is the tutor on every lesson page (`src/lib/parton/`). It needs `ANTHROPIC_API_KEY` in Vercel; without it, the panel says so.
