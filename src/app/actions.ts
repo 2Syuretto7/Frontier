@@ -51,8 +51,18 @@ export async function changePassphraseAction(_: FormState, form: FormData): Prom
 
 export async function learnAction() {
   await requireOwner();
+  await goToNextStep(false);
+}
+
+/** Leaving a review session: open a lesson, never another review session. */
+export async function afterReviewAction() {
+  await requireOwner();
+  await goToNextStep(true);
+}
+
+async function goToNextStep(afterReview: boolean) {
   const { nextStep, startLesson } = await import("@/lib/learning");
-  const step = await nextStep();
+  const step = await nextStep({ afterReview });
   if (step.kind === "continue") redirect(`/learn/${step.lesson.id}`);
   if (step.kind === "review") redirect("/review");
   if (step.kind === "begin") {

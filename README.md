@@ -73,6 +73,23 @@ Timed, from-scratch implementation drills at `/drills`, the closest thing here t
 - **Timing and pass rate** (`src/lib/drills.ts`, table `drill_attempts`, created on first use). The server times each attempt from Start to the submission that passes every test, or to Give up. Starting again while an attempt is open closes it as abandoned. Pass rate is passes over ended attempts; a pass counts as in time when it beats the drill's limit. `drillEvidence()` lists passed drills for the readiness scorecard.
 - **Tests** (`tests/drills.test.ts`). Every solution must pass every hidden test and every starter must fail. Each drill also lists plausible wrong answers (no score scaling, L2 instead of decoupled decay, a cache that never grows, and so on) that its hidden tests must catch.
 
+## Projects
+
+The Projects page (`src/app/projects/`) turns study into published work. Each project moves through six fixed
+stages: question, plan, experiments, lab notebook, write-up and public repository (`src/lib/pipeline.ts` holds the
+rules, `src/lib/projects.ts` the storage).
+
+- **One project at a time.** A new project cannot start until the open one is published or killed. A unique index on
+  open projects enforces this in the database as well as in the app.
+- **Each stage has a bar to clear** before Move on works: a question with a reason it matters, a plan with a kill
+  criterion decided in advance, at least one experiment with its result (and none left open), three lab notebook
+  entries, a public https link to the write-up with a summary of findings, and a public repository. A stage's fields
+  are frozen once the project moves past it, so the write-up is judged against what you set out to do.
+- **Publishing checks the links.** Both links must open for someone who is not signed in; a private or missing GitHub
+  repository is refused.
+- **Killing needs a post-mortem** of at least 50 words. Killed projects and their post-mortems stay on the Projects page.
+- `publishedProjects()` in `src/lib/projects.ts` lists the portfolio, with links, for other pages to cite as evidence.
+
 ## Parton
 
 Parton is the tutor on every lesson page (`src/lib/parton/`). It needs `ANTHROPIC_API_KEY` in Vercel; without it, the panel says so.
@@ -81,7 +98,7 @@ Parton is the tutor on every lesson page (`src/lib/parton/`). It needs `ANTHROPI
 - **A five-rung ladder** per question: a question back, a pointer, a nudge, a skeleton with blanks, a parallel worked example. Each nudge on the same question climbs one rung; over-to-you replies do not climb it.
 - **Memory and repair.** Conversations, hints and noted misconceptions are stored per lesson and fed back to Parton in later lessons that build on them. Questions missed three or more times come back in review after twelve hours instead of a day.
 - **Fresh recall.** The recall questions that open a lesson are written new by Parton for each sitting, on the mastered lessons it builds on (`src/lib/recall.ts`). Every recall question is stored, and a new one is dropped if it repeats an earlier recall question or a practice question from its lesson; a question is never shown again once tried. They lean towards ideas the learner has missed before, and their answer keys are checked on the server like any other exercise. Without Parton, the recall section says so instead of replaying old questions.
-- **Fresh review.** The Review page shows three to five questions at a time, written new by Parton on the ideas FSRS says are due. Each question stands in for one due card, and the first answer to it rates that card. Review and recall questions share one store, so neither repeats the other, an earlier question, or a practice question. A session is kept while at least three of its questions are untried; otherwise the leftovers are retired and a new session is written.
+- **Fresh review.** The Review page shows three to five questions at a time, written new by Parton on the ideas FSRS says are due. Each question stands in for one due card, and the first answer to it rates that card. Review and recall questions share one store, so neither repeats the other, an earlier question, or a practice question. A session is kept while at least three of its questions are untried; otherwise the leftovers are retired and a new session is written. After a review session, Learn (and the Review page's *Done: open a lesson* button) opens a lesson, never a second review session in a row; reviews become eligible again once a new lesson has been begun.
 - Model `claude-opus-5-5` with adaptive thinking, streamed, structured JSON output, prompt caching on the lesson context, and server-side refusal fallback (`fallbacks: "default"`).
 
 ## Readiness scorecard

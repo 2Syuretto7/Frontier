@@ -50,6 +50,42 @@ const SCHEMA = [
      key TEXT PRIMARY KEY,
      value JSONB NOT NULL
    )`,
+  // The project pipeline: question, plan, experiments, lab notebook, write-up, public repository. A project ends
+  // published or killed with a post-mortem, and the unique index allows only one open project at a time.
+  `CREATE TABLE IF NOT EXISTS projects (
+     id SERIAL PRIMARY KEY,
+     title TEXT NOT NULL,
+     status TEXT NOT NULL DEFAULT 'active',
+     stage TEXT NOT NULL DEFAULT 'question',
+     question TEXT NOT NULL DEFAULT '',
+     why TEXT NOT NULL DEFAULT '',
+     plan TEXT NOT NULL DEFAULT '',
+     kill_criterion TEXT NOT NULL DEFAULT '',
+     writeup_url TEXT NOT NULL DEFAULT '',
+     writeup_summary TEXT NOT NULL DEFAULT '',
+     repo_url TEXT NOT NULL DEFAULT '',
+     postmortem TEXT NOT NULL DEFAULT '',
+     history JSONB NOT NULL DEFAULT '[]',
+     started_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+     ended_at TIMESTAMPTZ
+   )`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS projects_one_open ON projects ((true)) WHERE status = 'active'`,
+  `CREATE TABLE IF NOT EXISTS project_experiments (
+     id SERIAL PRIMARY KEY,
+     project_id INTEGER NOT NULL REFERENCES projects (id),
+     title TEXT NOT NULL,
+     expected TEXT NOT NULL,
+     result TEXT,
+     at TIMESTAMPTZ NOT NULL DEFAULT now()
+   )`,
+  `CREATE INDEX IF NOT EXISTS project_experiments_project ON project_experiments (project_id, at)`,
+  `CREATE TABLE IF NOT EXISTS project_notebook (
+     id SERIAL PRIMARY KEY,
+     project_id INTEGER NOT NULL REFERENCES projects (id),
+     body TEXT NOT NULL,
+     at TIMESTAMPTZ NOT NULL DEFAULT now()
+   )`,
+  `CREATE INDEX IF NOT EXISTS project_notebook_project ON project_notebook (project_id, at)`,
   `CREATE TABLE IF NOT EXISTS attempt_log (
      id SERIAL PRIMARY KEY,
      exercise_id TEXT NOT NULL,
