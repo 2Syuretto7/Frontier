@@ -17,8 +17,31 @@ import { ArrowLeft } from "@/components/ui/Icons";
 import { ProjectForm } from "@/components/projects/ProjectForm";
 import { WordField } from "@/components/projects/WordField";
 import { ExperimentList, Field, LinkOut, Notebook, StatusPill, Stepper, fmtDate } from "@/components/projects/ProjectParts";
+import {
+  AimedAt,
+  NotebookTemplateHead,
+  OutlinePanel,
+  OverrideRecord,
+  PlanDraftPanel,
+  RepoPanel,
+  ReviewPanel,
+} from "@/components/projects/AssistPanels";
+import { getDrafts, githubConnected, suggestionFor, type Draft } from "@/lib/project-assist/store";
+import { latestReview, overrides, type Review } from "@/lib/project-assist/review";
+import { shortHash, type DraftKind } from "@/lib/project-assist/core";
+import { partonConnected } from "@/lib/parton/claude";
 
 export const dynamic = "force-dynamic";
+// Parton's drafts and checks can take a minute or two.
+export const maxDuration = 300;
+
+/** What Parton and GitHub add to the project page. */
+type Assist = {
+  drafts: Partial<Record<DraftKind, Draft>>;
+  review: Review | null;
+  parton: boolean;
+  github: boolean;
+};
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -35,6 +58,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const active = project.status === "active";
   const at = stageIndex(project.stage);
   const past = (stage: Parameters<typeof stageIndex>[0]) => !active || at > stageIndex(stage);
+  const [drafts, review, overruled, suggestion] = await Promise.all([
+    getDrafts(project.id),
+    active ? latestReview(project.id, project.stage) : Promise.resolve(null),
+    overrides(project.id),
+    suggestionFor(project.id),
+  ]);
+  const assist: Assist = { drafts, review, parton: partonConnected(), github: githubConnected() };
 
   return (
     <div className="shell">
@@ -47,6 +77,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             <span>Started {fmtDate(project.startedAt)}{project.endedAt ? ` · ended ${fmtDate(project.endedAt)}` : ""}</span>
           </p>
           <h1>{project.title}</h1>
+          <AimedAt suggestion={suggestion} />
         </header>
 
         <Stepper project={project} now={now} />
@@ -67,7 +98,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           </div>
         )}
 
-        {active && <CurrentStage project={project} />}
+        {active && <CurrentStage project={project} assist={assist} />}
 
         {past("question") && (
           <section className="pp-record" aria-label="Question">
@@ -95,7 +126,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             <Notebook project={project} />
           </section>
         )}
-        {active && at > stageIndex("notebook") && <NotebookPanel project={project} title="04 · Lab notebook" note="Still open: add entries while you write." />}
+        {active && at > stageIndex("notebook") && (
+          <NotebookPanel project={project} assist={assist} title="04 · Lab notebook" note="Still open: add entries while you write." />
+        )}
         {past("writeup") && (project.writeupUrl || project.writeupSummary) && (
           <section className="pp-record" aria-label="Write-up">
             <h2 className="pp-h2">05 · Write-up</h2>
@@ -109,6 +142,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             <p><LinkOut href={project.repoUrl}>{project.repoUrl}</LinkOut></p>
           </section>
         )}
+
+        <OverrideRecord overrides={overruled} />
 
         {active && <KillPanel project={project} />}
       </main>
@@ -128,9 +163,21 @@ function StageButtons({ project, saveable = true }: { project: Project; saveable
   );
 }
 
-function Gaps({ project }: { project: Project }) {
+function Gaps({ project, parton }: { project: Project; parton: boolean }) {
   const gaps = stageGaps(project);
-  if (gaps.length === 0) return <p className="hint good">This stage is complete. Move on when you are ready.</p>;
+  if (gaps.length === 0) {
+    const checks = [
+      project.stage === "writeup" ? "the write-up link opens" : null,
+      project.stage === "repo" ? "GitHub shows the repository has code and a real README" : null,
+      parton ? "Parton confirms the work does its job" : null,
+    ].filter(Boolean);
+    if (checks.length === 0) return <p className="hint good">This stage is complete. Move on when you are ready.</p>;
+    return (
+      <p className="hint good">
+        The word counts are met. {nextStage(project.stage) ? "Moving on" : "Publishing"} first checks that {checks.join(", and that ")}.
+      </p>
+    );
+  }
   return (
     <div className="pp-gaps">
       <p className="hint">Before moving on (as of your last save):</p>
@@ -139,7 +186,11 @@ function Gaps({ project }: { project: Project }) {
   );
 }
 
-function CurrentStage({ project }: { project: Project }) {
+const CHECKING = { advance: "Checking that this stage is really complete… (up to a minute)" };
+
+function CurrentStage({ project, assist }: { project: Project; assist: Assist }) {
+  // Parton's last check sits just below the stage's buttons, outside their form.
+  const check = stageGaps(project).length === 0 ? <ReviewPanel project={project} review={assist.review} /> : null;
   const info = STAGE_INFO[project.stage];
   const n = String(stageIndex(project.stage) + 1).padStart(2, "0");
   return (
@@ -153,7 +204,8 @@ function CurrentStage({ project }: { project: Project }) {
         <p className="pp-ask">{info.ask}</p>
 
         {project.stage === "question" && (
-          <ProjectForm projectId={project.id} op="save">
+          <>
+          <ProjectForm projectId={project.id} op="save" pendingNote={CHECKING}>
             <div className="field">
               <label htmlFor="pp-title">Title</label>
               <input id="pp-title" name="title" className="input" defaultValue={project.title} maxLength={200} />
@@ -162,51 +214,61 @@ function CurrentStage({ project }: { project: Project }) {
               hint="Specific enough that an experiment could answer it, and phrased as a question." />
             <WordField name="why" label="Why it matters" min={MIN_WORDS.why} rows={4} defaultValue={project.why}
               hint="Who would care about the answer, and what you would do differently knowing it." />
-            <Gaps project={project} />
+            <Gaps project={project} parton={assist.parton} />
             <StageButtons project={project} />
           </ProjectForm>
+          {check}
+          </>
         )}
 
         {project.stage === "plan" && (
           <>
             <Field label="Question" text={project.question} />
-            <ProjectForm projectId={project.id} op="save">
+            <PlanDraftPanel project={project} draft={assist.drafts.plan} parton={assist.parton} />
+            <ProjectForm projectId={project.id} op="save" pendingNote={CHECKING} key={shortHash(`${project.plan}\u0000${project.killCriterion}`)}>
               <WordField name="plan" label="Plan" min={MIN_WORDS.plan} rows={10} defaultValue={project.plan}
                 hint="Data, model and setup; the baselines; what you will measure; what result would answer the question; the compute and time budget." />
               <WordField name="killCriterion" label="Kill criterion" min={MIN_WORDS.killCriterion} rows={3} defaultValue={project.killCriterion}
                 hint="Decided now, before any results: what would make you stop this project." />
-              <Gaps project={project} />
+              <Gaps project={project} parton={assist.parton} />
               <StageButtons project={project} />
             </ProjectForm>
+            {check}
           </>
         )}
 
         {project.stage === "experiments" && (
           <>
             <ExperimentPanel project={project} />
-            <ProjectForm projectId={project.id} op="advance">
-              <Gaps project={project} />
+            <ProjectForm projectId={project.id} op="advance" pendingNote={CHECKING}>
+              <Gaps project={project} parton={assist.parton} />
               <p className="hint">At least {MIN_EXPERIMENTS} experiment with its result, and none left without one.</p>
               <StageButtons project={project} saveable={false} />
             </ProjectForm>
-            <NotebookPanel project={project} title="Lab notebook" note="The notebook is already open: write as you go." />
+            {check}
+            <NotebookPanel project={project} assist={assist} title="Lab notebook" note="The notebook is already open: write as you go." />
+            <RepoPanel project={project} github={assist.github} />
           </>
         )}
 
         {project.stage === "notebook" && (
           <>
-            <NotebookPanel project={project} />
-            <ProjectForm projectId={project.id} op="advance">
-              <Gaps project={project} />
+            <NotebookPanel project={project} assist={assist} />
+            <ProjectForm projectId={project.id} op="advance" pendingNote={CHECKING}>
+              <Gaps project={project} parton={assist.parton} />
               <p className="hint">At least {MIN_NOTEBOOK_ENTRIES} entries in all, including any written during experiments.</p>
               <StageButtons project={project} saveable={false} />
             </ProjectForm>
+            {check}
             <ExperimentPanel project={project} title="Experiments" />
+            <RepoPanel project={project} github={assist.github} />
           </>
         )}
 
         {project.stage === "writeup" && (
-          <ProjectForm projectId={project.id} op="save">
+          <>
+          <OutlinePanel project={project} draft={assist.drafts.outline} parton={assist.parton} />
+          <ProjectForm projectId={project.id} op="save" pendingNote={CHECKING}>
             <div className="field">
               <label htmlFor="pp-writeupUrl">Public link to the write-up</label>
               <p className="hint">A blog post, a report or a preprint: anywhere someone else can read it.</p>
@@ -214,21 +276,32 @@ function CurrentStage({ project }: { project: Project }) {
             </div>
             <WordField name="writeupSummary" label="Summary of findings" min={MIN_WORDS.writeupSummary} rows={6} defaultValue={project.writeupSummary}
               hint="What you found, how sure you are, and how it compares with the plan and the kill criterion." />
-            <Gaps project={project} />
+            <Gaps project={project} parton={assist.parton} />
             <StageButtons project={project} />
           </ProjectForm>
+          {check}
+          <RepoPanel project={project} github={assist.github} />
+          </>
         )}
 
         {project.stage === "repo" && (
-          <ProjectForm projectId={project.id} op="save">
+          <>
+          {!project.repoUrl && <RepoPanel project={project} github={assist.github} />}
+          <ProjectForm projectId={project.id} op="save" pendingNote={CHECKING}>
             <div className="field">
               <label htmlFor="pp-repoUrl">Public repository</label>
-              <p className="hint">Publishing checks with GitHub that the repository is public, and that the write-up link opens.</p>
+              <p className="hint">
+                Publishing checks with GitHub that the repository is public, has code and a README that says how to
+                reproduce the main result, and that the write-up link opens.
+              </p>
               <input id="pp-repoUrl" name="repoUrl" type="url" className="input" defaultValue={project.repoUrl} placeholder="https://github.com/" />
             </div>
-            <Gaps project={project} />
+            <Gaps project={project} parton={assist.parton} />
             <StageButtons project={project} />
           </ProjectForm>
+          {check}
+          {project.repoUrl && <RepoPanel project={project} github={assist.github} />}
+          </>
         )}
       </div>
     </section>
@@ -260,14 +333,18 @@ function ExperimentPanel({ project, title }: { project: Project; title?: string 
   );
 }
 
-function NotebookPanel({ project, title, note }: { project: Project; title?: string; note?: string }) {
+function NotebookPanel({ project, assist, title, note }: { project: Project; assist: Assist; title?: string; note?: string }) {
+  const draft = assist.drafts.notebook;
+  const template = draft?.status === "ready" ? draft.body : "";
   return (
     <div className="pp-sub">
       {title && <h3 className="pp-h3">{title}</h3>}
       {note && <p className="hint">{note}</p>}
       <Notebook project={project} />
-      <ProjectForm projectId={project.id} op="note" className="pp-add" resetOnDone>
-        <WordField name="body" label="New entry" rows={5} hint="What you tried, what surprised you, what you will change. Dated automatically." />
+      <NotebookTemplateHead project={project} draft={draft} parton={assist.parton} />
+      <ProjectForm projectId={project.id} op="note" className="pp-add" resetOnDone key={shortHash(template)}>
+        <WordField name="body" label="New entry" rows={template ? Math.min(16, template.split("\n").length + 2) : 5} defaultValue={template}
+          hint="What you tried, what surprised you, what you will change. Dated automatically." />
         <button type="submit" className="btn">Add entry</button>
       </ProjectForm>
     </div>
