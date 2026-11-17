@@ -1196,7 +1196,35 @@ html.has-code-overlay, html.has-code-overlay body { overflow: hidden; }
 .drill-attempts li { display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 14px; }
 .drill-attempts li:last-child { border-bottom: 0; }
 .drill-attempts li > :first-child { min-width: 140px; }
+.drill-plan { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 24px; margin: 0 0 32px; }
+.drill-next { display: grid; gap: 12px; align-content: start; }
+.drill-next .eyebrow, .drill-skills .eyebrow { margin: 0; }
+.drill-next-card { display: grid; gap: 8px; padding: 20px; border: 1px solid var(--border-strong); border-radius: var(--radius-md); background: var(--bg); transition: background var(--fast) var(--ease); }
+.drill-next-card:hover { background: var(--bg-subtle); }
+.drill-next-card:hover .chev { transform: translateX(3px); }
+.drill-reason { font-size: 14px; color: var(--text-muted); line-height: 1.55; }
+.drill-queue { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; line-height: 1.5; }
+.drill-queue a { color: var(--link); }
+.drill-skills { display: grid; gap: 10px; align-content: start; }
+.drill-skills ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.drill-skills li { display: grid; grid-template-columns: minmax(0, 1fr) 80px 56px; align-items: center; gap: 10px; font-size: 13px; }
+.drill-skill-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.drill-skill-bar { height: 4px; background: var(--overlay); border-radius: 2px; overflow: hidden; }
+.drill-skill-bar span { display: block; height: 100%; background: var(--accent); }
+.drill-skill-num { text-align: right; font-variant-numeric: tabular-nums; }
+.drill-level-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; margin: 0 0 16px; font-size: 14px; line-height: 1.55; }
+.drill-start .drill-level-line { margin: 0; }
+.drill-start-actions { margin-top: 0; }
+.drill-variant-failed { display: grid; gap: 4px; }
+.drill-parton { margin-top: 20px; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-md); display: grid; gap: 14px; }
+.drill-parton-head { display: flex; align-items: center; gap: 10px; margin: 0; font-weight: 500; font-size: 15px; }
+.drill-parton-head .mono-tag { margin-left: auto; font-weight: 400; }
+.drill-hint { display: grid; gap: 4px; }
+.drill-hint .parton-msg-meta { margin: 0; }
+.drill-parton-ask { display: flex; flex-wrap: wrap; gap: 8px; }
+.drill-parton-ask .input { flex: 1 1 240px; min-width: 0; }
 @media (max-width: 640px) {
+  .drill-plan { grid-template-columns: minmax(0, 1fr); }
   .drill-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .drill-list { grid-template-columns: minmax(0, 1fr); }
   .drill-start { padding: 24px 16px; }

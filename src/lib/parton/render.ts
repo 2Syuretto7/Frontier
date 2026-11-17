@@ -52,3 +52,16 @@ export function renderParton(text: string): string {
   });
   return out.join("");
 }
+
+/**
+ * Renders a drill variant's brief: everything renderParton handles, plus fenced code blocks (```), which are
+ * shown as they are, escaped, in the same style as the authored drills' code blocks.
+ */
+export function renderBrief(text: string): string {
+  const parts = text.replace(/\r\n/g, "\n").split(/^```[a-z]*\n([\s\S]*?)^```[ \t]*$/gm);
+  return parts
+    .map((part, i) => (i % 2 === 1
+      ? `<pre class="code-block"><code>${escape(part.replace(/\s+$/, ""))}</code></pre>`
+      : renderParton(part)))
+    .join("");
+}
