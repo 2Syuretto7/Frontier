@@ -414,9 +414,6 @@ assert all(abs(p.data - q.data) < 1e-12 for p, q in zip(m1.parameters(), m2.para
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a neuron, a layer and an MLP are built from Value objects, how to count the parameters, and what the four lines of one training step do and why their order matters.",
-
   glimpse: (
     <p>
       Scalar Values make one graph node per multiplication, so even a small network builds thousands of nodes. Next, the same

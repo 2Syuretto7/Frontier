@@ -328,9 +328,6 @@ assert np.allclose(gd_from_zero(A, b, 0.05, 1), 0.05 * A.T @ b)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the pseudoinverse is built from the SVD, why A⁺b is the minimum-norm least squares solution, and how ridge regression and truncation tame small singular values.",
-
   glimpse: (
     <>
       <p>

@@ -356,9 +356,6 @@ assert abs(math.cos(x) - x) < 1e-11 and abs(x - 0.7390851332) < 1e-9, 'cos x = x
     },
   ],
 
-  teachBack:
-    "Explain to a friend the intermediate value theorem, why it needs both continuity and the completeness of the real numbers, and how it solves the monk puzzle.",
-
   glimpse: (
     <p>
       Next, the extreme value theorem, the second great fact about continuous functions on closed intervals. The fixed-point exercise is the one-dimensional case of Brouwer&rsquo;s fixed point theorem, and bisection, the algorithm hidden in the proof, returns as the most reliable root-finder in Numerical Linear Algebra and Scientific Computing. Closer at hand, the theorem is one ingredient of the mean value theorem later in this course.

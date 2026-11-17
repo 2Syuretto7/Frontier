@@ -343,9 +343,6 @@ assert d[0] == 0 and all(x <= i for i, x in enumerate(d)), 'O(m log n) on 20000 
     },
   ],
 
-  teachBack:
-    "Explain to a friend how breadth-first search finds distances in a graph, and why the bridges of Königsberg cannot all be crossed exactly once.",
-
   glimpse: (
     <p>
       Next, trees: the connected graphs with no cycles, which are exactly what breadth-first search leaves behind. Data

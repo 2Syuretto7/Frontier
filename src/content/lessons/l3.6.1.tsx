@@ -287,9 +287,6 @@ assert abs(conv_factor(1.0, eta, 0.0) - 99 / 101) < 1e-9 and abs(conv_factor(100
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the sharpest direction limits the learning rate, how momentum speeds up the flat directions, and how much faster it can be.",
-
   glimpse: (
     <p>
       Momentum uses one learning rate for every parameter. Next: Adam, which rescales each parameter by its own gradient

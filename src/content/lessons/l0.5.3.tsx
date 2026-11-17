@@ -290,9 +290,6 @@ assert paired_bootstrap([0, 1] * 50, [1, 1] * 50, 500, 0) == 1.0 and paired_boot
     },
   ],
 
-  teachBack:
-    "Explain to a friend four questions to ask before believing a claim that an AI system beats humans at something, and why each matters.",
-
   glimpse: (
     <p>
       This completes How Machines Learn: A First Look. Introduction to Machine Learning follows, where every idea of this

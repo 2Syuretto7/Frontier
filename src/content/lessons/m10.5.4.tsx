@@ -290,9 +290,6 @@ assert abs(jacobi_kappa(np.array([[4.0, 2.0], [2.0, 4.0]])) - 3.0) < 1e-12` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a large condition number makes the gradient point across a narrow valley, why exact line search zigzags at right angles, why the best fixed step still contracts only by (κ − 1)/(κ + 1), and how a change of coordinates can remove the problem.",
-
   glimpse: (
     <>
       <p>

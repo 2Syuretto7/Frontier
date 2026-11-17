@@ -334,9 +334,6 @@ assert separated(E, [0], [2], [1, 3]) and not separated(E, [0], [2], [1]) and se
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a Markov random field defines a distribution with potentials, why graph separation gives conditional independence, why a variable's conditional depends only on its neighbours, how Gibbs sampling uses that, and how MRFs relate to Bayesian networks.",
-
   glimpse: (
     <>
       <p>

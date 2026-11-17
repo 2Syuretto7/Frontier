@@ -319,9 +319,6 @@ assert cauchy_product([1, 2, 3], [4, 5, 6]) == [4, 13, 28]` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why absolutely convergent series can be reordered freely, how the positive and negative parts of a conditionally convergent series let you reach any target, why row and column sums of an array can disagree, and when multiplying series term by term is valid.",
-
   glimpse: (
     <>
       <p>

@@ -297,9 +297,6 @@ assert ok, 'Each row and column must have exactly one 1.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the transpose does, why (AB)ᵀ = BᵀAᵀ, how a permutation matrix shuffles rows, and why its inverse is its transpose.",
-
   glimpse: (
     <p>
       Next chapter: vector spaces, the setting in which column spaces and null spaces live. Symmetric matrices like AᵀA return

@@ -291,9 +291,6 @@ def accuracy(t, x1, y1, x2, y2, x3, y3):
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between writing rules and learning from examples, using a task of your own choosing, and say when you would pick each.",
-
   glimpse: (
     <p>
       Next, the three ingredients every learning method shares: data, a model, and a loss that measures how wrong the model

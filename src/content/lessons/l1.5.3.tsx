@@ -302,9 +302,6 @@ assert np.all(lasso_cd(X, y, L * (1 + 1e-9), 50) == 0) and np.any(lasso_cd(X, y,
     },
   ],
 
-  teachBack:
-    "Explain to a friend what ridge and lasso add to least squares, why lasso produces exact zeros and ridge does not, and how you would choose λ.",
-
   glimpse: (
     <p>
       Next, how to search for <M>{"\\lambda"}</M> and every other setting efficiently. Statistical Machine Learning reveals ridge

@@ -324,9 +324,6 @@ assert first_true(lambda x: False, 3, 9) == 10 and first_true(lambda x: True, 3,
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a loop invariant is and how it proves that insertion sort sorts every list, not just the ones you tested.",
-
   glimpse: (
     <p>
       Next, big-O notation, the language for comparing running times as inputs grow. Data Structures and Algorithms proves

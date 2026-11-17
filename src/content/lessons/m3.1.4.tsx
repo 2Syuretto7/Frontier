@@ -291,9 +291,6 @@ assert np.allclose(x, [2, 2, 2]) and line_plane((0, 0, 0), (2, -1, 0), (1, 2, 2)
     },
   ],
 
-  teachBack:
-    "Explain to a friend the two ways to describe a line or plane, why the coefficients of an equation give a perpendicular vector, and how to find the distance from a point to a plane.",
-
   glimpse: (
     <p>
       Next chapter: many planes at once. Solving a system of linear equations is finding where several hyperplanes meet.

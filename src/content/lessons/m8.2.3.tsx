@@ -312,9 +312,6 @@ assert bw_bisect([1.0, 1.0, -1.0], -2, 2, 1) == (0.0, 2)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a subsequence is, the peak argument that every sequence has a monotone subsequence, why this gives Bolzano–Weierstrass, and how subsequences can prove a sequence diverges.",
-
   glimpse: (
     <>
       <p>

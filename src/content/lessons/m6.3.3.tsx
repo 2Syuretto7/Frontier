@@ -362,9 +362,6 @@ assert is_normal(np.diag([1.0, 2.0, 3.0])) is True` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a self-adjoint operator has an orthonormal basis of eigenvectors, what normality adds over ℂ, and how the spectral decomposition lets you apply any function to a symmetric matrix.",
-
   glimpse: (
     <>
       <p>

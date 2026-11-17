@@ -450,9 +450,6 @@ assert loss.data < 0.3 * first, (first, loss.data)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what state SGD with momentum and Adam keep for each parameter, what bias correction fixes, and why the training loop no longer needs to know the update rule.",
-
   glimpse: (
     <p>
       Training so far has used the whole dataset at every step. Next: data loaders, which shuffle the examples and hand them

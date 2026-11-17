@@ -269,9 +269,6 @@ assert nearest_centre(np.array([[1.0, 2.0], [9.0, 7.0], [5.0, 6.0]]), C).tolist(
     },
   ],
 
-  teachBack:
-    "Explain to a friend the broadcasting rule, how keepdims helps, and how broadcasting can silently produce the wrong shape.",
-
   glimpse: (
     <p>
       Next, indexing, and the difference between a view and a copy. Einsum, later in this chapter, names every axis explicitly,

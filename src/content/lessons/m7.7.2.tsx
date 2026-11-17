@@ -279,9 +279,6 @@ assert abs(z.mean()) < 0.02 and abs(z.std() - 1) < 0.02 and abs(frac_below(z, 1.
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the central limit theorem says about standardised sums, why only the mean and variance survive, how the MGF proof goes, and how it gives the familiar ±1.96σ/√n error bar.",
-
   glimpse: (
     <>
       <p>

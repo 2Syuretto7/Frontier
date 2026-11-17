@@ -297,9 +297,6 @@ assert flag_layers([1e-3, 0.5, 1e-6], lo=1e-5, hi=0.1) == [(1, "too large"), (2,
     },
   ],
 
-  teachBack:
-    "Explain to a friend which per-layer statistics to log, what healthy values look like, and why the update-to-weight ratio is the most useful single number.",
-
   glimpse: (
     <p>
       Statistics show what a network is doing. To learn which parts of a design actually matter, you have to take them away

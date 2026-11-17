@@ -354,9 +354,6 @@ assert smallest_period(s) == 2` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how KMP avoids re-reading text after a mismatch, using the pattern ababc as an example.",
-
   glimpse: (
     <p>
       KMP preprocesses the pattern. When the text is fixed and the patterns keep coming, as in a genome or a search index,

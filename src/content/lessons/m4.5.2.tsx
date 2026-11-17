@@ -288,9 +288,6 @@ assert sum(xs[i:j]) == b and b >= max(xs), 'Kadane on 300000 numbers.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what f = O(g) means, why constant factors are ignored, and how logarithms, polynomials and exponentials rank against each other.",
-
   glimpse: (
     <p>
       Next, divide and conquer, whose running times come from recurrences like T(n) = 2T(n/2) + n. Data Structures and

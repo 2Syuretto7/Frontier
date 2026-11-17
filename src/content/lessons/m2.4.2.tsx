@@ -337,9 +337,6 @@ assert derivative(f, 0.5) == 3 * ((0.5 - 1) * (0.5 + 2)) ** 2 * (2 * 0.5 + 1), '
     },
   ],
 
-  teachBack:
-    "Explain to a friend the product rule, using the picture of a growing rectangle, and why the derivative of a product is not the product of the derivatives.",
-
   glimpse: (
     <p>
       Next, the chain rule, which differentiates one function applied to another, and is the most important rule of all for machine learning. Every rule here also runs backwards later in the course: the product rule becomes integration by parts. And the functions missing from this lesson, the exponential and the logarithm, get a lesson of their own after the chain rule.

@@ -359,9 +359,6 @@ print(k)
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between a for loop and a while loop, what range(a, b, step) produces, and how an accumulator adds up a sequence.",
-
   glimpse: (
     <p>
       Next, a skill every programmer relies on: tracing a program by hand to predict exactly what it does. In Data Structures

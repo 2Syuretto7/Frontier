@@ -275,9 +275,6 @@ assert B['null'].shape == (3, 0) and B['left_null'].shape == (3, 0) and np.allcl
     },
   ],
 
-  teachBack:
-    "Explain to a friend the four fundamental subspaces of a matrix, why their dimensions are r, r, n − r and m − r, and what the left null space says about which b make Ax = b solvable.",
-
   glimpse: (
     <p>
       Next chapter: orthogonality, which shows that the null space is perpendicular to the row space and leads to least

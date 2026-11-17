@@ -294,9 +294,6 @@ assert Z.shape == (500, 2) and np.allclose(np.cov(Z.T), np.eye(2)), 'Whitened sc
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the first principal component is, why it both keeps the most variance and loses the least, and why you centre the data first.",
-
   glimpse: (
     <p>
       Next, the practice of machine learning, starting with how features are prepared. Statistical Machine Learning derives PCA

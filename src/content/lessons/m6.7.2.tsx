@@ -300,9 +300,6 @@ assert np.allclose(unfold(P, 1), M @ unfold(T, 1))` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the tensor product of two spaces is, why it turns bilinear maps into linear ones, and why the rank of a two-index tensor is the matrix rank while higher-order rank is much harder.",
-
   glimpse: (
     <>
       <p>

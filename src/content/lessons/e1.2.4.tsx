@@ -252,9 +252,6 @@ assert blame([('only', [])]) == []` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how git bisect finds a bad commit, why it takes about log₂ n steps, and why revert is safer than reset on shared branches.",
-
   glimpse: (
     <p>
       Next, Python itself, in depth. Binary search, the idea behind bisect, is studied properly in Data Structures and Algorithms.

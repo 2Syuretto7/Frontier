@@ -281,9 +281,6 @@ assert abs(x.var() - sgd_noise_var(0.05, 1.0, 1.0)) < 0.004` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why SGD hovers at a noise floor proportional to the learning rate, why that motivates decaying it, and why training often starts with a warmup.",
-
   glimpse: (
     <p>
       The noise in each step comes from using a minibatch. Next: how the batch size controls that noise, and how the

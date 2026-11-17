@@ -308,9 +308,6 @@ assert np.allclose(d_inverse(np.eye(2) * 2, np.eye(2)), -0.25 * np.eye(2))` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the derivative of a function of several variables is a linear map rather than a number, and what the remainder condition in the definition demands.",
-
   glimpse: (
     <p>
       In coordinates the derivative is a matrix of partial derivatives, the Jacobian. Next, computing Jacobians, and what

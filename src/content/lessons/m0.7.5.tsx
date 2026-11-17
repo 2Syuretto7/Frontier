@@ -268,9 +268,6 @@ assert time.time() - t < 2, 'Lucas needs only a few digits.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the coefficient of x squared in (1 + x) to the power 4 is the number of ways to choose 2 things from 4.",
-
   glimpse: (
     <p>
       Next, data and chance, a first look. Newton extended the binomial theorem to powers that are not whole numbers,

@@ -307,9 +307,6 @@ assert L < 0.5 * first, (first, L)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to get the gradients of Y = XW with respect to X and W, both by matching shapes and by the trace trick, and why the backward pass costs twice the forward.",
-
   glimpse: (
     <p>
       Gradients describe slopes. To tell a minimum from a saddle, and to understand how fast optimisers converge, we need

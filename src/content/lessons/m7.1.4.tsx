@@ -360,9 +360,6 @@ assert abs(s['ham'] - (m['ham'][0] + m['ham'][1]['win'] + m['ham'][1]['prize']))
     },
   ],
 
-  teachBack:
-    "Explain to a friend how Bayes' rule turns likelihoods into posteriors, why in odds form each independent piece of evidence just multiplies the odds by its likelihood ratio, and why the naive Bayes classifier works in log space with smoothing.",
-
   glimpse: (
     <>
       <p>

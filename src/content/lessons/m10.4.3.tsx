@@ -303,9 +303,6 @@ for _ in range(200):
     },
   ],
 
-  teachBack:
-    "Explain to a friend the four KKT conditions, why they must hold at an optimum when strong duality holds, why they are enough to certify optimality for a convex problem, and how they produce the water-filling solution.",
-
   glimpse: (
     <>
       <p>

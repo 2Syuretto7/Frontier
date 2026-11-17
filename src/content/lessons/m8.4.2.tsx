@@ -294,9 +294,6 @@ assert abs(lebesgue_number(cov, xs) - 0.1) < 1e-9 and lebesgue_number([(0, 1)], 
     },
   ],
 
-  teachBack:
-    "Explain to a friend the two definitions of compactness, why on the line they both mean closed and bounded, the bisection proof that closed bounded sets have finite subcovers, and why (0, 1) fails.",
-
   glimpse: (
     <>
       <p>

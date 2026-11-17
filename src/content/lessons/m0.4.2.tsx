@@ -276,9 +276,6 @@ assert abs(b - math.exp(math.log(4) / 2)) < 1e-9, 'Use the least-squares slope, 
     },
   ],
 
-  teachBack:
-    "Explain to a friend what 3 to the power π means, using the idea of trapping it between powers with fractional exponents. Then say why the bacteria at half past twelve number about 1732.",
-
   glimpse: (
     <p>
       Next, logarithms: the inverse of the exponential function, which answers &ldquo;what power gives this number?&rdquo;.

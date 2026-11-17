@@ -312,9 +312,6 @@ assert time.time() - t < 5 and len(d) == 201, 'Convolve; never list 6⁴⁰ outc
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the expected value of a game means, using a die game, and why the expected value can be a number the game can never actually pay.",
-
   glimpse: (
     <p>
       This completes the Foundations of School Mathematics. In Probability, expected value and its linearity are among the

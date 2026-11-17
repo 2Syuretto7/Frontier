@@ -289,9 +289,6 @@ assert all(abs(z ** 4 - complex(3, 4)) < 1e-12 for z in rs) and min(abs(a - b) f
     },
   ],
 
-  teachBack:
-    "Explain to a friend why it makes sense to picture i as a quarter turn, using the fact that multiplying by −1 is a half turn.",
-
   glimpse: (
     <p>
       This completes coordinates and vectors. Next, sequences, sums and counting. Multiplying by a complex number of

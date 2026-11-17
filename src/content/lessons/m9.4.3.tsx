@@ -272,9 +272,6 @@ assert abs(r - 0.05) < 0.012` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the generalised likelihood ratio test compares a free fit with a constrained one, why −2 log Λ is approximately chi-squared by Wilks' theorem, how to count its degrees of freedom, and how it applies to comparing two accuracies.",
-
   glimpse: (
     <>
       <p>

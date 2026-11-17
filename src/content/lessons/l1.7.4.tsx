@@ -269,9 +269,6 @@ assert r['b'][0] == 1 and r['b'][2] <= 1 + 1e-12 and r['b'][1] < 0.6, 'Even 5 er
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to run an error analysis, how to compute the ceiling of a fix, and why slices matter.",
-
   glimpse: (
     <p>
       This completes the course. Statistical Machine Learning rebuilds these methods from probability, and Neural Networks from

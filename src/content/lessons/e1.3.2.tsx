@@ -337,9 +337,6 @@ double, triple = make(2), make(3)`}</Code>
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a closure is, what @decorator really does, and why all the lambdas in a loop can return the same value.",
-
   glimpse: (
     <p>
       Next, classes and the special methods that let your own types work with Python&rsquo;s operators. Functions that take and

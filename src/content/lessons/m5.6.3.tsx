@@ -292,9 +292,6 @@ assert abs(L - 0.5) < 1e-12 and abs(g - (-0.5)) < 1e-12, 'x = 1, dx/dlam = -0.5,
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the implicit function theorem lets you differentiate the output of an iterative solver without backpropagating through its iterations, and when the answer can be wrong.",
-
   glimpse: (
     <p>
       That completes differentiation. The final chapter turns to integration in several variables: double integrals, changes of

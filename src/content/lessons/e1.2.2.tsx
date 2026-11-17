@@ -272,9 +272,6 @@ assert len(ancestors(P, 4999)) == 5000, 'No recursion limit for long histories.'
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a branch really is, the difference between a fast-forward and a merge commit, and what a conflict is.",
-
   glimpse: (
     <p>
       Next, sharing branches with others through GitHub and pull requests. The commit graph is a directed acyclic graph, the same

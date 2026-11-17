@@ -311,9 +311,6 @@ assert ts == [1.0, 1.0] and np.allclose(x, 0.0)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a Newton step minimises the local quadratic model, why it is unaffected by changes of coordinates, why the error squares near the minimum, why pure Newton can diverge far away, and how backtracking fixes that at the cost of an extra phase.",
-
   glimpse: (
     <>
       <p>

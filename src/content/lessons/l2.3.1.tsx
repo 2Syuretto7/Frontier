@@ -318,9 +318,6 @@ assert list(support_vectors(np.array([1.0]), 0.0, X, y)) == [0, 2]` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the geometric margin is, why maximising it becomes minimising ‖w‖ under constraints, how slack variables lead to the hinge loss, and which training points actually determine an SVM.",
-
   glimpse: (
     <>
       <p>

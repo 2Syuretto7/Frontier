@@ -287,9 +287,6 @@ assert quotient_dim(3, []) == 3 and quotient_dim(2, [np.array([1.0, 0.0]), np.ar
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the dual space and the dual basis are, why a gradient is naturally a dual vector, and what a quotient space throws away.",
-
   glimpse: (
     <p>
       To turn functionals into arrows, and to talk about lengths and angles at all, a space needs an inner product. Next

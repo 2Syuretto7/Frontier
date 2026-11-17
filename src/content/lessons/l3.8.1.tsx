@@ -296,9 +296,6 @@ assert diagnose([0.5, 0.1, 0.001], 10) == "bad init"` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to run the single-batch test, what the first and last losses should be, and what each failure pattern points to.",
-
   glimpse: (
     <p>
       Passing on one batch says the code can learn. On the full dataset, the shapes of the training and validation curves

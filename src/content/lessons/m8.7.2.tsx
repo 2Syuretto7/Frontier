@@ -292,9 +292,6 @@ assert thomae(Fraction(3, 9)) == Fraction(1, 3) and thomae(1) == 1 and thomae(0.
     },
   ],
 
-  teachBack:
-    "Explain to a friend the ε-criterion for integrability and why one good partition suffices, why continuous and monotone functions pass it, how finitely many discontinuities are handled, and why Thomae's function is integrable with integral 0.",
-
   glimpse: (
     <>
       <p>

@@ -278,9 +278,6 @@ def worst_factor(mu, L, alpha, beta, n=201):
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the heavy-ball method adds to gradient descent, why it damps the zigzag in a narrow valley, how the characteristic roots of the two-step recurrence give the rate (√κ − 1)/(√κ + 1) on a quadratic, and why that guarantee does not carry over to all strongly convex functions.",
-
   glimpse: (
     <>
       <p>

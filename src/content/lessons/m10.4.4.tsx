@@ -285,9 +285,6 @@ assert abs(d - 1 / level(a, 0.8)) < 1e-5 and abs(capacity(a, 0.0 + 1e-12) - np.l
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the perturbed optimal value is, why the optimal multipliers give a global linear lower bound on it, why they equal minus its derivatives when it is differentiable, and how this makes multipliers into prices for resources.",
-
   glimpse: (
     <>
       <p>

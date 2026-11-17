@@ -27,7 +27,6 @@ for (const lesson of LESSONS) {
     for (const rung of ["check", "apply", "prove"] as const) {
       assert.ok(lesson.practice.some((e) => e.rung === rung), `has a ${rung} exercise`);
     }
-    assert.ok(lesson.teachBack.length > 40, "has a teach-back prompt");
     for (const e of lesson.practice) {
       const a = e.answer;
       if (a.kind === "choice") {

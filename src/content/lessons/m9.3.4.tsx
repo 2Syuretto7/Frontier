@@ -257,9 +257,6 @@ assert rb_eff(1.0, 50) > rb_eff(1.0, 5)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the Cramér-Rao bound says, how Cauchy-Schwarz and the score prove it, which estimators attain it, and why it does not apply to biased estimators or to the uniform distribution.",
-
   glimpse: (
     <>
       <p>

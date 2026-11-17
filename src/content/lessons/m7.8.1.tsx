@@ -312,9 +312,6 @@ assert len(path) == 30001 and np.allclose(empirical_transitions(path, 2), P, ato
     },
   ],
 
-  teachBack:
-    "Explain to a friend what makes a sequence a Markov chain, how a transition matrix is laid out, why the distribution after n steps is the start times Pⁿ, and how to simulate a chain and estimate its matrix from data.",
-
   glimpse: (
     <>
       <p>

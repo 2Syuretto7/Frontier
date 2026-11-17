@@ -285,9 +285,6 @@ assert 'eig' not in src.replace('jacobi_eigen', ''), 'Rotate the matrix yourself
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the spectral theorem says about symmetric matrices, why their eigenvalues are real and their eigenvectors perpendicular, and why that makes the directions of principal component analysis perpendicular.",
-
   glimpse: (
     <p>
       Next, positive definite matrices, the symmetric matrices whose eigenvalues are all positive, which describe bowls,

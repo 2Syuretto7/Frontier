@@ -282,9 +282,6 @@ assert abs(q - 1) < 0.05 and abs(errs[5] / errs[4] - 0.5) < 1e-12, 'At a double 
     },
   ],
 
-  teachBack:
-    "Explain to a friend how Newton's method uses the tangent line to improve a guess, why it doubles the number of correct digits near a root, and how it can fail.",
-
   glimpse: (
     <p>
       Next, L&rsquo;Hôpital&rsquo;s rule, which uses derivatives to settle limits of the form 0/0. Newton&rsquo;s method

@@ -282,9 +282,6 @@ assert inverse(lambda x: x, range(3), range(4)) is None, 'Injective but not onto
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between f⁻¹ as an inverse function and f⁻¹(T) as a preimage, using f(x) = x² and the set {9}.",
-
   glimpse: (
     <p>
       This completes the chapter on functions. The last chapter of the course uses bijections to compare the sizes of infinite sets, with startling results. Continuity in Real Analysis and measurability in Measure-Theoretic Probability are both defined through preimages.

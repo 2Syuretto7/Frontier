@@ -299,9 +299,6 @@ assert abs(r.mean() - statistics.fmean(xs)) < 1e-9 and abs(r.variance() - statis
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between the mean and the median using the see-saw picture, and say which one you would quote for house prices and why.",
-
   glimpse: (
     <p>
       Next, histograms, which show the whole shape of a data set rather than one or two numbers. In Probability, the mean

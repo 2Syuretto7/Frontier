@@ -309,9 +309,6 @@ assert np.allclose(explained_ratio(vals), [0.6, 0.8, 0.9, 1.0]) and choose_k(val
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the best k-dimensional subspace for variance is spanned by the top k eigenvectors, why it also minimises reconstruction error, how the SVD computes it, and how to choose k.",
-
   glimpse: (
     <>
       <p>

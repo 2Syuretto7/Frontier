@@ -338,9 +338,6 @@ for lam in r:
     },
   ],
 
-  teachBack:
-    "Explain to a friend what an invariant subspace is, why every complex operator has an eigenvalue, and how a chain of invariant subspaces gives an upper-triangular matrix.",
-
   glimpse: (
     <>
       <p>

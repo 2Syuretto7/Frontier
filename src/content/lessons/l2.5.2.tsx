@@ -319,9 +319,6 @@ assert list(hard_assign(x, [0.0, 10.0])) == [0, 0, 1, 1] and np.allclose(kmeans_
     },
   ],
 
-  teachBack:
-    "Explain to a friend the E-step and M-step of EM for a Gaussian mixture, why the M-step formulas are weighted maximum-likelihood estimates, why the log-likelihood never decreases, and how k-means arises as a limit.",
-
   glimpse: (
     <>
       <p>

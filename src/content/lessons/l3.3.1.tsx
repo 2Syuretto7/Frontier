@@ -279,9 +279,6 @@ assert np.allclose(fit_linear_mse(X, y), [2.0, -1.0, 0.5])` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what squared, absolute and Huber loss each estimate, how squared error follows from Gaussian noise, and why outliers matter.",
-
   glimpse: (
     <p>
       For classification the outputs are probabilities, and the natural loss is the negative log-likelihood of the right

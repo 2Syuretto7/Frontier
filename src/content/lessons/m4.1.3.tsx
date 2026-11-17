@@ -282,9 +282,6 @@ assert all(odd_entries(n) == sum(comb(n, k) % 2 for k in range(n + 1)) for n in 
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to prove an identity by counting one set in two ways, using Pascal's rule and the fact that each row of Pascal's triangle sums to a power of 2.",
-
   glimpse: (
     <p>
       Generating functions, later in this course, turn the binomial theorem into a general tool for counting. The binomial

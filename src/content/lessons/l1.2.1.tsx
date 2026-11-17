@@ -292,9 +292,6 @@ assert np.allclose(loo_residuals(X, y), ref), 'Agree with scikit-learn leave-one
     },
   ],
 
-  teachBack:
-    "Explain to a friend why least squares squares the errors, the formulas for the best slope and intercept, and what R² measures.",
-
   glimpse: (
     <p>
       Next, what the fitted coefficients mean, and when they mislead. Linear Algebra I derives the normal equations as a

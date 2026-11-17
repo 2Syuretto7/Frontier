@@ -293,9 +293,6 @@ assert abs(m - 1.0) < 1e-3 and abs(s - np.sqrt(2 / 3)) < 1e-3` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the ELBO is defined, why log-likelihood equals the ELBO plus a KL divergence, how EM and variational inference both maximise it, and how the reparameterisation trick gives low-variance gradients.",
-
   glimpse: (
     <>
       <p>

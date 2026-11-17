@@ -325,9 +325,6 @@ assert -0.002 < lo <= 0 and 1 <= hi < 1.002, 'With many samples the range is nea
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a car whose average speed over a stretch was 120 km per hour must have been doing exactly 120 at some instant, and what could go wrong if the speed jumped.",
-
   glimpse: (
     <p>
       Next, the first payoff: the sign of the derivative decides where a function rises and falls, and the second derivative decides how it bends. The mean value theorem is also used to prove the fundamental theorem of calculus later in this course, and it extends to Taylor&rsquo;s theorem, which says how well a polynomial can approximate a function.

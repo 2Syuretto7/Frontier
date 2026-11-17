@@ -360,9 +360,6 @@ assert check_docstring(h) == (['p', 'q'], [])` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a good docstring for a numerical function contains, and why an executable example is the most trustworthy part of documentation.",
-
   glimpse: (
     <p>
       Doctests and unit tests only help if they run. Next, continuous integration: running every check automatically on every

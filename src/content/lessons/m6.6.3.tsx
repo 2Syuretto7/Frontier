@@ -307,9 +307,6 @@ assert np.isclose(conv_spectral_norm(np.array([1.0, -1.0, 0.0, 0.0])), 2.0)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why circulant matrices are exactly the shift-commuting ones, why the Fourier basis diagonalises all of them, and how that gives fast convolution and exact spectral norms of convolutions.",
-
   glimpse: (
     <>
       <p>

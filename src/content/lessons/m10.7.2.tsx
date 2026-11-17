@@ -304,9 +304,6 @@ assert np.allclose(ph(x1 - t * gg(x1), t), x1, atol=1e-8) and abs(F(x2) - F(x1))
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the proximal operator is, why it generalises projection, what it does for the absolute value, how proximal gradient splits a smooth plus simple objective, and why it keeps the rates of gradient descent and Nesterov.",
-
   glimpse: (
     <>
       <p>

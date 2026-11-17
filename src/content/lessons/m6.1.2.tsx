@@ -317,9 +317,6 @@ assert np.allclose(D @ integration_matrix(3), np.vstack([np.eye(4), np.zeros((1,
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a linear map is fixed by what it does to a basis, how that gives its matrix, and why composing maps means multiplying matrices.",
-
   glimpse: (
     <p>
       Every linear map has two subspaces attached to it: what it sends to zero, and what it can reach. Next: null spaces and

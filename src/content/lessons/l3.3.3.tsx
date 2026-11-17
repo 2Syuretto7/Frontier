@@ -303,9 +303,6 @@ assert ls_grad(np.array([[g + 2, 0.0, 0.0]]), np.array([0]), 0.1)[0, 0] > 0` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why cross-entropy keeps pushing logits up after the model is right, how label smoothing changes the target, and what gap it settles at.",
-
   glimpse: (
     <p>
       Smoothing limits how large logits get. Before any of that, though, the weights have to start somewhere sensible. Next:

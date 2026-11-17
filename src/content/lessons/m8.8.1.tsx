@@ -265,9 +265,6 @@ def worst_n(xs, eps):
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between pointwise and uniform convergence, with xⁿ and the sliding bump as examples, the Cauchy criterion and the M-test, and why a uniform limit of continuous functions is continuous.",
-
   glimpse: (
     <>
       <p>

@@ -253,9 +253,6 @@ def inertia(xs, c0, c1):
     },
   ],
 
-  teachBack:
-    "Explain to a friend how k-means finds groups in data that nobody labelled, using customers in a shop, and why it cannot tell you how many groups there really are.",
-
   glimpse: (
     <p>
       Next, generation, where a model produces new data rather than labelling old data. In Introduction to Machine Learning

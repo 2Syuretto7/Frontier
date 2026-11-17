@@ -446,9 +446,6 @@ assert accuracy(net, X, 1 - y) < 0.05` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a data loader does each epoch, why a mini-batch gradient is an unbiased estimate of the full gradient, and how batch size trades noise against cost.",
-
   glimpse: (
     <p>
       Every Linear so far started with weights scaled by 1/√nin, without saying why. Next: initialisation, and what happens to

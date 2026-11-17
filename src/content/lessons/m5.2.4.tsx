@@ -313,9 +313,6 @@ assert k == 5` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why knowing the n partial derivatives of a differentiable function gives its slope in every direction, and why the gradient points in the steepest uphill direction.",
-
   glimpse: (
     <p>
       The gradient's perpendicularity to level sets came from differentiating along a curve. That is a special case of the chain

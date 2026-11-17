@@ -317,9 +317,6 @@ assert shrink_config({'width': 7}, lambda c: c['width'] >= 7) == {'width': 7}` }
     },
   ],
 
-  teachBack:
-    "Explain to a friend why it is worth spending an hour making a failure reproduce in seconds before trying to fix it, and how delta debugging finds the few lines that matter.",
-
   glimpse: (
     <p>
       A minimal reproduction shows where to look. Next, debuggers and bisection: stepping through the failing program line by

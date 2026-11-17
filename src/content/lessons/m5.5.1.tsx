@@ -293,9 +293,6 @@ assert abs(p - 2) < 1e-9, 'For a quadratic the first-order error is exactly C s^
     },
   ],
 
-  teachBack:
-    "Explain to a friend how restricting a function to a line turns multivariable Taylor expansion into the one-variable version, and why one Hessian matrix gives the curvature in every direction.",
-
   glimpse: (
     <p>
       Next, the Hessian itself: what its eigenvalues and eigenvectors say about the shape of a function, and how to compute it.

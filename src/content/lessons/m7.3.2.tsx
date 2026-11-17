@@ -317,9 +317,6 @@ assert abs(min_rate([0.5], 400000, seed=3) - 0.5) < 0.01` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the uniform, normal and exponential distributions, why standardising reduces every normal to Φ, how fast normal tails fall off, and why the exponential is memoryless.",
-
   glimpse: (
     <>
       <p>

@@ -355,9 +355,6 @@ for d, err, word in [
     },
   ],
 
-  teachBack:
-    "Explain to a friend why every setting of an experiment should live in one validated configuration that is saved with the results, and what goes wrong when it does not.",
-
   glimpse: (
     <p>
       Saving the configuration is the first half of keeping records. Next, experiment tracking: logging metrics, code

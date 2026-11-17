@@ -266,9 +266,6 @@ assert memory_saving(x, 8) == 4 and memory_saving(x.astype(np.float64), 16) == 4
     },
   ],
 
-  teachBack:
-    "Explain to a friend what an array's shape and dtype are, why reshaping is cheap, and what can go wrong with int8 or float32.",
-
   glimpse: (
     <p>
       Next, vectorisation: why <C>a + b</C> on arrays is so much faster than a Python loop. Linear Algebra treats these grids of

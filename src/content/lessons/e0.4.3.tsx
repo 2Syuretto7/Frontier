@@ -283,9 +283,6 @@ print(n)
     },
   ],
 
-  teachBack:
-    "Explain to a friend how strings are like lists, why they cannot be changed in place, and how split and join turn text into pieces and back.",
-
   glimpse: (
     <p>
       Next, two more collections: tuples, which cannot change, and sets, which hold each value once. In Data Structures and

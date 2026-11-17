@@ -371,9 +371,6 @@ for x in (np.array([1.0, 0.0]), np.array([0.3, -2.0]), np.array([5.0, 7.0])):
     },
   ],
 
-  teachBack:
-    "Explain to a friend why coordinates in an orthonormal basis are just inner products, how Gram–Schmidt builds such a basis in any inner product space, and how the Riesz theorem turns a linear functional into a vector.",
-
   glimpse: (
     <>
       <p>

@@ -431,9 +431,6 @@ assert distinct_substrings(s) > 10 ** 8` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how sorting all the suffixes of a text turns finding any word in it into a binary search.",
-
   glimpse: (
     <p>
       Suffix arrays find exact matches. Real reads contain sequencing errors and real words contain typos; the last lesson

@@ -281,9 +281,6 @@ assert expected_records(3) == Fraction(11, 6) and expected_records(0) == 0` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend linearity of expectation and how indicator variables turn a hard average, like the number of matching cards, into a one-line sum.",
-
   glimpse: (
     <p>
       Next, the probabilistic method, which uses expectation to prove that objects exist. Probability develops expectation and

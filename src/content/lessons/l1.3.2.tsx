@@ -265,9 +265,6 @@ assert abs(-s.intercept_[0] / s.coef_[0, 0] - t) < 1e-3 and abs(1 / s.coef_[0, 0
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a decision boundary is, why logistic regression's boundary is a straight line, and how extra features let it curve.",
-
   glimpse: (
     <p>
       Next, how to judge a classifier properly, starting with the confusion matrix. Statistical Machine Learning&rsquo;s

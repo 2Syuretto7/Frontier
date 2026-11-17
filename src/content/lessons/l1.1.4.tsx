@@ -283,9 +283,6 @@ assert all((x == z).all() for x, z in zip((a1, b1, c1), stratified_split(y, (0.5
     },
   ],
 
-  teachBack:
-    "Explain to a friend why data are split into training, validation and test sets, and how choosing the best of many models by test score inflates the result.",
-
   glimpse: (
     <p>
       This completes The learning problem. Next, linear regression, the first model fitted in earnest. Cross-validation

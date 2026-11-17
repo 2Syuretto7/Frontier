@@ -280,9 +280,6 @@ assert G.shape == (4, 4) and np.allclose(G, H, atol=1e-6) and np.all(np.linalg.e
     },
   ],
 
-  teachBack:
-    "Explain to a friend what an inner product is, give three examples, and show why Cauchy–Schwarz holds for every one of them.",
-
   glimpse: (
     <p>
       With an inner product, some bases are much better than others. Next: orthonormal bases, the Gram–Schmidt process in

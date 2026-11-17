@@ -306,9 +306,6 @@ assert np.allclose(block_multiply(A, B, 4), A @ B) and np.allclose(block_multipl
     },
   ],
 
-  teachBack:
-    "Explain to a friend the four ways to compute AB, why AB and BA usually differ, and why the order of multiplying a chain of matrices can change the cost enormously.",
-
   glimpse: (
     <p>
       Next, inverse matrices, which undo a multiplication when that is possible. Transformers and Language Models counts the

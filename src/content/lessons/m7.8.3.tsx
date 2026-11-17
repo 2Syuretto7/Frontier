@@ -315,9 +315,6 @@ assert abs(slem(lazy(C)) - (0.5 + 0.5 * np.cos(2 * np.pi / k))) < 1e-9 and isins
     },
   ],
 
-  teachBack:
-    "Explain to a friend what total variation distance measures, why a periodic chain need not converge and how laziness fixes it, how the Doeblin contraction proves geometric convergence, and how the second largest eigenvalue sets the mixing speed.",
-
   glimpse: (
     <>
       <p>

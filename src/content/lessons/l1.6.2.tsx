@@ -291,9 +291,6 @@ assert lab_s == [0] * 10 + [1] and lab_c != lab_s, 'Single linkage chains along 
     },
   ],
 
-  teachBack:
-    "Explain to a friend how agglomerative clustering builds a dendrogram, how a cut turns it into clusters, and how single and complete linkage differ.",
-
   glimpse: (
     <p>
       Next, principal components, which find structure of a different kind: the directions along which data varies most. Data

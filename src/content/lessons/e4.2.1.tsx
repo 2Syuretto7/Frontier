@@ -370,9 +370,6 @@ assert guilty_layers([slightly, shift, relu, double], ref, [1.0], tol=1e-12) == 
     },
   ],
 
-  teachBack:
-    "Explain to a friend why changing hyperparameters until a stuck loss moves is a poor way to debug, and how listing hypotheses and choosing experiments that split them is faster.",
-
   glimpse: (
     <p>
       Experiments are fast only when the failure is fast to reproduce. Next, minimal reproductions: cutting a failing run down

@@ -312,9 +312,6 @@ assert check_limit(lambda x: x * x, 3, 9) and check_limit(lambda x: math.sin(x) 
     },
   ],
 
-  teachBack:
-    "Explain to a friend the epsilon-delta definition of a limit as a game between a sceptic and a prover, and show how to win it for 2x + 1 near 1.",
-
   glimpse: (
     <p>
       This definition, with its alternating quantifiers, is the model for every precise definition in analysis. Next come the limit laws, which spare you from running the game by hand for every new function. In Multivariable and Matrix Calculus the absolute value is replaced by the length of a vector, and the same game defines limits and continuity in any number of dimensions.

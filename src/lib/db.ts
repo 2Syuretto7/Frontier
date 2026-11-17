@@ -79,6 +79,9 @@ const SCHEMA = [
      body TEXT NOT NULL,
      at TIMESTAMPTZ NOT NULL DEFAULT now()
    )`,
+  // Teach it back was removed: delete the saved explanations and Parton's reviews of them.
+  `DELETE FROM writings WHERE kind = 'teachback'`,
+  `DELETE FROM parton_notes WHERE kind = 'teachback'`,
   // Recall questions Parton wrote for the start of a lesson. Kept for good, so none is ever asked twice.
   `CREATE TABLE IF NOT EXISTS recall_questions (
      id SERIAL PRIMARY KEY,

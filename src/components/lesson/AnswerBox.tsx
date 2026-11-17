@@ -47,7 +47,7 @@ export function appendSpoken(text: string, spoken: string): string {
 }
 
 /**
- * A text box for Prove or argue and Teach it back that keeps typing to a minimum: answers can be
+ * A text box for Prove or argue answers that keeps typing to a minimum: answers can be
  * dictated, drafts are kept on this device until submitted, and Ctrl or Cmd + Enter submits.
  */
 export function AnswerBox({ value, onChange, onSubmit, draftKey, rows, placeholder, label, disabled }: {

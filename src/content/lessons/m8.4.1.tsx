@@ -313,9 +313,6 @@ assert c == [(0, 1, True, True), (3, math.inf, True, False)] and is_closed(c)` }
     },
   ],
 
-  teachBack:
-    "Explain to a friend what open and closed sets are, why infinite intersections of open sets can fail to be open, how limit points and sequences characterise closed sets, and why a set is open exactly when its complement is closed.",
-
   glimpse: (
     <>
       <p>

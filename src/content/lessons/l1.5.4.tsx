@@ -315,9 +315,6 @@ assert win == 'a' and spent == 3, 'Ties keep the earlier configuration.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why random search usually beats grid search, why learning rates are searched on a log scale, and why tuning hard can fool you.",
-
   glimpse: (
     <p>
       Next, learning without labels, starting with k-means. Neural Networks from Scratch tunes learning rates and their schedules

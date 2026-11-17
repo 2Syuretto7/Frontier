@@ -395,9 +395,6 @@ for _ in range(100):
     },
   ],
 
-  teachBack:
-    "Explain to a friend why choosing the talk that finishes first always fits in the most talks, and give an example where a different greedy rule fails.",
-
   glimpse: (
     <p>
       Coin change with awkward coins needed a table of answers for every smaller amount. That table is dynamic programming, the

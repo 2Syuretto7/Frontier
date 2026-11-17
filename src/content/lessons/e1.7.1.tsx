@@ -276,9 +276,6 @@ assert np.isnan(g.loc['N', '01']) and g.loc['N', '02'] == 50 and g.loc['N', '03'
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a dataframe is, what split, apply, combine means, and why column operations are faster than row-by-row functions.",
-
   glimpse: (
     <p>
       Next, the step that comes before any of this: real files arrive with stray spaces, mixed date formats, typos and

@@ -347,9 +347,6 @@ print(g())
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between local and global variables, the order in which Python looks up a name, and why passing values in and out beats using globals.",
-
   glimpse: (
     <p>
       Next, using functions to break a whole problem into parts. In Python, NumPy and the Command Line you will meet closures,

@@ -350,9 +350,6 @@ assert np.allclose(two_loop(np.array([1.0, -2.0]), [], []), [1.0, -2.0])` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the secant equation says, how the BFGS update satisfies it while staying positive definite, why L-BFGS needs only a few vectors and O(mn) work per step, and why BFGS behaves almost like Newton's method near the solution.",
-
   glimpse: (
     <>
       <p>

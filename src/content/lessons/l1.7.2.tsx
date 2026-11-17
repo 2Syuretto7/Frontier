@@ -301,9 +301,6 @@ assert leaked_rows(np.array([[1, 2], [3, 4]]), np.array([[3, 4], [5, 6], [1, 2],
     },
   ],
 
-  teachBack:
-    "Explain to a friend what leakage is, give one example each of target leakage, contamination and temporal leakage, and state the rule that prevents all three.",
-
   glimpse: (
     <p>
       Next, baselines: the simple predictors every model must beat before its score means anything. Evaluation and the Science of

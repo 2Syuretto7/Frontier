@@ -291,9 +291,6 @@ print(int(b) + 1)
     },
   ],
 
-  teachBack:
-    "Explain to a friend the four basic types of Python value, what a variable is, and why x = x + 1 makes sense in Python.",
-
   glimpse: (
     <p>
       Next, combining values with operators into expressions. In Python, NumPy and the Command Line you will see how Python

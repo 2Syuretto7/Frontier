@@ -299,9 +299,6 @@ assert abs(first_order_gap(g, np.array([0.5, 0.5]), [np.array(p) for p in [(0.0,
     },
   ],
 
-  teachBack:
-    "Explain to a friend why projected gradient descent steps then projects, why its fixed points are exactly the constrained minimisers, how nonexpansiveness of projection preserves the convergence rates of gradient descent, and which constraint sets have cheap projections.",
-
   glimpse: (
     <>
       <p>

@@ -339,9 +339,6 @@ assert c == 2 and r.device == "gpu" and r.dtype == "float32" and r.data == [9.0,
     },
   ],
 
-  teachBack:
-    "Explain to a friend how a framework chooses a kernel for a + b, why it refuses to mix devices, how dtype promotion works, and what a fallback costs.",
-
   glimpse: (
     <p>
       The table has a column for the GPU, but no kernels in it yet. Next, a first look at a GPU backend: thousands of threads,

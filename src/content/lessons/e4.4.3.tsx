@@ -306,9 +306,6 @@ assert split_by_group(items, g, 0.01, seed=0)[1] != [], 'ceil gives at least one
     },
   ],
 
-  teachBack:
-    "Explain to a friend what to look for when reviewing a change to evaluation code, and why a sudden improvement in a result is a reason to look harder.",
-
   glimpse: (
     <p>
       Correct code that is slow wastes compute and time. Next, profiling: measuring where a program actually spends its time

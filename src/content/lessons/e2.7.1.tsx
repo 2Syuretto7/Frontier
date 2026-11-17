@@ -383,9 +383,6 @@ assert math.isclose(got, best), (got, best)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how Karatsuba multiplies with three half-size products instead of four, and why that changes n² into n to the 1.585.",
-
   glimpse: (
     <p>
       Divide and conquer works when the subproblems are independent. When they overlap, solving each once and remembering the

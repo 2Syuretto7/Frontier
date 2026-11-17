@@ -280,9 +280,6 @@ assert any(c) and all(sum(ci * v[k] for ci, v in zip(c, vs)) == 0 for k in range
     },
   ],
 
-  teachBack:
-    "Explain to a friend what it means for vectors to be independent, how to test independence with the null space, and why duplicated features make a regression's weights unstable.",
-
   glimpse: (
     <p>
       Next, a basis: a set that is independent and spans, and the dimension, which counts it. Interpretability returns to

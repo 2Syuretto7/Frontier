@@ -297,9 +297,6 @@ assert len(calibrate(Ws, x, np.tanh)) == 5` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why every weight must not start at the same value, and why the weight variance should be about 1/n for a deep network.",
-
   glimpse: (
     <p>
       The 1/n rule ignored the activation function and the backward pass. Next: Xavier and He initialisation, which account

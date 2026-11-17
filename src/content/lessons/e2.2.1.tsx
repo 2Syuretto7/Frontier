@@ -423,9 +423,6 @@ assert time.time() - t < 4, 'Both should be linear.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why indexing an array is O(1) while inserting at the front is O(n), and what a Python list actually stores in its slots.",
-
   glimpse: (
     <p>
       The next lesson trades random access for cheap insertion with linked lists, and the one after builds stacks, queues and ring

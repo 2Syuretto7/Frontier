@@ -314,9 +314,6 @@ assert n_for_squeeze(lambda e: 4, lambda e: 2, 1.0) == 4` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how an ε–N proof splits its tolerance among hypotheses, why convergent sequences are bounded and why the product rule needs that, and why limits preserve ≤ but not <.",
-
   glimpse: (
     <>
       <p>

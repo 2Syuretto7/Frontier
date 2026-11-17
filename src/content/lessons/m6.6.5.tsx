@@ -323,9 +323,6 @@ assert np.allclose(kron_eigvals(np.diag([2.0, 3.0]), np.diag([1.0, 2.0])), [2.0,
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a Kronecker product is, why the mixed-product property makes its inverse, eigenvalues and SVD come from the factors, and how the vec trick lets you multiply by it cheaply.",
-
   glimpse: (
     <>
       <p>

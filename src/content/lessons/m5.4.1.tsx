@@ -294,9 +294,6 @@ assert np.allclose(J, np.kron(np.eye(2), B.T), atol=1e-6)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the derivative of Ax is written as A in one book and Aᵀ in another, and how differentials and the trace trick avoid the confusion.",
-
   glimpse: (
     <p>
       With these rules, the gradients that appear everywhere, of linear and quadratic forms and of least squares, take a line

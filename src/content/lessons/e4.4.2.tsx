@@ -339,9 +339,6 @@ else:
     },
   ],
 
-  teachBack:
-    "Explain to a friend why passing a random generator and a logger into a training function as arguments makes it easier to test and to change than reading them from globals.",
-
   glimpse: (
     <p>
       Modular code is easier to read, and somebody else will read it. Next, code review: what to look for in a colleague&rsquo;s

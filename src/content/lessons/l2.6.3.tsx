@@ -325,9 +325,6 @@ assert np.allclose(communality(W, np.array([2.0, 1.0, 4.0])), [0.5, 0.9, 0.5])` 
     },
   ],
 
-  teachBack:
-    "Explain to a friend how factor analysis differs from probabilistic PCA, why separate noise variances let it tell shared structure from feature-specific noise, how EM fits it, and why its answers do not change when a feature is rescaled.",
-
   glimpse: (
     <>
       <p>

@@ -291,9 +291,6 @@ assert codes == [2, 2, 2, 0], 'argparse exits with 2 on errors and 0 for --help.
     },
   ],
 
-  teachBack:
-    "Explain to a friend the three standard streams, what > , >> and | do, and how to turn a pipeline into a script that takes arguments.",
-
   glimpse: (
     <p>
       Next, running all of this on a machine on the other side of the world, over SSH. SQL, later in this course, asks the same

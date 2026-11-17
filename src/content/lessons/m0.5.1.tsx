@@ -339,9 +339,6 @@ assert len(ts) == 158 and all(a * a + b * b == c * c and math.gcd(a, b) == 1 for
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the angles of every triangle add to 180 degrees, and show them the four-triangle proof of Pythagoras with a sketch.",
-
   glimpse: (
     <p>
       Next, circles, where similarity explains why every circle has the same ratio of circumference to diameter, and

@@ -260,9 +260,6 @@ assert ok, '{{∅}} has one element but is not 1.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between ∅ and {∅}, and why {{1, 2}, 3} has two elements, not three.",
-
   glimpse: (
     <p>
       Next comes the most important relation between sets, being a subset, and what it means for two sets to be equal. Russell&rsquo;s paradox was resolved by the axioms of set theory, which build every set from sets already given; Measure-Theoretic Probability shows why even probability needs that care.

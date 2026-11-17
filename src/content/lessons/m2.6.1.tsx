@@ -297,9 +297,6 @@ assert abs(errs[0] - (0.46875 - 1 / 3)) < 1e-15, 'Right sum with 4 strips is 0.4
     },
   ],
 
-  teachBack:
-    "Explain to a friend how adding up thin rectangles gives the area under a curve, and why the answer for x² from 0 to 1 must be exactly one third.",
-
   glimpse: (
     <p>
       The next lesson asks when such sums really do settle on one number, whatever the choice of points. In Multivariable and Matrix Calculus, the strips become small boxes and the area becomes volume. And in Measure-Theoretic Probability, Lebesgue cuts the range of the function instead of the domain, and integrates functions that defeat Riemann sums entirely.

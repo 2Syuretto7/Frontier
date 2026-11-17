@@ -293,9 +293,6 @@ assert np.allclose(Q, [[1, 2], [6, 0]])` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why intersections, affine images and affine preimages of convex sets are convex, how polyhedra, ellipsoids and spectrahedra arise this way, why the perspective map preserves convexity, and why unions do not.",
-
   glimpse: (
     <>
       <p>

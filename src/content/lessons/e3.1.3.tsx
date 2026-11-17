@@ -334,9 +334,6 @@ assert gray_inverse(gray(big)) == big` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why x & (x − 1) removes the lowest 1 bit of x, and how that counts the 1 bits.",
-
   glimpse: (
     <p>
       Chapter 1 is done: you know what the bits mean. Next, the programs that move them around, starting with C, the

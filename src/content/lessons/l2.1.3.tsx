@@ -283,9 +283,6 @@ assert np.allclose(map_laplace(X, y, 4.0), [2.0, 0.0, -1.0]) and np.allclose(map
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a MAP estimate is, why a Gaussian prior gives ridge and a Laplace prior gives lasso, what λ measures, and why lasso produces exact zeros while ridge does not.",
-
   glimpse: (
     <>
       <p>

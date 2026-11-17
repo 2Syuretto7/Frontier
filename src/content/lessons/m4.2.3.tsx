@@ -284,9 +284,6 @@ assert partitions_distinct(10) == 10 and all(partitions_distinct(n) == odd_parts
     },
   ],
 
-  teachBack:
-    "Explain to a friend how multiplying generating functions counts combined choices, using the coins, and why the coefficient of xⁿ is the answer.",
-
   glimpse: (
     <p>
       Probability uses moment generating functions, which encode a distribution as a function in the same way. Data Structures

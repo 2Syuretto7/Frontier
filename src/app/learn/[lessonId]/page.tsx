@@ -4,19 +4,18 @@ import { notFound } from "next/navigation";
 import { requireOwner } from "@/lib/auth";
 import { EXERCISES, GRAPH, LESSON_BY_ID, exerciseId } from "@/lib/curriculum";
 import { connections, isUnlocked } from "@/lib/graph";
-import { exerciseStates, latestTeachBack, masteredSet, masteryReport, startLesson } from "@/lib/learning";
-import { recallSources } from "@/lib/recall";
+import { exerciseStates, masteredSet, masteryReport, startLesson } from "@/lib/learning";
 import { toView } from "@/lib/views";
 import { TopBar } from "@/components/TopBar";
 import { ExerciseCard } from "@/components/lesson/ExerciseCard";
+import { recallSources } from "@/lib/recall";
 import { RecallLoading, RecallQuestions } from "@/components/lesson/RecallQuestions";
-import { TeachBack } from "@/components/lesson/TeachBack";
 import { MasteryBanner } from "@/components/lesson/MasteryBanner";
 import { PartonPanel } from "@/components/parton/PartonPanel";
 import { LessonRail } from "@/components/lesson/LessonRail";
 import { Pill } from "@/components/ui/Pill";
 import { ArrowLeft, Lock } from "@/components/ui/Icons";
-import { conversation, latestTeachBackReview, partonConnected, renderReview } from "@/lib/parton";
+import { conversation, partonConnected } from "@/lib/parton";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +32,6 @@ const SECTIONS = [
   ["intuition", "Intuition"],
   ["theory", "Theory"],
   ["practice", "Practice"],
-  ["teach", "Teach it back"],
   ["connections", "Connections"],
 ] as const;
 
@@ -74,11 +72,9 @@ export default async function LessonPage({ params }: { params: Promise<{ lessonI
   await startLesson(lessonId);
   const hasRecall = recallSources(lessonId, mastered).length > 0;
   const states = await exerciseStates([lessonId]);
-  const [teach, report, chat, teachReview] = await Promise.all([
-    latestTeachBack(lessonId),
+  const [report, chat] = await Promise.all([
     masteryReport(lessonId),
     conversation(lessonId),
-    latestTeachBackReview(lessonId),
   ]);
   const connected = partonConnected();
   const links = connections(GRAPH, lessonId);
@@ -138,8 +134,8 @@ export default async function LessonPage({ params }: { params: Promise<{ lessonI
           <section id="practice" className="lesson-section">
             <h2><StepChip id="practice" sections={sections} />Practice</h2>
             <p className="section-lede">
-              Mastery needs at least 80 percent of the check, apply and prove questions, every written proof or argument accepted by Parton,
-              and your teach-back. Stretch questions are optional. So far: {Math.round(report.score * 100)} percent solved
+              Mastery needs at least 80 percent of the check, apply and prove questions, and every written proof or argument accepted by Parton.
+              Stretch questions are optional. So far: {Math.round(report.score * 100)} percent solved
               {required.some((e) => e.answer.kind === "written") && <>, written work {report.writtenDone ? "accepted" : "not yet accepted"}</>}.
             </p>
             {lesson.practice.map((e, i) => {
@@ -150,13 +146,6 @@ export default async function LessonPage({ params }: { params: Promise<{ lessonI
                 </ExerciseCard>
               );
             })}
-          </section>
-
-          <section id="teach" className="lesson-section">
-            <h2><StepChip id="teach" sections={sections} />Teach it back</h2>
-            <p className="section-lede">If you can explain it simply, you understand it. If you can&rsquo;t, you&rsquo;ve found what to study next.</p>
-            <TeachBack lessonId={lessonId} prompt={lesson.teachBack} initial={teach} connected={connected}
-              initialReview={teachReview ? renderReview(teachReview) : null} />
           </section>
 
           <section id="connections" className="lesson-section">

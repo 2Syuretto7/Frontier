@@ -267,9 +267,6 @@ assert acc[0] > 0.97 and acc[0] > acc[1] > acc[2] and acc[2] < 0.75, 'Noise dime
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a neighbourhood holding 1% of the data is not local in 100 dimensions, and why real data can still be learned from.",
-
   glimpse: (
     <p>
       Next, decision trees, which choose a few features to split on rather than measuring distance in all of them. High-Dimensional

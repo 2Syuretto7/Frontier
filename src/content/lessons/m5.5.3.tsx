@@ -312,9 +312,6 @@ assert np.allclose(z, [1, 1]), 'At a minimum there is no escape direction.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the eigenvalues of the Hessian classify a critical point, why a zero eigenvalue makes the test fail, and why saddles are common in high dimensions.",
-
   glimpse: (
     <p>
       Computing the full Hessian of a large model is out of the question, but multiplying it by a vector is cheap. Next,

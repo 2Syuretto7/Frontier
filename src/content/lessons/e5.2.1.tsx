@@ -364,9 +364,6 @@ assert np.allclose(a.grad, num, atol=1e-8), (a.grad, num)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what changes and what stays the same when a scalar autograd engine becomes a tensor engine, and why elementwise closures never need a Jacobian matrix.",
-
   glimpse: (
     <p>
       Adding a bias vector to every row of a batch is a broadcast, and a broadcast copies an entry many times. Next: what the

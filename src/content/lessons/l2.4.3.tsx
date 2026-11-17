@@ -306,9 +306,6 @@ assert np.allclose(boost_score(m, X), [0.5, -1.5])` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how AdaBoost reweights points and weights its votes, why its training error falls geometrically when each stump beats chance, and how it can be seen as stagewise minimisation of the exponential loss.",
-
   glimpse: (
     <>
       <p>

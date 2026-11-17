@@ -287,9 +287,6 @@ assert abs(l - 4.0) < 1e-9 and abs(v - 4.0) < 1e-6` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the Lagrangian prices the constraints, why the dual function is concave and gives a lower bound on the optimal value for every nonnegative multiplier, and how to compute it for a least-norm problem and a linear program.",
-
   glimpse: (
     <>
       <p>

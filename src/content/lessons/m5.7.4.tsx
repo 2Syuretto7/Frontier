@@ -284,9 +284,6 @@ assert mc_ball_volume(25, 100000) < 0.01, 'In 25 dimensions almost no point land
     },
   ],
 
-  teachBack:
-    "Explain to a friend why grids fail for integrals in many dimensions while random sampling does not, and what the strange geometry of high-dimensional balls says about intuition.",
-
   glimpse: (
     <p>
       That completes multivariable and matrix calculus. Its tools, gradients, Jacobians, Hessians and change of variables,

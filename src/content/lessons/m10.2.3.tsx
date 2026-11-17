@@ -304,9 +304,6 @@ assert abs(midpoint_gap(np.exp, 0.0, 2.0) - ((1 + np.e ** 2) / 2 - np.e)) < 1e-1
     },
   ],
 
-  teachBack:
-    "Explain to a friend the operations that preserve convexity of functions (nonnegative sums, affine composition, pointwise suprema, composition rules, partial minimisation and the perspective), and use them to show that the largest eigenvalue, the hinge loss and the distance to a convex set are convex.",
-
   glimpse: (
     <>
       <p>

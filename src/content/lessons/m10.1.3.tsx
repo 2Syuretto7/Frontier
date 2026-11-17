@@ -320,9 +320,6 @@ assert separates(a, 0.5, np.array([[0.0, 5.0], [0.4, -2.0]]), np.array([[1.0, 0.
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a closed convex set has a unique nearest point to any x, how the projection inequality characterises it, how this gives a hyperplane separating x from the set, how two disjoint convex sets are separated, and what a supporting hyperplane is.",
-
   glimpse: (
     <>
       <p>

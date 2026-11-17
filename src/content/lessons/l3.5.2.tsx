@@ -307,9 +307,6 @@ assert np.allclose(bn.mean, [1.5, 3.0])` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what batch, layer and RMS normalisation each compute, why BatchNorm needs running statistics, and why scale invariance stabilises training.",
-
   glimpse: (
     <p>
       Normalisation fixes the scale of activations, but the gradient still has to pass through every layer's Jacobian. Next:

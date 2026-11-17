@@ -304,9 +304,6 @@ assert k == 'one' and abs(x - 1) < 1e-12 and abs(y - 3) < 1e-12, 'Cramer: x = (e
     },
   ],
 
-  teachBack:
-    "Explain to a friend why two linear equations in two unknowns can have one solution, none or infinitely many, using the picture of two lines, and say what the number ad − bc tells you.",
-
   glimpse: (
     <p>
       Next, inequalities, where the balance tips. In Linear Algebra, systems with any number of equations and unknowns are

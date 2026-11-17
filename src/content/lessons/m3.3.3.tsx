@@ -289,9 +289,6 @@ assert np.allclose(sherman_morrison(np.linalg.inv(A), u, v), np.linalg.inv(A + n
     },
   ],
 
-  teachBack:
-    "Explain to a friend what an inverse matrix is, why a matrix that flattens the plane cannot have one, why the inverse of AB is B⁻¹A⁻¹, and why we rarely compute inverses in practice.",
-
   glimpse: (
     <p>
       Next, elimination recorded as a factorisation A = LU, which is how computers actually solve systems. The quantity ad − bc

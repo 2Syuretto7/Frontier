@@ -496,9 +496,6 @@ assert check(t) < 60, 'Random priorities keep even sorted insertions shallow.'` 
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a rotation does and why it keeps a tree a valid search tree, and how AVL trees use rotations to keep their height logarithmic.",
-
   glimpse: (
     <p>
       Balanced trees are the ordered maps of most standard libraries and the indexes of databases and file systems; Computer

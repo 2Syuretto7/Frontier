@@ -286,9 +286,6 @@ print(x, a * x + b == c * x + d)`}</Code>
     },
   ],
 
-  teachBack:
-    "Explain why 'do the same to both sides' works, and why it fails if you multiply both sides by zero. A balance, or any picture you like, will help.",
-
   glimpse: (
     <p>
       Next, systems of two equations, solved by elimination and pictured as two lines. Linear equations return as

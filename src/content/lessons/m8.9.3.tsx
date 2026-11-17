@@ -290,9 +290,6 @@ assert abs(picard(lambda y: y, 1.0, 0.001, 1000, 40)[-1] - math.e) < 1e-5` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the statement of the contraction mapping theorem, the proof that iterates are Cauchy and converge to the unique fixed point, the two error bounds, why completeness and a uniform q < 1 are both needed, and how the theorem gives solutions of differential equations.",
-
   glimpse: (
     <>
       <p>

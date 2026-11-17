@@ -284,9 +284,6 @@ assert abs(fit_poisson([4, 4], steps=1) - math.exp(0.6)) < 1e-9` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the likelihood is, how to find the maximum likelihood estimate for a coin, a normal sample and a uniform sample, why the estimate is invariant under reparametrisation, and why minimising cross-entropy loss is maximum likelihood.",
-
   glimpse: (
     <>
       <p>

@@ -295,9 +295,6 @@ assert iterate_until(lambda x: x, 3.0, 1e-6, 5) == (3.0, 1)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a Cauchy sequence is, why it converges in ℝ but not always in ℚ, why consecutive terms getting close is not enough, and how a contraction factor c < 1 proves convergence with an error bar.",
-
   glimpse: (
     <>
       <p>

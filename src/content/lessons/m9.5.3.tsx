@@ -286,9 +286,6 @@ assert abs(p - 1 / 64) < 0.006 and sign_flip(-np.ones(6), B=100) == 1.0` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why shuffling labels simulates the null hypothesis, how an exact permutation test is computed, why the Monte Carlo p-value with the plus one is valid, and how sign flipping compares two models on the same test examples.",
-
   glimpse: (
     <>
       <p>

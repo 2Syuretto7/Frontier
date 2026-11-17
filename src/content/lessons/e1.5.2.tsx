@@ -276,9 +276,6 @@ acc = correct / len(pred)`}</Code>
     },
   ],
 
-  teachBack:
-    "Explain to a friend why vectorised NumPy code is fast, how to replace an if inside a loop, and why softmax subtracts the maximum first.",
-
   glimpse: (
     <p>
       Next, broadcasting, which lets arrays of different shapes be combined without copying. On GPUs, vectorised thinking is not

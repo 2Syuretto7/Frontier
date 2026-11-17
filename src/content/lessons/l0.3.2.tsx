@@ -276,9 +276,6 @@ assert loo_mse(train, 59) > loo_mse(train, k)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to predict whether someone will like a film from the films most similar to it, and how the number of neighbours you consult changes the answer.",
-
   glimpse: (
     <p>
       Next, a model that asks a short series of questions: the decision tree. In Introduction to Machine Learning you will

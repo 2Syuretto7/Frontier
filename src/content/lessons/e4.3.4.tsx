@@ -307,9 +307,6 @@ assert holm([0.009, 0.02, 0.013, 0.001, 0.5]) == {0, 1, 2, 3}` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why writing a prediction down before an experiment makes its result more believable, and why trying many variants and reporting the best one is misleading.",
-
   glimpse: (
     <p>
       Notes, configs and logs make research reproducible; the code itself must also stay workable as it grows. Next, research

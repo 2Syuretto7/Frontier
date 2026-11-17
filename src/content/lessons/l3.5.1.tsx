@@ -275,9 +275,6 @@ assert abs(n - 0.5) < 1e-12 and np.allclose(gs[0], [0.3, 0.4]) and np.allclose(g
     },
   ],
 
-  teachBack:
-    "Explain to a friend why gradients vanish or explode in deep networks, how to see it in per-layer gradient norms, and why clipping helps one problem but not the other.",
-
   glimpse: (
     <p>
       If each layer's activations could be put back to a standard scale, the factors would stay near 1 by construction. Next:

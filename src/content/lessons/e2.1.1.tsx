@@ -443,9 +443,6 @@ assert time.time() - t0 < 3, 'Use sets and dicts so that each test is O(1).'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the list version of dedupe is quadratic and the set version linear, and how doubling n tells you the growth rate of a piece of code.",
-
   glimpse: (
     <p>
       Worst-case bounds can be pessimistic for a sequence of operations where expensive steps are rare: amortised analysis, next,

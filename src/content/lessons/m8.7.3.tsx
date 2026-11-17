@@ -289,9 +289,6 @@ assert abs(riemann(lambda x: 2 * x, P, midpoints(P)) - 4) < 1e-12` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the two forms of the fundamental theorem of calculus, how the mean value theorem turns F(b) − F(a) into a Riemann sum, why continuity of f at c is needed for F′(c) = f(c), and what Thomae's function shows.",
-
   glimpse: (
     <>
       <p>

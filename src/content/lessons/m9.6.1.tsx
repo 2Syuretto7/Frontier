@@ -294,9 +294,6 @@ assert abs(b / a - 0.8) < 0.03 and abs(regression_to_mean(0.0)[1]) < 0.05` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the least squares line is derived, why it is the maximum likelihood fit under normal errors, what R² measures, and why regression to the mean happens whenever we select on a noisy measurement.",
-
   glimpse: (
     <>
       <p>

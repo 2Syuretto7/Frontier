@@ -304,9 +304,6 @@ assert image_range(lambda x: (x - 1) * (x - 1), 0, 3, 3) == (0.0, 4.0)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend the definition of continuity, why continuous images of compact sets are compact, how that gives the extreme value theorem, and which of its hypotheses each counterexample drops.",
-
   glimpse: (
     <>
       <p>

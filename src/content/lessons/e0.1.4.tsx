@@ -258,9 +258,6 @@ def total_line(total):
     },
   ],
 
-  teachBack:
-    "Explain to a friend why input always gives a string, how to turn it into a number, and how print and f-strings control what the user sees.",
-
   glimpse: (
     <p>
       This completes First programs. Next, programs that make decisions with if and else. In Python, NumPy and the Command

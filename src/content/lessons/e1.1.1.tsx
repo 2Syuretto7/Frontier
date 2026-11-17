@@ -271,9 +271,6 @@ assert expand('*.py', names) == ['a.py', 'b.py'] and expand('.*', names) == ['.e
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a shell is, the difference between absolute and relative paths, and what . , .. and ~ mean.",
-
   glimpse: (
     <p>
       Next, creating, moving and deleting files, and the programs, called processes, that the shell starts. Later in this course

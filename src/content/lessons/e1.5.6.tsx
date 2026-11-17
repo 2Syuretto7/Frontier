@@ -256,9 +256,6 @@ assert np.allclose(out, correlate2d(img, ker, mode='valid')), 'A convolution lay
     },
   ],
 
-  teachBack:
-    "Explain to a friend what strides are, why a transpose is free, and why memory order affects speed.",
-
   glimpse: (
     <p>
       Next, visualisation: turning arrays into pictures you can trust. Data Structures and Algorithms begins with the dynamic

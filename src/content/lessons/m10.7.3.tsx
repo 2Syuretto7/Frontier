@@ -287,9 +287,6 @@ assert np.allclose(c[on], 5.0 * np.sign(x[on]), atol=1e-6) and np.all(np.abs(c[~
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the ℓ₁ penalty produces exact zeros while the squared penalty does not, using both the corners of the diamond and the subdifferential of |x| at 0, how λ_max is found, and how coordinate descent solves the lasso.",
-
   glimpse: (
     <>
       <p>

@@ -266,9 +266,6 @@ for _ in range(30):
     },
   ],
 
-  teachBack:
-    "Explain to a friend what precision and recall measure, why they trade off against each other, and what the ROC curve and its area tell you.",
-
   glimpse: (
     <p>
       This completes Classification. Next, two classifiers that are not linear at all: nearest neighbours and decision trees.

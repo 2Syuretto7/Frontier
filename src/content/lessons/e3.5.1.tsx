@@ -479,9 +479,6 @@ flag[i] = False`}</Code>
     },
   ],
 
-  teachBack:
-    "Explain to a friend why two threads adding 1 to the same counter can lose an update, and how a lock and a lock order fix the two classic problems.",
-
   glimpse: (
     <p>
       A lock is one tool against one kind of race. Next: races in general, atomic operations such as compare-and-swap, and

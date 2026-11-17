@@ -317,9 +317,6 @@ assert abs(a - 2 / 3) < 1e-12 and abs(b - 1) < 1e-12` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the rationals can be dense yet countable, Cantor's nested-interval proof that the reals are not, why every countable set has measure zero, and why the Cantor set shows the converse fails.",
-
   glimpse: (
     <>
       <p>

@@ -335,9 +335,6 @@ assert unreachable(g, ['missing']) == sorted(g)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to find the place to make a change in a large codebase they have never seen, without reading all of it.",
-
   glimpse: (
     <p>
       That completes the engineering habits: tests, debugging, reproducibility, design, performance and documentation. The

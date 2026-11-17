@@ -341,9 +341,6 @@ assert check_shapes({'rgb': (32, 32, 3)}, {'rgb': 'h w 3'}) == {'h': 32, 'w': 32
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a shape mismatch in NumPy usually produces a wrong number rather than an error, and how a one-line assertion turns it into an error at the line where it happens.",
-
   glimpse: (
     <p>
       Assertions tell you where a program first goes wrong. When one fires, or when a result is wrong and no assertion fires,

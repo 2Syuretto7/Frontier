@@ -350,9 +350,6 @@ assert interlaces(A) is True and interlaces(np.diag([1.0, 3.0, 2.0])) is True` }
     },
   ],
 
-  teachBack:
-    "Explain to a friend why the Rayleigh quotient of a symmetric matrix is a weighted average of its eigenvalues, how Courant–Fischer describes the k-th eigenvalue as a min–max, and why that forces interlacing.",
-
   glimpse: (
     <>
       <p>

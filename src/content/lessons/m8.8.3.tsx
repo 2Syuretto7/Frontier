@@ -293,9 +293,6 @@ assert poly_eval(deriv_coeffs(integ_coeffs(c)), 0.7) == poly_eval(c, 0.7)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the radius of convergence comes from the root test, why a power series converges uniformly on smaller closed intervals, why it can be differentiated and integrated term by term, and why 1/(1 + x²) has radius 1.",
-
   glimpse: (
     <>
       <p>

@@ -290,9 +290,6 @@ assert all(x > y for x, y in zip(a, b)) and abs(a[1] - 0.327) < 0.02` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the Neyman-Pearson lemma says, why spending the false alarm budget on outcomes with the highest likelihood ratio maximises power, how it gives the uniformly most powerful one-sided test for a normal mean, and how it relates to ROC curves.",
-
   glimpse: (
     <>
       <p>

@@ -301,9 +301,6 @@ assert e[1] < e[0] ** 2 and e[2] < e[1] ** 2` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a fixed-point iteration with |T′(x*)| < 1 converges locally, how the step size sets the contraction factor of gradient descent and why ill-conditioning slows it, why Newton's method converges quadratically, and when the Jacobi solver is a contraction.",
-
   glimpse: (
     <>
       <p>

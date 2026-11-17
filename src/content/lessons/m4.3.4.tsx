@@ -345,9 +345,6 @@ assert count_paths((m + 1) ** 2, E, 0, idx(m, m)) == comb(2 * m, m) and count_pa
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a topological order is, why it exists exactly when there is no directed cycle, and how a deep-learning framework uses one to run a forward and backward pass.",
-
   glimpse: (
     <p>
       Data Structures and Algorithms implements topological sort by Kahn&rsquo;s algorithm and by depth-first search. In Build

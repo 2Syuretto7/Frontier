@@ -302,9 +302,6 @@ assert all(np.all(np.isfinite(g)) for pair in grads for g in pair)` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the backward pass of a dense layer becomes three matrix products, and how the shapes tell you which ones.",
-
   glimpse: (
     <p>
       Hand-derived gradients are easy to get subtly wrong. Next: checking them against finite differences, and reading what

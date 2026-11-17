@@ -316,9 +316,6 @@ assert all(a < b for a, b in zip(vals, vals[1:])), 'Inscribed polygons approach 
     },
   ],
 
-  teachBack:
-    "Explain to a friend why every circle has the same ratio of circumference to diameter, what one radian is, and why a full turn is 2π radians.",
-
   glimpse: (
     <p>
       Next, sine and cosine, defined by walking round a circle of radius 1, where an angle in radians is simply the distance

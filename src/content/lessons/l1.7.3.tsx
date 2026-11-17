@@ -274,9 +274,6 @@ assert moving_average(np.array([1.0, 2.0, 3.0]), np.array([4.0, 6.0]), 2) == ((4
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a model's score means nothing without a baseline, name three baselines, and say why balanced accuracy suits rare classes better than accuracy.",
-
   glimpse: (
     <p>
       Next, error analysis: reading what a model gets wrong to decide what to do next. Statistical Machine Learning grounds the

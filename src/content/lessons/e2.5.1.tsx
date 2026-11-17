@@ -428,9 +428,6 @@ assert 0.45 < inv / (100000 * 99999 / 2) < 0.55 and time.time() - t < 6` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why quicksort is usually fast but can be quadratic, how random pivots and three-way partitioning fix that, and why stability matters when sorting by several keys.",
-
   glimpse: (
     <p>
       Binary search, next, is what sorted data makes possible. Partitioning returns in selection, finding the k-th smallest item

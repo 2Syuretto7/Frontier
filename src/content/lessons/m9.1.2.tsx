@@ -251,9 +251,6 @@ def tail_prob(n, reps, c, seed=0):
     },
   ],
 
-  teachBack:
-    "Explain to a friend what a sampling distribution is, why for normal data the mean and sample variance are independent, where the chi-squared and t distributions come from, and why ±1.96 standard errors is too narrow for small samples.",
-
   glimpse: (
     <>
       <p>

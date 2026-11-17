@@ -373,9 +373,6 @@ for _ in range(60):
     },
   ],
 
-  teachBack:
-    "Explain to a friend how two programs can both use address 0x601040 without interfering, and what the hardware does on each access.",
-
   glimpse: (
     <p>
       The page table is per process, and switching tables switches worlds. Next chapter: processes and threads, what the

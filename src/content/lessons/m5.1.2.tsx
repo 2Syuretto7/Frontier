@@ -285,9 +285,6 @@ assert time.time() - t < 5, 'Evaluate f on whole arrays, not point by point.'` }
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the level sets of a function of two variables are, what their shapes tell you about the landscape, and why checking limits along straight lines can mislead.",
-
   glimpse: (
     <p>
       Level sets show where a function is constant; derivatives measure how fast it changes. Before derivatives, one more

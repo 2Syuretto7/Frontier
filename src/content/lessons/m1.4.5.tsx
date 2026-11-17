@@ -272,9 +272,6 @@ assert 'itertools' not in inspect.getsource(subsets_of_size) and 'combinations' 
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a set with n elements has 2ⁿ subsets, using toppings on a pizza.",
-
   glimpse: (
     <p>
       This completes the chapter on sets. A relation, later in this course, is simply a subset of a Cartesian product, and a

@@ -316,9 +316,6 @@ assert np.allclose(m, [0, 2, 4]) and np.allclose(al, 0.3) and np.allclose(ep, [0
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between aleatoric and epistemic uncertainty, how an ensemble estimates each, how split conformal prediction builds intervals, why its coverage guarantee holds under exchangeability, and what that guarantee does not promise.",
-
   glimpse: (
     <>
       <p>

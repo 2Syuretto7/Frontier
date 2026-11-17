@@ -329,9 +329,6 @@ assert orth_error(newton_schulz(G, steps=1)) > orth_error(newton_schulz(G, steps
     },
   ],
 
-  teachBack:
-    "Explain to a friend how every square matrix factors as an isometry times a positive matrix, why the isometry is the nearest orthogonal matrix, and how Newton–Schulz computes it.",
-
   glimpse: (
     <>
       <p>

@@ -338,9 +338,6 @@ assert classify_critical(np.array([[1.0, 2.0], [2.0, 1.0]])) == "saddle"` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a bilinear form's matrix changes by PᵀSP rather than P⁻¹SP, and why the signs of its eigenvalues (its inertia) are the only basis-independent information.",
-
   glimpse: (
     <>
       <p>

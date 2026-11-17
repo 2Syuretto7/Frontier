@@ -297,9 +297,6 @@ a()
     },
   ],
 
-  teachBack:
-    "Explain to a friend what happens when Python reaches a def statement and when it reaches a call, and why functions make programs easier to change.",
-
   glimpse: (
     <p>
       Next, functions that take values in and hand results back with return. In Python, NumPy and the Command Line you will

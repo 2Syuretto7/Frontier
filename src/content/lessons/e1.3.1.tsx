@@ -272,9 +272,6 @@ assert a == [1, [2, [3, 4]], 'x'] and b == [1, [2, [3, 4, 5]], 'x'] and b is not
     },
   ],
 
-  teachBack:
-    "Explain to a friend why b = a does not copy a list, the difference between is and ==, and why mutable default arguments are a trap.",
-
   glimpse: (
     <p>
       Next, functions as objects: closures and decorators. NumPy&rsquo;s views, later in this course, are the same aliasing idea

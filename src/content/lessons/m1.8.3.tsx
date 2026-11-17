@@ -312,9 +312,6 @@ assert all(g(i) != progs[i](i) for i in range(4)), 'g disagrees with program i a
     },
   ],
 
-  teachBack:
-    "Explain to a friend Cantor's diagonal argument: why any list of infinite 0-1 sequences must miss one, and what that tells us about the real numbers.",
-
   glimpse: (
     <p>
       So some infinite sets are larger than others. The last lesson of the course shows why this matters for probability: on an uncountable set such as an interval, every single point can have probability zero. The same diagonal argument proves, in the theory of computation, that no program can decide whether every other program halts.

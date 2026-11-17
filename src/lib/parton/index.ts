@@ -14,15 +14,12 @@ import {
   acceptWritten,
   MARK_SCHEMA,
   RUNGS,
-  TEACHBACK_RULES,
-  TEACHBACK_SCHEMA,
   VOICE,
   describeAnswer,
   rungFor,
   type CheckOutput,
   type HintOutput,
   type MarkOutput,
-  type TeachBackOutput,
 } from "./prompts";
 import { renderParton } from "./render";
 
@@ -84,7 +81,6 @@ export function lessonBrief(lessonId: string): string {
     `## Intuition\n${toPlainText(lesson.intuition)}`,
     `## Theory\n${toPlainText(lesson.theory)}`,
     `## Practice questions (answers are deliberately not shown to you)\n${practice.join("\n\n")}`,
-    `## Teach-back prompt\n${lesson.teachBack}`,
   ].join("\n\n");
   briefs.set(lessonId, brief);
   return brief;
@@ -110,7 +106,7 @@ async function notesFor(lessonId: string): Promise<string[]> {
   return rows.map((r) => (r.lesson_id === lessonId ? r.body : `${r.body} (in "${GRAPH.nodes.get(r.lesson_id)?.title ?? r.lesson_id}")`));
 }
 
-async function note(lessonId: string, exercise: string | null, kind: "misconception" | "teachback", body: string) {
+async function note(lessonId: string, exercise: string | null, kind: "misconception", body: string) {
   const text = body.trim();
   if (!text) return;
   await query("INSERT INTO parton_notes (lesson_id, exercise_id, kind, body) VALUES ($1, $2, $3, $4)", [lessonId, exercise, kind, text.slice(0, 2000)]);
@@ -262,44 +258,6 @@ export async function markWritten(ref: ExerciseRef, response: string): Promise<M
   const feedback = accepted ? out.feedback : await guard(out.feedback, describeAnswer(answer), 3);
   await note(ref.lessonId, ref.id, "misconception", out.misconception);
   return { accepted, feedback };
-}
-
-// ---------------------------------------------------------------------------------------------
-// Teach-back
-
-export type TeachBackReview = { strength: string; questions: string[] };
-
-export async function reviewTeachBack(lessonId: string, body: string): Promise<TeachBackReview> {
-  const lesson = LESSON_BY_ID.get(lessonId)!;
-  const out = await structured<TeachBackOutput>({
-    system: `${VOICE}\n\n${TEACHBACK_RULES}\n\n${lessonBrief(lessonId)}`,
-    schema: TEACHBACK_SCHEMA,
-    effort: "medium",
-    maxTokens: 8000,
-    messages: [{ role: "user", content: `The teach-back prompt was: ${lesson.teachBack}\n\nThe learner's explanation:\n<<<\n${body}\n>>>` }],
-  });
-  const review = { strength: out.strength.trim(), questions: out.questions.map((q) => q.trim()).filter(Boolean).slice(0, 1) };
-  await note(lessonId, null, "teachback", JSON.stringify(review));
-  await note(lessonId, null, "misconception", out.misconception);
-  return review;
-}
-
-export async function latestTeachBackReview(lessonId: string): Promise<TeachBackReview | null> {
-  const rows = await query<{ body: string }>(
-    "SELECT body FROM parton_notes WHERE lesson_id = $1 AND kind = 'teachback' ORDER BY at DESC, id DESC LIMIT 1",
-    [lessonId],
-  );
-  if (!rows[0]) return null;
-  try {
-    return JSON.parse(rows[0].body) as TeachBackReview;
-  } catch {
-    return null;
-  }
-}
-
-/** Renders a teach-back review for the browser. */
-export function renderReview(r: TeachBackReview) {
-  return { strength: renderParton(r.strength), questions: r.questions.map(renderParton) };
 }
 
 function capitalise(s: string) {

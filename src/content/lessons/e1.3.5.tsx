@@ -299,9 +299,6 @@ assert type_errors(Cfg('x', 2, False, (1,))) == ['layers', 'lr']` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what type hints are, why they help even though Python ignores them, and what a dataclass writes for you.",
-
   glimpse: (
     <p>
       Next, packages and modules: how Python finds the code you import. Configurations written as frozen dataclasses reappear in

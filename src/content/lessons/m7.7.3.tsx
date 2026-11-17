@@ -313,9 +313,6 @@ assert abs(m - 1 / 3) < 0.001 and abs(se - (1 / 180) ** 0.5 / 100000 ** 0.5) < 2
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to estimate any expectation or integral by simulation, how to attach an error bar, why the error shrinks like 1/√n in any dimension, why rare events are expensive, and how antithetic pairs reduce the variance.",
-
   glimpse: (
     <>
       <p>

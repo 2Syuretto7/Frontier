@@ -321,9 +321,6 @@ assert many <= one and many < ref * 1.01, 'Restarts never hurt and should match 
     },
   ],
 
-  teachBack:
-    "Explain to a friend the two steps of k-means, why the sum of squares never goes up, and why you should run it from several starting points.",
-
   glimpse: (
     <p>
       Next, clustering at every scale at once, with hierarchical clustering. Statistical Machine Learning reveals k-means as the

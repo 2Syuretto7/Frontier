@@ -304,9 +304,6 @@ assert f > 0.94, f'Infinitely many rationals, yet {1 - f:.3f} of [0, 1) is cover
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a uniformly random number between 0 and 1 hits any particular value with probability zero, why probability can add up countably many pieces but not uncountably many, and what this has to do with Cantor.",
-
   glimpse: (
     <p>
       This completes Proof and Logic. In Probability you will meet densities, the right tool for continuous quantities, and

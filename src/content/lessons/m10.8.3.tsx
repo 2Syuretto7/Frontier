@@ -312,9 +312,6 @@ assert abs(w.sum() - 1) < 1e-9 and w.min() > -1e-9 and np.allclose(w, [0.9, 0.1,
     },
   ],
 
-  teachBack:
-    "Explain to a friend how ADMM splits a problem into two easy pieces with a consensus constraint, what the augmented Lagrangian adds to the ordinary one, why the dual update makes the z-step dual feasible, and how the primal and dual residuals tell you when to stop.",
-
   glimpse: (
     <>
       <p>

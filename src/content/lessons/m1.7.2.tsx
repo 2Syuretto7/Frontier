@@ -289,9 +289,6 @@ for m in range(5):
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between injective and surjective using a cinema hall, and why a perfect seating proves there are as many people as seats.",
-
   glimpse: (
     <p>
       A bijection can be run backwards. The next lesson combines functions by doing one after another, and undoes them with inverses. Counting injections and bijections is central to Discrete Mathematics, and the bijections of a set to itself are the symmetries studied in Geometry and Symmetry in Deep Learning.

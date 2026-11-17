@@ -276,9 +276,6 @@ assert lattice_points(pts) == sum(inside(x, y) for x in range(-3, 9) for y in ra
     },
   ],
 
-  teachBack:
-    "Explain to a friend how the distance formula comes from Pythagoras, and why coordinates turn geometry questions into arithmetic.",
-
   glimpse: (
     <p>
       Next, distance, lines and slopes: the length of a segment and the equation of a line, both read off from

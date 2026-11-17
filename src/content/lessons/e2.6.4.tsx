@@ -490,9 +490,6 @@ assert single_linkage(chain, 2) == [[0, 1, 2, 3, 4], [5]], 'Single linkage follo
     },
   ],
 
-  teachBack:
-    "Explain to a friend why building the cheapest link that does not close a loop always gives the cheapest network, and how union-find spots a loop.",
-
   glimpse: (
     <p>
       Chapter 6 is done. Kruskal was a greedy algorithm that happens to be right; chapter 7 asks when greed works in general,

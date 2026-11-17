@@ -295,9 +295,6 @@ assert abs(f - 4 / 16) < 0.015, f'Expected about 0.25, got {f}.'` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend why a function is defined as a set of pairs rather than a formula, and what 'well defined' means, using 1/2 = 2/4.",
-
   glimpse: (
     <p>
       Some functions never send two inputs to one output; some reach every possible output. Those that do both can be undone, and they are the subject of the next lesson. Continuous functions are the heart of Calculus and Real Analysis, and a neural network is, in the end, a function built by composing many simple ones.

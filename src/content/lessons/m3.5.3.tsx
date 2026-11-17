@@ -281,9 +281,6 @@ assert np.allclose(x, np.polyfit([0, 1, 2], [1, 2, 2], 1)[::-1], atol=1e-5), 'A 
     },
   ],
 
-  teachBack:
-    "Explain to a friend what least squares minimises, why its solution comes from projecting b onto the column space, and how the normal equations express that the errors are perpendicular to the columns.",
-
   glimpse: (
     <p>
       Next, Gram-Schmidt and the QR factorisation, which make projections and least squares simple and numerically safe.

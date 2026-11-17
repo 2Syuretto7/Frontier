@@ -461,9 +461,6 @@ assert d[0][299] == 299 and d[150][150] == 298 and d[299][0] == 299, 'Start from
     },
   ],
 
-  teachBack:
-    "Explain to a friend how changing a queue into a stack turns breadth-first search into depth-first search, and what each one is good for.",
-
   glimpse: (
     <p>
       Reversed DFS finishing order sorts tasks so that every prerequisite comes first; the next lesson makes that precise, and

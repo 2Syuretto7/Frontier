@@ -337,9 +337,6 @@ assert is_orthogonal_projection(2 * np.eye(2), np.eye(2)) is False` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend what the orthogonal complement of a subspace is, why V splits as U plus its complement, and why the projection changes when the inner product does.",
-
   glimpse: (
     <>
       <p>

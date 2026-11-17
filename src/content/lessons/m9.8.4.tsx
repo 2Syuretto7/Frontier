@@ -255,9 +255,6 @@ assert abs(p - 0.079) < 0.01 and x > 4 and 0.02 < w < 0.15` },
     },
   ],
 
-  teachBack:
-    "Explain to a friend how to compute the sample size for a desired power, what the minimum detectable effect is, why paired designs need far fewer units, and why significant results from underpowered experiments overstate the effect.",
-
   glimpse: (
     <>
       <p>

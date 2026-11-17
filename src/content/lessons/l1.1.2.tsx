@@ -271,9 +271,6 @@ assert tr < 1e-20 and te > 5, 'With one point the line fits the noise exactly an
     },
   ],
 
-  teachBack:
-    "Explain to a friend the difference between training error and test error, why the first is optimistic, and what a learning curve tells you.",
-
   glimpse: (
     <p>
       Next, overfitting: what happens when a model is flexible enough to memorise its training data. The noise floor and the
