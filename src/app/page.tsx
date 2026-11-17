@@ -3,6 +3,7 @@ import { requireOwner } from "@/lib/auth";
 import { GRAPH } from "@/lib/curriculum";
 import { COURSES } from "@/lib/graph";
 import { nextStep, overallStats } from "@/lib/learning";
+import { reviewCount } from "@/lib/parton/recall";
 import type { LearnStep } from "@/lib/scheduler";
 import { learnAction } from "./actions";
 import { TopBar } from "@/components/TopBar";
@@ -83,9 +84,10 @@ function NextPanel({ step }: { step: LearnStep }) {
     if (step.kind === "begin" && step.pastPace) meta += ". You have reached today's suggested pace; carry on whenever you like.";
     code = `${step.lesson.course} / ${step.lesson.id}`;
   } else if (step.kind === "review") {
-    const n = Math.min(step.count, 12);
-    title = n === 1 ? "One question to review" : `${n} questions to review`;
-    meta = "Earlier ideas, mixed together, just before you would forget them.";
+    // A review session is three to five new questions, however many ideas are due.
+    const n = reviewCount(step.count);
+    title = `${n} new questions to review`;
+    meta = "Fresh questions on earlier ideas, just before you would forget them.";
     code = "review / spaced";
   } else {
     title = "You're ahead of the writing";
