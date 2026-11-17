@@ -1,4 +1,5 @@
 import outline from "../content/outline.json";
+import codePrerequisites from "../content/code-prerequisites.json";
 import type { Course, LinkKind, Track } from "./types";
 
 export type LessonNode = {
@@ -16,17 +17,40 @@ export type LessonNode = {
 
 export type Edge = { from: string; to: string; kind: LinkKind };
 
+/**
+ * Links that gate progress. A lesson that revisits an earlier lesson builds on its material,
+ * so it opens only once that lesson is mastered, just as for "requires".
+ */
+const GATING: ReadonlySet<LinkKind> = new Set(["requires", "revisits"]);
+
 export const COURSES: readonly Course[] = (outline as { courses: Course[] }).courses;
 export const COURSE_BY_CODE = new Map(COURSES.map((c) => [c.code, c]));
 
 export type Graph = {
   nodes: Map<string, LessonNode>;
   order: string[];
-  /** Lessons each lesson requires (vertical, past to future). */
+  /** Lessons each lesson requires or revisits: what must be mastered before it opens. */
   requires: Map<string, string[]>;
   /** All links, both implicit and authored. */
   edges: Edge[];
 };
+
+type Links = Partial<Record<LinkKind, string[]>>;
+
+/**
+ * Adds to each authored lesson's links the engineering lessons that teach the Python its code uses,
+ * as worked out by `npm run prerequisites` (scripts/code-prerequisites.ts), so a lesson that shows
+ * a list opens only after the lesson that teaches lists is mastered.
+ */
+export function withCodePrerequisites(authored: ReadonlyMap<string, Links>): Map<string, Links> {
+  const extra = codePrerequisites as Record<string, string[]>;
+  return new Map(
+    [...authored].map(([id, links]) => [
+      id,
+      extra[id] ? { ...links, requires: [...new Set([...(links.requires ?? []), ...extra[id]])] } : links,
+    ]),
+  );
+}
 
 /**
  * Builds the lesson graph from the curriculum outline plus the links that
@@ -34,6 +58,7 @@ export type Graph = {
  * - each lesson requires the one before it in its chapter;
  * - a chapter's first lesson requires the previous chapter's last lesson;
  * - a course's first lesson requires the last lesson of every required course.
+ * Authored "requires" and "revisits" links add to these, as do the code prerequisites from `withCodePrerequisites`.
  */
 export function buildGraph(
   authoredLinks: ReadonlyMap<string, Partial<Record<LinkKind, string[]>>>,
@@ -70,7 +95,7 @@ export function buildGraph(
 
   const add = (from: string, to: string, kind: LinkKind) => {
     edges.push({ from, to, kind });
-    if (kind === "requires") {
+    if (GATING.has(kind)) {
       const list = requires.get(to) ?? [];
       if (!list.includes(from)) list.push(from);
       requires.set(to, list);

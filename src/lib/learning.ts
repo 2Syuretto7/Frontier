@@ -3,7 +3,7 @@ import { createEmptyCard, fsrs, Rating, type Card } from "ts-fsrs";
 import { query } from "./db";
 import { EXERCISES, GRAPH, LESSON_BY_ID, exerciseId, masteryExercises, reviewable } from "./curriculum";
 import { checkAnswer, type CheckResult } from "./check";
-import { frontier } from "./graph";
+import { frontier, isUnlocked } from "./graph";
 import { chooseNextStep, type LearnStep } from "./scheduler";
 import type { Track } from "./types";
 import { RECALL_PREFIX, recallAttempt } from "./recall";
@@ -47,13 +47,16 @@ export async function nextStep(): Promise<LearnStep> {
     query<{ lesson_id: string }>("SELECT lesson_id FROM progress ORDER BY started_at DESC LIMIT 1"),
   ]);
   const mastered = new Set(progress.filter((p) => p.status === "mastered").map((p) => p.lesson_id));
+  // The most recent lesson still in progress whose prerequisites are all mastered. A lesson started before
+  // a prerequisite was added to it waits, locked, until that prerequisite is mastered.
   const open = await query<{ lesson_id: string }>(
-    "SELECT lesson_id FROM progress WHERE status = 'in_progress' ORDER BY updated_at DESC LIMIT 1",
+    "SELECT lesson_id FROM progress WHERE status = 'in_progress' ORDER BY updated_at DESC",
   );
-  const openNode = open[0] ? GRAPH.nodes.get(open[0].lesson_id) ?? null : null;
+  const openId = open.map((o) => o.lesson_id).find((id) => LESSON_BY_ID.has(id) && isUnlocked(GRAPH, id, mastered));
+  const openNode = openId ? GRAPH.nodes.get(openId) ?? null : null;
   const lastTrack: Track | null = last[0] ? GRAPH.nodes.get(last[0].lesson_id)?.track ?? null : null;
   return chooseNextStep({
-    openLesson: openNode && LESSON_BY_ID.has(openNode.id) ? openNode : null,
+    openLesson: openNode,
     dueReviews: due,
     frontier: frontier(GRAPH, mastered),
     lastTrack,

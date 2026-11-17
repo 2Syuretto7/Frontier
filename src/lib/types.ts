@@ -24,7 +24,7 @@ export type Course = {
   chapters: OutlineChapter[];
 };
 
-/** How one lesson relates to another. Only "requires" gates progress. */
+/** How one lesson relates to another. "requires" and "revisits" gate progress: both name material a lesson builds on. */
 export type LinkKind = "requires" | "parallels" | "foreshadows" | "revisits" | "applies";
 
 /** The three rungs of the practice ladder. */

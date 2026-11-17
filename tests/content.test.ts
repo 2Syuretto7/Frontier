@@ -3,13 +3,13 @@ import assert from "node:assert/strict";
 import { createElement, Fragment } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { LESSONS } from "../src/content/lessons/index.ts";
-import { buildGraph } from "../src/lib/graph.ts";
+import { buildGraph, withCodePrerequisites } from "../src/lib/graph.ts";
 import { checkAnswer } from "../src/lib/check.ts";
 
 const render = (node: unknown) => renderToStaticMarkup(createElement(Fragment, null, node as never));
 
 test("the lesson graph accepts every authored lesson's links", () => {
-  assert.doesNotThrow(() => buildGraph(new Map(LESSONS.map((l) => [l.id, l.links ?? {}]))));
+  assert.doesNotThrow(() => buildGraph(withCodePrerequisites(new Map(LESSONS.map((l) => [l.id, l.links ?? {}])))));
 });
 
 for (const lesson of LESSONS) {

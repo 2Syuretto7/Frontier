@@ -8,8 +8,7 @@ export const lesson: LessonContent = {
   minutes: 40,
   links: {
     requires: ["e1.6.2"],
-    revisits: ["l1.7.4"],
-    foreshadows: ["e4.3.3", "e6.6.3"],
+    foreshadows: ["e4.3.3", "e6.6.3", "l1.7.4"],
   },
 
   puzzle: (
