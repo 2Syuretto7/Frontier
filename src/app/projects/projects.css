@@ -76,3 +76,33 @@
   .pp-start .input { flex: none; }
   .pp-open-body, .pp-current-body { padding: 20px 16px; }
 }
+
+/* ---------- Parton's help: suggestions, drafts, checks, the repository ---------- */
+.pp-assist { margin: 0 0 24px; padding: 16px; border: 1px dashed var(--border); border-radius: var(--radius-md); background: var(--bg); min-width: 0; }
+.pp-assist-quiet { margin: 16px 0 0; padding: 10px 14px; }
+.pp-assist-bar { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.pp-assist-bar .pp-h3, .pp-assist-bar .pp-h2 { margin-bottom: 8px; }
+.pp-assist-note { margin: 4px 0 0; flex: 1; min-width: 200px; }
+.pp-draft-head .pp-fieldset { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.pp-draft-head .hint { margin: 0; }
+.pp-pending { color: var(--link); }
+.pp-pre { white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; margin: 8px 0 12px; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); max-height: 520px; overflow: auto; }
+.pp-start-row { display: flex; gap: 8px; }
+.pp-start-row .input { flex: 1; min-width: 0; }
+.pp-review { margin: 0 0 12px; padding: 12px 14px; border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent); border-radius: var(--radius-md); }
+.pp-review-title { margin: 0 0 6px; font-weight: 500; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.pp-review ul, .pp-review-list { margin: 6px 0 10px; padding-left: 20px; font-size: 14px; line-height: 1.6; }
+.pp-override { margin-top: 8px; }
+.pp-override summary { cursor: pointer; font-size: 14px; color: var(--text-muted); }
+.pp-override[open] summary { margin-bottom: 12px; }
+.pp-aim { margin: 8px 0 0; font-size: 14px; color: var(--text-muted); display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.pp-aim .eyebrow { margin: 0; }
+.pp-suggest { margin: 0 0 48px; }
+.pp-suggest .pp-row form { margin-top: 10px; }
+.pp-row-why { margin: 0 0 6px; font-size: 14px; line-height: 1.55; color: var(--text-muted); }
+.pp-suggest-go { margin-top: 16px; }
+
+@media (max-width: 640px) {
+  .pp-start-row { flex-direction: column; }
+  .pp-assist { padding: 12px; }
+}

@@ -1,5 +1,6 @@
 import "server-only";
 import { query } from "./db";
+import { checkStage } from "./project-assist/review";
 import {
   canStart,
   checkPublic,
@@ -223,12 +224,28 @@ export async function addNotebookEntry(id: number, body: string): Promise<Result
   return { ok: true };
 }
 
+/**
+ * Links the project's public repository before the repository stage, for a repository Frontier created on GitHub
+ * once experiments began. In the repository stage itself the link is saved with the stage's form.
+ */
+export async function setRepoUrl(id: number, url: string): Promise<Result> {
+  const p = await openProject(id);
+  if ("error" in p) return { ok: false, error: p.error };
+  const clean = publicUrl(url);
+  if (!clean) return { ok: false, error: "Links must be public https addresses." };
+  await query("UPDATE projects SET repo_url = $1 WHERE id = $2 AND status = 'active'", [clean, id]);
+  return { ok: true };
+}
+
 /** Moves the project to its next stage, or publishes it from the last stage. Only when the stage's work is done. */
-export async function advance(id: number): Promise<Result & { published?: boolean }> {
+export async function advance(id: number): Promise<Result & { published?: boolean; stage?: Stage }> {
   const p = await openProject(id);
   if ("error" in p) return { ok: false, error: p.error };
   const gaps = stageGaps(p);
   if (gaps.length) return { ok: false, error: gaps.join(" ") };
+  // Beyond word counts: the hard facts of the stage, and Parton's read of whether the work does its job.
+  const check = await checkStage(p);
+  if (!check.ok) return check;
   const now = new Date().toISOString();
   const next = nextStage(p.stage);
   if (next) {
@@ -236,12 +253,11 @@ export async function advance(id: number): Promise<Result & { published?: boolea
     await query("UPDATE projects SET stage = $1, history = $2::jsonb WHERE id = $3 AND status = 'active' AND stage = $4", [
       next, JSON.stringify(history), id, p.stage,
     ]);
-    return { ok: true };
+    return { ok: true, stage: next };
   }
-  for (const [url, what] of [[p.writeupUrl, "write-up"], [p.repoUrl, "repository"]] as const) {
-    const problem = await checkPublic(url, what);
-    if (problem) return { ok: false, error: problem };
-  }
+  // The repository was checked with the stage; the write-up must still open on the day it is published.
+  const problem = await checkPublic(p.writeupUrl, "write-up");
+  if (problem) return { ok: false, error: problem };
   await query("UPDATE projects SET status = 'published', ended_at = $1 WHERE id = $2 AND status = 'active'", [now, id]);
   return { ok: true, published: true };
 }
