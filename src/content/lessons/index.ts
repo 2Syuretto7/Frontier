@@ -711,6 +711,7 @@ import { lesson as e6_6_3 } from "./e6.6.3";
 import { lesson as m14_1_1 } from "./m14.1.1";
 import { lesson as m14_1_2 } from "./m14.1.2";
 import { lesson as m14_1_3 } from "./m14.1.3";
+import { lesson as m14_1_4 } from "./m14.1.4";
 
 export const LESSONS: readonly LessonContent[] = [
   m0_1_1,
@@ -1425,4 +1426,5 @@ export const LESSONS: readonly LessonContent[] = [
   m14_1_1,
   m14_1_2,
   m14_1_3,
+  m14_1_4,
 ];
