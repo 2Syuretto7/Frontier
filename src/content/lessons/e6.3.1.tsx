@@ -95,7 +95,7 @@ export const lesson: LessonContent = {
   minutes: 45,
   links: {
     requires: ["e6.2.3"],
-    revisits: ["e6.1.1"],
+    revisits: ["e5.3.1", "e6.1.1"],
     foreshadows: ["e6.3.3", "e6.5.1"],
   },
 
