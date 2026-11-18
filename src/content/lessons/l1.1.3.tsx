@@ -203,7 +203,7 @@ assert res[0][0] == 1 and res[0][1] < 1e-20 and res[0][2] < 1e-18, 'A line fits 
       prompt: (
         <>
           <p>
-            Early stopping fights overfitting. Write <C>early_stopping(X_tr, y_tr, X_val, y_val, lr, max_steps, patience)</C>: run gradient descent on the training mean squared error of a linear model without intercept from w = 0 (gradient (2/n)Xᵀ(Xw − y)); after each step compute the validation MSE; remember the weights with the lowest validation MSE so far; stop once <C>patience</C> consecutive steps fail to improve on it, or after <C>max_steps</C>. Return (best_w, best_step, val_curve), with steps counted from 1 and val_curve the list of validation errors computed.
+            Early stopping fights overfitting. Write <C>early_stopping(X_tr, y_tr, X_val, y_val, lr, max_steps, patience)</C>: run gradient descent on the training mean squared error of a linear model without intercept from w = 0 (gradient (2/n)Xᵀ(Xw − y)); after each step compute the MSE on the held-out data (X_val, y_val); remember the weights with the lowest held-out MSE so far; stop once <C>patience</C> consecutive steps fail to improve on it, or after <C>max_steps</C>. Return (best_w, best_step, val_curve), with steps counted from 1 and val_curve the list of held-out errors computed.
           </p>
         </>
       ),
@@ -238,12 +238,12 @@ def early_stopping(X_tr, y_tr, X_val, y_val, lr, max_steps, patience):
 rng = np.random.default_rng(0)
 X = rng.normal(size=(100, 3)); y = X @ [1.0, -1.0, 2.0]
 w, step, curve = early_stopping(X[:60], y[:60], X[60:], y[60:], 0.1, 80, 10)
-assert np.allclose(w, [1, -1, 2], atol=1e-4) and len(curve) == 80 and step == 80, 'Without noise, validation error keeps falling.'` },
+assert np.allclose(w, [1, -1, 2], atol=1e-4) and len(curve) == 80 and step == 80, 'Without noise, held-out error keeps falling.'` },
           { name: "stops", code: `import numpy as np
 rng = np.random.default_rng(1)
 X = rng.normal(size=(60, 40)); y = X[:, 0] + rng.normal(0, 1, 60)
 w, step, curve = early_stopping(X[:30], y[:30], X[30:], y[30:], 0.01, 5000, 25)
-assert len(curve) == step + 25 and curve[step - 1] == min(curve) and step < 5000, 'Stop patience steps after the best validation error.'
+assert len(curve) == step + 25 and curve[step - 1] == min(curve) and step < 5000, 'Stop patience steps after the best held-out error.'
 assert np.mean((X[30:] @ w - y[30:]) ** 2) == min(curve), 'Return the best weights, not the last.'` },
           { name: "one step", code: `import numpy as np
 w, step, curve = early_stopping(np.array([[1.0]]), np.array([2.0]), np.array([[1.0]]), np.array([2.0]), 0.25, 1, 5)

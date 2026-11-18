@@ -165,7 +165,8 @@ print(A @ x, np.linalg.matrix_rank(A), A.shape[1] - np.linalg.matrix_rank(A))`}<
         <>
           <p>
             Write <C>null_basis(A)</C>, which returns a matrix whose columns are a basis of the null space of A (with as many
-            columns as there are free variables). Any correct method is fine, for example the special solutions or the SVD.
+            columns as there are free variables), made of the special solutions: row-reduce A, and for each free variable set
+            it to 1 and the other free variables to 0, then read off the pivot variables.
           </p>
         </>
       ),
@@ -179,11 +180,33 @@ def null_basis(A):
 `,
         solution: `import numpy as np
 
-def null_basis(A):
-    A = np.asarray(A, float)
-    _, s, Vt = np.linalg.svd(A)
-    r = int((s > 1e-10).sum())
-    return Vt[r:].T
+def null_basis(A, tol=1e-10):
+    R = np.array(A, float)
+    m, n = R.shape
+    tol = tol * (np.abs(R).max() if R.size else 0.0)
+    pivots = []
+    r = 0
+    for c in range(n):
+        if r == m:
+            break
+        p = r + int(np.argmax(np.abs(R[r:, c])))
+        if abs(R[p, c]) <= tol:
+            R[r:, c] = 0.0
+            continue
+        R[[r, p]] = R[[p, r]]
+        R[r] /= R[r, c]
+        for i in range(m):
+            if i != r:
+                R[i] -= R[i, c] * R[r]
+        pivots.append(c)
+        r += 1
+    free = [c for c in range(n) if c not in pivots]
+    N = np.zeros((n, len(free)))
+    for k, f in enumerate(free):
+        N[f, k] = 1.0
+        for i, p in enumerate(pivots):
+            N[p, k] = -R[i, f]
+    return N
 `,
         tests: [
           { name: "solves Ax = 0", code: `import numpy as np
@@ -204,7 +227,7 @@ assert np.linalg.matrix_rank(N) == 2, 'The basis vectors must be independent.'` 
       prompt: (
         <>
           <p>
-            The starter gives <C>_rank(s, tol)</C>, the number of singular values in s above tol times the largest. Write <C>null_space_svd(A, tol=1e-10)</C>, an orthonormal basis of the null space of A as the columns of a matrix, taken from the rows of Vᵀ in the SVD whose singular values are below tol times the largest (or beyond the number of singular values). Then write <C>col_space_basis(A, tol=1e-10)</C>, an orthonormal basis of the column space from the columns of U, and <C>in_col_space(A, b)</C>, whether b lies in the column space (the residual after projecting onto that basis is below 1e−9 times ‖b‖ + 1).
+            Write <C>rref(A, tol=1e-10)</C>, which returns the reduced row echelon form of A and the list of its pivot columns, by Gauss-Jordan elimination with partial pivoting (treat entries no larger than tol times the largest entry of A as zero). Then write <C>col_space_basis(A)</C>, the pivot columns of A itself as the columns of a matrix, and <C>in_col_space(A, b)</C>, whether b lies in the column space of A, that is, whether [A | b] has no more pivots than A.
           </p>
         </>
       ),
@@ -212,13 +235,10 @@ assert np.linalg.matrix_rank(N) == 2, 'The basis vectors must be independent.'` 
         kind: "code",
         starter: `import numpy as np
 
-def _rank(s, tol):
-    return int(np.sum(s > tol * s[0])) if s.size and s[0] > 0 else 0
+def rref(A, tol=1e-10):
+    return np.array(A, float), []
 
-def null_space_svd(A, tol=1e-10):
-    return np.zeros((np.asarray(A).shape[1], 0))
-
-def col_space_basis(A, tol=1e-10):
+def col_space_basis(A):
     return np.asarray(A, float)
 
 def in_col_space(A, b):
@@ -226,44 +246,54 @@ def in_col_space(A, b):
 `,
         solution: `import numpy as np
 
-def _rank(s, tol):
-    return int(np.sum(s > tol * s[0])) if s.size and s[0] > 0 else 0
+def rref(A, tol=1e-10):
+    R = np.array(A, float)
+    m, n = R.shape
+    tol = tol * (np.abs(R).max() if R.size else 0.0)
+    pivots = []
+    r = 0
+    for c in range(n):
+        if r == m:
+            break
+        p = r + int(np.argmax(np.abs(R[r:, c])))
+        if abs(R[p, c]) <= tol:
+            R[r:, c] = 0.0
+            continue
+        R[[r, p]] = R[[p, r]]
+        R[r] /= R[r, c]
+        for i in range(m):
+            if i != r:
+                R[i] -= R[i, c] * R[r]
+        pivots.append(c)
+        r += 1
+    return R, pivots
 
-def null_space_svd(A, tol=1e-10):
+def col_space_basis(A):
     A = np.asarray(A, float)
-    U, s, Vt = np.linalg.svd(A)
-    r = _rank(s, tol)
-    return Vt[r:].T
-
-def col_space_basis(A, tol=1e-10):
-    A = np.asarray(A, float)
-    U, s, Vt = np.linalg.svd(A)
-    r = _rank(s, tol)
-    return U[:, :r]
+    return A[:, rref(A)[1]]
 
 def in_col_space(A, b):
-    Q = col_space_basis(A)
-    b = np.asarray(b, float)
-    return bool(np.linalg.norm(b - Q @ (Q.T @ b)) < 1e-9 * (np.linalg.norm(b) + 1))
+    A = np.asarray(A, float)
+    return len(rref(np.column_stack([A, b]))[1]) == len(rref(A)[1])
 `,
         tests: [
-          { name: "null", code: `import numpy as np
-A = np.array([[1.0, 2.0, 3.0], [2.0, 4.0, 6.0]])
-N = null_space_svd(A)
-assert N.shape == (3, 2) and np.allclose(A @ N, 0) and np.allclose(N.T @ N, np.eye(2)), 'Two orthonormal null vectors.'` },
+          { name: "rref", code: `import numpy as np
+R, piv = rref([[1, 2, 2, 2], [2, 4, 6, 8], [3, 6, 8, 10]])
+assert piv == [0, 2] and np.allclose(R, [[1, 2, 0, -2], [0, 0, 1, 2], [0, 0, 0, 0]]), 'Pivots in columns 0 and 2.'` },
           { name: "full rank", code: `import numpy as np
-assert null_space_svd(np.eye(3)).shape == (3, 0) and null_space_svd(np.zeros((2, 3))).shape == (3, 3), 'No null space, or everything.'` },
+R, piv = rref(np.eye(3) * 4)
+assert piv == [0, 1, 2] and np.allclose(R, np.eye(3)) and rref(np.zeros((2, 3)))[1] == [], 'Every column, or none.'` },
           { name: "columns", code: `import numpy as np
 A = np.array([[1.0, 2.0], [2.0, 4.0], [3.0, 6.0]])
 Q = col_space_basis(A)
-assert Q.shape == (3, 1) and np.allclose(abs(Q[:, 0]), np.array([1, 2, 3]) / 14 ** 0.5), 'The column space is the line through (1, 2, 3).'` },
+assert Q.shape == (3, 1) and np.allclose(Q[:, 0], [1, 2, 3]), 'The column space is the line through (1, 2, 3).'` },
           { name: "membership", code: `import numpy as np
 A = np.array([[1.0, 2.0], [2.0, 4.0], [3.0, 6.0]])
 assert in_col_space(A, [2, 4, 6]) and not in_col_space(A, [1, 0, 0]) and in_col_space(np.eye(3), [5, -1, 2]), 'b must be a combination of the columns.'` },
           { name: "rank-nullity", code: `import numpy as np
 rng = np.random.default_rng(11)
 A = rng.normal(size=(5, 3)) @ rng.normal(size=(3, 7))
-assert col_space_basis(A).shape[1] + null_space_svd(A).shape[1] == 7, 'rank + nullity = number of columns.'` },
+assert len(rref(A)[1]) == 3, 'A product through 3 dimensions has 3 pivots.'` },
         ],
       },
     },

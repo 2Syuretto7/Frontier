@@ -245,7 +245,7 @@ assert abs((v[1] - v[0]) / (2 * h) - 4) < 1e-5, 'The slope of the accumulated ar
       prompt: (
         <>
           <p>
-            Write <C>cumulative(ys, h)</C>, the running integral of equally spaced samples by the trapezoid rule (a list starting with 0, the same length as ys), and <C>differentiate(ys, h)</C>, the derivative of samples by central differences inside and one-sided second-order differences (−3y₀ + 4y₁ − y₂)/2h at the ends. The fundamental theorem says these undo each other; the tests check that differentiating the running integral of cos gives cos back to about h².
+            Write <C>cumulative(ys, h)</C>, the running integral of equally spaced samples (a list starting with 0, the same length as ys, each entry adding h·(yᵢ + yᵢ₊₁)/2, the area of the trapezoid under one step), and <C>differentiate(ys, h)</C>, the derivative of samples by central differences inside and one-sided second-order differences (−3y₀ + 4y₁ − y₂)/2h at the ends. The fundamental theorem says these undo each other; the tests check that differentiating the running integral of cos gives cos back to about h².
           </p>
         </>
       ),

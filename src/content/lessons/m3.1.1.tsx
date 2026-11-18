@@ -173,7 +173,7 @@ print(len(pts), (4, 1) in pts, (0, 0) in pts)`}</Code>
         <>
           <p>
             Write <C>combine(coeffs, vectors)</C>, which returns the linear combination c₁v₁ + … + cₖvₖ as a NumPy array.
-            Use a loop over the pairs rather than a single matrix product.
+            Use a loop over the pairs.
           </p>
         </>
       ),
@@ -210,7 +210,7 @@ assert np.allclose(combine([1, 1, -1], [[1, 0, 1], [0, 1, 1], [1, 1, 2]]), [0, 0
       prompt: (
         <>
           <p>
-            Write <C>solve_combination(u, v, w)</C> for vectors in ℝ², which returns the coefficients (a, b) with au + bv = w by Cramer&rsquo;s rule, or <C>None</C> if u and v are parallel (determinant within 1e−12 of 0). Then write <C>lattice_points(u, v, box)</C>, the sorted list of integer combinations au + bv (as tuples of integers) whose two coordinates both lie in [−box, box], for integer vectors u, v that are not parallel; search a range of a and b large enough to be sure (use the bound |a|, |b| ≤ 2·box·(|u| + |v|)/|det| + 1).
+            Write <C>solve_combination(u, v, w)</C> for vectors in ℝ², which returns the coefficients (a, b) with au + bv = w from a = (w₁v₂ − w₂v₁)/D and b = (u₁w₂ − u₂w₁)/D with D = u₁v₂ − u₂v₁, or <C>None</C> if u and v are parallel (|D| &lt; 1e−12). Then write <C>lattice_points(u, v, box)</C>, the sorted list of integer combinations au + bv (as tuples of integers) whose two coordinates both lie in [−box, box], for integer vectors u, v that are not parallel; search a range of a and b large enough to be sure (use the bound |a|, |b| ≤ 2·box·(|u| + |v|)/|det| + 1).
           </p>
         </>
       ),

@@ -224,7 +224,7 @@ print(years, round(balance, 2), round(72 / 7, 1))`}</Code>
       prompt: (
         <>
           <p>
-            A drug has a half-life of h hours. Write <C>remaining(dose, h, t)</C>, the amount left after t hours, and <C>schedule(dose, h, every, n)</C>, the amount in the body just after each of n doses taken every <C>every</C> hours (each dose adds to whatever is left), returned as a list. Then write <C>steady_state(dose, h, every)</C>, the limit of that list, using the sum of a geometric series.
+            A drug has a half-life of h hours. Write <C>remaining(dose, h, t)</C>, the amount left after t hours, and <C>schedule(dose, h, every, n)</C>, the amount in the body just after each of n doses taken every <C>every</C> hours (each dose adds to whatever is left), returned as a list. Then write <C>steady_state(dose, h, every)</C>, the limit of that list, using 1 + r + r² + … = 1/(1 − r) for 0 &lt; r &lt; 1.
           </p>
         </>
       ),

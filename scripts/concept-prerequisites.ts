@@ -11,8 +11,9 @@
  *   npm run prerequisites
  *
  * A concept whose only teachers come later in the same course cannot be gated without reordering the course, so
- * those uses are listed in src/content/concept-forward-uses.json for the authors to fix. The concept tests fail
- * if either file is out of date, so run the script after writing or changing a lesson.
+ * the script stops and lists such uses: reword the lesson so it no longer leans on the idea, give the idea in full
+ * where it is used, or, if the lesson only names it in passing, waive it in src/content/concepts.ts. The concept
+ * tests fail if the file is out of date or any use is left, so run the script after writing or changing a lesson.
  */
 import { isValidElement } from "react";
 import { writeFileSync } from "node:fs";
@@ -63,7 +64,7 @@ const text = (node: unknown) => {
 const SENTENCE = /(?<=[.?!:])\s+|\n|\[[A-Z][A-Za-z]+\]/;
 /** A sentence that looks ahead names an idea without using it. */
 const LOOKS_AHEAD =
-  /\blater\b|will (meet|see|learn|study|return|come|build|prove|use|make|need|be)|a future lesson|coming (lesson|course|chapter)s?|next (course|chapter)|in (a|the) (later|coming)|\bahead\b|foreshadow|first look/i;
+  /\blater\b|will (meet|see|learn|study|return|come|build|prove|use|make|need|be)|a future lesson|coming (lesson|course|chapter)s?|next (lesson|course|chapter)|will show|made precise|end of (this|the) course|returns? with|in chapter \d|in (a|the) (later|coming)|\bahead\b|foreshadow|first look/i;
 
 /** The text of each section of every lesson, with sentences that look ahead removed. The glimpse is left out. */
 export function lessonTexts(): Map<string, Record<Section, string>> {
@@ -189,8 +190,11 @@ export function derive(uses: Use[], base: Graph = buildGraph(withCodePrerequisit
     .sort((a, b) => at(a.u.lesson) - at(b.u.lesson) || a.i - b.i)
     .map(({ u }) => u)
     .filter((u) => !u.teachers.some((t) => baseAncestors.get(u.lesson)!.has(t)));
-  const forward = pending.filter((u) => u.teachers.some((t) => course(t) === course(u.lesson) && at(t) > at(u.lesson)));
-  const cross = pending.filter((u) => !forward.includes(u));
+  // A use whose teacher comes later in the same course needs the course reordered or the lesson reworded; it is
+  // not linked, since a link to another course for it can block the links other lessons need.
+  const laterInCourse = (u: Use) => u.teachers.some((t) => course(t) === course(u.lesson) && at(t) > at(u.lesson));
+  const forward = pending.filter(laterInCourse);
+  const cross = pending.filter((u) => !laterInCourse(u));
 
   const passes: ((teacher: string, lesson: string) => boolean)[] = [
     (t, l) => l[0] === "m" && t[0] === "m",
@@ -238,25 +242,25 @@ export function derive(uses: Use[], base: Graph = buildGraph(withCodePrerequisit
 }
 
 export const OUTPUT = resolve(process.cwd(), "src/content/concept-prerequisites.json");
-export const FORWARD_OUTPUT = resolve(process.cwd(), "src/content/concept-forward-uses.json");
 
 export function computeConceptPrerequisites() {
   const uses = conceptUses();
   const { links, forwardUses, unmet } = derive(uses);
-  if (unmet.length) {
-    const list = unmet.map((u) => `${u.lesson} uses ${u.concept} (taught in ${u.teachers.join(", ")})`).join("\n  ");
-    throw new Error(`No teacher of these concepts can come first without a cycle. Reword the lesson or waive the use:\n  ${list}`);
+  const problems = [
+    ...forwardUses.map((u) => `${u.lesson} uses ${u.concept}, which only a later lesson of its course teaches (${u.taughtIn.join(", ")})`),
+    ...unmet.map((u) => `${u.lesson} uses ${u.concept}, and no lesson that teaches it can come first (${u.teachers.join(", ")})`),
+  ];
+  if (problems.length) {
+    throw new Error(`Reword these lessons, give the idea in full where it is used, or waive a passing mention:\n  ${problems.join("\n  ")}`);
   }
-  return { links, forwardUses };
+  return links;
 }
 
 export const serialise = (value: unknown) => `${JSON.stringify(value, null, 1)}\n`;
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const { links, forwardUses } = computeConceptPrerequisites();
+  const links = computeConceptPrerequisites();
   writeFileSync(OUTPUT, serialise(links));
-  writeFileSync(FORWARD_OUTPUT, serialise(forwardUses));
   const count = Object.values(links).reduce((n, l) => n + l.length, 0);
   console.log(`Wrote ${count} concept prerequisites for ${Object.keys(links).length} lessons to ${OUTPUT}.`);
-  console.log(`${forwardUses.length} uses come before a later lesson of the same course teaches them; see ${FORWARD_OUTPUT}.`);
 }

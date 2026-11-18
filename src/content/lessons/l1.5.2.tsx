@@ -69,7 +69,7 @@ export const lesson: LessonContent = {
         <p>
           With 1,000 examples and 5 folds, each model trains on 800 and is scored on 200. If the five fold errors are 0.20,
           0.25, 0.15, 0.22 and 0.18, the estimate is their mean, 0.20, and their spread hints at how uncertain it is. Comparing
-          12 hyperparameter settings this way costs <M>{"12 \\times 5 = 60"}</M> fits.
+          12 settings of a model&rsquo;s knobs, such as the degree of a polynomial, this way costs <M>{"12 \\times 5 = 60"}</M> fits.
         </p>
       </Example>
 
@@ -121,7 +121,7 @@ export const lesson: LessonContent = {
     {
       key: "fits",
       rung: "apply",
-      prompt: <p>How many models are trained to compare 12 hyperparameter settings by 10-fold cross-validation?</p>,
+      prompt: <p>How many models are trained to compare 12 settings of the polynomial degree by 10-fold cross-validation?</p>,
       answer: { kind: "numeric", value: 120 },
     },
     {
@@ -203,7 +203,7 @@ assert sizes == [6, 7, 7] and abs(s - 10 / 3) < 1e-12, 'np.array_split gives fol
       prompt: (
         <>
           <p>
-            Choosing hyperparameters by cross-validation and then reporting that same score is optimistic. Write <C>nested_cv(model_fn, grid, X, y, outer, inner)</C>: split the rows with <C>KFold(outer)</C>; in each outer training part, choose parameters from the dict of lists <C>grid</C> by mean <C>cross_val_score</C> over <C>KFold(inner)</C> (the first best combination on ties, in <C>itertools.product</C> order), refit on the whole outer training part, and score on the outer test fold. Return (mean outer score, list of chosen parameter dicts).
+            Choosing settings such as a model&rsquo;s degree or penalty by cross-validation and then reporting that same score is optimistic. Write <C>nested_cv(model_fn, grid, X, y, outer, inner)</C>: split the rows with <C>KFold(outer)</C>; in each outer training part, choose parameters from the dict of lists <C>grid</C> by mean <C>cross_val_score</C> over <C>KFold(inner)</C> (the first best combination on ties, in <C>itertools.product</C> order), refit on the whole outer training part, and score on the outer test fold. Return (mean outer score, list of chosen parameter dicts).
           </p>
         </>
       ),

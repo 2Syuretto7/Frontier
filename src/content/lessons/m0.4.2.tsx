@@ -213,7 +213,7 @@ assert abs(b - 0.8) < 1e-9, 'A ratio below 1 is decay.'` },
       prompt: (
         <>
           <p>
-            Exponential data lie on a straight line after taking logarithms. Write <C>fit_exponential(xs, ys)</C>, which fits y = a·bˣ to positive data by least squares on (x, ln y): with X = xs and Y = ln ys, the slope is m = Σ(X − X̄)(Y − Ȳ)/Σ(X − X̄)² and the intercept c = Ȳ − mX̄. Return (a, b) = (eᶜ, eᵐ). Use only <C>math</C>, not numpy.
+            Exponential data lie on a straight line after taking logarithms. Write <C>fit_exponential(xs, ys)</C>, which fits y = a·bˣ to positive data by least squares on (x, ln y), where ln y is the power to which e must be raised to give y (<C>math.log(y)</C>), so that ln(e^t) = t: with X = xs and Y = ln ys, the slope is m = Σ(X − X̄)(Y − Ȳ)/Σ(X − X̄)² and the intercept c = Ȳ − mX̄. Return (a, b) = (eᶜ, eᵐ). Use only <C>math</C>, not numpy.
           </p>
         </>
       ),

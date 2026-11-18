@@ -188,7 +188,7 @@ assert abs(I(3) - np.trapezoid(x ** 3 * np.exp(x), x)) < 1e-6, 'Apply the recurr
       prompt: (
         <>
           <p>
-            The forward recurrence Iₙ = e − n·Iₙ₋₁ multiplies any error by n! and soon gives nonsense. Write <C>forward(n)</C>, which uses it from I₀ = e − 1, and <C>backward(n, start=60)</C>, which runs the recurrence backwards, Iₖ₋₁ = (e − Iₖ)/k, from a rough guess I_start = 0, dividing the error by k at each step. Then write <C>exact(n)</C>, the integral computed independently from the series Σₖ≥₀ 1/(k! (n + k + 1)) multiplied by e and with the sign pattern of the closed form, or more simply by <C>Fraction</C> integration of xⁿ times the Taylor series of eˣ to 40 terms, returned as a float.
+            The forward recurrence Iₙ = e − n·Iₙ₋₁ multiplies any error by n! and soon gives nonsense. Write <C>forward(n)</C>, which uses it from I₀ = e − 1, and <C>backward(n, start=60)</C>, which runs the recurrence backwards, Iₖ₋₁ = (e − Iₖ)/k, from a rough guess I_start = 0, dividing the error by k at each step. Then write <C>exact(n)</C>, the integral computed independently from the series Σₖ≥₀ 1/(k! (n + k + 1)) multiplied by e and with the sign pattern of the closed form, or more simply by <C>Fraction</C> integration of xⁿ times the first 40 terms of eˣ = Σ xᵏ/k!, returned as a float.
           </p>
         </>
       ),

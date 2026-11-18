@@ -181,7 +181,7 @@ for n in (1, 10, 1000, 10 ** 6):
       prompt: (
         <>
           <p>
-            Write <C>e_series(n)</C>, the sum 1 + 1/1! + 1/2! + … + 1/n!, building each term from the previous one rather than computing factorials afresh.
+            Write <C>e_series(n)</C>, the sum 1 + 1/1! + 1/2! + … + 1/n!, where k! = 1·2·…·k, building each term from the previous one rather than computing factorials afresh.
           </p>
         </>
       ),
@@ -210,7 +210,7 @@ assert abs(e_series(15) - math.e) < 1e-10, 'The series reaches e quickly.'` },
       prompt: (
         <>
           <p>
-            Two ways to reach e. Write <C>compound(n)</C>, the value of (1 + 1/n)ⁿ, and <C>e_series(n)</C>, the sum 1 + 1 + 1/2! + 1/3! + … + 1/n!, building each term from the one before it (divide by k to get 1/k! from 1/(k − 1)!). The tests compare how fast the two approach e.
+            Two ways to reach e. Write <C>compound(n)</C>, the value of (1 + 1/n)ⁿ, and <C>e_series(n)</C>, the sum 1 + 1 + 1/2! + 1/3! + … + 1/n! (with k! = 1·2·…·k), building each term from the one before it (divide by k to get 1/k! from 1/(k − 1)!). The tests compare how fast the two approach e.
           </p>
         </>
       ),

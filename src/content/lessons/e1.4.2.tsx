@@ -108,7 +108,7 @@ dependencies = [
       key: "commit",
       rung: "apply",
       prompt: <p>Which of these should be committed to Git? Select all that apply.</p>,
-      answer: { kind: "choice", options: ["pyproject.toml", ".venv/", "the lock file, uv.lock"], correct: [0, 2] },
+      answer: { kind: "choice", options: ["pyproject.toml", ".venv/", "train.py"], correct: [0, 2] },
     },
     {
       key: "uvrun",

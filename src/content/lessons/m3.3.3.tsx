@@ -153,8 +153,8 @@ print(x[0])`}</Code>
           <Code>{`import numpy as np
 A = np.array([[2.0, 1.0], [5.0, 3.0]])
 Ainv = np.linalg.inv(A)
-print(Ainv, np.linalg.det(A).round(6))`}</Code>
-          <p>The inverse of a 2 × 2 matrix with determinant 1. What does this print?</p>
+print(Ainv, round(A[0, 0] * A[1, 1] - A[0, 1] * A[1, 0], 6))`}</Code>
+          <p>The inverse of a 2 × 2 matrix with ad − bc = 1. What does this print?</p>
         </>
       ),
       answer: { kind: "choice", options: ["[[ 3. -1.]\n [-5.  2.]] 1.0", "[[ 2. -1.]\n [-5.  3.]] 1.0", "[[ 3. -5.]\n [-1.  2.]] 1.0", "[[ 3. -1.]\n [-5.  2.]] -1.0"], correct: [0] },
@@ -203,7 +203,7 @@ assert np.allclose(np.array(M) @ inverse2(M), np.eye(2)), 'M times its inverse s
       prompt: (
         <>
           <p>
-            Write <C>gauss_jordan_inverse(A)</C>, which inverts a square matrix by row-reducing [A | I] with partial pivoting (swap in the row with the largest absolute entry in the pivot column), raising <C>np.linalg.LinAlgError</C> if a pivot is below 1e−12 times the largest entry of A. Then write <C>sherman_morrison(Ainv, u, v)</C>, the inverse of A + uvᵀ from A⁻¹ in O(n²) time: A⁻¹ − (A⁻¹u)(vᵀA⁻¹)/(1 + vᵀA⁻¹u).
+            Write <C>gauss_jordan_inverse(A)</C>, which inverts a square matrix by row-reducing [A | I] with partial pivoting (swap in the row with the largest absolute entry in the pivot column), raising <C>np.linalg.LinAlgError</C> if a pivot is below 1e−12 times the largest entry of A. Then write <C>sherman_morrison(Ainv, u, v)</C>, the inverse of A + M, where M is the n × n matrix with entries uᵢvⱼ, from A⁻¹ in O(n²) time: with p = A⁻¹u and q the vector with entries qⱼ = Σᵢ vᵢ(A⁻¹)ᵢⱼ, it is A⁻¹ minus the matrix with entries pᵢqⱼ/(1 + v·p).
           </p>
         </>
       ),

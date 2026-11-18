@@ -81,7 +81,7 @@ export const lesson: LessonContent = {
         <p>
           Retrieval systems rank documents by the cosine between embedding vectors. Contrastive learning trains embeddings so
           that matching pairs have high cosine. Many models normalise their vectors to unit length first, after which the dot
-          product and the cosine are the same number and can be computed by one matrix multiplication.
+          product and the cosine are the same number.
         </p>
       </Remark>
 
@@ -211,7 +211,7 @@ assert list(top_k(E, [0.1, 1], 1)) == [1], 'Scaling a row should not change its 
       prompt: (
         <>
           <p>
-            Write <C>normalise_rows(E)</C>, which scales each row of a matrix to unit length (leaving all-zero rows as zeros instead of dividing by 0), and <C>similarity_matrix(E)</C>, the matrix of cosine similarities between all pairs of rows, as one matrix product of normalised rows. Then write <C>nearest_pairs(E, k)</C>, the k pairs (i, j) with i &lt; j of highest cosine similarity, in decreasing order of similarity (break ties by (i, j)).
+            Write <C>normalise_rows(E)</C>, which scales each row of a 2D NumPy array to unit length (leaving all-zero rows as zeros instead of dividing by 0), and <C>similarity_matrix(E)</C>, the 2D array S whose entry S[i, j] is the cosine similarity of rows i and j, from the dot products of the normalised rows. Then write <C>nearest_pairs(E, k)</C>, the k pairs (i, j) with i &lt; j of highest cosine similarity, in decreasing order of similarity (break ties by (i, j)).
           </p>
         </>
       ),

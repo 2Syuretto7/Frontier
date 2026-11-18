@@ -203,13 +203,13 @@ net.zero_grad()
 loss.backward()
 for p in net.parameters():
     p.data -= 0.1 * p.grad`}</Code>
-        <p>The loop no longer knows anything about the architecture, which is what lets an optimiser be written once.</p>
+        <p>The loop no longer knows anything about the architecture, which is what lets the update rule be written once.</p>
       </Example>
 
       <Remark title="shared parameters">
         <p>
           The id set matters when one module is used in two places, as in weight tying, where a language model&rsquo;s input
-          embedding and output layer share a matrix. Listing it twice would make the optimiser update it twice per step.
+          embedding and output layer share a matrix. Listing it twice would make the update rule change it twice per step.
         </p>
       </Remark>
     </>

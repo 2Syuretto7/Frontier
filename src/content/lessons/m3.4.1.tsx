@@ -203,7 +203,7 @@ def in_span(vectors, b):
       prompt: (
         <>
           <p>
-            Write <C>is_subspace(member, sample, trials, seed)</C>, a randomised test of the subspace conditions for a set described by a predicate <C>member</C>: seed NumPy&rsquo;s generator, draw pairs of members by calling <C>sample(rng)</C> (which returns a member), and check that 0 is a member and that a·u + b·v is a member for random reals a, b. Return <C>False</C> as soon as a check fails. The tests try planes through the origin, shifted planes, the union of two lines and the set of symmetric matrices.
+            Write <C>is_subspace(member, sample, trials, seed)</C>, a randomised test of the subspace conditions for a set described by a predicate <C>member</C>: seed NumPy&rsquo;s generator, draw pairs of members by calling <C>sample(rng)</C> (which returns a member), and check that 0 is a member and that a·u + b·v is a member for random reals a, b. Return <C>False</C> as soon as a check fails. The tests try planes through the origin, shifted planes, the union of two lines and the set of 3 × 3 matrices equal to their own mirror image across the diagonal (entry (i, j) equal to entry (j, i)).
           </p>
         </>
       ),
@@ -252,17 +252,17 @@ member = lambda M: np.allclose(M, M.T)
 def sample(rng):
     A = rng.normal(size=(3, 3))
     return A + A.T
-assert is_subspace(member, sample, 50, 2), 'Symmetric matrices form a subspace.'` },
+assert is_subspace(member, sample, 50, 2), 'Matrices with entry (i, j) equal to entry (j, i) form a subspace.'` },
         ],
       },
     },
     {
       key: "sym",
       rung: "stretch",
-      prompt: <p>Which of these are subspaces of the space of 2 × 2 matrices? Select all that apply.</p>,
+      prompt: <p>Which of these are subspaces of the space of 2 × 2 matrices [[a, b], [c, d]]? Select all that apply.</p>,
       answer: {
         kind: "choice",
-        options: ["The symmetric matrices", "The invertible matrices", "The matrices with trace 0", "The matrices with determinant 0"],
+        options: ["The matrices with b = c", "The invertible matrices", "The matrices with a + d = 0", "The matrices with ad − bc = 0"],
         correct: [0, 2],
       },
     },

@@ -47,14 +47,14 @@ export const lesson: LessonContent = {
 
       <Theorem title="gradients">
         <p>
-          <M>{"\\nabla \\mathrm{lse}(z) = \\mathrm{softmax}(z)"}</M>, the Hessian of lse is{" "}
+          <M>{"\\nabla \\mathrm{lse}(z) = \\mathrm{softmax}(z)"}</M>, the matrix of second partial derivatives of lse is{" "}
           <M>{"\\mathrm{diag}(p) - pp^\\top"}</M>, and
         </p>
         <MD>{"\\nabla_z\\, \\ell(z, y) = p - e_y."}</MD>
       </Theorem>
       <Proof>
         <p>
-          <M>{"\\partial\\,\\mathrm{lse}/\\partial z_i = e^{z_i}/\\sum_k e^{z_k} = p_i"}</M>. The Hessian is the Jacobian of
+          <M>{"\\partial\\,\\mathrm{lse}/\\partial z_i = e^{z_i}/\\sum_k e^{z_k} = p_i"}</M>. That matrix is the Jacobian of
           softmax, computed in the Jacobian lesson. For the loss, <M>{"\\nabla(\\mathrm{lse}(z) - z_y) = p - e_y"}</M>.
         </p>
       </Proof>
@@ -274,7 +274,7 @@ assert abs(L - 1000) < 1e-9 and np.allclose(G, [[1.0, -1.0]])` },
       rung: "stretch",
       prompt: (
         <p>
-          The Hessian of lse is <M>{"\\mathrm{diag}(p) - pp^\\top"}</M>. With three classes and z = (0, 0, 0), what is its (1, 1)
+          The matrix of second partial derivatives of lse is <M>{"\\mathrm{diag}(p) - pp^\\top"}</M>. With three classes and z = (0, 0, 0), what is its (1, 1)
           entry?
         </p>
       ),
