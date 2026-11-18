@@ -36,9 +36,11 @@ export function CpuPipelineViz() {
   return (
     <figure className="viz">
       <div className="viz-controls" style={{ marginTop: 0, flexWrap: "wrap", gap: 8 }}>
-        {MODES.map((m, i) => (
-          <button key={m} type="button" className="seg" aria-pressed={mode === i} onClick={() => setMode(i)}>{m}</button>
-        ))}
+        <div className="segmented" role="group" aria-label="Hazard">
+          {MODES.map((m, i) => (
+            <button key={m} type="button" className="seg" aria-pressed={mode === i} onClick={() => setMode(i)}>{m}</button>
+          ))}
+        </div>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: 460, display: "block", margin: "0 auto" }} role="img" aria-label="Pipeline diagram of eight instructions over clock cycles">
         {Array.from({ length: maxC }, (_, c) => (

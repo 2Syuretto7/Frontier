@@ -38,9 +38,11 @@ export function WarpDivergenceViz() {
   return (
     <figure className="viz">
       <div className="viz-controls" style={{ marginTop: 0, flexWrap: "wrap", gap: 8 }}>
-        {PATTERNS.map((name, i) => (
-          <button key={name} type="button" className="seg" aria-pressed={p === i} onClick={() => setP(i)}>{name}</button>
-        ))}
+        <div className="segmented" role="group" aria-label="Branch condition">
+          {PATTERNS.map((name, i) => (
+            <button key={name} type="button" className="seg" aria-pressed={p === i} onClick={() => setP(i)}>{name}</button>
+          ))}
+        </div>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: 460, display: "block", margin: "0 auto" }} role="img" aria-label="Which lanes of four warps take the branch">
         {Array.from({ length: WARPS }, (_, w) => {
