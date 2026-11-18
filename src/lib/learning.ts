@@ -4,7 +4,7 @@ import { query } from "./db";
 import { EXERCISES, GRAPH, LESSON_BY_ID, exerciseId, masteryExercises, reviewable } from "./curriculum";
 import { checkAnswer, type CheckResult } from "./check";
 import { frontier, isUnlocked } from "./graph";
-import { chooseNextStep, type LearnStep } from "./scheduler";
+import { chooseNextStep, type LearnInputs, type LearnStep } from "./scheduler";
 import type { Track } from "./types";
 import { RECALL_PREFIX, recallAttempt } from "./recall";
 import { masteryOf, type MasteryReport } from "./mastery";
@@ -37,10 +37,10 @@ export async function dueReviewCount(): Promise<number> {
 }
 
 /**
- * The next step for the Learn button. `afterReview` is set when the learner leaves a review session:
- * they go on to a lesson, never straight into another review.
+ * Everything the Learn scheduler reads: what is open, due and unlocked, today's pace, and the lessons that
+ * Readiness, Projects and Drills want favoured. `afterReview` is set when the learner leaves a review session.
  */
-export async function nextStep({ afterReview = false }: { afterReview?: boolean } = {}): Promise<LearnStep> {
+export async function learnInputs({ afterReview = false }: { afterReview?: boolean } = {}): Promise<LearnInputs> {
   const [progress, due, pace, today, last, reviewed] = await Promise.all([
     loadProgress(),
     dueReviewCount(),
@@ -64,7 +64,7 @@ export async function nextStep({ afterReview = false }: { afterReview?: boolean 
   const openId = open.map((o) => o.lesson_id).find((id) => LESSON_BY_ID.has(id) && isUnlocked(GRAPH, id, mastered));
   const openNode = openId ? GRAPH.nodes.get(openId) ?? null : null;
   const lastTrack: Track | null = last[0] ? GRAPH.nodes.get(last[0].lesson_id)?.track ?? null : null;
-  return chooseNextStep({
+  return {
     openLesson: openNode,
     dueReviews: due,
     reviewedSinceLesson: afterReview || (reviewed[0]?.reviewed ?? false),
@@ -72,7 +72,27 @@ export async function nextStep({ afterReview = false }: { afterReview?: boolean 
     lastTrack,
     newLessonsToday: today[0]?.n ?? 0,
     pace,
-  });
+    pulls: await guidance(mastered, pace),
+  };
+}
+
+/** Guidance never stops Learn: if it fails, Learn carries on with the plain rotation. */
+async function guidance(mastered: Set<string>, pace: number) {
+  try {
+    const { guidePulls } = await import("./guide/store");
+    return await guidePulls(mastered, pace);
+  } catch (error) {
+    console.error("Guidance unavailable:", error);
+    return [];
+  }
+}
+
+/**
+ * The next lesson or review session, by the scheduler alone. `afterReview` is set when the learner leaves a
+ * review session: they go on to a lesson, never straight into another review.
+ */
+export async function nextStep({ afterReview = false }: { afterReview?: boolean } = {}): Promise<LearnStep> {
+  return chooseNextStep(await learnInputs({ afterReview }));
 }
 
 export async function masteredSet(): Promise<Set<string>> {
@@ -81,11 +101,12 @@ export async function masteredSet(): Promise<Set<string>> {
   return new Set(rows.map((r) => r.lesson_id));
 }
 
-export async function startLesson(lessonId: string) {
+/** Begins a lesson. `guided` records which feature, if any, steered Learn to it, for the weekly plan's count. */
+export async function startLesson(lessonId: string, guided: string | null = null) {
   await query(
-    `INSERT INTO progress (lesson_id, status) VALUES ($1, 'in_progress')
+    `INSERT INTO progress (lesson_id, status, guided) VALUES ($1, 'in_progress', $2)
      ON CONFLICT (lesson_id) DO UPDATE SET updated_at = now()`,
-    [lessonId],
+    [lessonId, guided],
   );
 }
 

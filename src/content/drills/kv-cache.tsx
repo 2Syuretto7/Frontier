@@ -67,6 +67,15 @@ export const kvCache: Drill = {
   summary: "Add a key-value cache to a small transformer so each new token costs one position's work.",
   minutes: 25,
   skills: ["Inference", "Transformers", "Performance"],
+  lessons: ["l4.4.3", "l4.4.4", "l5.3.4"],
+  testLessons: {
+    "a decode step projects only the new position": ["l5.3.4"],
+    "generate does linear work": ["l5.3.4"],
+    "the cache holds one (K, V) pair per layer, (T, d) each": ["l5.3.4"],
+    "prefill matches the full forward pass": ["l4.4.3"],
+    "each decode step matches the full forward pass": ["l4.4.3", "l5.3.4"],
+    "generate matches greedy decoding without a cache": ["l5.3.4"],
+  },
   setup: SETUP,
   brief: (
     <>

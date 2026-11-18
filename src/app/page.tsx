@@ -4,7 +4,7 @@ import { GRAPH } from "@/lib/curriculum";
 import { COURSES } from "@/lib/graph";
 import { nextStep, overallStats } from "@/lib/learning";
 import { reviewCount } from "@/lib/parton/recall";
-import type { LearnStep } from "@/lib/scheduler";
+import type { TodayItem } from "@/lib/guide/core";
 import { learnAction } from "./actions";
 import { TopBar } from "@/components/TopBar";
 import { RevealText } from "@/components/ui/RevealText";
@@ -17,7 +17,7 @@ const fmt = (n: number) => n.toLocaleString("en-IN");
 
 export default async function Home() {
   await requireOwner();
-  const [step, stats] = await Promise.all([nextStep(), overallStats()]);
+  const [queue, stats] = await Promise.all([todayQueue(), overallStats()]);
   const total = GRAPH.order.length;
   const lede =
     stats.mastered === 0
@@ -44,8 +44,10 @@ export default async function Home() {
               <Link href="/map" className="text-link">Browse the map <ArrowRight size={14} /></Link>
             </div>
           </div>
-          <NextPanel step={step} />
+          <NextPanel item={queue[0] ?? null} />
         </section>
+
+        {queue.length > 1 && <TodayList queue={queue} />}
 
         <section className="stats" aria-label="Progress">
           <Stat label="Mastered" value={fmt(stats.mastered)} note={stats.mastered === 0 ? "The first one is the hardest" : `${((stats.mastered / total) * 100).toFixed(1)} percent of the arc`} />
@@ -68,32 +70,73 @@ function Stat({ label, value, note }: { label: string; value: string; note: stri
   );
 }
 
-function NextPanel({ step }: { step: LearnStep }) {
-  const head =
-    step.kind === "begin" ? <Pill tone="accent" icon="dot">New lesson</Pill> :
-    step.kind === "continue" ? <Pill tone="success" icon="dot">In progress</Pill> :
-    step.kind === "review" ? <Pill tone="accent" icon="clock">Review due</Pill> :
-    <Pill tone="muted">Resting</Pill>;
-
-  let title: string;
-  let meta: string;
-  let code: string;
-  if (step.kind === "begin" || step.kind === "continue") {
-    title = step.lesson.title;
-    meta = `${step.lesson.courseTitle} · Chapter ${step.lesson.chapter}, ${step.lesson.chapterTitle}`;
-    if (step.kind === "begin" && step.pastPace) meta += ". You have reached today's suggested pace; carry on whenever you like.";
-    code = `${step.lesson.course} / ${step.lesson.id}`;
-  } else if (step.kind === "review") {
-    // A review session is three to five new questions, however many ideas are due.
-    const n = reviewCount(step.count);
-    title = `${n} new questions to review`;
-    meta = "Fresh questions on earlier ideas, just before you would forget them.";
-    code = "review / spaced";
-  } else {
-    title = "You're ahead of the writing";
-    meta = "New lessons are on their way. Until then, Learn opens the map, which shows everything that is ready.";
-    code = "frontier / waiting";
+/** Today's queue, or, if it can't be built, the scheduler's single next step. */
+async function todayQueue(): Promise<TodayItem[]> {
+  try {
+    const { today } = await import("@/lib/guide/store");
+    return await today();
+  } catch (error) {
+    console.error("Today's queue unavailable:", error);
+    const step = await nextStep();
+    if (step.kind === "continue") return [{ kind: "continue", lessonId: step.lesson.id, title: step.lesson.title, why: null }];
+    if (step.kind === "review") return [{ kind: "review", count: step.count }];
+    if (step.kind === "begin") return [{ kind: "begin", lessonId: step.lesson.id, title: step.lesson.title, why: step.why ?? null, pastPace: step.pastPace }];
+    return [];
   }
+}
+
+const KIND_LABEL: Record<TodayItem["kind"], string> = {
+  continue: "Lesson",
+  review: "Review",
+  revisit: "Revisit",
+  begin: "Lesson",
+  drill: "Drill",
+  project: "Project",
+};
+
+function describe(item: TodayItem): { title: string; meta: string; code: string; href: string } {
+  switch (item.kind) {
+    case "continue":
+    case "begin":
+    case "revisit": {
+      const n = GRAPH.nodes.get(item.lessonId);
+      const where = n ? `${n.courseTitle} · Chapter ${n.chapter}, ${n.chapterTitle}` : "";
+      let meta = item.why ?? where;
+      if (item.kind === "begin" && item.pastPace) meta += " You have reached today's suggested pace; carry on whenever you like.";
+      return { title: item.title, meta, code: n ? `${n.course} / ${n.id}` : item.lessonId, href: `/learn/${item.lessonId}` };
+    }
+    case "review":
+      // A review session is three to five new questions, however many ideas are due.
+      return {
+        title: `${reviewCount(item.count)} new questions to review`,
+        meta: "Fresh questions on earlier ideas, just before you would forget them.",
+        code: "review / spaced",
+        href: "/review",
+      };
+    case "drill":
+      return { title: `${item.title} drill`, meta: item.why, code: `drills / ${item.drillId}`, href: `/drills/${item.drillId}` };
+    case "project":
+      return { title: item.title, meta: item.why, code: `projects / ${item.projectId}`, href: `/projects/${item.projectId}` };
+  }
+}
+
+function NextPanel({ item }: { item: TodayItem | null }) {
+  const head =
+    !item ? <Pill tone="muted">Resting</Pill> :
+    item.kind === "begin" ? <Pill tone="accent" icon="dot">New lesson</Pill> :
+    item.kind === "continue" ? <Pill tone="success" icon="dot">In progress</Pill> :
+    item.kind === "review" ? <Pill tone="accent" icon="clock">Review due</Pill> :
+    item.kind === "revisit" ? <Pill tone="accent" icon="dot">Revisit</Pill> :
+    item.kind === "drill" ? <Pill tone="accent" icon="clock">Drill</Pill> :
+    <Pill tone="accent" icon="dot">Project</Pill>;
+
+  const shown = item
+    ? describe(item)
+    : {
+        title: "You're ahead of the writing",
+        meta: "New lessons are on their way. Until then, Learn opens the map, which shows everything that is ready.",
+        code: "frontier / waiting",
+      };
 
   return (
     <aside className="next-panel fade-up" style={{ animationDelay: "420ms" }} aria-label="Up next">
@@ -102,13 +145,39 @@ function NextPanel({ step }: { step: LearnStep }) {
         {head}
       </div>
       <div className="next-body">
-        <p className="next-title">{title}</p>
-        <p className="next-meta">{meta}</p>
+        <p className="next-title">{shown.title}</p>
+        <p className="next-meta">{shown.meta}</p>
       </div>
       <div className="panel-foot">
-        <span className="mono-meta">{code}</span>
+        <span className="mono-meta">{shown.code}</span>
         <span className="next-progress" aria-hidden="true"><span /></span>
       </div>
     </aside>
+  );
+}
+
+/** The rest of the day's queue, in the order Learn will open it. */
+function TodayList({ queue }: { queue: TodayItem[] }) {
+  return (
+    <section className="today" aria-labelledby="today-title">
+      <div className="today-head">
+        <h2 id="today-title">Today</h2>
+        <p className="muted">Learn opens these in order. Readiness, your project and your drills steer it, but only towards lessons whose prerequisites you have already mastered.</p>
+      </div>
+      <ol className="today-list">
+        {queue.map((item, i) => {
+          const d = describe(item);
+          return (
+            <li key={`${item.kind}-${i}`} className={i === 0 ? "is-next" : undefined}>
+              <span className="mono-tag">{KIND_LABEL[item.kind]}</span>
+              <span className="today-body">
+                <Link href={d.href} className="today-title">{d.title}</Link>
+                {d.meta && <span className="today-why">{d.meta}</span>}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
   );
 }

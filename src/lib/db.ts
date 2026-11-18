@@ -22,6 +22,8 @@ const SCHEMA = [
      updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
    )`,
   `ALTER TABLE progress ADD COLUMN IF NOT EXISTS started_at TIMESTAMPTZ NOT NULL DEFAULT now()`,
+  // Which feature steered Learn to a lesson when it was begun: 'readiness', 'project' or 'drill', or null.
+  `ALTER TABLE progress ADD COLUMN IF NOT EXISTS guided TEXT`,
   `CREATE TABLE IF NOT EXISTS exercise_state (
      exercise_id TEXT PRIMARY KEY,
      lesson_id TEXT NOT NULL,

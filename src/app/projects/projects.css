@@ -106,3 +106,8 @@
   .pp-start-row { flex-direction: column; }
   .pp-assist { padding: 12px; }
 }
+
+.pp-guide { margin: 24px 0; padding: 20px; border: 1px solid var(--border); border-radius: var(--radius-md); }
+.pp-guide .pp-h2 { margin-top: 0; }
+.pp-guide-list { list-style: none; padding: 0; margin: 8px 0 16px; display: grid; gap: 8px; }
+.pp-guide-list li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 14px; line-height: 1.5; }

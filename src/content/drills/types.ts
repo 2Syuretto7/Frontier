@@ -16,6 +16,16 @@ export type Drill = {
   minutes: number;
   /** What the drill exercises, shown as tags and usable as scorecard evidence. */
   skills: string[];
+  /**
+   * The lessons the drill tests, by id. The drill unlocks once every one of them is mastered, so it tests what
+   * was just learnt.
+   */
+  lessons: string[];
+  /**
+   * The lessons behind each hidden test, by test name. When a test fails, Frontier sends the learner to these
+   * lessons before the drill comes back. A test not listed falls back to `lessons`.
+   */
+  testLessons?: Record<string, string[]>;
   /** The full task, shown once the clock starts. Name every function, its arguments, shapes and conventions. */
   brief: ReactNode;
   /** What the editor opens with. It must fail at least one test. */

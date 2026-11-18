@@ -7,6 +7,15 @@ export const adamw: Drill = {
   summary: "Adam with bias correction and decoupled weight decay, updating NumPy parameters in place.",
   minutes: 15,
   skills: ["Optimisation", "Training", "NumPy"],
+  lessons: ["l3.6.1", "l3.6.2", "l3.7.1"],
+  testLessons: {
+    "weight decay is decoupled from the gradient": ["l3.7.1", "l3.6.2"],
+    "parameters are updated in place": ["l3.6.1"],
+    "the first step moves each weight by about lr": ["l3.6.2"],
+    "matches the reference over many steps": ["l3.6.2"],
+    "default hyperparameters follow PyTorch": ["l3.6.2"],
+    "state is kept separately for each parameter": ["l3.6.2"],
+  },
   brief: (
     <>
       <p>Write a class <C>AdamW</C> in NumPy with the same update rule as PyTorch&apos;s <C>torch.optim.AdamW</C>.</p>

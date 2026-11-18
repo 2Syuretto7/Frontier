@@ -177,7 +177,8 @@ export function skillProfile(drills: readonly PlanDrill[], attempts: PlanAttempt
 // ---------------------------------------------------------------------------------------------
 // The plan
 
-export type PickKind = "open" | "retry" | "due" | "new" | "later";
+/** "locked": its lessons are not all mastered, or a miss has sent the learner back to a lesson first. */
+export type PickKind = "open" | "retry" | "due" | "new" | "later" | "locked";
 
 export type Pick = {
   drillId: string;
@@ -204,6 +205,8 @@ export function planDrills(
   attempts: PlanAttempt[],
   readiness: readonly ReadinessSkill[] = [],
   now = Date.now(),
+  /** Drills that can't be started now, with the reason. An attempt already under way is never blocked. */
+  blocked: ReadonlyMap<string, string> = new Map(),
 ): { next: Pick | null; queue: Pick[]; skills: SkillRow[] } {
   const skills = skillProfile(drills, attempts, readiness);
   const weak = new Map(skills.map((s) => [s.skill, s]));
@@ -223,6 +226,8 @@ export function planDrills(
     if (mine.some((a) => !a.finishedAt)) {
       return { ...base, kind: "open", score: 1000, reason: "You have an attempt under way. Finish it first." };
     }
+    const block = blocked.get(d.id);
+    if (block) return { ...base, kind: "locked", score: -1 + weakness / 10, reason: block };
     if (!last) {
       return { ...base, kind: "new", score: 50 + 30 * weakness, reason: `New. It works on ${weakest.skill}, ${weakest.tried ? "one of your weaker drill skills" : "a skill no drill has tested yet"}.` };
     }
@@ -238,6 +243,6 @@ export function planDrills(
     return { ...base, kind: "later", score: 10 + 10 * weakness, reason: `Not due until ${due!.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short" })}.` };
   });
   queue.sort((a, b) => b.score - a.score || a.drillId.localeCompare(b.drillId));
-  const next = queue[0] && queue[0].kind !== "later" ? queue[0] : null;
+  const next = queue[0] && queue[0].kind !== "later" && queue[0].kind !== "locked" ? queue[0] : null;
   return { next, queue, skills };
 }
