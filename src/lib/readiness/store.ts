@@ -98,6 +98,8 @@ const SCHEMA = [
   `ALTER TABLE readiness_skills ADD COLUMN IF NOT EXISTS next_step JSONB`,
   // Each skill's share of the postings at each check, to show which skills are new or fading.
   `ALTER TABLE readiness_checks ADD COLUMN IF NOT EXISTS shares JSONB`,
+  // The lessons that teach each skill, as Parton picked them, for the weekly plan that steers Learn.
+  `ALTER TABLE readiness_skills ADD COLUMN IF NOT EXISTS lessons JSONB`,
 ];
 
 const shared = globalThis as typeof globalThis & { __frontierReadiness?: Promise<void> };
@@ -486,6 +488,8 @@ async function currentFingerprint(): Promise<string> {
   ]);
   if (skills.length === 0) return "";
   return fingerprint([
+    // Bumped when Parton's scoring asks for something new, so every scorecard is scored again once.
+    "scoring:lessons-v1",
     ...skills.map((s) => `skill:${s.key}`),
     ...own.map((e) => `own:${e.id}`),
     ...projects.map((p) => `project:${p.id}`),
@@ -577,12 +581,12 @@ export async function scoreSkills(): Promise<Result> {
     }
     await q(
       `UPDATE readiness_skills
-          SET suggested_level = $2, suggested_reason = $3, next_step = $4::jsonb,
+          SET suggested_level = $2, suggested_reason = $3, next_step = $4::jsonb, lessons = $5::jsonb,
               level = CASE WHEN level_source = 'parton' THEN $2 ELSE level END,
               level_source = CASE WHEN level_source = 'confirmed' AND level <> $2 THEN 'learner' ELSE level_source END,
               updated_at = now()
         WHERE id = $1`,
-      [skillId, r.level, r.reason, r.next ? JSON.stringify(r.next) : null],
+      [skillId, r.level, r.reason, r.next ? JSON.stringify(r.next) : null, JSON.stringify(r.lessons)],
     );
   }
   await q(
@@ -598,12 +602,23 @@ export async function scoreSkills(): Promise<Result> {
  */
 export async function readinessGaps(): Promise<{
   key: string; name: string; area: string; description: string; frequency: number; postingCount: number; level: number; gap: number; next: NextStep | null;
+  lessons: string[] | null;
 }[]> {
-  const card = await loadScorecard();
+  const [card, rows] = await Promise.all([loadScorecard(), q<{ key: string; lessons: string[] | string | null }>("SELECT key, lessons FROM readiness_skills")]);
+  const lessons = new Map(rows.map((r) => [r.key, typeof r.lessons === "string" ? (JSON.parse(r.lessons) as string[]) : r.lessons]));
   return card.skills
     .filter((s) => s.gap > 0)
     .sort((a, b) => b.gap - a.gap)
-    .map((s) => ({ key: s.key, name: s.name, area: s.area, description: s.description, frequency: s.frequency, postingCount: s.postingCount, level: s.level, gap: s.gap, next: s.next }));
+    .map((s) => ({
+      key: s.key, name: s.name, area: s.area, description: s.description, frequency: s.frequency, postingCount: s.postingCount, level: s.level, gap: s.gap, next: s.next,
+      lessons: Array.isArray(lessons.get(s.key)) ? lessons.get(s.key)! : null,
+    }));
+}
+
+/** The id of the latest check of postings, or null before the first: a new one means labs' asks may have changed. */
+export async function latestCheckId(): Promise<number | null> {
+  const rows = await q<{ id: number }>("SELECT id FROM readiness_checks ORDER BY at DESC, id DESC LIMIT 1");
+  return rows[0] ? Number(rows[0].id) : null;
 }
 
 // ---------------------------------------------------------------------------------------------

@@ -17,7 +17,7 @@ const dateFmt = new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short
 
 export default async function Readiness() {
   await requireOwner();
-  const [card, dirty] = await Promise.all([loadScorecard(), needsScoring()]);
+  const [card, dirty, week] = await Promise.all([loadScorecard(), needsScoring(), thisWeek()]);
   const live = card.skills.filter((s) => s.frequency > 0);
   const gaps = live.filter((s) => s.gap > 0).sort((a, b) => b.gap - a.gap).slice(0, 5);
   const moved = card.skills.filter((s) => s.trend !== null);
@@ -174,6 +174,8 @@ export default async function Readiness() {
             </ol>
           </section>
         )}
+
+        {week && week.plan && <WeekPlan view={week} />}
 
         {card.compared && moved.length > 0 && (
           <section className="rd-block" aria-labelledby="rd-moved">
@@ -371,5 +373,72 @@ function SkillRow({ skill: s }: { skill: Skill }) {
         </form>
       )}
     </li>
+  );
+}
+
+/** This week's plan and where each of its lessons stands, or null if it can't be loaded. */
+async function thisWeek() {
+  try {
+    const [{ masteredSet, getPace }, { weeklyPlan }, { GRAPH }, { isUnlocked }] = await Promise.all([
+      import("@/lib/learning"), import("@/lib/guide/store"), import("@/lib/curriculum"), import("@/lib/graph"),
+    ]);
+    const [mastered, pace] = await Promise.all([masteredSet(), getPace()]);
+    const view = await weeklyPlan(mastered, pace);
+    const lesson = (id: string) => {
+      const n = GRAPH.nodes.get(id);
+      const state: "mastered" | "open" | "waiting" = mastered.has(id) ? "mastered" : n?.authored && isUnlocked(GRAPH, id, mastered) ? "open" : "waiting";
+      return { id, title: n?.title ?? id, course: n?.course ?? "", state };
+    };
+    return { ...view, skills: (view.plan?.skills ?? []).map((s) => ({ ...s, items: s.lessons.map(lesson) })) };
+  } catch (error) {
+    console.error("Weekly plan unavailable:", error);
+    return null;
+  }
+}
+
+type WeekView = NonNullable<Awaited<ReturnType<typeof thisWeek>>>;
+
+function WeekPlan({ view }: { view: WeekView }) {
+  const plan = view.plan!;
+  const left = Math.max(0, plan.quota - view.begun);
+  return (
+    <section className="rd-block" aria-labelledby="rd-week">
+      <div className="rd-block-head">
+        <div>
+          <h2 id="rd-week">This week&apos;s plan</h2>
+          <p className="desc">
+            Learn favours the lessons behind your weakest job skills for up to {plan.quota} new lessons this week, and rotates the
+            three tracks as usual for the rest. It only steers towards a lesson once you have mastered its prerequisites through
+            Learn; until then the lesson waits. The plan is made again each Monday and after each quarterly refresh of postings.
+          </p>
+        </div>
+        <span className="mono-meta">{Math.min(view.begun, plan.quota)} of {plan.quota} begun · {plan.week}</span>
+      </div>
+      {view.skills.length === 0 ? (
+        <p className="hint">No gap has lessons that teach it yet. Learn rotates the three tracks as usual.</p>
+      ) : (
+        <ol className="rd-gaps">
+          {view.skills.map((s) => (
+            <li key={s.key}>
+              <div className="rd-gap-head">
+                <span className="rd-gap-name">{s.name}</span>
+                <span className="mono-meta">{Math.round(s.gap * 100)} percent short</span>
+              </div>
+              <ul className="rd-week-lessons">
+                {s.items.map((l) => (
+                  <li key={l.id}>
+                    {l.state === "mastered" ? <Pill tone="success" icon="check">Mastered</Pill>
+                      : l.state === "open" ? <Pill tone="accent" icon="dot">{left > 0 ? "Steering" : "Next week"}</Pill>
+                      : <Pill tone="muted" icon="lock">Waits for prerequisites</Pill>}
+                    {l.state === "waiting" ? <span>{l.title}</span> : <Link href={`/learn/${l.id}`} className="text-link">{l.title}</Link>}
+                    <span className="mono-meta">{l.course}</span>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ol>
+      )}
+    </section>
   );
 }

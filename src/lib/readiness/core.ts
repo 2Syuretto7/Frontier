@@ -357,8 +357,13 @@ export const ASSESS_SCHEMA = {
           next_ref: { type: "string", description: "For a lesson or drill, its ref from \"What the learner could do next\". Otherwise empty." },
           next_title: { type: "string", description: "For a project, the project's question in one line. Otherwise empty." },
           next_why: { type: "string", description: "One sentence on why this is the best next step for the skill. Empty for none." },
+          lessons: {
+            type: "array",
+            items: { type: "string" },
+            description: "Refs of up to six lessons from \"What the learner could do next\" (open or locked) that teach the core of this skill, earliest in the curriculum first. Empty if none does.",
+          },
         },
-        required: ["skill", "evidence", "level", "reason", "next_kind", "next_ref", "next_title", "next_why"],
+        required: ["skill", "evidence", "level", "reason", "next_kind", "next_ref", "next_title", "next_why", "lessons"],
         additionalProperties: false,
       },
     },
@@ -368,7 +373,7 @@ export const ASSESS_SCHEMA = {
 } as const;
 
 export type AssessOutput = {
-  skills: { skill: string; evidence: string[]; level: number; reason: string; next_kind: string; next_ref: string; next_title: string; next_why: string }[];
+  skills: { skill: string; evidence: string[]; level: number; reason: string; next_kind: string; next_ref: string; next_title: string; next_why: string; lessons?: string[] }[];
 };
 
 export const ASSESS_SYSTEM = `You are Parton, the tutor inside Frontier, a private learning platform for one learner preparing for research and engineering roles at frontier AI labs.
@@ -393,6 +398,8 @@ Choosing the next step, for each skill below Built:
 - A lesson, when the learner lacks the foundations. Prefer lessons marked open now; name a locked lesson only if nothing open teaches the skill.
 - A project, when the skill can only be shown by building something real, or the learner is already at Practised. Write a concrete, answerable research question in one line, small enough for a few weeks.
 - Use only refs from the list. For a skill at Built or above, the next step is none unless a write-up would take it to Published, in which case suggest the project.
+
+The lessons behind each skill: list up to six lessons, open or locked, that teach the core of the skill as the postings mean it, earliest in the curriculum first. Frontier uses them to steer the learner's lessons towards their weakest skills, but only once each lesson's prerequisites are mastered. Leave the list empty when no lesson really teaches the skill.
 
 Write in British spelling (as used in India). No emojis. Return every listed skill exactly once.`;
 
@@ -424,6 +431,8 @@ export type Assessment = {
   level: number;
   reason: string;
   next: NextStep | null;
+  /** Lessons that teach the skill, as lesson ids. */
+  lessons: string[];
 };
 
 /**
@@ -458,7 +467,8 @@ export function acceptAssessment(
       const title = (raw.next_title ?? "").trim().replace(/\s+/g, " ").slice(0, 300);
       if (title) next = { kind: "project", ref: "", title, why };
     }
-    out.set(key, { key, evidence, level, reason: (raw.reason ?? "").trim().slice(0, 500), next });
+    const lessons = [...new Set((raw.lessons ?? []).filter((r) => optionByRef.get(r)?.kind === "lesson").map((r) => r.replace(/^lesson:/, "")))].slice(0, 6);
+    out.set(key, { key, evidence, level, reason: (raw.reason ?? "").trim().slice(0, 500), next, lessons });
   }
   return [...out.values()];
 }

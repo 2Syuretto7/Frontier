@@ -7,6 +7,15 @@ export const ppo: Drill = {
   summary: "Generalised advantage estimation, the clipped surrogate loss and its gradient, and one policy update.",
   minutes: 30,
   skills: ["Reinforcement learning", "Policy gradients", "Backpropagation"],
+  lessons: ["l3.2.3", "l6.6.4", "l6.7.3"],
+  testLessons: {
+    "GAE matches the reference within one episode": ["l6.6.4"],
+    "GAE resets at episode boundaries": ["l6.6.4"],
+    "the loss matches the reference": ["l6.7.3"],
+    "the gradient matches finite differences": ["l3.2.3", "l3.2.4"],
+    "clipped samples contribute no gradient": ["l6.7.3"],
+    "a PPO step improves the objective without changing its input": ["l6.7.3"],
+  },
   brief: (
     <>
       <p>Write the core of proximal policy optimisation for a categorical policy, in NumPy.</p>

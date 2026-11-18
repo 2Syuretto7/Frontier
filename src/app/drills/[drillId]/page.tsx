@@ -9,6 +9,7 @@ import { partonConnected } from "@/lib/parton/claude";
 import { TopBar } from "@/components/TopBar";
 import { DrillSession } from "@/components/drills/DrillSession";
 import { ArrowLeft } from "@/components/ui/Icons";
+import { Pill } from "@/components/ui/Pill";
 import { clock, percent } from "@/components/drills/format";
 
 export const dynamic = "force-dynamic";
@@ -51,6 +52,12 @@ export default async function DrillPage({ params }: { params: Promise<{ drillId:
           </p>
         </header>
 
+        {!open && pick.kind === "locked" ? (
+          <div className="drill-locked" role="status">
+            <p><Pill tone="muted" icon="lock">Locked</Pill> {pick.reason}</p>
+            <p className="muted">Drills test what you have just learnt, so each opens once its lessons are mastered through Learn.</p>
+          </div>
+        ) : (
         <DrillSession
           drill={{ id: drill.id, title: drill.title, summary: drill.summary }}
           upcoming={{
@@ -67,6 +74,7 @@ export default async function DrillPage({ params }: { params: Promise<{ drillId:
         >
           {drill.brief}
         </DrillSession>
+        )}
 
         {attempts.some((a) => a.finishedAt) && (
           <section className="drill-history" aria-labelledby="history">
