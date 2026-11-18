@@ -412,7 +412,7 @@ export const CONCEPTS: Concept[] = [
   { name: "autoencoders", taughtIn: ["l4.2.3"], patterns: ["autoencoder", "\\bvae\\b", "encoder and decoder"] },
   { name: "contrastive learning", taughtIn: ["l4.2.4"], patterns: ["contrastive", "infonce", "=\\bCLIP\\b", "simclr"] },
   { name: "language models and n-grams", taughtIn: ["l4.3.1", "l0.4.4", "l0.2.4"], patterns: ["n-gram", "bigram", "trigram", "language model", "next-token", "next token"] },
-  { name: "tokens and tokenisation", taughtIn: ["l4.3.1", "l0.4.4"], patterns: ["(?<!rate limits, commonly a )\\btokens?\\b(?! bucket)", "tokeni[sz]", "\\bbpe\\b", "byte-pair", "vocabulary size"] },
+  { name: "tokens and tokenisation", taughtIn: ["l4.3.1", "l0.4.4", "l5.1.1"], patterns: ["(?<!rate limits, commonly a )\\btokens?\\b(?! bucket)", "tokeni[sz]", "\\bbpe\\b", "byte-pair", "vocabulary size"] },
   { name: "recurrent networks", taughtIn: ["l4.3.3"], patterns: ["\\brnns?\\b", "recurrent (neural )?net", "backpropagation through time", "\\bbptt\\b"] },
   { name: "LSTMs and GRUs", taughtIn: ["l4.3.4"], patterns: ["\\blstms?\\b", "\\bgrus?\\b", "gated recurrent"] },
   { name: "sequence to sequence", taughtIn: ["l4.3.5"], patterns: ["sequence[- ]to[- ]sequence", "seq2seq", "encoder-decoder", "teacher forcing"] },
