@@ -118,9 +118,8 @@ export const lesson: LessonContent = {
       </Theorem>
       <Proof>
         <p>
-          Replacing <M>{"X_i"}</M> changes each average <M>{"\\tfrac1n\\sum h(X_j)"}</M> by at most 1/n, so it changes the
-          supremum by at most 1/n: if the new supremum were larger by more than 1/n, the function nearly attaining it would
-          have been larger by more than 0 before. McDiarmid with <M>{"c_i = 1/n"}</M> gives <M>{"\\exp(-2t^2/(n \\cdot n^{-2}))"}</M>.
+          Replacing <M>{"X_i"}</M> changes each average <M>{"\\tfrac1n\\sum h(X_j)"}</M> by at most 1/n, since one term in [0, 1]
+          is swapped for another, and if every member of a family of numbers moves by at most 1/n, so does their supremum. McDiarmid with <M>{"c_i = 1/n"}</M> gives <M>{"\\exp(-2t^2/(n \\cdot n^{-2}))"}</M>.
           With the indicators <M>{"h = \\mathbf{1}[x \\le s]"}</M> this covers the Kolmogorov-Smirnov statistic{" "}
           <M>{"\\sup_s |F_n(s) - F(s)|"}</M>, computed by <C>ks_stat</C>: it is within about{" "}
           <M>{"\\sqrt{\\log(1/\\delta)/(2n)}"}</M> of its mean. What that mean is, for a rich class, is the subject of chaining
