@@ -86,7 +86,7 @@ export const lesson: LessonContent = {
         </p>
       </Proof>
 
-      <Theorem title="Little&apos;s law for links">
+      <Theorem title="Little’s law for links">
         <p>
           To sustain bandwidth β when each request takes latency α to be answered, at least <M>{"\\alpha\\beta"}</M> bytes
           must be in flight on average; with requests of s bytes, at least <M>{"\\lceil\\alpha\\beta/s\\rceil"}</M> must be
