@@ -201,7 +201,7 @@ assert np.allclose(w, [0.5]) and np.allclose(gd_linear(np.eye(2), np.ones(2), 0.
       prompt: (
         <>
           <p>
-            Write <C>max_stable_lr(X)</C> for gradient descent on the mean squared error (1/n)‖Xw − y‖²: the Hessian is (2/n)XᵀX and descent converges exactly when the learning rate is below 2 divided by its largest eigenvalue, that is below n/λ_max(XᵀX). Then write <C>minibatch_sgd(X, y, lr, epochs, batch, seed)</C>: from w = 0, for each epoch take <C>rng.permutation(n)</C> from one <C>np.random.default_rng(seed)</C>, walk through it in consecutive batches (the last may be shorter) and step with the batch gradient (2/b)X_bᵀ(X_bw − y_b). Return w.
+            Write <C>max_stable_lr(X)</C> for gradient descent on the mean squared error (1/n)‖Xw − y‖²: descent converges exactly when the learning rate is below n/λ_max(XᵀX), where λ_max is the largest eigenvalue of XᵀX. Then write <C>minibatch_sgd(X, y, lr, epochs, batch, seed)</C>: from w = 0, for each epoch take <C>rng.permutation(n)</C> from one <C>np.random.default_rng(seed)</C>, walk through it in consecutive batches (the last may be shorter) and step with the batch gradient (2/b)X_bᵀ(X_bw − y_b). Return w.
           </p>
         </>
       ),

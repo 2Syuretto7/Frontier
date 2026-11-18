@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { LESSONS } from "../src/content/lessons/index.ts";
 import codePrerequisites from "../src/content/code-prerequisites.json";
-import { buildGraph, frontier, withCodePrerequisites, type Graph } from "../src/lib/graph.ts";
+import { buildGraph, frontier, withPrerequisites, type Graph } from "../src/lib/graph.ts";
 import { chooseNextStep } from "../src/lib/scheduler.ts";
 import type { Track } from "../src/lib/types.ts";
 import {
@@ -28,7 +28,7 @@ const MAX_FUNCTIONS = 3;
 
 const python = pythonAvailable();
 const skip = !python && "python3 is not installed";
-const graph = buildGraph(withCodePrerequisites(authoredLinks()));
+const graph = buildGraph(withPrerequisites(authoredLinks()));
 const items = codeItems();
 const needs = python ? neededTeachers(items, itemFeatures(items)) : new Map<string, Map<string, Set<string>>>();
 

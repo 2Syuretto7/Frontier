@@ -1,12 +1,12 @@
 import "server-only";
 import { LESSONS } from "@/content/lessons";
-import { buildGraph, withCodePrerequisites, type Graph } from "./graph";
+import { buildGraph, withPrerequisites, type Graph } from "./graph";
 import type { Exercise, LessonContent } from "./types";
 
 export const LESSON_BY_ID = new Map(LESSONS.map((l) => [l.id, l]));
 
 /** Built once per server process; throws (and fails the build) if any link is broken. */
-export const GRAPH: Graph = buildGraph(withCodePrerequisites(new Map(LESSONS.map((l) => [l.id, l.links ?? {}]))));
+export const GRAPH: Graph = buildGraph(withPrerequisites(new Map(LESSONS.map((l) => [l.id, l.links ?? {}]))));
 
 export type ExerciseRef = { id: string; lessonId: string; exercise: Exercise };
 
