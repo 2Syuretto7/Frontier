@@ -45,7 +45,7 @@ export const lesson: LessonContent = {
   minutes: 45,
   links: {
     requires: ["m14.2.3"],
-    revisits: ["l3.6.2"],
+    revisits: ["l3.6.2", "l3.7.1"],
     foreshadows: ["m14.6.4", "m14.4.3"],
   },
 
