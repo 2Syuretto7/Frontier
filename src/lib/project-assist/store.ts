@@ -82,6 +82,8 @@ export async function listSuggestions(): Promise<StoredSuggestion[]> {
 }
 
 async function masteredTitles(limit = 40): Promise<string[]> {
+  const { reconcileMastery } = await import("@/lib/learning");
+  await reconcileMastery();
   const rows = await query<{ lesson_id: string }>(
     "SELECT lesson_id FROM progress WHERE status = 'mastered' ORDER BY updated_at DESC LIMIT $1",
     [limit],
