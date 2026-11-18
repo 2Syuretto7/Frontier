@@ -91,7 +91,7 @@ export function BenignOverfitViz() {
         <line x1={X0} x2={X0 + PW} y1={sy(SIGMA2)} y2={sy(SIGMA2)} stroke="var(--text-muted)" strokeDasharray="2 4" />
         {pts.map((q) => <circle key={q.p} cx={sx(q.p)} cy={sy(q.risk)} r={3.2} fill="var(--accent)" />)}
         <line x1={X0} x2={X0 + PW} y1={Y0 + PH} y2={Y0 + PH} stroke="var(--border)" />
-        {[10, 40, 100, 1000].map((v) => <text key={v} x={sx(v)} y={Y0 + PH + 14} textAnchor="middle" className="viz-label">{v}</text>)}
+        {[10, 40, 100, 1000].map((v) => <text key={v} x={sx(v)} y={Y0 + PH + 14} textAnchor={v === 1000 ? "end" : "middle"} className="viz-label">{v}</text>)}
         {[0, 1, 2, 3].map((v) => <text key={v} x={X0 - 4} y={sy(v) + 4} textAnchor="end" className="viz-label">{v}</text>)}
         <text x={X0 + PW / 2} y={H - 3} textAnchor="middle" className="viz-label">features p (log scale; n = 40)</text>
       </svg>
