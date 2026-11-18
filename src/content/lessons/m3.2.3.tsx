@@ -199,7 +199,7 @@ def count_solutions(A, b):
       prompt: (
         <>
           <p>
-            The starter gives <C>rank(M, tol)</C>, which counts the singular values above tol times the largest. Write <C>classify_system(A, b, tol=1e-10)</C>, which uses the ranks of A and of [A | b] to return <C>("none", r)</C>, <C>("one", r)</C> or <C>("infinite", r)</C> where r is the rank of A (the number of singular values above tol times the largest). Then write <C>nearest_consistent(A, b)</C>, the vector b′ in the column space of A closest to b (via <C>np.linalg.lstsq</C>), and <C>sensitivity(A)</C>, the 2-norm condition number σ_max/σ_min of a square matrix (infinity if singular).
+            The starter gives <C>rank(M, tol)</C>, which row-reduces M with partial pivoting and counts the pivots larger than tol times the largest entry of M. Write <C>classify_system(A, b, tol=1e-10)</C>, which uses the ranks of A and of [A | b] to return <C>("none", r)</C>, <C>("one", r)</C> or <C>("infinite", r)</C> where r is the rank of A. Then write <C>free_variables(A, tol=1e-10)</C>, the number of free variables in the solutions of Ax = b whenever there are any, and <C>fragile(A, b, eps=1e-6)</C> for a square invertible A: how far the solution moves when the first entry of b grows by eps, as the length of the change in x (both solutions from <C>np.linalg.solve</C>) divided by eps.
           </p>
         </>
       ),
@@ -208,23 +208,47 @@ def count_solutions(A, b):
         starter: `import numpy as np
 
 def rank(M, tol):
-    s = np.linalg.svd(np.asarray(M, float), compute_uv=False)
-    return int(np.sum(s > tol * s[0])) if s.size and s[0] > 0 else 0
+    M = np.array(M, float)
+    scale = np.abs(M).max() if M.size else 0.0
+    r = 0
+    for c in range(M.shape[1]):
+        if r == M.shape[0]:
+            break
+        p = r + int(np.argmax(np.abs(M[r:, c])))
+        if abs(M[p, c]) <= tol * scale:
+            continue
+        M[[r, p]] = M[[p, r]]
+        for i in range(r + 1, M.shape[0]):
+            M[i] -= M[i, c] / M[r, c] * M[r]
+        r += 1
+    return r
 
 def classify_system(A, b, tol=1e-10):
     return ('one', np.asarray(A).shape[1])
 
-def nearest_consistent(A, b):
-    return np.asarray(b, float)
+def free_variables(A, tol=1e-10):
+    return 0
 
-def sensitivity(A):
+def fragile(A, b, eps=1e-6):
     return 1.0
 `,
         solution: `import numpy as np
 
 def rank(M, tol):
-    s = np.linalg.svd(np.asarray(M, float), compute_uv=False)
-    return int(np.sum(s > tol * s[0])) if s.size and s[0] > 0 else 0
+    M = np.array(M, float)
+    scale = np.abs(M).max() if M.size else 0.0
+    r = 0
+    for c in range(M.shape[1]):
+        if r == M.shape[0]:
+            break
+        p = r + int(np.argmax(np.abs(M[r:, c])))
+        if abs(M[p, c]) <= tol * scale:
+            continue
+        M[[r, p]] = M[[p, r]]
+        for i in range(r + 1, M.shape[0]):
+            M[i] -= M[i, c] / M[r, c] * M[r]
+        r += 1
+    return r
 
 def classify_system(A, b, tol=1e-10):
     A = np.asarray(A, float)
@@ -234,25 +258,25 @@ def classify_system(A, b, tol=1e-10):
         return ('none', r)
     return ('one', r) if r == A.shape[1] else ('infinite', r)
 
-def nearest_consistent(A, b):
+def free_variables(A, tol=1e-10):
     A = np.asarray(A, float)
-    x = np.linalg.lstsq(A, np.asarray(b, float), rcond=None)[0]
-    return A @ x
+    return A.shape[1] - rank(A, tol)
 
-def sensitivity(A):
-    s = np.linalg.svd(np.asarray(A, float), compute_uv=False)
-    return float('inf') if s[-1] <= 1e-15 * s[0] else float(s[0] / s[-1])
+def fragile(A, b, eps=1e-6):
+    b = np.asarray(b, float)
+    x = np.linalg.solve(A, b)
+    db = np.zeros_like(b)
+    db[0] = eps
+    return float(np.linalg.norm(np.linalg.solve(A, b + db) - x) / eps)
 `,
         tests: [
           { name: "cases", code: `A = [[1, 2], [2, 4], [3, 6]]
 assert classify_system(A, [1, 2, 3]) == ('infinite', 1) and classify_system(A, [1, 2, 4]) == ('none', 1) and classify_system([[1, 0], [0, 1], [1, 1]], [1, 2, 3]) == ('one', 2), 'Compare ranks.'` },
-          { name: "nearest", code: `import numpy as np
-b2 = nearest_consistent([[1, 2], [2, 4], [3, 6]], [1, 2, 4])
-assert classify_system([[1, 2], [2, 4], [3, 6]], b2)[0] == 'infinite' and np.allclose(b2, np.array([1, 2, 3]) * 17 / 14), 'Project b onto the line through (1, 2, 3).'` },
-          { name: "condition", code: `assert abs(sensitivity([[2, 0], [0, 0.5]]) - 4) < 1e-12 and sensitivity([[1, 2], [2, 4]]) == float('inf'), 'σ_max/σ_min.'` },
+          { name: "free", code: `assert free_variables([[1, 2], [2, 4], [3, 6]]) == 1 and free_variables([[1, 0, 2], [0, 1, 3]]) == 1 and free_variables([[1, 0], [0, 1]]) == 0, 'Columns minus pivots.'` },
+          { name: "fragile", code: `assert abs(fragile([[2, 0], [0, 0.5]], [1, 1]) - 0.5) < 1e-6 and 14000 < fragile([[1, 1], [1, 1.0001]], [2, 2.0001]) < 14300, 'Nearly parallel rows make the solution jump.'` },
           { name: "hilbert", code: `import numpy as np
 H = 1 / (np.arange(8)[:, None] + np.arange(8) + 1)
-assert 1e9 < sensitivity(H) < 1e11, 'The 8 × 8 Hilbert matrix has condition number about 1.5 × 10¹⁰.'` },
+assert 4e5 < fragile(H, np.ones(8)) < 4.5e5, 'The 8 × 8 Hilbert matrix moves its solution about 425 000 times as far as b moved.'` },
         ],
       },
     },

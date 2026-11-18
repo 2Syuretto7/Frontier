@@ -214,7 +214,7 @@ def digits(n):
       prompt: (
         <>
           <p>
-            Logarithms turn huge products into sums. Write <C>log10_factorial(n)</C>, log₁₀ n! as a sum of logarithms, and <C>leading_digits(n, k)</C>, the first k digits of n! as an integer, found from the fractional part of log₁₀ n! (10 raised to the fraction, times 10ᵏ⁻¹, rounded down). Also write <C>num_digits(n)</C>, the number of digits of n!. Do not compute n! itself: the tests use n up to 10⁵.
+            Logarithms turn huge products into sums. Here n! = 1·2·3·…·n. Write <C>log10_factorial(n)</C>, log₁₀ n! as a sum of logarithms, and <C>leading_digits(n, k)</C>, the first k digits of n! as an integer, found from the fractional part of log₁₀ n! (10 raised to the fraction, times 10ᵏ⁻¹, rounded down). Also write <C>num_digits(n)</C>, the number of digits of n!. Do not compute n! itself: the tests use n up to 10⁵.
           </p>
         </>
       ),

@@ -213,7 +213,7 @@ assert abs(estimate_limit(lambda x: math.sin(x) / x, 0) - 1) < 1e-6, 'sin(x)/x s
       prompt: (
         <>
           <p>
-            Write <C>richardson(f, a, n)</C>, a better numerical estimate of the limit of f at a: take the values f(a + h) for h = 2⁻¹, 2⁻², …, 2⁻ⁿ, and, assuming the error is a power series in h, repeatedly combine neighbours in Richardson&rsquo;s table T[i][k] = (2ᵏ·T[i][k−1] − T[i−1][k−1])/(2ᵏ − 1). Return the last diagonal entry T[n−1][n−1]. It should beat the plain value f(a + 2⁻ⁿ) by many orders of magnitude.
+            Write <C>richardson(f, a, n)</C>, a better numerical estimate of the limit of f at a: take the values f(a + h) for h = 2⁻¹, 2⁻², …, 2⁻ⁿ, and, assuming the error is c₁h + c₂h² + c₃h³ + … for some constants cₖ, repeatedly combine neighbours in Richardson&rsquo;s table T[i][k] = (2ᵏ·T[i][k−1] − T[i−1][k−1])/(2ᵏ − 1). Return the last diagonal entry T[n−1][n−1]. It should beat the plain value f(a + 2⁻ⁿ) by many orders of magnitude.
           </p>
         </>
       ),

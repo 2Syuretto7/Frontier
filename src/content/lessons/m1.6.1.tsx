@@ -194,7 +194,7 @@ assert properties(R, A)['reflexive'] is False and properties(R, A)['transitive']
       prompt: (
         <>
           <p>
-            Write <C>closure(R, A)</C>, which returns a dict with the reflexive, symmetric and transitive closures of a relation R (a set of pairs) on the finite set A, under the keys <C>"reflexive"</C>, <C>"symmetric"</C> and <C>"transitive"</C>, the last by Warshall&rsquo;s algorithm (for each k, add (i, j) whenever (i, k) and (k, j) are present). Then write <C>equivalence_closure(R, A)</C>, the smallest equivalence relation containing R.
+            Write <C>closure(R, A)</C>, which returns a dict with the reflexive, symmetric and transitive closures of a relation R (a set of pairs) on the finite set A, under the keys <C>"reflexive"</C>, <C>"symmetric"</C> and <C>"transitive"</C>, the last by Warshall&rsquo;s algorithm (for each k, add (i, j) whenever (i, k) and (k, j) are present). Then write <C>equivalence_closure(R, A)</C>, the smallest relation containing R that is reflexive, symmetric and transitive at once.
           </p>
         </>
       ),

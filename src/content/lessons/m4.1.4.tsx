@@ -210,7 +210,7 @@ for _ in range(200):
       prompt: (
         <>
           <p>
-            Erdős–Szekeres: any sequence of (r − 1)(s − 1) + 1 distinct numbers has an increasing run of length r or a decreasing one of length s. Write <C>lis_length(seq)</C>, the length of the longest strictly increasing subsequence, in O(n log n) with the patience method (keep the smallest possible tail for each length and place each element with <C>bisect_left</C>). Then write <C>lis_witness(seq)</C>, one actual longest strictly increasing subsequence, by remembering for each element the index of its predecessor.
+            Erdős–Szekeres: any sequence of (r − 1)(s − 1) + 1 distinct numbers has an increasing run of length r or a decreasing one of length s. Write <C>lis_length(seq)</C>, the length of the longest strictly increasing subsequence, fast enough for 200,000 numbers, with the patience method (keep the smallest possible tail for each length and place each element with <C>bisect_left</C>). Then write <C>lis_witness(seq)</C>, one actual longest strictly increasing subsequence, by remembering for each element the index of its predecessor.
           </p>
         </>
       ),

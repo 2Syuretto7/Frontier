@@ -199,7 +199,7 @@ assert abs(C - 1) < 1e-9 and abs(D - 2) < 1e-9, 'Points on y = 1 + 2t should be 
       prompt: (
         <>
           <p>
-            Write <C>polyfit_ls(t, y, deg)</C>, the least-squares polynomial coefficients (lowest power first) found by solving with a QR factorisation of the Vandermonde matrix (<C>np.linalg.qr</C>, then a triangular solve), not the normal equations. Then write <C>weighted_ls(A, b, w)</C>, the solution of the weighted problem minimising Σ wᵢ(Ax − b)ᵢ², by scaling each row of A and b by √wᵢ. A helper <C>_qr_solve(A, b)</C> used by both keeps the code short.
+            Write <C>polyfit_ls(t, y, deg)</C>, the least-squares polynomial coefficients (lowest power first) found with <C>np.linalg.lstsq</C> on the Vandermonde matrix, which solves the least-squares problem without forming AᵀA, rather than with the normal equations. Then write <C>weighted_ls(A, b, w)</C>, the solution of the weighted problem minimising Σ wᵢ(Ax − b)ᵢ², by scaling each row of A and b by √wᵢ.
           </p>
         </>
       ),
@@ -216,22 +216,13 @@ def weighted_ls(A, b, w):
 `,
         solution: `import numpy as np
 
-def _qr_solve(A, b):
-    Q, R = np.linalg.qr(A)
-    z = Q.T @ b
-    n = R.shape[1]
-    x = np.zeros(n)
-    for i in range(n - 1, -1, -1):
-        x[i] = (z[i] - R[i, i + 1:] @ x[i + 1:]) / R[i, i]
-    return x
-
 def polyfit_ls(t, y, deg):
     A = np.vander(np.asarray(t, float), deg + 1, increasing=True)
-    return _qr_solve(A, np.asarray(y, float))
+    return np.linalg.lstsq(A, np.asarray(y, float), rcond=None)[0]
 
 def weighted_ls(A, b, w):
     sw = np.sqrt(np.asarray(w, float))
-    return _qr_solve(np.asarray(A, float) * sw[:, None], np.asarray(b, float) * sw)
+    return np.linalg.lstsq(np.asarray(A, float) * sw[:, None], np.asarray(b, float) * sw, rcond=None)[0]
 `,
         tests: [
           { name: "line", code: `import numpy as np
@@ -240,7 +231,7 @@ assert np.allclose(polyfit_ls([0, 1, 2], [6, 0, 0], 1), [5, -3]), 'Strang’s ex
 t = np.linspace(0, 1, 40)
 coef = np.arange(1, 12, dtype=float)
 y = np.vander(t, 11, increasing=True) @ coef
-assert np.allclose(polyfit_ls(t, y, 10), coef, atol=1e-5), 'Degree 10: the normal equations lose too many digits, QR does not.'` },
+assert np.allclose(polyfit_ls(t, y, 10), coef, atol=1e-5), 'Degree 10: the normal equations lose too many digits; lstsq does not.'` },
           { name: "weighted", code: `import numpy as np
 A = np.column_stack([np.ones(4), [0, 1, 2, 3]])
 b = np.array([1.0, 2.0, 2.0, 10.0])

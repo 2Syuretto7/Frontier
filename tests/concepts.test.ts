@@ -4,7 +4,6 @@ import { LESSONS } from "../src/content/lessons/index.ts";
 import { DRILLS } from "../src/content/drills/index.ts";
 import { CONCEPTS, WAIVED } from "../src/content/concepts.ts";
 import conceptPrerequisites from "../src/content/concept-prerequisites.json";
-import forwardUses from "../src/content/concept-forward-uses.json";
 import { buildGraph, frontier, withPrerequisites, type Graph, type LessonNode } from "../src/lib/graph.ts";
 import { chooseNextStep } from "../src/lib/scheduler.ts";
 import { COURSES } from "../src/lib/graph.ts";
@@ -27,10 +26,7 @@ import { itemFeatures, pythonAvailable, taughtIn, type CodeItem } from "../scrip
  */
 
 const graph = buildGraph(withPrerequisites(authoredLinks()));
-const uses = conceptUses();
-/** Uses that only a later lesson of the same course teaches: listed for the authors, not gated. */
-const known = new Set((forwardUses as { lesson: string; concept: string }[]).map((f) => `${f.lesson} ${f.concept}`));
-const gated = uses.filter((u) => !known.has(`${u.lesson} ${u.concept}`));
+const gated = conceptUses();
 const usesOf = new Map<string, Use[]>();
 for (const u of gated) usesOf.set(u.lesson, [...(usesOf.get(u.lesson) ?? []), u]);
 
@@ -64,10 +60,8 @@ test("the concept list names real lessons and patterns that compile", () => {
   }
 });
 
-test("concept prerequisites are up to date (run npm run prerequisites)", () => {
-  const { links, forwardUses: forward } = computeConceptPrerequisites();
-  assert.equal(serialise(conceptPrerequisites), serialise(links));
-  assert.equal(serialise(forwardUses), serialise(forward));
+test("concept prerequisites are up to date, and no lesson uses an idea before its course teaches it (run npm run prerequisites)", () => {
+  assert.equal(serialise(conceptPrerequisites), serialise(computeConceptPrerequisites()));
 });
 
 test("every lesson requires a lesson that teaches each idea it uses", () => {

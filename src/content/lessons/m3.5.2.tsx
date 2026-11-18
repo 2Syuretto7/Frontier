@@ -210,13 +210,31 @@ assert np.allclose(A.T @ (b - project(A, b)), 0), 'The error b − p must be per
       prompt: (
         <>
           <p>
-            Write <C>projection_matrix(A)</C>, the matrix projecting onto the column space of A, computed stably from a QR factorisation as QQᵀ (using only the first r columns of Q, where r is the rank found from the diagonal of R with a 1e−10 relative tolerance, after column pivoting is not needed if you use the SVD instead: either is accepted). Then write <C>is_projection(P, tol=1e-10)</C>, true when P is symmetric and P² = P, and <C>reflection(A)</C>, the reflection 2P − I across the column space.
+            The starter gives <C>pivot_columns(A)</C>, the indices of the pivot columns of A, found by elimination. Write <C>projection_matrix(A)</C>, the matrix projecting onto the column space of A, as B(BᵀB)⁻¹Bᵀ where B keeps only the pivot columns of A, so that BᵀB is invertible even when the columns of A are dependent (use <C>np.linalg.solve</C> rather than an explicit inverse). Then write <C>is_projection(P, tol=1e-10)</C>, true when P is symmetric and P² = P, and <C>reflection(A)</C>, the reflection 2P − I across the column space.
           </p>
         </>
       ),
       answer: {
         kind: "code",
         starter: `import numpy as np
+
+def pivot_columns(A, tol=1e-10):
+    R = np.array(A, float)
+    m, n = R.shape
+    tol = tol * (np.abs(R).max() if R.size else 0.0)
+    piv = []
+    for c in range(n):
+        r = len(piv)
+        if r == m:
+            break
+        p = r + int(np.argmax(np.abs(R[r:, c])))
+        if abs(R[p, c]) <= tol:
+            continue
+        R[[r, p]] = R[[p, r]]
+        for i in range(r + 1, m):
+            R[i] -= R[i, c] / R[r, c] * R[r]
+        piv.append(c)
+    return piv
 
 def projection_matrix(A):
     A = np.asarray(A, float)
@@ -230,12 +248,28 @@ def reflection(A):
 `,
         solution: `import numpy as np
 
+def pivot_columns(A, tol=1e-10):
+    R = np.array(A, float)
+    m, n = R.shape
+    tol = tol * (np.abs(R).max() if R.size else 0.0)
+    piv = []
+    for c in range(n):
+        r = len(piv)
+        if r == m:
+            break
+        p = r + int(np.argmax(np.abs(R[r:, c])))
+        if abs(R[p, c]) <= tol:
+            continue
+        R[[r, p]] = R[[p, r]]
+        for i in range(r + 1, m):
+            R[i] -= R[i, c] / R[r, c] * R[r]
+        piv.append(c)
+    return piv
+
 def projection_matrix(A):
     A = np.asarray(A, float)
-    U, s, _ = np.linalg.svd(A, full_matrices=False)
-    r = int(np.sum(s > 1e-10 * s[0])) if s.size and s[0] > 0 else 0
-    Q = U[:, :r]
-    return Q @ Q.T
+    B = A[:, pivot_columns(A)]
+    return B @ np.linalg.solve(B.T @ B, B.T)
 
 def is_projection(P, tol=1e-10):
     P = np.asarray(P, float)

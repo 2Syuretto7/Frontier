@@ -176,7 +176,7 @@ grad = (A + A.T) @ x
 h = 1e-6
 num = [(f(x + h * e) - f(x - h * e)) / (2 * h) for e in np.eye(2)]
 print(grad, np.round(num, 4))`}</Code>
-          <p>The derivative of a quadratic form, by formula and numerically. What does this print?</p>
+          <p>The derivative of xᵀAx, by formula and numerically. What does this print?</p>
         </>
       ),
       answer: { kind: "choice", options: ["[4. 8.] [4. 8.]", "[3. 3.] [4. 8.]", "[2. 6.] [2. 6.]", "[4. 8.] [3. 3.]"], correct: [0] },

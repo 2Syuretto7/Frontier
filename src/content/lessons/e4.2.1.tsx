@@ -17,7 +17,7 @@ export const lesson: LessonContent = {
     <>
       <p>
         Your classifier&rsquo;s loss starts at 2.30 and stays there for a thousand steps. You try a smaller learning rate, then
-        a bigger one, then a different optimiser, then a wider model. Nothing changes, and an afternoon is gone.
+        a bigger one, then a different update rule, then a wider model. Nothing changes, and an afternoon is gone.
       </p>
       <p>Each change was a reasonable guess. What was wrong with the afternoon?</p>
     </>
@@ -67,8 +67,8 @@ export const lesson: LessonContent = {
             means a bug in the loss or the labels.
           </li>
           <li>
-            <strong>Overfit one batch.</strong> A working model and optimiser can memorise eight examples, driving the loss
-            near 0. If they cannot, the bug is in the model, the loss or the optimiser step, not in the data or the
+            <strong>Overfit one batch.</strong> A working model and training loop can memorise eight examples, driving the loss
+            near 0. If they cannot, the bug is in the model, the loss or the update step, not in the data or the
             hyperparameters.
           </li>
           <li>

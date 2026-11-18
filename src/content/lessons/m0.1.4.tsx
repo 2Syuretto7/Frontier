@@ -14,8 +14,8 @@ export const lesson: LessonContent = {
   puzzle: (
     <>
       <p>
-        Draw a square whose sides are 1 metre long. Its diagonal is some length <M>d</M>, and by Pythagoras{" "}
-        <M>{"d^2 = 1^2 + 1^2 = 2"}</M>.
+        Draw a square whose sides are 1 metre long. Its diagonal is some length <M>d</M>. The square drawn on that diagonal is made of four half-squares, twice the
+        area of the original, so <M>{"d^2 = 2"}</M>.
       </p>
       <p>
         Can you find a fraction <M>{"\\tfrac{a}{b}"}</M> with <M>{"\\left(\\tfrac{a}{b}\\right)^2 = 2"}</M>? Try{" "}

@@ -16,7 +16,7 @@ export const lesson: LessonContent = {
   puzzle: (
     <>
       <p>
-        A gradient has a million coordinates. One training recipe clips it when its largest coordinate exceeds 1; another when
+        The update a large model makes to its weights is a vector with a million coordinates. One training recipe clips it when its largest coordinate exceeds 1; another when
         its length exceeds 1. A third adds the sum of the absolute values of the weights to the loss, and a fourth adds the
         sum of their squares.
       </p>
@@ -95,7 +95,7 @@ export const lesson: LessonContent = {
       <Example title="norms in training">
         <p>
           Weight decay adds <M>{"\\lambda \\|w\\|_2^2"}</M> to the loss and shrinks every weight in proportion; an{" "}
-          <M>{"\\lambda \\|w\\|_1"}</M> penalty pushes many weights to exactly 0. Gradient clipping rescales g to{" "}
+          <M>{"\\lambda \\|w\\|_1"}</M> penalty pushes many weights to exactly 0. Clipping an update vector g rescales it to{" "}
           <M>{"g \\cdot \\min(1, c / \\|g\\|_2)"}</M>, which keeps its direction and caps its length.
         </p>
       </Example>
@@ -167,7 +167,7 @@ g = np.array([6.0, 8.0])
 for max_norm in [20.0, 5.0]:
     n = np.linalg.norm(g)
     print(g * min(1.0, max_norm / n))`}</Code>
-          <p>Gradient clipping by norm. What does this print?</p>
+          <p>Clipping a vector by its norm. What does this print?</p>
         </>
       ),
       answer: { kind: "choice", options: ["[6. 8.]\n[3. 4.]", "[12. 16.]\n[3. 4.]", "[6. 8.]\n[5. 5.]", "[6. 8.]\n[0.6 0.8]"], correct: [0] },
@@ -254,7 +254,7 @@ g = [np.array([0.3, 0.4])]
 out, n = clip_by_global_norm(g, 1.0)
 assert np.isclose(n, 0.5) and np.allclose(out[0], g[0])
 out, n = clip_by_global_norm([np.zeros(3)], 1.0)
-assert n == 0 and np.allclose(out[0], 0), 'A zero gradient stays zero, with no division by zero.'` },
+assert n == 0 and np.allclose(out[0], 0), 'A zero vector stays zero, with no division by zero.'` },
         ],
       },
     },

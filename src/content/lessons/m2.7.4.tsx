@@ -188,7 +188,7 @@ def normal_mass(k):
       prompt: (
         <>
           <p>
-            Write <C>norm_cdf(x)</C>, the standard normal distribution function Φ(x), to within 1e−12 for |x| ≤ 8 without <C>math.erf</C>: for |x| ≤ 3 sum the Taylor series of the integral of e^(−t²/2) from 0 to x (term ratio −x²(2k + 1)/((2k + 3)·2(k + 1))), and for |x| &gt; 3 use Φ(x) = 1 − φ(x)·R(x) with the continued fraction R(x) = 1/(x + 1/(x + 2/(x + 3/(x + …)))) evaluated from 60 levels deep. Then write <C>norm_ppf(p)</C>, the inverse, by bisection on [−9, 9].
+            Write <C>norm_cdf(x)</C>, the standard normal distribution function Φ(x), to within 1e−12 for |x| ≤ 8 without <C>math.erf</C>: for |x| ≤ 3 sum the series x − x³/6 + x⁵/40 − …, which is the integral of e^(−t²/2) from 0 to x (term ratio −x²(2k + 1)/((2k + 3)·2(k + 1)), starting from x), and for |x| &gt; 3 use Φ(x) = 1 − φ(x)·R(x) with the continued fraction R(x) = 1/(x + 1/(x + 2/(x + 3/(x + …)))) evaluated from 60 levels deep. Then write <C>norm_ppf(p)</C>, the inverse, by bisection on [−9, 9].
           </p>
         </>
       ),

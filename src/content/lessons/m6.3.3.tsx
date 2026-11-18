@@ -308,7 +308,7 @@ assert np.allclose(matrix_function(A, lambda l: 1 / l), np.linalg.inv(A))` },
       prompt: (
         <p>
           Write <C>power_eig(A, iters=500, seed=0)</C> (power iteration from a random normal start, normalising each step,
-          returning the Rayleigh quotient and the unit vector), <C>deflation_eigs(A, k, iters=500)</C>, the first k
+          returning the estimate xᵀAx for the final unit vector x, and x itself), <C>deflation_eigs(A, k, iters=500)</C>, the first k
           eigenvalues of a symmetric matrix found by power iteration and deflation, and <C>is_normal(A, tol=1e-9)</C>.
         </p>
       ),

@@ -159,7 +159,8 @@ print(A @ x, np.cross(A[0], A[1]))`}</Code>
         <>
           <p>
             Write <C>split(A, x)</C>, which returns (xr, xn): the part of x in the row space of A and the part in its null space,
-            with xr + xn = x. Use the pseudoinverse <C>np.linalg.pinv(A) @ A</C>, which projects onto the row space.
+            with xr + xn = x, for A with independent rows. The row space part is a combination xr = Aᵀc of the rows, and
+            A(x − xr) = 0 gives (AAᵀ)c = Ax: solve that for c.
           </p>
         </>
       ),
@@ -175,7 +176,7 @@ def split(A, x):
 
 def split(A, x):
     A, x = np.asarray(A, float), np.asarray(x, float)
-    xr = np.linalg.pinv(A) @ A @ x
+    xr = A.T @ np.linalg.solve(A @ A.T, A @ x)
     return xr, x - xr
 `,
         tests: [
@@ -197,7 +198,7 @@ assert abs(xr @ xn) < 1e-9 and np.allclose(xr + xn, x), 'The two parts must be p
       prompt: (
         <>
           <p>
-            The starter gives <C>_basis(V, tol)</C>, which returns orthonormal bases (as columns) of the span of V and of its orthogonal complement, from the SVD. Write <C>orthogonal_complement(V, tol=1e-10)</C>, an orthonormal basis (as columns) of the orthogonal complement of the span of the columns of V in ℝⁿ, via the SVD of V. Then write <C>decompose(V, x)</C>, which splits x into (p, q) with p in the span of V and q in its complement, and <C>angle_between_subspaces(V, W)</C>, the smallest principal angle in degrees between two subspaces given by bases: the arccosine of the largest singular value of QᵥᵀQ_W, where Qᵥ and Q_W are orthonormal bases.
+            The starter gives <C>null_basis(M)</C>, the special solutions of Mx = 0 as the columns of a matrix. Write <C>orthogonal_complement(V)</C>, a basis (as columns) of the vectors perpendicular to every column of V, which is the null space of Vᵀ. Then write <C>decompose(V, x)</C> for V with independent columns, which splits x into (p, q) with p = Vc a combination of the columns and q = x − p perpendicular to every column: Vᵀ(x − Vc) = 0, so solve (VᵀV)c = Vᵀx. Finally write <C>are_complements(V, W, tol=1e-9)</C>, whether the spans of the columns of V and of W are orthogonal complements in ℝⁿ: every column of V is perpendicular to every column of W (to within tol), and their ranks add up to n.
           </p>
         </>
       ),
@@ -205,54 +206,97 @@ assert abs(xr @ xn) < 1e-9 and np.allclose(xr + xn, x), 'The two parts must be p
         kind: "code",
         starter: `import numpy as np
 
-def _basis(V, tol=1e-10):
-    U, s, _ = np.linalg.svd(np.asarray(V, float))
-    r = int(np.sum(s > tol * s[0])) if s.size and s[0] > 0 else 0
-    return U[:, :r], U[:, r:]
+def null_basis(M, tol=1e-10):
+    R = np.array(M, float)
+    m, n = R.shape
+    tol = tol * (np.abs(R).max() if R.size else 0.0)
+    piv = []
+    for c in range(n):
+        r = len(piv)
+        if r == m:
+            break
+        p = r + int(np.argmax(np.abs(R[r:, c])))
+        if abs(R[p, c]) <= tol:
+            continue
+        R[[r, p]] = R[[p, r]]
+        R[r] /= R[r, c]
+        for i in range(m):
+            if i != r:
+                R[i] -= R[i, c] * R[r]
+        piv.append(c)
+    free = [c for c in range(n) if c not in piv]
+    N = np.zeros((n, len(free)))
+    for k, f in enumerate(free):
+        N[f, k] = 1.0
+        for i, q in enumerate(piv):
+            N[q, k] = -R[i, f]
+    return N
 
-def orthogonal_complement(V, tol=1e-10):
+def orthogonal_complement(V):
     return np.zeros((np.asarray(V).shape[0], 0))
 
 def decompose(V, x):
     x = np.asarray(x, float)
     return (x, np.zeros_like(x))
 
-def angle_between_subspaces(V, W):
-    return 0.0
+def are_complements(V, W, tol=1e-9):
+    return True
 `,
         solution: `import numpy as np
 
-def _basis(V, tol=1e-10):
-    U, s, _ = np.linalg.svd(np.asarray(V, float))
-    r = int(np.sum(s > tol * s[0])) if s.size and s[0] > 0 else 0
-    return U[:, :r], U[:, r:]
+def null_basis(M, tol=1e-10):
+    R = np.array(M, float)
+    m, n = R.shape
+    tol = tol * (np.abs(R).max() if R.size else 0.0)
+    piv = []
+    for c in range(n):
+        r = len(piv)
+        if r == m:
+            break
+        p = r + int(np.argmax(np.abs(R[r:, c])))
+        if abs(R[p, c]) <= tol:
+            continue
+        R[[r, p]] = R[[p, r]]
+        R[r] /= R[r, c]
+        for i in range(m):
+            if i != r:
+                R[i] -= R[i, c] * R[r]
+        piv.append(c)
+    free = [c for c in range(n) if c not in piv]
+    N = np.zeros((n, len(free)))
+    for k, f in enumerate(free):
+        N[f, k] = 1.0
+        for i, q in enumerate(piv):
+            N[q, k] = -R[i, f]
+    return N
 
-def orthogonal_complement(V, tol=1e-10):
-    return _basis(V, tol)[1]
+def orthogonal_complement(V):
+    return null_basis(np.asarray(V, float).T)
 
 def decompose(V, x):
-    Q = _basis(V)[0]
-    x = np.asarray(x, float)
-    p = Q @ (Q.T @ x)
+    V, x = np.asarray(V, float), np.asarray(x, float)
+    p = V @ np.linalg.solve(V.T @ V, V.T @ x)
     return (p, x - p)
 
-def angle_between_subspaces(V, W):
-    Qv, Qw = _basis(V)[0], _basis(W)[0]
-    s = np.linalg.svd(Qv.T @ Qw, compute_uv=False)
-    return float(np.degrees(np.arccos(np.clip(s.max(), -1, 1))))
+def are_complements(V, W, tol=1e-9):
+    V, W = np.asarray(V, float), np.asarray(W, float)
+    ranks = np.linalg.matrix_rank(V) + np.linalg.matrix_rank(W)
+    return bool(np.abs(V.T @ W).max(initial=0.0) <= tol and ranks == V.shape[0])
 `,
         tests: [
           { name: "complement", code: `import numpy as np
 V = np.array([[1.0, 0.0], [1.0, 1.0], [0.0, 1.0]])
 C = orthogonal_complement(V)
-assert C.shape == (3, 1) and np.allclose(V.T @ C, 0) and np.allclose(abs(C[:, 0]), np.array([1, 1, 1]) / 3 ** 0.5), 'The complement of a plane in ℝ³ is a line.'` },
+assert C.shape == (3, 1) and np.allclose(V.T @ C, 0) and np.allclose(abs(C[:, 0]) / np.linalg.norm(C[:, 0]), np.array([1, 1, 1]) / 3 ** 0.5), 'The complement of a plane in ℝ³ is a line.'` },
           { name: "decompose", code: `import numpy as np
 V = np.array([[1.0], [1.0], [0.0]])
 p, q = decompose(V, [3, 1, 4])
-assert np.allclose(p, [2, 2, 0]) and np.allclose(q, [1, -1, 4]) and abs(p @ q) < 1e-12, 'Orthogonal pieces that add to x.'` },
-          { name: "angle", code: `import numpy as np
-assert abs(angle_between_subspaces([[1], [0], [0]], [[1], [1], [0]]) - 45) < 1e-9 and abs(angle_between_subspaces([[1, 0], [0, 1], [0, 0]], [[1], [1], [1]]) - np.degrees(np.arccos(np.sqrt(2 / 3)))) < 1e-9, 'Principal angles.'` },
-          { name: "meet", code: `assert angle_between_subspaces([[1, 0], [0, 1], [0, 0]], [[0, 0], [1, 0], [0, 1]]) < 1e-6, 'Two planes in ℝ³ share a line: angle 0.'` },
+assert np.allclose(p, [2, 2, 0]) and np.allclose(q, [1, -1, 4]) and abs(p @ q) < 1e-12, 'Perpendicular pieces that add to x.'` },
+          { name: "complements", code: `import numpy as np
+V = np.array([[1.0, 0.0], [1.0, 1.0], [0.0, 1.0]])
+assert are_complements(V, orthogonal_complement(V)), 'A plane and its normal line.'
+assert not are_complements([[1], [0], [0]], [[0], [1], [0]]), 'Two perpendicular lines in ℝ³ leave a direction out.'
+assert not are_complements([[1], [1], [0]], [[1, 0], [0, 0], [0, 1]]), 'Not perpendicular.'` },
         ],
       },
     },
