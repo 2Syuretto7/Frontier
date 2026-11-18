@@ -33,7 +33,7 @@ export function SelfAttentionMapViz() {
   const [causal, setCausal] = useState(false);
   const [A, setA] = useState<number[][] | null>(null);
   useEffect(() => setA(attentionMap(pos, causal)), [pos, causal]);
-  const n = TOKENS.length, C = 28, L = 44, T = 44, W = L + n * C + 4, H = T + n * C + 4;
+  const n = TOKENS.length, C = 28, L = 44, T = 54, W = L + n * C + 4, H = T + n * C + 4;
   const same = A ? A[1].every((v, j) => Math.abs(v - A[7][j]) < 1e-9) : false;
   return (
     <figure className="viz">
