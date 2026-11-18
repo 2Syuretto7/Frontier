@@ -7,14 +7,15 @@ import { frontier, isUnlocked } from "./graph";
 import { chooseNextStep, type LearnStep } from "./scheduler";
 import type { Track } from "./types";
 import { RECALL_PREFIX, recallAttempt } from "./recall";
+import { masteryOf, type MasteryReport } from "./mastery";
 
 const scheduler = fsrs({ enable_fuzz: true, request_retention: 0.9 });
 const TZ = "Asia/Kolkata";
-export const MASTERY_THRESHOLD = 0.8;
 
 type ProgressRow = { lesson_id: string; status: string; mastery: number };
 
 export async function loadProgress() {
+  await reconcileMastery();
   return query<ProgressRow>("SELECT lesson_id, status, mastery FROM progress");
 }
 
@@ -75,6 +76,7 @@ export async function nextStep({ afterReview = false }: { afterReview?: boolean 
 }
 
 export async function masteredSet(): Promise<Set<string>> {
+  await reconcileMastery();
   const rows = await query<{ lesson_id: string }>("SELECT lesson_id FROM progress WHERE status = 'mastered'");
   return new Set(rows.map((r) => r.lesson_id));
 }
@@ -155,19 +157,45 @@ async function rateCard(id: string, rating: Rating.Again | Rating.Good) {
   await query("UPDATE review_cards SET card = $2, due = $3 WHERE exercise_id = $1", [id, JSON.stringify(next), next.due.toISOString()]);
 }
 
-export type MasteryReport = { score: number; mastered: boolean };
+export type { MasteryReport };
+
+function requiredIds(lessonId: string): string[] {
+  return masteryExercises(LESSON_BY_ID.get(lessonId)!).map((e) => exerciseId(lessonId, e.key));
+}
 
 export async function masteryReport(lessonId: string): Promise<MasteryReport> {
-  const lesson = LESSON_BY_ID.get(lessonId)!;
-  const required = masteryExercises(lesson);
   const states = await exerciseStates([lessonId]);
-  const solved = required.filter((e) => states.get(exerciseId(lessonId, e.key))?.solved).length;
-  const score = required.length ? solved / required.length : 1;
-  return { score, mastered: score >= MASTERY_THRESHOLD };
+  return masteryOf(requiredIds(lessonId), (id) => states.get(id)?.solved ?? false);
 }
 
 /**
- * A lesson is mastered when at least 80% of its check and apply exercises are solved.
+ * Lessons were once mastered at 80% of their questions, and questions are sometimes added to a lesson after it
+ * was mastered. Any lesson marked mastered without its complete set solved goes back to in progress, and its
+ * review cards are removed until it is mastered again. Runs once per server process.
+ */
+const shared = globalThis as typeof globalThis & { __frontierMasteryReconciled?: Promise<void> };
+
+export function reconcileMastery(): Promise<void> {
+  shared.__frontierMasteryReconciled ??= (async () => {
+    const rows = await query<{ lesson_id: string }>("SELECT lesson_id FROM progress WHERE status = 'mastered'");
+    const ids = rows.map((r) => r.lesson_id).filter((id) => LESSON_BY_ID.has(id));
+    if (ids.length === 0) return;
+    const states = await exerciseStates(ids);
+    for (const id of ids) {
+      const report = masteryOf(requiredIds(id), (e) => states.get(e)?.solved ?? false);
+      if (report.mastered) continue;
+      await query("UPDATE progress SET status = 'in_progress', mastery = $2, updated_at = now() WHERE lesson_id = $1", [id, report.score]);
+      await query("DELETE FROM review_cards WHERE lesson_id = $1", [id]);
+    }
+  })().catch((error) => {
+    shared.__frontierMasteryReconciled = undefined;
+    throw error;
+  });
+  return shared.__frontierMasteryReconciled;
+}
+
+/**
+ * A lesson is mastered only when all of its check and apply exercises are solved. Stretch is optional.
  */
 export async function evaluateMastery(lessonId: string): Promise<boolean> {
   const report = await masteryReport(lessonId);
