@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { requireOwner } from "@/lib/auth";
-import { loadScorecard, type Skill } from "@/lib/readiness/store";
-import { LEVELS, POSTINGS_MAX, POSTINGS_MIN, daysUntilRecheck, evidenceLabel, quarterLabel, supportedLevel } from "@/lib/readiness/core";
-import { removeEvidenceAction, removePostingAction, removeSkillAction, setLevelAction } from "./actions";
+import { loadScorecard, needsScoring, type Skill } from "@/lib/readiness/store";
+import { LEVELS, POSTINGS_MAX, TREND_LABELS, daysUntilRecheck, evidenceLabel, nextHref, quarterLabel, supportedLevel, type NextStep, type Trend } from "@/lib/readiness/core";
+import { acceptSuggestionAction, confirmLevelAction, removeEvidenceAction, removePostingAction, removeSkillAction, setLevelAction } from "./actions";
 import { TopBar } from "@/components/TopBar";
 import { Pill } from "@/components/ui/Pill";
 import { ArrowLeft, Close } from "@/components/ui/Icons";
-import { EvidenceForm, ExtractButton, PostingForm, RefreshPanel } from "@/components/readiness/Forms";
+import { EvidenceForm, ExtractButton, PostingForm, RefreshPanel, ScorePanel } from "@/components/readiness/Forms";
 import "@/components/readiness/readiness.css";
 
 export const dynamic = "force-dynamic";
@@ -17,8 +17,10 @@ const dateFmt = new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short
 
 export default async function Readiness() {
   await requireOwner();
-  const card = await loadScorecard();
+  const [card, dirty] = await Promise.all([loadScorecard(), needsScoring()]);
   const live = card.skills.filter((s) => s.frequency > 0);
+  const gaps = live.filter((s) => s.gap > 0).sort((a, b) => b.gap - a.gap).slice(0, 5);
+  const moved = card.skills.filter((s) => s.trend !== null);
   const gone = card.skills.filter((s) => s.frequency === 0);
   const days = daysUntilRecheck(card.lastCheck);
   const due = days !== null && days <= 0;
@@ -107,7 +109,7 @@ export default async function Readiness() {
             <div className="rd-stat">
               <p className="eyebrow">Next re-check</p>
               <p className="stat-value">{days === null ? "—" : due ? "Due" : days}<span className="rd-unit">{days !== null && !due ? (days === 1 ? " day" : " days") : ""}</span></p>
-              <p className="stat-note">{card.lastCheck ? `Last read ${dateFmt.format(card.lastCheck)}` : "After Parton first reads postings"}</p>
+              <p className="stat-note">{card.lastCheck ? `Last read ${dateFmt.format(card.lastCheck)}. Runs by itself` : "After Parton first reads postings"}</p>
             </div>
           </section>
         )}
@@ -116,8 +118,8 @@ export default async function Readiness() {
           <section className="rd-due" aria-label="Quarterly re-check">
             <p><Pill tone="accent" icon="clock">Quarterly re-check due</Pill></p>
             <p>
-              It has been over three months since the postings were last read, and postings change. One click finds this
-              quarter&apos;s postings and re-reads them. Your levels and evidence stay.
+              It has been over three months since the postings were last read, and postings change. Frontier runs this
+              re-check by itself overnight; run it now if you don&apos;t want to wait. Your levels and evidence stay.
             </p>
             <RefreshPanel role={card.role} label={`Run the ${quarterLabel(new Date())} re-check`} parton={card.parton} />
           </section>
@@ -136,13 +138,70 @@ export default async function Readiness() {
 
         {!hasSkills && postings}
 
+        {hasSkills && (dirty || card.unconfirmed > 0) && (
+          <section className="rd-confirm" aria-label="Parton's scores">
+            <ScorePanel auto={dirty && !card.stale} parton={card.parton} />
+            {card.unconfirmed > 0 && (
+              <form action={confirmLevelAction} className="rd-confirm-all">
+                <p>
+                  Parton scored {card.unconfirmed} skill{card.unconfirmed === 1 ? "" : "s"} from the evidence it found in Frontier.
+                  Check each below and correct any that are wrong, or confirm them all.
+                </p>
+                <button type="submit" className="btn btn-sm">Confirm all of Parton&apos;s scores</button>
+              </form>
+            )}
+          </section>
+        )}
+
+        {gaps.length > 0 && (
+          <section className="rd-block" aria-labelledby="rd-gaps">
+            <div className="rd-block-head">
+              <div>
+                <h2 id="rd-gaps">Close the gaps</h2>
+                <p className="desc">The skills holding you back most: asked for often, and short of Built. Each has the step Parton thinks will raise it fastest.</p>
+              </div>
+            </div>
+            <ol className="rd-gaps">
+              {gaps.map((s) => (
+                <li key={s.id}>
+                  <div className="rd-gap-head">
+                    <a href={`#skill-${s.id}`} className="rd-gap-name">{s.name}</a>
+                    <span className="mono-meta">{LEVELS[s.level].label} · {s.frequency} of {s.postingCount} postings</span>
+                  </div>
+                  {s.next ? <NextLine next={s.next} /> : <p className="hint">Parton hasn&apos;t picked a next step for this yet.</p>}
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+
+        {card.compared && moved.length > 0 && (
+          <section className="rd-block" aria-labelledby="rd-moved">
+            <div className="rd-block-head">
+              <div>
+                <h2 id="rd-moved">What changed this quarter</h2>
+                <p className="desc">Skills that are new in the latest postings, asked for noticeably more or less, or no longer asked for, compared with the check before.</p>
+              </div>
+            </div>
+            <ul className="rd-moved">
+              {(["new", "rising", "fading", "gone"] as Trend[]).flatMap((t) => moved.filter((s) => s.trend === t)).map((s) => (
+                <li key={s.id}>
+                  <TrendPill trend={s.trend!} />
+                  <a href={`#skill-${s.id}`}>{s.name}</a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         {hasSkills && (
           <section className="rd-block" aria-labelledby="rd-skills">
             <div className="rd-block-head">
               <div>
                 <h2 id="rd-skills">Skills</h2>
                 <p className="desc">
-                  Most asked for first. A level above Studied counts only when evidence backs it:{" "}
+                  Most asked for first. Parton attaches evidence from your passed drills, published projects and mastered
+                  lessons, and scores each skill from it; you confirm or correct the score. A level above Studied counts only when evidence backs it:{" "}
                   {LEVELS.slice(2).map((l, i) => <span key={l.value}>{i ? "; " : ""}<strong>{l.label}</strong> needs {l.needs.charAt(0).toLowerCase() + l.needs.slice(1, -1)}</span>)}.
                 </p>
               </div>
@@ -169,7 +228,7 @@ export default async function Readiness() {
             <div className="rd-block-head">
               <div>
                 <h2 id="rd-history">History</h2>
-                <p className="desc">Each time Parton read the postings. The page asks for a re-check every quarter, because postings change.</p>
+                <p className="desc">Each time Parton read the postings. Frontier finds fresh postings and re-reads them by itself every quarter, because postings change.</p>
               </div>
             </div>
             <div className="rd-table-wrap"><table className="table rd-history">
@@ -193,6 +252,54 @@ export default async function Readiness() {
   );
 }
 
+const TREND_TONE: Record<Trend, "accent" | "success" | "danger" | "muted"> = { new: "accent", rising: "success", fading: "danger", gone: "muted" };
+
+function TrendPill({ trend }: { trend: Trend }) {
+  return <Pill tone={TREND_TONE[trend]}>{TREND_LABELS[trend]}</Pill>;
+}
+
+const NEXT_LABEL: Record<NextStep["kind"], string> = { lesson: "Lesson", drill: "Drill", project: "Project idea" };
+
+function NextLine({ next }: { next: NextStep }) {
+  return (
+    <p className="rd-next">
+      <span className="rd-kind">{NEXT_LABEL[next.kind]}</span>
+      <Link href={nextHref(next)}>{next.title}</Link>
+      {next.why && <span className="rd-next-why">{next.why}</span>}
+    </p>
+  );
+}
+
+function PartonScore({ skill: s }: { skill: Skill }) {
+  if (s.suggested === null) return null;
+  const label = LEVELS[s.suggested]?.label ?? "None";
+  if (s.levelSource === "parton") {
+    return (
+      <form action={confirmLevelAction} className="rd-parton">
+        <input type="hidden" name="skill" value={s.id} />
+        <p><strong>Parton&apos;s score: {label}.</strong> {s.reason}</p>
+        <div className="rd-parton-actions">
+          <button type="submit" className="btn btn-sm">Confirm</button>
+          <span className="hint">or pick the right level above to correct it</span>
+        </div>
+      </form>
+    );
+  }
+  if (s.suggested !== s.claimed) {
+    return (
+      <form action={acceptSuggestionAction} className="rd-parton">
+        <input type="hidden" name="skill" value={s.id} />
+        <p><strong>Parton now scores this {label}.</strong> {s.reason}</p>
+        <div className="rd-parton-actions">
+          <button type="submit" className="btn btn-sm">Use {label}</button>
+          <span className="hint">or keep your level</span>
+        </div>
+      </form>
+    );
+  }
+  return s.reason ? <p className="rd-parton rd-parton-quiet"><span className="hint">Parton agrees: {s.reason}</span></p> : null;
+}
+
 function SkillRow({ skill: s }: { skill: Skill }) {
   const backed = supportedLevel(s.kinds);
   const short = s.claimed > s.level;
@@ -202,6 +309,7 @@ function SkillRow({ skill: s }: { skill: Skill }) {
         <div className="rd-skill-name">
           <h3>{s.name}</h3>
           <span className="mono-meta">{s.area}</span>
+          {s.trend && <TrendPill trend={s.trend} />}
         </div>
         <div className="rd-freq" title={`${s.frequency} of ${s.postingCount} postings ask for this`}>
           <span className="rd-freq-bar" aria-hidden="true"><span style={{ width: `${s.postingCount ? (s.frequency / s.postingCount) * 100 : 0}%` }} /></span>
@@ -227,6 +335,7 @@ function SkillRow({ skill: s }: { skill: Skill }) {
           <Pill tone="danger">Counts as {LEVELS[s.level].label} until evidence backs {LEVELS[s.claimed].label}</Pill>
         )}
       </form>
+      <PartonScore skill={s} />
 
       <div className="rd-evidence">
         {s.evidence.length > 0 ? (
@@ -237,6 +346,7 @@ function SkillRow({ skill: s }: { skill: Skill }) {
                 {e.url ? (
                   e.url.startsWith("/") ? <Link href={e.url}>{e.title}</Link> : <a href={e.url} target="_blank" rel="noreferrer noopener">{e.title}</a>
                 ) : <span>{e.title}</span>}
+                {e.auto && <span className="mono-meta" title="Found by Parton in Frontier">auto</span>}
                 <form action={removeEvidenceAction}>
                   <input type="hidden" name="id" value={e.id} />
                   <button type="submit" className="btn btn-ghost btn-icon rd-x" aria-label={`Remove evidence ${e.title}`}><Close size={12} /></button>
@@ -247,6 +357,7 @@ function SkillRow({ skill: s }: { skill: Skill }) {
         ) : (
           <p className="hint">No evidence yet.</p>
         )}
+        {s.next && <NextLine next={s.next} />}
         <details className="rd-add">
           <summary className="btn btn-sm btn-ghost">Add evidence</summary>
           <EvidenceForm skillId={s.id} />

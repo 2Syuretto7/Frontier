@@ -14,6 +14,7 @@ export function ProjectForm({
   className,
   resetOnDone = false,
   extra,
+  pendingNote,
 }: {
   op?: string;
   projectId?: number;
@@ -21,8 +22,11 @@ export function ProjectForm({
   className?: string;
   resetOnDone?: boolean;
   extra?: Record<string, string | number>;
+  /** Shown while the form is submitting, for actions that take a while (Parton, GitHub). */
+  pendingNote?: string | Record<string, string>;
 }) {
   const [state, setState] = useState<ProjectFormState>();
+  const [submitted, setSubmitted] = useState("");
   const [pending, start] = useTransition();
   return (
     <form
@@ -36,6 +40,7 @@ export function ProjectForm({
         if (!data.has("op") && op) data.set("op", op);
         if (projectId !== undefined) data.set("projectId", String(projectId));
         for (const [k, v] of Object.entries(extra ?? {})) data.set(k, String(v));
+        setSubmitted(String(data.get("op") ?? ""));
         start(async () => {
           const result = await projectAction(data);
           setState(result);
@@ -45,7 +50,10 @@ export function ProjectForm({
     >
       {state?.error && <p className="error" role="alert">{state.error}</p>}
       {state?.done && !pending && <p className="success" role="status">{state.done}</p>}
+      {pending && note(pendingNote, submitted) && <p className="hint pp-pending" role="status">{note(pendingNote, submitted)}</p>}
       <fieldset disabled={pending} className="pp-fieldset">{children}</fieldset>
     </form>
   );
 }
+
+const note = (n: string | Record<string, string> | undefined, op: string) => (typeof n === "string" ? n : n?.[op]);

@@ -116,7 +116,7 @@ async function note(lessonId: string, exercise: string | null, kind: "misconcept
 // ---------------------------------------------------------------------------------------------
 // The give-away check. A separate pass that sees the answers and judges only the draft.
 
-async function guard(draft: string, answers: string, maxLevel: string): Promise<string> {
+export async function guard(draft: string, answers: string, maxLevel: string, fallback = FALLBACK_HINT): Promise<string> {
   let reply = draft;
   if (!answers.trim()) return reply;
   for (let pass = 0; pass < 2; pass++) {
@@ -134,7 +134,7 @@ async function guard(draft: string, answers: string, maxLevel: string): Promise<
     if (!verdict.safer_reply.trim()) break;
     reply = verdict.safer_reply;
   }
-  return FALLBACK_HINT;
+  return fallback;
 }
 
 // ---------------------------------------------------------------------------------------------

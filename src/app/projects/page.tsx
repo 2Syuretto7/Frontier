@@ -6,8 +6,13 @@ import { TopBar } from "@/components/TopBar";
 import { ArrowRight } from "@/components/ui/Icons";
 import { ProjectForm } from "@/components/projects/ProjectForm";
 import { LinkOut, Stepper, fmtDate } from "@/components/projects/ProjectParts";
+import { Suggestions } from "@/components/projects/AssistPanels";
+import { listSuggestions, readinessGaps } from "@/lib/project-assist/store";
+import { partonConnected } from "@/lib/parton/claude";
 
 export const dynamic = "force-dynamic";
+// Parton's suggestions can take a minute or two.
+export const maxDuration = 300;
 export const metadata = { title: "Projects" };
 
 export default async function Projects() {
@@ -17,6 +22,7 @@ export default async function Projects() {
   const open = projects.find((p) => p.status === "active");
   const published = projects.filter((p) => p.status === "published");
   const killed = projects.filter((p) => p.status === "killed");
+  const [suggestions, gaps] = open ? [[], []] : await Promise.all([listSuggestions(), readinessGaps(5)]);
 
   return (
     <div className="shell">
@@ -74,6 +80,8 @@ export default async function Projects() {
             </div>
           </section>
         )}
+
+        {!open && <Suggestions suggestions={suggestions} gaps={gaps.map((g) => g.name)} parton={partonConnected()} />}
 
         <section className="pp-list-section" aria-labelledby="published-title">
           <h2 id="published-title" className="pp-h2">Published <span className="mono-meta">{published.length}</span></h2>

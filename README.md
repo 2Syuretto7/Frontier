@@ -89,6 +89,20 @@ rules, `src/lib/projects.ts` the storage).
   repository is refused.
 - **Killing needs a post-mortem** of at least 50 words. Killed projects and their post-mortems stay on the Projects page.
 - `publishedProjects()` in `src/lib/projects.ts` lists the portfolio, with links, for other pages to cite as evidence.
+- **Parton helps at each stage** (`src/lib/project-assist/`). With nothing open, Parton suggests three project
+  questions aimed at the biggest Readiness gaps (skills many postings ask for and you are weakest at), and one click
+  starts a project with its question already filled in. On entering the plan, experiments and write-up stages Parton
+  drafts, in the background, a plan and kill criterion, a lab notebook entry template, and a write-up outline, all from
+  what you have already written and never inventing results.
+- **Public repository from the app.** From the experiments stage on, Frontier can create the public GitHub repository
+  with a README built from the project and a Python .gitignore, and later refresh the README while keeping your own
+  "Reproducing the main result" section. This needs `GITHUB_TOKEN` in Vercel: a fine-grained token with access to all
+  repositories and read and write permission for Administration and Contents.
+- **Each stage is checked before the next unlocks.** Beyond word counts, moving on asks Parton whether the stage's work
+  does its job (a sharp question, a plan with baselines and a checkable kill criterion, real results, real notes, a
+  write-up that matches the findings, a repository that says how to reproduce them). The write-up link must open, and
+  the repository must have code and a README whose reproduction section is filled in. An unchanged stage is never
+  checked twice. If you disagree with Parton you can move on anyway with a written reason, which stays on the record.
 
 ## Parton
 

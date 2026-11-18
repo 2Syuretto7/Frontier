@@ -5,5 +5,19 @@
       "**": false,
       "main": true
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/readiness?run=1",
+      "schedule": "0 20 * * *"
+    },
+    {
+      "path": "/api/cron/readiness?run=2",
+      "schedule": "0 22 * * *"
+    },
+    {
+      "path": "/api/cron/readiness?run=3",
+      "schedule": "0 0 * * *"
+    }
+  ]
 }
