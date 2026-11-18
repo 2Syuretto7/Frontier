@@ -12,7 +12,7 @@ export const trainingLoop: Drill = {
     "init_params returns the right shapes": ["l3.2.3"],
     "the loss matches the reference": ["l3.3.2"],
     "every gradient matches the reference": ["l3.2.3", "l3.2.4"],
-    "the loss stays finite for huge logits": ["m11.2.3", "l3.3.2"],
+    "the loss stays finite for huge logits": ["l3.3.2"],
     "train takes one step per minibatch": ["l3.6.1"],
     "the first logged loss is the loss before any update": ["l3.6.1"],
     "training learns a non-linear boundary": ["l3.6.1"],

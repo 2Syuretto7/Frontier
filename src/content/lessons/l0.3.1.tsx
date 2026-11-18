@@ -193,7 +193,7 @@ assert grid_fit(pts, [0.5, 1, 1.5], [-0.5, 0, 0.5]) == (1, 0), 'With noise, pick
       prompt: (
         <>
           <p>
-            Replace the eye with gradient descent. Write <C>closed_form(pts)</C>, the least-squares (m, c) from the centred formulas, and <C>gradient_fit(pts, lr, steps)</C>, which starts at m = c = 0 and repeats m ← m − lr·∂L/∂m, c ← c − lr·∂L/∂c for the mean squared error L = (1/n) Σ (mx + c − y)², updating both from the same gradient, and returns (m, c).
+            Replace the eye with gradient descent. Write <C>closed_form(pts)</C>, the least-squares (m, c) from the centred formulas, and <C>gradient_fit(pts, lr, steps)</C>, which starts at m = c = 0 and repeats m ← m − lr·gₘ and c ← c − lr·g_c, where gₘ = (2/n) Σ (mx + c − y)·x and g_c = (2/n) Σ (mx + c − y). Compute gₘ and g_c from the same old (m, c) before updating either, and return (m, c). Each step nudges the line downhill on the mean squared error (1/n) Σ (mx + c − y)².
           </p>
         </>
       ),
@@ -225,7 +225,7 @@ def gradient_fit(pts, lr, steps):
           { name: "closed", code: `m, c = closed_form([(0, 1), (1, 2), (2, 2), (3, 5)])
 assert abs(m - 1.2) < 1e-12 and abs(c - 0.7) < 1e-12, 'The best line is y = 1.2x + 0.7.'` },
           { name: "one step", code: `m, c = gradient_fit([(1, 2), (3, 4)], 0.1, 1)
-assert abs(m - 1.4) < 1e-12 and abs(c - 0.6) < 1e-12, 'From 0: ∂L/∂m = −14, ∂L/∂c = −6.'` },
+assert abs(m - 1.4) < 1e-12 and abs(c - 0.6) < 1e-12, 'From 0: gₘ = −14 and g_c = −6.'` },
           { name: "converge", code: `pts = [(0, 1), (1, 2), (2, 2), (3, 5)]
 m, c = gradient_fit(pts, 0.05, 5000)
 M, C = closed_form(pts)

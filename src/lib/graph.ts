@@ -1,5 +1,6 @@
 import outline from "../content/outline.json";
 import codePrerequisites from "../content/code-prerequisites.json";
+import conceptPrerequisites from "../content/concept-prerequisites.json";
 import type { Course, LinkKind, Track } from "./types";
 
 export type LessonNode = {
@@ -43,7 +44,20 @@ type Links = Partial<Record<LinkKind, string[]>>;
  * a list opens only after the lesson that teaches lists is mastered.
  */
 export function withCodePrerequisites(authored: ReadonlyMap<string, Links>): Map<string, Links> {
-  const extra = codePrerequisites as Record<string, string[]>;
+  return withRequires(authored, codePrerequisites as Record<string, string[]>);
+}
+
+/**
+ * Adds both kinds of worked-out prerequisite: the lessons that teach the Python a lesson's code uses, and the
+ * lessons that teach the mathematics, machine learning and engineering ideas its prose and exercises use
+ * (scripts/concept-prerequisites.ts). Both come from `npm run prerequisites`. This is the graph Learn,
+ * Readiness, Projects and Drills all use, so none of them can offer a lesson before the ideas it builds on.
+ */
+export function withPrerequisites(authored: ReadonlyMap<string, Links>): Map<string, Links> {
+  return withRequires(withCodePrerequisites(authored), conceptPrerequisites as Record<string, string[]>);
+}
+
+function withRequires(authored: ReadonlyMap<string, Links>, extra: Record<string, string[]>): Map<string, Links> {
   return new Map(
     [...authored].map(([id, links]) => [
       id,
@@ -58,7 +72,7 @@ export function withCodePrerequisites(authored: ReadonlyMap<string, Links>): Map
  * - each lesson requires the one before it in its chapter;
  * - a chapter's first lesson requires the previous chapter's last lesson;
  * - a course's first lesson requires the last lesson of every required course.
- * Authored "requires" and "revisits" links add to these, as do the code prerequisites from `withCodePrerequisites`.
+ * Authored "requires" and "revisits" links add to these, as do the worked-out prerequisites from `withPrerequisites`.
  */
 export function buildGraph(
   authoredLinks: ReadonlyMap<string, Partial<Record<LinkKind, string[]>>>,

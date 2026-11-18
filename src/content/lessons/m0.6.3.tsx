@@ -208,7 +208,7 @@ def angle(u, v):
       prompt: (
         <>
           <p>
-            Write <C>project(u, v)</C>, the projection of vector u onto non-zero v, and <C>reflect(u, n)</C>, the reflection of u in the line through the origin perpendicular to the non-zero normal n, both for vectors of any length given as tuples. Then write <C>gram_schmidt(vs)</C>, which turns a list of linearly independent vectors into an orthonormal list spanning the same space, by subtracting projections onto the vectors already found and normalising.
+            Write <C>project(u, v)</C>, the projection of vector u onto non-zero v, which is (u·v / v·v) v, and <C>reflect(u, n)</C>, the reflection of u in the line through the origin perpendicular to the non-zero normal n, both for vectors of any length given as tuples. Then write <C>gram_schmidt(vs)</C>, which takes a list of vectors, none of which can be built from the ones before it, and returns a list of unit vectors that are pairwise perpendicular, by subtracting from each vector its projections onto the vectors already found and then scaling it to length 1.
           </p>
         </>
       ),
