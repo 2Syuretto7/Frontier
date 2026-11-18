@@ -199,13 +199,35 @@ assert tuple(dims(A)) == (3, 4, 3, 2), 'Use r, n − r, r and m − r.'` },
       prompt: (
         <>
           <p>
-            Write <C>four_subspaces(A, tol=1e-10)</C>, which returns a dict of orthonormal bases (as matrices whose columns are the basis vectors) for <C>"col"</C>, <C>"null"</C>, <C>"row"</C> and <C>"left_null"</C>, all read off one SVD A = UΣVᵀ: the first r columns of U and V, and the remaining columns. Then write <C>check_orthogonality(A)</C>, the largest absolute entry of (row basis)ᵀ(null basis) and of (col basis)ᵀ(left-null basis), which should be about 1e−15.
+            The starter gives <C>rref(A, tol)</C>, the reduced row echelon form of A and its pivot columns. Write <C>four_subspaces(A, tol=1e-10)</C>, which returns a dict of bases (as matrices whose columns are the basis vectors) for <C>"col"</C>, the pivot columns of A; <C>"row"</C>, the non-zero rows of the reduced form; <C>"null"</C>, the special solutions of Ax = 0; and <C>"left_null"</C>, the special solutions of Aᵀy = 0. Then write <C>check_orthogonality(A)</C>, the largest absolute entry of (row basis)ᵀ(null basis) and of (col basis)ᵀ(left-null basis), which should be tiny.
           </p>
         </>
       ),
       answer: {
         kind: "code",
         starter: `import numpy as np
+
+def rref(A, tol=1e-10):
+    R = np.array(A, float)
+    m, n = R.shape
+    tol = tol * (np.abs(R).max() if R.size else 0.0)
+    pivots = []
+    r = 0
+    for c in range(n):
+        if r == m:
+            break
+        p = r + int(np.argmax(np.abs(R[r:, c])))
+        if abs(R[p, c]) <= tol:
+            R[r:, c] = 0.0
+            continue
+        R[[r, p]] = R[[p, r]]
+        R[r] /= R[r, c]
+        for i in range(m):
+            if i != r:
+                R[i] -= R[i, c] * R[r]
+        pivots.append(c)
+        r += 1
+    return R, pivots
 
 def four_subspaces(A, tol=1e-10):
     A = np.asarray(A, float)
@@ -217,12 +239,43 @@ def check_orthogonality(A):
 `,
         solution: `import numpy as np
 
+def rref(A, tol=1e-10):
+    R = np.array(A, float)
+    m, n = R.shape
+    tol = tol * (np.abs(R).max() if R.size else 0.0)
+    pivots = []
+    r = 0
+    for c in range(n):
+        if r == m:
+            break
+        p = r + int(np.argmax(np.abs(R[r:, c])))
+        if abs(R[p, c]) <= tol:
+            R[r:, c] = 0.0
+            continue
+        R[[r, p]] = R[[p, r]]
+        R[r] /= R[r, c]
+        for i in range(m):
+            if i != r:
+                R[i] -= R[i, c] * R[r]
+        pivots.append(c)
+        r += 1
+    return R, pivots
+
+def special_solutions(A, tol):
+    R, piv = rref(A, tol)
+    n = R.shape[1]
+    free = [c for c in range(n) if c not in piv]
+    N = np.zeros((n, len(free)))
+    for k, f in enumerate(free):
+        N[f, k] = 1.0
+        for i, p in enumerate(piv):
+            N[p, k] = -R[i, f]
+    return N
+
 def four_subspaces(A, tol=1e-10):
     A = np.asarray(A, float)
-    U, s, Vt = np.linalg.svd(A)
-    r = int(np.sum(s > tol * s[0])) if s.size and s[0] > 0 else 0
-    V = Vt.T
-    return {'col': U[:, :r], 'left_null': U[:, r:], 'row': V[:, :r], 'null': V[:, r:]}
+    R, piv = rref(A, tol)
+    return {'col': A[:, piv], 'row': R[:len(piv)].T, 'null': special_solutions(A, tol), 'left_null': special_solutions(A.T, tol)}
 
 def check_orthogonality(A):
     B = four_subspaces(A)
@@ -241,10 +294,10 @@ assert np.allclose(A @ B['null'], 0) and np.allclose(B['left_null'].T @ A, 0), '
           { name: "orthogonal", code: `import numpy as np
 rng = np.random.default_rng(14)
 A = rng.normal(size=(5, 3)) @ rng.normal(size=(3, 4))
-assert check_orthogonality(A) < 1e-12, 'The row space is orthogonal to the null space.'` },
+assert check_orthogonality(A) < 1e-9, 'The row space is orthogonal to the null space.'` },
           { name: "full", code: `import numpy as np
 B = four_subspaces(np.eye(3))
-assert B['null'].shape == (3, 0) and B['left_null'].shape == (3, 0) and np.allclose(abs(np.linalg.det(B['col'])), 1), 'An invertible matrix has trivial null spaces.'` },
+assert B['null'].shape == (3, 0) and B['left_null'].shape == (3, 0) and np.allclose(B['col'], np.eye(3)), 'An invertible matrix has trivial null spaces.'` },
         ],
       },
     },

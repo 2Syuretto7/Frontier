@@ -121,7 +121,7 @@ export const lesson: LessonContent = {
     {
       key: "mean",
       rung: "check",
-      prompt: <p>A gradient forgot to divide by the batch size N = 4, so it is 4 times too large. What relative error does the check report?</p>,
+      prompt: <p>A gradient forgot to divide by the number of examples N = 4, so it is 4 times too large. What relative error does the check report?</p>,
       answer: { kind: "numeric", value: 0.75 },
     },
     {

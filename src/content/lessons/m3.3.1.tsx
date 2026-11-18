@@ -146,12 +146,12 @@ print((x[0] * A[:, 0] + x[1] * A[:, 1] == A @ x).all(), (A @ x)[1])`}</Code>
         <>
           <Code>{`import numpy as np
 A = np.array([[1, 2], [3, 4]])
-B = np.array([[0, 1], [1, 0]])
-print(A @ B, (A * B).sum(), np.array_equal(A @ B, B @ A))`}</Code>
-          <p>A matrix product, an entrywise product summed, and a commutativity check. What does this print?</p>
+x = np.array([1, -1])
+print(A @ x, (A * A).sum(), A[:, 1])`}</Code>
+          <p>A matrix times a vector, an entrywise product summed, and a column. What does this print?</p>
         </>
       ),
-      answer: { kind: "choice", options: ["[[2 1]\n [4 3]] 5 False", "[[3 4]\n [1 2]] 5 False", "[[2 1]\n [4 3]] 10 False", "[[2 1]\n [4 3]] 5 True"], correct: [0] },
+      answer: { kind: "choice", options: ["[-1 -1] 30 [2 4]", "[-1 -1] 30 [3 4]", "[-1 -1] 10 [2 4]", "[-1  1] 30 [2 4]"], correct: [0] },
     },
     {
       key: "write",
@@ -198,7 +198,7 @@ assert np.allclose(matvec([[1, 2], [3, 4]], [0, 1]), [2, 4]), 'A times e₂ shou
       prompt: (
         <>
           <p>
-            Write <C>matrix_power(A, k)</C> for a square NumPy matrix and integer k ≥ 0 by repeated squaring (at most about 2 log₂ k products), and <C>fib_matrix(n)</C>, the n-th Fibonacci number as the top-right entry of [[1, 1], [1, 0]]ⁿ computed with Python integers (use <C>dtype=object</C>) so that n = 500 is exact. Do not use <C>np.linalg.matrix_power</C>.
+            Write <C>iterate(A, x, k)</C>, the vector A(A(⋯(Ax))) obtained by multiplying x by the square NumPy matrix A k times, using only matrix-times-vector products, and <C>fib_vector(n)</C>, the n-th Fibonacci number as the second entry of [[1, 1], [1, 0]] applied n times to (1, 0), computed with Python integers (use <C>dtype=object</C>) so that n = 500 is exact.
           </p>
         </>
       ),
@@ -206,51 +206,38 @@ assert np.allclose(matvec([[1, 2], [3, 4]], [0, 1]), [2, 4]), 'A times e₂ shou
         kind: "code",
         starter: `import numpy as np
 
-def matrix_power(A, k):
-    A = np.asarray(A)
-    R = np.eye(len(A), dtype=A.dtype)
-    for _ in range(k):
-        R = R @ A
-    return R
+def iterate(A, x, k):
+    return np.asarray(x)
 
-def fib_matrix(n):
-    return int(matrix_power(np.array([[1, 1], [1, 0]]), n)[0, 1])
+def fib_vector(n):
+    return 0
 `,
         solution: `import numpy as np
 
-def matrix_power(A, k):
+def iterate(A, x, k):
     A = np.asarray(A)
-    R = np.eye(len(A), dtype=A.dtype)
-    if A.dtype == object:
-        R = np.array([[1 if i == j else 0 for j in range(len(A))] for i in range(len(A))], dtype=object)
-    while k:
-        if k & 1:
-            R = R @ A
-        A = A @ A
-        k >>= 1
-    return R
+    x = np.asarray(x)
+    for _ in range(k):
+        x = A @ x
+    return x
 
-def fib_matrix(n):
-    return int(matrix_power(np.array([[1, 1], [1, 0]], dtype=object), n)[0, 1])
+def fib_vector(n):
+    v = iterate(np.array([[1, 1], [1, 0]], dtype=object), np.array([1, 0], dtype=object), n)
+    return int(v[1])
 `,
         tests: [
-          { name: "powers", code: `import numpy as np
+          { name: "shear", code: `import numpy as np
 A = np.array([[1, 1], [0, 1]])
-assert np.array_equal(matrix_power(A, 0), np.eye(2)) and np.array_equal(matrix_power(A, 7), [[1, 7], [0, 1]]), 'Shears add up.'` },
+assert np.array_equal(iterate(A, [0, 1], 0), [0, 1]) and np.array_equal(iterate(A, [0, 1], 7), [7, 1]), 'Each shear adds the second entry to the first.'` },
           { name: "random", code: `import numpy as np
 rng = np.random.default_rng(3)
 A = rng.integers(-2, 3, size=(4, 4))
-assert np.array_equal(matrix_power(A, 13), np.linalg.matrix_power(A, 13)), 'Agree with NumPy.'` },
-          { name: "fib", code: `assert [fib_matrix(n) for n in range(10)] == [0, 1, 1, 2, 3, 5, 8, 13, 21, 34] and fib_matrix(500) == 139423224561697880139724382870407283950070256587697307264108962948325571622863290691557658876222521294125, 'Exact big integers.'` },
-          { name: "few products", code: `import numpy as np
-class Counted(np.ndarray):
-    pass
-count = [0]
-real = np.ndarray.__matmul__
-A = np.array([[1.0, 1.0], [1.0, 0.0]])
-import inspect
-src = inspect.getsource(matrix_power)
-assert 'linalg' not in src and ('>>' in src or '// 2' in src or '%' in src or '&' in src), 'Square the matrix and halve k.'` },
+x = rng.integers(-2, 3, size=4)
+want = x
+for _ in range(6):
+    want = A.dot(want)
+assert np.array_equal(iterate(A, x, 6), want), 'Multiply by A six times.'` },
+          { name: "fib", code: `assert [fib_vector(n) for n in range(10)] == [0, 1, 1, 2, 3, 5, 8, 13, 21, 34] and fib_vector(500) == 139423224561697880139724382870407283950070256587697307264108962948325571622863290691557658876222521294125, 'Exact big integers.'` },
         ],
       },
     },

@@ -258,7 +258,7 @@ assert len(kill_tree(procs, 1)) == 2999, 'Use a stack, not deep recursion, for l
     {
       key: "perm",
       rung: "stretch",
-      prompt: <p>An SSH private key must be readable and writable by its owner and by nobody else. What mode should it have, as three digits?</p>,
+      prompt: <p>A file holding a private key must be readable and writable by its owner and by nobody else. What mode should it have, as three digits?</p>,
       answer: { kind: "numeric", value: 600 },
     },
   ],

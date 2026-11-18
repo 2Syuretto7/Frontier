@@ -228,7 +228,7 @@ assert x == 5, 'The maximum can sit at an endpoint.'` },
       prompt: (
         <>
           <p>
-            Write <C>golden_max(f, a, b, tol)</C>, which maximises a unimodal f on [a, b] by golden-section search, keeping two interior points at fractions 1 − 1/φ and 1/φ and reusing one function value per step, until the bracket is shorter than tol; return the midpoint. Then write <C>global_max(f, a, b, n)</C>, which finds the largest of the local maxima on a grid of n steps (refining each with <C>golden_max</C>) and also compares with the endpoints, returning (x, f(x)).
+            Write <C>golden_max(f, a, b, tol)</C>, which maximises a unimodal f on [a, b] by golden-section search, keeping two interior points at fractions 1 − 1/φ and 1/φ and reusing one function value per step, until the bracket is shorter than tol; return the midpoint. Then write <C>global_max(f, a, b, n)</C>, which finds the largest value of f on [a, b]: on a grid of n steps, find each grid point no lower than either neighbour, refine it with <C>golden_max</C> on the two steps around it, and compare the results with the endpoints, returning the best (x, f(x)).
           </p>
         </>
       ),

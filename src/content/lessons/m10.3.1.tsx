@@ -132,7 +132,7 @@ export const lesson: LessonContent = {
           simplex method walks from vertex to better vertex, and interior-point methods cut through the middle, both
           practical for millions of variables. The equality QP of projecting 0 onto x₁ + x₂ + x₃ = 3 gives (1, 1, 1) with
           ν = −1. With inequality constraints there is no single linear system; the box QP in the code is solved by
-          projected gradient steps, which land on (1, 0) where one variable sits at each bound.
+          gradient steps that clip back into the box, which land on (1, 0) where one variable sits at each bound.
         </p>
       </Remark>
     </>
@@ -266,8 +266,8 @@ assert np.allclose(x, [0, 2]) and abs(v + 6) < 1e-12` },
       prompt: (
         <p>
           Write <C>eq_qp(P, q, A, b)</C>, solving the KKT system and returning (x, ν), and{" "}
-          <C>box_qp(P, q, lo, hi, steps=500)</C>, minimising ½xᵀPx + qᵀx over the box by projected gradient with step 1/λ_max(P),
-          starting from the projection of 0.
+          <C>box_qp(P, q, lo, hi, steps=500)</C>, minimising ½xᵀPx + qᵀx over the box by repeating x ← clip(x − (Px + q)/λ_max(P), lo, hi), a gradient step of
+          size 1/λ_max(P) followed by clipping each coordinate back into [loᵢ, hiᵢ], starting from 0 clipped into the box.
         </p>
       ),
       answer: {

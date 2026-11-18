@@ -129,7 +129,7 @@ export const lesson: LessonContent = {
         <p>
           With <M>{"\\langle x, y\\rangle_M = x^\\top M y"}</M>, the projection onto the column space of A is{" "}
           <M>{"P = A(A^\\top M A)^{-1}A^\\top M"}</M>. It is idempotent, and it is self-adjoint for{" "}
-          <M>{"\\langle\\cdot,\\cdot\\rangle_M"}</M>, which in matrices says MP is symmetric, but P itself need not be. A
+          <M>{"\\langle\\cdot,\\cdot\\rangle_M"}</M>, meaning <M>{"\\langle Px, y\\rangle_M = \\langle x, Py\\rangle_M"}</M> for all x and y, which in matrices says MP is symmetric, but P itself need not be. A
           projection that is idempotent but not self-adjoint for the inner product in use is an oblique projection: it splits
           V along some complement of U, not the orthogonal one.
         </p>

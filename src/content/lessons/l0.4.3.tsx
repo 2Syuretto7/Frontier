@@ -144,7 +144,7 @@ def d(f, z):
     return (f(z + 1e-6) - f(z - 1e-6)) / 2e-6
 
 print(round(d(sig, 6), 4), round(d(relu, 6), 4))`}</Code>
-          <p>Gradients of sigmoid and ReLU at z = 6. Why did ReLU help deep networks train?</p>
+          <p>Slopes of sigmoid and ReLU at z = 6. Why did ReLU help deep networks train?</p>
         </>
       ),
       answer: { kind: "choice", options: ["0.0025 1.0", "0.25 1.0", "0.0025 0.0", "1.0 1.0"], correct: [0] },
@@ -207,7 +207,7 @@ def xor_net(x1, x2):
       prompt: (
         <>
           <p>
-            Backpropagation by hand for a network with one hidden layer of tanh units: h = tanh(W₁x + b₁), ŷ = W₂·h + b₂ (one output), loss L = ½(ŷ − y)². Write <C>forward(x, W1, b1, W2, b2)</C>, returning (h, ŷ), and <C>backward(x, y, W1, b1, W2, b2)</C>, returning the gradients (dW1, db1, dW2, db2) with the same shapes as the parameters (lists and lists of lists), using the chain rule and tanh′(z) = 1 − tanh²(z). No NumPy.
+            Train a two-layer network by hand. The middle layer is h = tanh(W₁x + b₁) and the output is ŷ = W₂·h + b₂ (one number), with loss ½(ŷ − y)². Write <C>forward(x, W1, b1, W2, b2)</C>, returning (h, ŷ), and <C>backward(x, y, W1, b1, W2, b2)</C>, returning the update directions (dW1, db1, dW2, db2) with the same shapes as the parameters (lists and lists of lists). Use these formulas: d = ŷ − y; dW2[j] = d·h[j]; db2 = d; g_j = d·W2[j]·(1 − h[j]²); dW1[j][i] = g_j·x[i]; db1[j] = g_j. No NumPy.
           </p>
         </>
       ),

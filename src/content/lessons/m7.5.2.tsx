@@ -268,7 +268,7 @@ assert abs(a - 3) < 1e-9 and abs(b + 2) < 1e-9 and isinstance(a, float)` },
       prompt: (
         <p>
           Write <C>cov_from_joint(xs, ys, J)</C>, the covariance of X and Y from a joint pmf table J[i][j] = P(X = xs[i], Y =
-          ys[j]), and <C>var_of_combination(a, S)</C>, the variance of Σ aᵢXᵢ given the covariance matrix S as nested lists.
+          ys[j]), and <C>var_of_combination(a, S)</C>, the variance of Σ aᵢXᵢ given, as nested lists, the matrix S with S[i][j] = Cov(Xᵢ, Xⱼ).
         </p>
       ),
       answer: {

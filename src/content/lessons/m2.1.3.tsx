@@ -233,7 +233,7 @@ assert abs(lo - 2.5) < 1e-12 and abs(hi - 3.5) < 1e-12, '|2x − 6| < 1 means 2.
       prompt: (
         <>
           <p>
-            Write <C>sum_abs_solve(points, r)</C>, the solution set of |x − p₁| + |x − p₂| + … + |x − pₖ| ≤ r as a closed interval (lo, hi), or <C>None</C>. The left side is convex and piecewise linear with kinks at the pᵢ, so: find its minimum (at a median of the points), return <C>None</C> if that exceeds r, and otherwise solve for each end on the correct linear piece. Then write <C>minimiser(points)</C>, the smallest x achieving the minimum.
+            Write <C>sum_abs_solve(points, r)</C>, the solution set of |x − p₁| + |x − p₂| + … + |x − pₖ| ≤ r as a closed interval (lo, hi), or <C>None</C>. The left side is piecewise linear with kinks at the pᵢ, falling and then rising, so: find its minimum (at a median of the points), return <C>None</C> if that exceeds r, and otherwise solve for each end on the correct linear piece. Then write <C>minimiser(points)</C>, the smallest x achieving the minimum.
           </p>
         </>
       ),

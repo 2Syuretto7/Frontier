@@ -49,7 +49,7 @@ export const lesson: LessonContent = {
         An embedding table's rows receive gradients only when their word appears, so a rare word's gradient is a thousand
         times smaller on average than a common word's. With one learning rate, either the common words' rows blow up or the
         rare words' rows never move. And a second puzzle: adding L2 regularisation to Adam's loss turns out to do something
-        different from weight decay, although for SGD the two are the same thing. Why?
+        different from weight decay, which shrinks every weight by the same small fraction at each step, although for SGD the two are the same thing. Why?
       </p>
     </>
   ),
