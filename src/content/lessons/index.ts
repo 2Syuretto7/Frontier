@@ -759,6 +759,26 @@ import { lesson as l5_6_1 } from "./l5.6.1";
 import { lesson as l5_6_2 } from "./l5.6.2";
 import { lesson as l5_6_3 } from "./l5.6.3";
 import { lesson as l5_6_4 } from "./l5.6.4";
+import { lesson as e7_1_1 } from "./e7.1.1";
+import { lesson as e7_1_2 } from "./e7.1.2";
+import { lesson as e7_1_3 } from "./e7.1.3";
+import { lesson as e7_2_1 } from "./e7.2.1";
+import { lesson as e7_2_2 } from "./e7.2.2";
+import { lesson as e7_2_3 } from "./e7.2.3";
+import { lesson as e7_3_1 } from "./e7.3.1";
+import { lesson as e7_3_2 } from "./e7.3.2";
+import { lesson as e7_3_3 } from "./e7.3.3";
+import { lesson as e7_3_4 } from "./e7.3.4";
+import { lesson as e7_4_1 } from "./e7.4.1";
+import { lesson as e7_4_2 } from "./e7.4.2";
+import { lesson as e7_4_3 } from "./e7.4.3";
+import { lesson as e7_4_4 } from "./e7.4.4";
+import { lesson as e7_5_1 } from "./e7.5.1";
+import { lesson as e7_5_2 } from "./e7.5.2";
+import { lesson as e7_5_3 } from "./e7.5.3";
+import { lesson as e7_6_1 } from "./e7.6.1";
+import { lesson as e7_6_2 } from "./e7.6.2";
+import { lesson as e7_6_3 } from "./e7.6.3";
 
 export const LESSONS: readonly LessonContent[] = [
   m0_1_1,
@@ -1521,4 +1541,24 @@ export const LESSONS: readonly LessonContent[] = [
   l5_6_2,
   l5_6_3,
   l5_6_4,
+  e7_1_1,
+  e7_1_2,
+  e7_1_3,
+  e7_2_1,
+  e7_2_2,
+  e7_2_3,
+  e7_3_1,
+  e7_3_2,
+  e7_3_3,
+  e7_3_4,
+  e7_4_1,
+  e7_4_2,
+  e7_4_3,
+  e7_4_4,
+  e7_5_1,
+  e7_5_2,
+  e7_5_3,
+  e7_6_1,
+  e7_6_2,
+  e7_6_3,
 ];
