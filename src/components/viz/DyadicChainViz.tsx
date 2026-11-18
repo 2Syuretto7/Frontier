@@ -86,8 +86,8 @@ export function DyadicChainViz() {
         Top: a Brownian path on 1024 steps (grey) and its approximation that rounds each time down to the grid of 2^k
         points (blue). Bottom: for each level, the largest change between the level-k and level-(k − 1) approximations,
         averaged over 200 paths, with the union bound 2^(−k/2)√(2 log 2^(k+1)) (red). There are more increments at finer
-        levels, but each is smaller, and the bounds shrink geometrically, so their sum stays below 5.4 however fine the grid,
-        while a single union bound over all 1024 points grows like √(2 log 1024).
+        levels, but each is smaller, and the bounds shrink geometrically, so their sum converges, to about 5.7, however fine the
+        grid, whereas a single union bound over N grid points is √(2 log N), which grows without limit.
       </figcaption>
     </figure>
   );
