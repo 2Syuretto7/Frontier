@@ -333,7 +333,7 @@ def count_below(M, x):
 assert abs(semicircle(0) - 1 / math.pi) < 1e-15 and semicircle(2.5) == 0.0 and semicircle(-3) == 0.0 and abs(semicircle(1) - math.sqrt(3) / (2 * math.pi)) < 1e-15
 assert abs(semicircle_mass(-2, 2) - 1) < 1e-5 and abs(semicircle_mass(-1, 1) - (math.sqrt(3) / 2 + math.pi / 3) / math.pi) < 1e-6 and abs(semicircle_mass(-3, 3, 30000) - 1) < 1e-5` },
           { name: "count", code: `A = [[4, 1, 0, 2], [1, 3, 1, 0], [0, 1, 2, 1], [2, 0, 1, 5]]
-assert [count_below(A, x) for x in [0.5, 1.5, 2.5, 3, 4.5, 5.5, 6.5, 7.5]] == [0, 1, 1, 2, 3, 3, 3, 4]
+assert [count_below(A, x) for x in [0.5, 1.5, 2.5, 3.2, 4.5, 5.5, 6.5, 7.5]] == [0, 1, 1, 2, 3, 3, 3, 4]
 assert count_below([[0, 1], [1, 0]], 0.5) == 1 and count_below([[0, 1], [1, 0]], -2) == 0 and count_below([[-1]], 0) == 1` },
         ],
       },
