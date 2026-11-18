@@ -43,7 +43,7 @@ export const lesson: LessonContent = {
   id: "m14.6.3",
   minutes: 40,
   links: {
-    requires: ["m14.6.2", "m5.4.4", "l5.2.1"],
+    requires: ["m14.6.2", "m5.4.4"],
     revisits: ["m11.2.3"],
     foreshadows: ["m14.6.4"],
   },
