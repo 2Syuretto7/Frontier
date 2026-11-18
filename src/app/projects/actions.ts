@@ -23,6 +23,7 @@ export async function projectAction(form: FormData): Promise<ProjectFormState> {
       ? await projects.startProject(text(form, "title"))
       : await (await import("@/lib/project-assist/store")).startFromSuggestion(Number(text(form, "suggestionId")));
     if (!result.ok) return { error: result.error };
+    if (result.id) await guideInBackground(result.id, op, "");
     revalidatePath("/projects");
     redirect(`/projects/${result.id}`);
   }
@@ -101,9 +102,26 @@ export async function projectAction(form: FormData): Promise<ProjectFormState> {
       return { error: "Unknown action." };
   }
   if (!result.ok) return { error: result.error ?? "That didn't work." };
+  await guideInBackground(id, op, op === "note" ? text(form, "body") : op === "result" ? text(form, "result") : "");
   revalidatePath("/projects");
   revalidatePath(`/projects/${id}`);
   return { ok: true, done };
+}
+
+/**
+ * After a change, Parton works out in the background which lessons the next stage needs (when the stage or its text
+ * changed), and reads a new notebook entry or experiment result for gaps in understanding.
+ */
+async function guideInBackground(id: number, op: string, entry: string) {
+  const guide = await import("@/lib/guide/store");
+  const project = await (await import("@/lib/projects")).getProject(id);
+  if (!project || project.status !== "active") return;
+  const needs = await guide.needsStale(project);
+  if (!needs && !entry.trim()) return;
+  after(async () => {
+    if (needs) await guide.refreshNeeds(id);
+    if (entry.trim() && (op === "note" || op === "result")) await guide.recordTrouble(id, entry);
+  });
 }
 
 /** Moves the project on, then starts Parton on the draft the new stage uses, in the background. */

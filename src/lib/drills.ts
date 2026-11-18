@@ -277,6 +277,8 @@ export async function startAttempt(drillId: string, opts: { variantId?: number; 
   const drill = DRILL_BY_ID.get(drillId);
   if (!drill) return { ok: false, error: `Unknown drill ${drillId}` };
   await ensureTable();
+  const blocked = await drillBlocked(drillId);
+  if (blocked) return { ok: false, error: blocked };
   let level = await levelOf(drillId);
   let variant: DrillVariant | null = null;
   if (opts.variantId) {
@@ -495,6 +497,18 @@ async function readinessSkills(): Promise<ReadinessSkill[]> {
 
 export async function drillPlan(): Promise<{ next: Pick | null; queue: Pick[]; skills: SkillRow[]; usesReadiness: boolean }> {
   const [{ attempts }, readiness] = await Promise.all([allStats(), readinessSkills()]);
-  const plan = planDrills(DRILLS, attempts, readiness);
+  const plan = planDrills(DRILLS, attempts, readiness, Date.now(), await blocks(attempts));
   return { ...plan, usesReadiness: readiness.length > 0 };
+}
+
+/** Why drills can't be started now: lessons not yet mastered, or a miss that sent the learner back to a lesson. */
+async function blocks(attempts: Attempt[]): Promise<Map<string, string>> {
+  const { drillBlocks, drillGuide } = await import("./guide/store");
+  return drillBlocks(await drillGuide(attempts));
+}
+
+/** Why this drill can't be started now, or null if it can. */
+export async function drillBlocked(drillId: string): Promise<string | null> {
+  const { attempts } = await allStats();
+  return (await blocks(attempts)).get(drillId) ?? null;
 }

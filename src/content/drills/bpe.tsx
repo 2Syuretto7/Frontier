@@ -7,6 +7,17 @@ export const bpe: Drill = {
   summary: "Train byte-pair-encoding merges on a text, then encode and decode with them.",
   minutes: 25,
   skills: ["Tokenisation", "Algorithms", "Python data structures"],
+  lessons: ["e0.4.2", "e0.4.3", "e2.7.2", "l5.1.1"],
+  testLessons: {
+    "decode handles partial UTF-8 sequences": ["e0.4.3"],
+    "decode inverts encode on any text": ["e0.4.3", "l5.1.1"],
+    "train_bpe returns merges as pairs of token ids": ["l5.1.1"],
+    "train_bpe matches the reference on mixed-script text": ["l5.1.1", "e0.4.2"],
+    "ties go to the pair that occurs first": ["e2.7.2"],
+    "overlapping pairs are counted but merged without overlap": ["e0.4.2"],
+    "training stops once no pair repeats": ["e2.7.2"],
+    "encode applies merges in the order they were learned": ["l5.1.1"],
+  },
   brief: (
     <>
       <p>Write a byte-level byte-pair-encoding tokeniser in plain Python. Token ids <C>0</C> to <C>255</C> are the raw bytes; the <C>i</C>-th merge creates token <C>256 + i</C>.</p>

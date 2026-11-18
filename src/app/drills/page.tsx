@@ -18,7 +18,7 @@ export default async function DrillsPage() {
   await requireOwner();
   const [{ drills, attempts }, plan] = await Promise.all([allStats(), drillPlan()]);
   const picks = new Map(plan.queue.map((p) => [p.drillId, p]));
-  const upNext = plan.queue.filter((p) => p.kind !== "later").slice(0, 4);
+  const upNext = plan.queue.filter((p) => p.kind !== "later" && p.kind !== "locked").slice(0, 4);
   const finished = attempts.filter((a) => a.finishedAt);
   const passes = finished.filter((a) => a.outcome === "passed");
   const passedDrills = drills.filter((s) => s.passes > 0).length;
@@ -47,9 +47,11 @@ export default async function DrillsPage() {
         <section className="drill-plan" aria-labelledby="up-next">
           <div className="drill-next">
             <p className="eyebrow" id="up-next">Up next</p>
-            {plan.next ? <NextDrill pick={plan.next} /> : (
+            {plan.next ? <NextDrill pick={plan.next} /> : plan.queue.every((p) => p.kind === "locked") ? (
+              <p className="muted">Every drill opens once you have mastered the lessons it tests. Each card says which.</p>
+            ) : (
               <p className="muted">Nothing is due. Every drill is held for now; the next one comes back on {
-                plan.queue[0]?.due ? when(plan.queue[0].due) : "its review date"}.</p>
+                plan.queue.find((p) => p.kind === "later")?.due ? when(plan.queue.find((p) => p.kind === "later")!.due!) : "its review date"}.</p>
             )}
             {upNext.length > 1 && (
               <ol className="drill-queue">
@@ -135,11 +137,12 @@ function DrillCard({ stats, pick }: { stats: DrillStats; pick: Pick }) {
     <Link href={`/drills/${d.id}`} className="drill-card">
       <span className="drill-card-head">
         <span className="mono-tag">Level {pick.level} · {levelInfo(pick.level).editor === "variant" ? "variant" : `${pick.limitMinutes} min`}</span>
-        {pick.kind === "retry" || pick.kind === "due" ? <Pill tone="accent" icon="dot">Due</Pill> : state}
+        {pick.kind === "locked" ? <Pill tone="muted" icon="lock">Locked</Pill> : pick.kind === "retry" || pick.kind === "due" ? <Pill tone="accent" icon="dot">Due</Pill> : state}
       </span>
       <span className="drill-card-title">{d.title}<span className="chev"><ChevronRight size={14} /></span></span>
       <span className="drill-card-summary">{d.summary}</span>
       <span className="drill-card-skills">{d.skills.join(" · ")}</span>
+      {pick.kind === "locked" && <span className="drill-reason">{pick.reason}</span>}
       <span className="drill-card-stats">
         <span><span className="muted">Best</span> {stats.bestSeconds !== null ? clock(stats.bestSeconds) : "None"}</span>
         <span><span className="muted">Pass rate</span> {stats.finished ? `${percent(stats.passRate)} of ${stats.finished}` : "None yet"}</span>

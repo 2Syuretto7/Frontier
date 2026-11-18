@@ -7,6 +7,18 @@ export const attention: Drill = {
   summary: "Scaled dot-product attention with a mask, then causal multi-head self-attention, in NumPy.",
   minutes: 20,
   skills: ["Transformers", "Attention", "NumPy broadcasting"],
+  lessons: ["l3.3.2", "e1.5.3", "l4.4.3", "l4.4.4"],
+  testLessons: {
+    "softmax sums to one and stays finite on large inputs": ["l3.3.2", "m11.2.3"],
+    "causal_mask has the right shape, type and pattern": ["l4.4.3"],
+    "attention returns shape (..., Tq, dv) with extra leading dimensions": ["e1.5.3", "l4.4.3"],
+    "attention matches the reference without a mask": ["l4.4.3"],
+    "masked keys get exactly zero weight": ["l4.4.3"],
+    "a mask broadcasts across batch and heads": ["e1.5.3"],
+    "multi-head attention returns shape (B, T, D)": ["l4.4.4"],
+    "multi-head attention matches the reference": ["l4.4.4"],
+    "earlier positions never see later tokens": ["l4.4.3"],
+  },
   brief: (
     <>
       <p>Write four functions in NumPy. Every array is <C>float64</C>.</p>

@@ -60,13 +60,38 @@ export async function afterReviewAction() {
   await goToNextStep(true);
 }
 
+/**
+ * Opens the first item of today's queue: a lesson, Review, a drill or a project step. Leaving a review session
+ * opens the first lesson in it instead, never another review. If the queue can't be built, Learn falls back to
+ * the scheduler on its own.
+ */
 async function goToNextStep(afterReview: boolean) {
   const { nextStep, startLesson } = await import("@/lib/learning");
+  let queue: import("@/lib/guide/core").TodayItem[] | null = null;
+  try {
+    const { today } = await import("@/lib/guide/store");
+    queue = await today({ afterReview });
+  } catch (error) {
+    console.error("Today's queue unavailable:", error);
+  }
+  if (queue) {
+    const { isLessonItem } = await import("@/lib/guide/core");
+    const item = afterReview ? queue.find(isLessonItem) : queue[0];
+    if (item?.kind === "continue" || item?.kind === "revisit") redirect(`/learn/${item.lessonId}`);
+    if (item?.kind === "begin") {
+      await startLesson(item.lessonId, item.guided ?? null);
+      redirect(`/learn/${item.lessonId}`);
+    }
+    if (item?.kind === "review") redirect("/review");
+    if (item?.kind === "drill") redirect(`/drills/${item.drillId}`);
+    if (item?.kind === "project") redirect(`/projects/${item.projectId}`);
+    redirect("/map");
+  }
   const step = await nextStep({ afterReview });
   if (step.kind === "continue") redirect(`/learn/${step.lesson.id}`);
   if (step.kind === "review") redirect("/review");
   if (step.kind === "begin") {
-    await startLesson(step.lesson.id);
+    await startLesson(step.lesson.id, step.guided ?? null);
     redirect(`/learn/${step.lesson.id}`);
   }
   redirect("/map");

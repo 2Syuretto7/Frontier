@@ -7,6 +7,16 @@ export const lora: Drill = {
   summary: "A frozen linear layer with a trainable low-rank update: forward, backward and merge.",
   minutes: 20,
   skills: ["Fine-tuning", "Backpropagation", "Linear algebra"],
+  lessons: ["m3.8.4", "l3.2.3", "l9.1.4"],
+  testLessons: {
+    "A and B have the right shapes, and B starts at zero": ["l9.1.4"],
+    "a fresh layer equals the frozen layer": ["l9.1.4"],
+    "the update is scaled by alpha / r": ["l9.1.4"],
+    "the gradients of A and B match the reference": ["l3.2.3"],
+    "the gradient with respect to x matches the reference": ["l3.2.3"],
+    "training changes only A and B": ["l9.1.4"],
+    "the merged weight reproduces the output": ["m3.8.4"],
+  },
   brief: (
     <>
       <p>Write a class <C>LoRALinear</C> in NumPy: a frozen linear layer plus a trainable low-rank update.</p>

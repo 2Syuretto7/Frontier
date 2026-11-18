@@ -6,6 +6,7 @@ import { EXERCISES, GRAPH, LESSON_BY_ID, exerciseId } from "@/lib/curriculum";
 import { connections, isUnlocked } from "@/lib/graph";
 import { evaluateMastery, exerciseStates, masteredSet, masteryReport, startLesson } from "@/lib/learning";
 import { toView } from "@/lib/views";
+import { markVisited } from "@/lib/guide/store";
 import { TopBar } from "@/components/TopBar";
 import { ExerciseCard } from "@/components/lesson/ExerciseCard";
 import { recallSources } from "@/lib/recall";
@@ -70,6 +71,8 @@ export default async function LessonPage({ params }: { params: Promise<{ lessonI
   }
 
   await startLesson(lessonId);
+  // Opening a lesson counts as revisiting it, for a drill that sent the learner back here.
+  await markVisited(lessonId).catch((error) => console.error("Lesson visit not recorded:", error));
   const hasRecall = recallSources(lessonId, mastered).length > 0;
   const states = await exerciseStates([lessonId]);
   const [report, chat] = await Promise.all([
@@ -135,7 +138,7 @@ export default async function LessonPage({ params }: { params: Promise<{ lessonI
           <section id="practice" className="lesson-section">
             <h2><StepChip id="practice" sections={sections} />Practice</h2>
             <p className="section-lede">
-              Mastery needs at least 80 percent of the check and apply questions. Stretch questions are optional.
+              Mastery needs every check and apply question answered correctly. Stretch questions are optional.
               So far: {Math.round(report.score * 100)} percent solved.
             </p>
             {lesson.practice.map((e, i) => {

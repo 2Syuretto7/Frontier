@@ -129,3 +129,6 @@
 .rd-moved a { color: var(--text); }
 .rd-moved a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .rd-skill-name .pill { align-self: center; }
+
+.rd-week-lessons { list-style: none; padding: 0; margin: 6px 0 0; display: grid; gap: 6px; }
+.rd-week-lessons li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 14px; }

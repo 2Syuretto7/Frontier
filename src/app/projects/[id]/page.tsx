@@ -30,6 +30,8 @@ import { getDrafts, githubConnected, suggestionFor, type Draft } from "@/lib/pro
 import { latestReview, overrides, type Review } from "@/lib/project-assist/review";
 import { shortHash, type DraftKind } from "@/lib/project-assist/core";
 import { partonConnected } from "@/lib/parton/claude";
+import { projectGuide, type ProjectGuide } from "@/lib/guide/store";
+import { Pill } from "@/components/ui/Pill";
 
 export const dynamic = "force-dynamic";
 // Parton's drafts and checks can take a minute or two.
@@ -58,11 +60,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const active = project.status === "active";
   const at = stageIndex(project.stage);
   const past = (stage: Parameters<typeof stageIndex>[0]) => !active || at > stageIndex(stage);
-  const [drafts, review, overruled, suggestion] = await Promise.all([
+  const [drafts, review, overruled, suggestion, guide] = await Promise.all([
     getDrafts(project.id),
     active ? latestReview(project.id, project.stage) : Promise.resolve(null),
     overrides(project.id),
     suggestionFor(project.id),
+    active ? projectGuide(project).catch(() => null) : Promise.resolve(null),
   ]);
   const assist: Assist = { drafts, review, parton: partonConnected(), github: githubConnected() };
 
@@ -97,6 +100,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             <Field label="Post-mortem" text={project.postmortem} />
           </div>
         )}
+
+        {active && guide && <GuidePanel guide={guide} />}
 
         {active && <CurrentStage project={project} assist={assist} />}
 
@@ -366,5 +371,59 @@ function KillPanel({ project }: { project: Project }) {
         <button type="submit" className="btn btn-danger">Kill project</button>
       </ProjectForm>
     </details>
+  );
+}
+
+/** The lessons the next stage needs, and what the lab notebook has sent back to Review or Learn. */
+function GuidePanel({ guide }: { guide: ProjectGuide }) {
+  if (!guide.next && guide.troubles.length === 0) return null;
+  const next = guide.next ? STAGE_INFO[guide.next].title.toLowerCase() : null;
+  const active = guide.needs.filter((n) => n.state === "active");
+  return (
+    <section className="pp-guide" aria-labelledby="pp-guide-title">
+      <h2 className="pp-h2" id="pp-guide-title">What this project asks you to learn</h2>
+      {next && (
+        <>
+          {guide.status === "pending" && <p className="hint"><Pill tone="accent" icon="spin">Reading</Pill> Parton is working out which lessons the {next} stage needs.</p>}
+          {guide.status === "failed" && <p className="hint">Parton couldn&apos;t work out what the {next} stage needs. Save the stage again to retry.</p>}
+          {guide.status === "ready" && guide.needs.length === 0 && <p className="hint">The {next} stage needs no lesson you haven&apos;t covered.</p>}
+          {guide.needs.length > 0 && (
+            <>
+              <p className="hint">
+                {active.length
+                  ? `The ${next} stage stays locked until you master ${active.length === 1 ? "this lesson" : "these lessons"}. Learn puts ${active.length === 1 ? "it" : "them"} first.`
+                  : `Lessons the ${next} stage needs. A lesson whose prerequisites you haven't mastered yet locks nothing and isn't queued; it waits for your own progress through Learn.`}
+              </p>
+              <ul className="pp-guide-list">
+                {guide.needs.map((n) => (
+                  <li key={n.lessonId}>
+                    {n.state === "met" ? <Pill tone="success" icon="check">Mastered</Pill>
+                      : n.state === "active" ? <Pill tone="accent" icon="lock">Needed first</Pill>
+                      : <Pill tone="muted">Waits for prerequisites</Pill>}
+                    {n.state === "waiting" ? <span>{n.title}</span> : <Link href={`/learn/${n.lessonId}`} className="text-link">{n.title}</Link>}
+                    <span className="muted">{n.why}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          {guide.status === "none" && <p className="hint">Once the question is written and saved, Parton works out which lessons the {next} stage needs.</p>}
+        </>
+      )}
+      {guide.troubles.length > 0 && (
+        <>
+          <p className="hint">From your lab notebook. Mastered lessons come back in your next Review; the others are queued in Learn.</p>
+          <ul className="pp-guide-list">
+            {guide.troubles.map((t, i) => (
+              <li key={`${t.lessonId}-${i}`}>
+                <Pill tone={t.mastered ? "neutral" : "accent"}>{t.mastered ? "In Review" : "In Learn"}</Pill>
+                <Link href={`/learn/${t.lessonId}`} className="text-link">{t.title}</Link>
+                <span className="muted">{t.note}</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </section>
   );
 }

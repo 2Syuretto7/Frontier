@@ -243,6 +243,10 @@ export async function advance(id: number): Promise<Result & { published?: boolea
   if ("error" in p) return { ok: false, error: p.error };
   const gaps = stageGaps(p);
   if (gaps.length) return { ok: false, error: gaps.join(" ") };
+  // A lesson the next stage needs, once its prerequisites are mastered, must be mastered before the stage opens.
+  const { stageLock } = await import("./guide/store");
+  const lock = await stageLock(p);
+  if (lock) return { ok: false, error: lock };
   // Beyond word counts: the hard facts of the stage, and Parton's read of whether the work does its job.
   const check = await checkStage(p);
   if (!check.ok) return check;
