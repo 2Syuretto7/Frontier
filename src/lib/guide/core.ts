@@ -13,13 +13,16 @@ import { skillWords } from "../drill-plan";
 // ---------------------------------------------------------------------------------------------
 // Pulls: lessons that Readiness, Projects or Drills want Learn to favour
 
-export type PullSource = "project" | "drill" | "gym" | "readiness";
+export type PullSource = "project" | "drill" | "gym" | "interview" | "readiness";
 
 /** A lesson some feature wants Learn to favour, with how strongly and why. */
 export type Pull = { lessonId: string; source: PullSource; weight: number; why: string };
 
-/** A project waiting on a lesson comes first, then a drill or gym case that failed on it, then the weekly Readiness plan. */
-export const SOURCE_RANK: Record<PullSource, number> = { project: 3, drill: 2, gym: 2, readiness: 1 };
+/**
+ * A project waiting on a lesson comes first, then a drill or gym case that failed on it or a weak mock interview
+ * answer, then the weekly Readiness plan.
+ */
+export const SOURCE_RANK: Record<PullSource, number> = { project: 3, drill: 2, gym: 2, interview: 2, readiness: 1 };
 
 /** Whether a lesson's prerequisites are met through mastery, so guidance may act on it. */
 export const reachable = (graph: Graph, id: string, mastered: ReadonlySet<string>) =>
@@ -255,14 +258,16 @@ export type TodayItem =
   | { kind: "begin"; lessonId: string; title: string; why: string | null; pastPace: boolean; guided?: string | null }
   | { kind: "drill"; drillId: string; title: string; why: string }
   | { kind: "gym"; caseId: string; title: string; why: string }
+  | { kind: "interview"; sessionId: number | null; mode: string; title: string; why: string }
   | { kind: "project"; projectId: number; title: string; why: string };
 
 /** Items that open a lesson, which is where the learner goes after a Review session. */
 export const isLessonItem = (i: TodayItem) => i.kind === "continue" || i.kind === "revisit" || i.kind === "begin";
 
 /**
- * One queue for the day: whatever is open first, then Review, then lessons a failed drill or gym case sent the
- * learner back to, then new lessons with the day's drill, gym case and project step woven in after the first of them.
+ * One queue for the day: whatever is open first, then Review, then lessons a failed drill, gym case or weak interview
+ * answer sent the learner back to, then new lessons with the day's drill, gym case, mock interview and project step
+ * woven in after the first of them.
  */
 export function buildToday(input: {
   head: TodayItem[];
@@ -270,9 +275,10 @@ export function buildToday(input: {
   lessons: TodayItem[];
   drill: TodayItem | null;
   gym?: TodayItem | null;
+  interview?: TodayItem | null;
   project: TodayItem | null;
 }): TodayItem[] {
   const [first, ...rest] = input.lessons;
-  const practice = [input.drill, input.gym ?? null, input.project].filter((i): i is TodayItem => i !== null);
+  const practice = [input.drill, input.gym ?? null, input.interview ?? null, input.project].filter((i): i is TodayItem => i !== null);
   return [...input.head, ...input.revisits, ...(first ? [first] : []), ...practice, ...rest];
 }

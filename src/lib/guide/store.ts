@@ -399,7 +399,7 @@ export async function guidePulls(mastered: ReadonlySet<string>, pace: number): P
       return [];
     }
   };
-  const [readiness, project, drill, gym] = await Promise.all([
+  const [readiness, project, drill, gym, interview] = await Promise.all([
     safe("Readiness", async () => {
       const { plan, begun } = await weeklyPlan(mastered, pace);
       return readinessPulls(plan, begun, mastered);
@@ -407,13 +407,15 @@ export async function guidePulls(mastered: ReadonlySet<string>, pace: number): P
     safe("Projects", () => projectGuidance(mastered)),
     safe("Drills", () => drillGuidance(mastered)),
     safe("Debugging gym", () => gymGuidance(mastered)),
+    safe("Mock interviews", async () => (await import("@/lib/interview/store")).interviewGuidance(mastered)),
   ]);
-  return [...project, ...drill, ...gym, ...readiness];
+  return [...project, ...drill, ...gym, ...interview, ...readiness];
 }
 
 /**
- * The day's queue: what is open, Review, lessons a failed drill or gym case sent the learner back to, the day's new
- * lessons at their pace, one drill, one gym case and one project step. The Learn button opens its first item.
+ * The day's queue: what is open, Review, lessons a failed drill, gym case or weak interview answer sent the learner
+ * back to, the day's new lessons at their pace, one drill, one gym case, a mock interview every other day and one
+ * project step. The Learn button opens its first item.
  */
 export async function today({ afterReview = false }: { afterReview?: boolean } = {}): Promise<TodayItem[]> {
   const { learnInputs } = await import("@/lib/learning");
@@ -480,7 +482,20 @@ export async function today({ afterReview = false }: { afterReview?: boolean } =
     }
   }
 
-  const queue = buildToday({ head, revisits, lessons, drill, gym, project: step });
+  // Mock interviews: lessons a weak answer sent the learner back to, and a session every other day.
+  let interview: TodayItem | null = null;
+  try {
+    const { interviewToday } = await import("@/lib/interview/store");
+    const fromInterview = await interviewToday(have);
+    for (const r of fromInterview.revisits) {
+      if (!revisits.some((i) => i.kind === "revisit" && r.kind === "revisit" && i.lessonId === r.lessonId)) revisits.push(r);
+    }
+    interview = fromInterview.session;
+  } catch (error) {
+    console.error("Mock interviews unavailable for today's queue:", error);
+  }
+
+  const queue = buildToday({ head, revisits, lessons, drill, gym, interview, project: step });
   if (queue.length === 0) {
     // Everything for today is done. Learn never stops at the pace: offer the next lesson anyway.
     const next = chooseNextStep({ ...input, openLesson: null, dueReviews: 0 });
