@@ -91,6 +91,7 @@ const KIND_LABEL: Record<TodayItem["kind"], string> = {
   revisit: "Revisit",
   begin: "Lesson",
   drill: "Drill",
+  gym: "Gym",
   interview: "Interview",
   project: "Project",
 };
@@ -116,6 +117,8 @@ function describe(item: TodayItem): { title: string; meta: string; code: string;
       };
     case "drill":
       return { title: `${item.title} drill`, meta: item.why, code: `drills / ${item.drillId}`, href: `/drills/${item.drillId}` };
+    case "gym":
+      return { title: item.title, meta: item.why, code: `gym / ${item.caseId}`, href: `/gym/${item.caseId}` };
     case "interview":
       return {
         title: item.title, meta: item.why, code: `interview / ${item.mode}`,
@@ -134,6 +137,7 @@ function NextPanel({ item }: { item: TodayItem | null }) {
     item.kind === "review" ? <Pill tone="accent" icon="clock">Review due</Pill> :
     item.kind === "revisit" ? <Pill tone="accent" icon="dot">Revisit</Pill> :
     item.kind === "drill" ? <Pill tone="accent" icon="clock">Drill</Pill> :
+    item.kind === "gym" ? <Pill tone="accent" icon="dot">Debugging gym</Pill> :
     item.kind === "interview" ? <Pill tone="accent" icon="dot">Mock interview</Pill> :
     <Pill tone="accent" icon="dot">Project</Pill>;
 
@@ -169,7 +173,7 @@ function TodayList({ queue }: { queue: TodayItem[] }) {
     <section className="today" aria-labelledby="today-title">
       <div className="today-head">
         <h2 id="today-title">Today</h2>
-        <p className="muted">Learn opens these in order. Readiness, your project, your drills and your mock interviews steer it, but only towards lessons whose prerequisites you have already mastered.</p>
+        <p className="muted">Learn opens these in order. Readiness, your project, your drills, the Debugging gym and your mock interviews steer it, but only towards lessons whose prerequisites you have already mastered.</p>
       </div>
       <ol className="today-list">
         {queue.map((item, i) => {

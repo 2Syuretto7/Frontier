@@ -1246,3 +1246,32 @@ html.has-code-overlay, html.has-code-overlay body { overflow: hidden; }
 
 .drill-locked { margin: 0 0 24px; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius-md); display: grid; gap: 6px; }
 .drill-locked p { margin: 0; font-size: 14px; line-height: 1.55; }
+
+/* Debugging gym */
+.gym-symptom { margin-bottom: 24px; }
+.gym-symptom .prose p { margin: 0 0 12px; }
+.gym-chart { margin: 8px 0 0; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg); }
+.gym-chart .eyebrow { margin: 0 0 8px; }
+.gym-chart svg { width: 100%; height: auto; display: block; }
+.gym-chart-grid { stroke: var(--border); stroke-width: 1; }
+.gym-chart-floor { stroke: var(--text-faint); stroke-width: 1; stroke-dasharray: 4 4; }
+.gym-chart-tick { fill: var(--text-faint); font-size: 11px; font-family: var(--font-mono); }
+.gym-chart-legend { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 8px 0 0; padding: 0; font-size: 13px; color: var(--text-muted); }
+.gym-chart-legend li { display: inline-flex; align-items: center; gap: 6px; }
+.gym-chart-swatch { width: 12px; height: 3px; border-radius: 2px; display: inline-block; }
+.gym-diagnose { margin-top: 24px; padding: 20px; border: 1px solid var(--border-strong); border-radius: var(--radius-md); }
+.gym-diagnose h2 { font-size: 17px; margin: 0 0 12px; letter-spacing: -0.01em; }
+.gym-causes { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; }
+.gym-causes legend { font-size: 14px; margin-bottom: 8px; }
+.gym-cause { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer; font-size: 15px; line-height: 1.5; }
+.gym-cause.is-on { border-color: var(--accent); background: var(--accent-soft); }
+.gym-cause input { margin-top: 4px; }
+.gym-unguided { display: grid; gap: 12px; }
+.gym-unguided label { display: grid; gap: 6px; }
+.gym-unguided select { max-width: 100%; }
+.gym-debrief { margin-top: 40px; display: grid; gap: 12px; }
+.gym-debrief h2 { font-size: 18px; letter-spacing: -0.01em; margin: 0; }
+.gym-debrief p { margin: 0; line-height: 1.6; }
+.gym-fix { display: grid; gap: 4px; }
+.gym-card .drill-card-head { flex-wrap: wrap; }
+.gym-debrief .prose p + p { margin-top: 12px; }

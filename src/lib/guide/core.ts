@@ -1,5 +1,5 @@
 /**
- * Guidance: how Readiness, Projects and Drills steer what Learn does next. Pure functions, so they can be tested
+ * Guidance: how Readiness, Projects, Drills and the Debugging gym steer what Learn does next. Pure functions, so they can be tested
  * without a database or the API.
  *
  * The one rule over all of it: guidance only ever acts on lessons whose prerequisites are already mastered through
@@ -13,16 +13,16 @@ import { skillWords } from "../drill-plan";
 // ---------------------------------------------------------------------------------------------
 // Pulls: lessons that Readiness, Projects or Drills want Learn to favour
 
-export type PullSource = "project" | "drill" | "interview" | "readiness";
+export type PullSource = "project" | "drill" | "gym" | "interview" | "readiness";
 
 /** A lesson some feature wants Learn to favour, with how strongly and why. */
 export type Pull = { lessonId: string; source: PullSource; weight: number; why: string };
 
 /**
- * A project waiting on a lesson comes first, then a drill that failed on it or a weak mock interview answer, then
- * the weekly Readiness plan.
+ * A project waiting on a lesson comes first, then a drill or gym case that failed on it or a weak mock interview
+ * answer, then the weekly Readiness plan.
  */
-export const SOURCE_RANK: Record<PullSource, number> = { project: 3, drill: 2, interview: 2, readiness: 1 };
+export const SOURCE_RANK: Record<PullSource, number> = { project: 3, drill: 2, gym: 2, interview: 2, readiness: 1 };
 
 /** Whether a lesson's prerequisites are met through mastery, so guidance may act on it. */
 export const reachable = (graph: Graph, id: string, mastered: ReadonlySet<string>) =>
@@ -218,6 +218,37 @@ export const drillPulls = (open: readonly Remedy[], titleOf: (drillId: string) =
     .map((r) => ({ lessonId: r.lessonId, source: "drill" as const, weight: 1, why: `The ${titleOf(r.drillId)} drill failed on it${r.tests.length ? ` (${r.tests[0]})` : ""}. It comes back once you have this.` }));
 
 // ---------------------------------------------------------------------------------------------
+// The Debugging gym: the same locks and remedies as drills, with a misdiagnosis counting as a failed test
+
+/** The lessons a gym case sends the learner back to: those behind its bug, and behind each hidden test. */
+export const gymLessons = (c: { id: string; title: string; bugLessons: string[]; testLessons?: Record<string, string[]> }, diagnosis: string): DrillLessons => ({
+  id: c.id,
+  title: c.title,
+  lessons: c.bugLessons,
+  testLessons: { ...c.testLessons, [diagnosis]: c.bugLessons },
+});
+
+/**
+ * What a finished gym attempt reports as missed, or null when it shows no gap: a wrong guess at the cause (or never
+ * naming it) counts as the diagnosis failing; a fix that never passed counts its failing hidden tests.
+ */
+export function gymMiss(
+  a: { caseId: string; finishedAt: string | null; outcome: string | null; wrongGuesses: number; diagnosed: boolean; failedTests: string[] },
+  diagnosis: string,
+): FailedDrill | null {
+  if (!a.finishedAt || !a.outcome) return null;
+  const solved = a.outcome === "solved";
+  if (solved && a.wrongGuesses === 0) return null;
+  const missed = [...(a.wrongGuesses > 0 || !a.diagnosed ? [diagnosis] : []), ...(solved ? [] : a.failedTests)];
+  return { drillId: a.caseId, finishedAt: a.finishedAt, failedTests: missed };
+}
+
+export const gymPulls = (open: readonly Remedy[], titleOf: (caseId: string) => string): Pull[] =>
+  open
+    .filter((r) => r.mode === "learn")
+    .map((r) => ({ lessonId: r.lessonId, source: "gym" as const, weight: 1, why: `In the Debugging gym, "${titleOf(r.drillId)}" showed a gap here. The case comes back once you have this.` }));
+
+// ---------------------------------------------------------------------------------------------
 // The daily queue
 
 export type TodayItem =
@@ -226,6 +257,7 @@ export type TodayItem =
   | { kind: "revisit"; lessonId: string; title: string; why: string }
   | { kind: "begin"; lessonId: string; title: string; why: string | null; pastPace: boolean; guided?: string | null }
   | { kind: "drill"; drillId: string; title: string; why: string }
+  | { kind: "gym"; caseId: string; title: string; why: string }
   | { kind: "interview"; sessionId: number | null; mode: string; title: string; why: string }
   | { kind: "project"; projectId: number; title: string; why: string };
 
@@ -233,18 +265,20 @@ export type TodayItem =
 export const isLessonItem = (i: TodayItem) => i.kind === "continue" || i.kind === "revisit" || i.kind === "begin";
 
 /**
- * One queue for the day: whatever is open first, then Review, then lessons a failed drill sent the learner back to,
- * then new lessons with the day's drill, mock interview and project step woven in after the first of them.
+ * One queue for the day: whatever is open first, then Review, then lessons a failed drill, gym case or weak interview
+ * answer sent the learner back to, then new lessons with the day's drill, gym case, mock interview and project step
+ * woven in after the first of them.
  */
 export function buildToday(input: {
   head: TodayItem[];
   revisits: TodayItem[];
   lessons: TodayItem[];
   drill: TodayItem | null;
+  gym?: TodayItem | null;
   interview?: TodayItem | null;
   project: TodayItem | null;
 }): TodayItem[] {
   const [first, ...rest] = input.lessons;
-  const practice = [input.drill, input.interview ?? null, input.project].filter((i): i is TodayItem => i !== null);
+  const practice = [input.drill, input.gym ?? null, input.interview ?? null, input.project].filter((i): i is TodayItem => i !== null);
   return [...input.head, ...input.revisits, ...(first ? [first] : []), ...practice, ...rest];
 }

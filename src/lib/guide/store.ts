@@ -7,10 +7,14 @@ import { partonConnected, structured } from "@/lib/parton/claude";
 import { shortHash } from "@/lib/project-assist/core";
 import { chooseNextStep } from "@/lib/scheduler";
 import { DRILLS, DRILL_BY_ID } from "@/content/drills";
+import { CASES, CASE_BY_ID } from "@/content/gym";
 import {
   buildToday,
   drillLock,
   drillPulls,
+  gymLessons,
+  gymMiss,
+  gymPulls,
   makeWeeklyPlan,
   matchLessons,
   needStates,
@@ -345,9 +349,47 @@ async function drillGuidance(mastered: ReadonlySet<string>): Promise<Pull[]> {
 }
 
 // ---------------------------------------------------------------------------------------------
+// The Debugging gym: locks, and lessons a missed bug sends the learner back to
+
+type GymAttemptLike = { caseId: string; finishedAt: string | null; outcome: string | null; wrongGuesses: number; diagnosed: boolean; failedTests: string[] };
+
+/**
+ * Cases whose lessons are not all mastered, and what each case's last miss asks of the learner. A wrong guess at the
+ * cause counts as a miss even when the fix then passed, so the lessons behind the bug come back.
+ */
+export async function gymGuide(attempts: readonly GymAttemptLike[], mastered?: ReadonlySet<string>): Promise<DrillGuide> {
+  const { DIAGNOSIS } = await import("@/lib/gym-plan");
+  const have = mastered ?? (await masteredNow());
+  const visits = new Map(
+    (await q<{ lesson_id: string; at: unknown }>("SELECT lesson_id, at FROM guide_visits")).map((v) => [v.lesson_id, Date.parse(iso(v.at))]),
+  );
+  const visitedSince = (id: string, since: string) => (visits.get(id) ?? 0) > Date.parse(since);
+  const locks = new Map<string, string[]>();
+  const all: Remedy[] = [];
+  for (const c of CASES) {
+    const lock = drillLock({ id: c.id, title: c.title, lessons: c.lessons }, have);
+    if (lock.locked) locks.set(c.id, lock.missing);
+    const last = attempts
+      .filter((a) => a.caseId === c.id && a.finishedAt && a.outcome)
+      .sort((a, b) => Date.parse(b.finishedAt!) - Date.parse(a.finishedAt!))[0];
+    all.push(...remedies(gymLessons(c, DIAGNOSIS), last ? gymMiss(last, DIAGNOSIS) : null, GRAPH, have, visitedSince));
+  }
+  return { locks, remedies: all };
+}
+
+/** Why each case can't be started now: its lessons aren't mastered, or a miss sent the learner back. */
+export const gymBlocks = (guide: DrillGuide): Map<string, string> => drillBlocks(guide);
+
+async function gymGuidance(mastered: ReadonlySet<string>): Promise<Pull[]> {
+  const { allAttempts } = await import("@/lib/gym");
+  const guide = await gymGuide(await allAttempts(), mastered);
+  return gymPulls(guide.remedies, (id) => CASE_BY_ID.get(id)?.title ?? id);
+}
+
+// ---------------------------------------------------------------------------------------------
 // Everything together
 
-/** Every lesson Readiness, Projects and Drills want Learn to favour. Each source fails on its own without stopping the rest. */
+/** Every lesson Readiness, Projects, Drills and the gym want Learn to favour. Each source fails on its own without stopping the rest. */
 export async function guidePulls(mastered: ReadonlySet<string>, pace: number): Promise<Pull[]> {
   const safe = async (name: string, f: () => Promise<Pull[]>) => {
     try {
@@ -357,21 +399,23 @@ export async function guidePulls(mastered: ReadonlySet<string>, pace: number): P
       return [];
     }
   };
-  const [readiness, project, drill, interview] = await Promise.all([
+  const [readiness, project, drill, gym, interview] = await Promise.all([
     safe("Readiness", async () => {
       const { plan, begun } = await weeklyPlan(mastered, pace);
       return readinessPulls(plan, begun, mastered);
     }),
     safe("Projects", () => projectGuidance(mastered)),
     safe("Drills", () => drillGuidance(mastered)),
+    safe("Debugging gym", () => gymGuidance(mastered)),
     safe("Mock interviews", async () => (await import("@/lib/interview/store")).interviewGuidance(mastered)),
   ]);
-  return [...project, ...drill, ...interview, ...readiness];
+  return [...project, ...drill, ...gym, ...interview, ...readiness];
 }
 
 /**
- * The day's queue: what is open, Review, lessons a failed drill or a weak interview answer sent the learner back
- * to, the day's new lessons at their pace, one drill, a mock interview every other day and one project step. The Learn button opens its first item.
+ * The day's queue: what is open, Review, lessons a failed drill, gym case or weak interview answer sent the learner
+ * back to, the day's new lessons at their pace, one drill, one gym case, a mock interview every other day and one
+ * project step. The Learn button opens its first item.
  */
 export async function today({ afterReview = false }: { afterReview?: boolean } = {}): Promise<TodayItem[]> {
   const { learnInputs } = await import("@/lib/learning");
@@ -418,6 +462,11 @@ export async function today({ afterReview = false }: { afterReview?: boolean } =
     drill = { kind: "drill", drillId: plan.next.drillId, title: DRILL_BY_ID.get(plan.next.drillId)?.title ?? plan.next.drillId, why: plan.next.reason };
   }
 
+  const gym = await gymToday(have, todayIst, revisits).catch((error) => {
+    console.error("Debugging gym unavailable for today:", error);
+    return null;
+  });
+
   let step: TodayItem | null = null;
   if (project) {
     const touched =
@@ -446,7 +495,7 @@ export async function today({ afterReview = false }: { afterReview?: boolean } =
     console.error("Mock interviews unavailable for today's queue:", error);
   }
 
-  const queue = buildToday({ head, revisits, lessons, drill, interview, project: step });
+  const queue = buildToday({ head, revisits, lessons, drill, gym, interview, project: step });
   if (queue.length === 0) {
     // Everything for today is done. Learn never stops at the pace: offer the next lesson anyway.
     const next = chooseNextStep({ ...input, openLesson: null, dueReviews: 0 });
@@ -458,4 +507,25 @@ export async function today({ afterReview = false }: { afterReview?: boolean } =
 /** Which feature steered Learn to a lesson, from the pulls that apply to it. */
 function guidedOf(item: Extract<TodayItem, { kind: "begin" }>, pulls: readonly Pull[]): string | null {
   return item.why ? pulls.find((p) => p.lessonId === item.lessonId && p.why === item.why)?.source ?? null : null;
+}
+
+/**
+ * The gym's part of the day: lessons a missed case sent the learner back to (added to `revisits`), and one case, if
+ * one is due and none was started today. A case under way always shows.
+ */
+async function gymToday(have: ReadonlySet<string>, todayIst: string, revisits: TodayItem[]): Promise<TodayItem | null> {
+  const { gymPlan } = await import("@/lib/gym");
+  const plan = await gymPlan();
+  const guide = await gymGuide(plan.attempts, have);
+  for (const r of guide.remedies.filter((x) => x.mode === "revisit")) {
+    if (revisits.some((i) => i.kind === "revisit" && i.lessonId === r.lessonId)) continue;
+    const name = CASE_BY_ID.get(r.drillId)?.title ?? r.drillId;
+    revisits.push({
+      kind: "revisit", lessonId: r.lessonId, title: title(r.lessonId),
+      why: `In the Debugging gym, "${name}" showed a gap here. Reread this, then the case comes back.`,
+    });
+  }
+  const startedToday = plan.attempts.some((a) => istDay(a.startedAt) === todayIst);
+  if (!plan.next || (plan.next.kind !== "open" && startedToday)) return null;
+  return { kind: "gym", caseId: plan.next.caseId, title: CASE_BY_ID.get(plan.next.caseId)?.title ?? plan.next.caseId, why: plan.next.reason };
 }
