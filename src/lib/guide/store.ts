@@ -6,6 +6,7 @@ import { STAGE_INFO, nextStage, type Project, type Stage } from "@/lib/pipeline"
 import { partonConnected, structured } from "@/lib/parton/claude";
 import { shortHash } from "@/lib/project-assist/core";
 import { chooseNextStep } from "@/lib/scheduler";
+import type { SectionId } from "@/lib/sections";
 import { DRILLS, DRILL_BY_ID } from "@/content/drills";
 import { CASES, CASE_BY_ID } from "@/content/gym";
 import {
@@ -399,15 +400,18 @@ export async function guidePulls(mastered: ReadonlySet<string>, pace: number): P
       return [];
     }
   };
+  // A section that has not opened yet steers nothing (src/lib/sections.ts).
+  const { open } = await (await import("@/lib/sections-store")).sectionState();
+  const when = (section: SectionId, f: () => Promise<Pull[]>) => (open.has(section) ? f : async () => []);
   const [readiness, project, drill, gym, interview] = await Promise.all([
-    safe("Readiness", async () => {
+    safe("Readiness", when("readiness", async () => {
       const { plan, begun } = await weeklyPlan(mastered, pace);
       return readinessPulls(plan, begun, mastered);
-    }),
-    safe("Projects", () => projectGuidance(mastered)),
-    safe("Drills", () => drillGuidance(mastered)),
-    safe("Debugging gym", () => gymGuidance(mastered)),
-    safe("Mock interviews", async () => (await import("@/lib/interview/store")).interviewGuidance(mastered)),
+    })),
+    safe("Projects", when("projects", () => projectGuidance(mastered))),
+    safe("Drills", when("drills", () => drillGuidance(mastered))),
+    safe("Debugging gym", when("gym", () => gymGuidance(mastered))),
+    safe("Mock interviews", when("interview", async () => (await import("@/lib/interview/store")).interviewGuidance(mastered))),
   ]);
   return [...project, ...drill, ...gym, ...interview, ...readiness];
 }
@@ -440,14 +444,20 @@ export async function today({ afterReview = false }: { afterReview?: boolean } =
     lastTrack = step.lesson.track;
   }
 
+  // Drills, the gym, interviews and projects join the queue only once their section has opened (src/lib/sections.ts).
+  const { open } = await (await import("@/lib/sections-store")).sectionState();
   const [{ allStats, drillPlan }, { activeProject }] = await Promise.all([import("@/lib/drills"), import("@/lib/projects")]);
-  const [{ attempts }, plan, project] = await Promise.all([allStats(), drillPlan(), activeProject()]);
+  const [{ attempts }, plan, project] = await Promise.all([
+    allStats(),
+    drillPlan(),
+    open.has("projects") ? activeProject() : Promise.resolve(null),
+  ]);
   const todayIst = istDay(new Date());
   const have = await masteredNow();
   const guide = await drillGuide(attempts, have);
 
   const revisits: TodayItem[] = [];
-  for (const r of guide.remedies.filter((x) => x.mode === "revisit")) {
+  for (const r of open.has("drills") ? guide.remedies.filter((x) => x.mode === "revisit") : []) {
     if (revisits.some((i) => i.kind === "revisit" && i.lessonId === r.lessonId)) continue;
     const drill = DRILL_BY_ID.get(r.drillId)?.title ?? r.drillId;
     revisits.push({
@@ -458,11 +468,11 @@ export async function today({ afterReview = false }: { afterReview?: boolean } =
 
   let drill: TodayItem | null = null;
   const drilledToday = attempts.some((a) => istDay(a.startedAt) === todayIst);
-  if (plan.next && (plan.next.kind === "open" || !drilledToday)) {
+  if (open.has("drills") && plan.next && (plan.next.kind === "open" || !drilledToday)) {
     drill = { kind: "drill", drillId: plan.next.drillId, title: DRILL_BY_ID.get(plan.next.drillId)?.title ?? plan.next.drillId, why: plan.next.reason };
   }
 
-  const gym = await gymToday(have, todayIst, revisits).catch((error) => {
+  const gym = !open.has("gym") ? null : await gymToday(have, todayIst, revisits).catch((error) => {
     console.error("Debugging gym unavailable for today:", error);
     return null;
   });
@@ -484,15 +494,17 @@ export async function today({ afterReview = false }: { afterReview?: boolean } =
 
   // Mock interviews: lessons a weak answer sent the learner back to, and a session every other day.
   let interview: TodayItem | null = null;
-  try {
-    const { interviewToday } = await import("@/lib/interview/store");
-    const fromInterview = await interviewToday(have);
-    for (const r of fromInterview.revisits) {
-      if (!revisits.some((i) => i.kind === "revisit" && r.kind === "revisit" && i.lessonId === r.lessonId)) revisits.push(r);
+  if (open.has("interview")) {
+    try {
+      const { interviewToday } = await import("@/lib/interview/store");
+      const fromInterview = await interviewToday(have);
+      for (const r of fromInterview.revisits) {
+        if (!revisits.some((i) => i.kind === "revisit" && r.kind === "revisit" && i.lessonId === r.lessonId)) revisits.push(r);
+      }
+      interview = fromInterview.session;
+    } catch (error) {
+      console.error("Mock interviews unavailable for today's queue:", error);
     }
-    interview = fromInterview.session;
-  } catch (error) {
-    console.error("Mock interviews unavailable for today's queue:", error);
   }
 
   const queue = buildToday({ head, revisits, lessons, drill, gym, interview, project: step });

@@ -197,3 +197,16 @@ export function connections(graph: Graph, id: string) {
     leadsTo: [...new Set(ahead.filter((e) => e.kind !== "parallels").map((e) => e.to))],
   };
 }
+
+/** The lessons given and every lesson they require, directly or not: everything mastered before they can all be. */
+export function closureOf(graph: Graph, ids: Iterable<string>): Set<string> {
+  const all = new Set<string>();
+  const stack = [...ids];
+  while (stack.length) {
+    const id = stack.pop()!;
+    if (all.has(id)) continue;
+    all.add(id);
+    stack.push(...(graph.requires.get(id) ?? []));
+  }
+  return all;
+}

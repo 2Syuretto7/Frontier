@@ -6,9 +6,10 @@ import { usePathname } from "next/navigation";
 import { signOutAction } from "@/app/actions";
 import { Menu } from "@/components/ui/Icons";
 import { NavLinks } from "@/components/NavLinks";
+import type { SectionId } from "@/lib/sections";
 
 /** The account menu. Closes on Escape, on a click outside and on navigation. */
-export function UserMenu() {
+export function UserMenu({ open }: { open: readonly SectionId[] }) {
   const ref = useRef<HTMLDetailsElement>(null);
   const path = usePathname();
 
@@ -35,7 +36,7 @@ export function UserMenu() {
       </summary>
       <div className="menu-panel">
         <div className="menu-mobile">
-          <NavLinks variant="menu" />
+          <NavLinks variant="menu" open={open} />
           <div className="menu-sep" />
         </div>
         <Link href="/settings" className="menu-item">Settings</Link>
