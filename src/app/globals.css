@@ -1273,3 +1273,5 @@ html.has-code-overlay, html.has-code-overlay body { overflow: hidden; }
 .gym-debrief h2 { font-size: 18px; letter-spacing: -0.01em; margin: 0; }
 .gym-debrief p { margin: 0; line-height: 1.6; }
 .gym-fix { display: grid; gap: 4px; }
+.gym-card .drill-card-head { flex-wrap: wrap; }
+.gym-debrief .prose p + p { margin-top: 12px; }

@@ -129,7 +129,7 @@ function CaseCard({ stats, pick }: { stats: CaseStats; pick: GymPick }) {
     stats.finished > 0 ? <Pill tone="muted">Not solved yet</Pill> :
     <Pill tone="muted">New</Pill>;
   return (
-    <Link href={`/gym/${c.id}`} className="drill-card">
+    <Link href={`/gym/${c.id}`} className="drill-card gym-card">
       <span className="drill-card-head">
         <span className="mono-tag">{KIND_BY_ID.get(c.kind)?.name} · Level {pick.level}</span>
         {pick.kind === "locked" ? <Pill tone="muted" icon="lock">Locked</Pill> : pick.kind === "retry" || pick.kind === "due" ? <Pill tone="accent" icon="dot">Due</Pill> : state}
