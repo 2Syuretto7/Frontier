@@ -47,8 +47,6 @@ export default async function Home() {
           <NextPanel item={queue[0] ?? null} />
         </section>
 
-        {queue.length > 1 && <TodayList queue={queue} />}
-
         <section className="stats" aria-label="Progress">
           <Stat label="Mastered" value={fmt(stats.mastered)} note={stats.mastered === 0 ? "The first one is the hardest" : `${((stats.mastered / total) * 100).toFixed(1)} percent of the arc`} />
           <Stat label="In progress" value={fmt(Math.max(0, stats.started - stats.mastered))} note="Started, not yet mastered" />
@@ -85,18 +83,7 @@ async function todayQueue(): Promise<TodayItem[]> {
   }
 }
 
-const KIND_LABEL: Record<TodayItem["kind"], string> = {
-  continue: "Lesson",
-  review: "Review",
-  revisit: "Revisit",
-  begin: "Lesson",
-  drill: "Drill",
-  gym: "Gym",
-  interview: "Interview",
-  project: "Project",
-};
-
-function describe(item: TodayItem): { title: string; meta: string; code: string; href: string } {
+function describe(item: TodayItem): { title: string; meta: string; code: string } {
   switch (item.kind) {
     case "continue":
     case "begin":
@@ -105,7 +92,7 @@ function describe(item: TodayItem): { title: string; meta: string; code: string;
       const where = n ? `${n.courseTitle} · Chapter ${n.chapter}, ${n.chapterTitle}` : "";
       let meta = item.why ?? where;
       if (item.kind === "begin" && item.pastPace) meta += " You have reached today's suggested pace; carry on whenever you like.";
-      return { title: item.title, meta, code: n ? `${n.course} / ${n.id}` : item.lessonId, href: `/learn/${item.lessonId}` };
+      return { title: item.title, meta, code: n ? `${n.course} / ${n.id}` : item.lessonId };
     }
     case "review":
       // A review session is three to five new questions, however many ideas are due.
@@ -113,19 +100,17 @@ function describe(item: TodayItem): { title: string; meta: string; code: string;
         title: `${reviewCount(item.count)} new questions to review`,
         meta: "Fresh questions on earlier ideas, just before you would forget them.",
         code: "review / spaced",
-        href: "/review",
       };
     case "drill":
-      return { title: `${item.title} drill`, meta: item.why, code: `drills / ${item.drillId}`, href: `/drills/${item.drillId}` };
+      return { title: `${item.title} drill`, meta: item.why, code: `drills / ${item.drillId}` };
     case "gym":
-      return { title: item.title, meta: item.why, code: `gym / ${item.caseId}`, href: `/gym/${item.caseId}` };
+      return { title: item.title, meta: item.why, code: `gym / ${item.caseId}` };
     case "interview":
       return {
         title: item.title, meta: item.why, code: `interview / ${item.mode}`,
-        href: item.sessionId ? `/interview/${item.sessionId}` : `/interview?mode=${item.mode}`,
       };
     case "project":
-      return { title: item.title, meta: item.why, code: `projects / ${item.projectId}`, href: `/projects/${item.projectId}` };
+      return { title: item.title, meta: item.why, code: `projects / ${item.projectId}` };
   }
 }
 
@@ -164,31 +149,5 @@ function NextPanel({ item }: { item: TodayItem | null }) {
         <span className="next-progress" aria-hidden="true"><span /></span>
       </div>
     </aside>
-  );
-}
-
-/** The rest of the day's queue, in the order Learn will open it. */
-function TodayList({ queue }: { queue: TodayItem[] }) {
-  return (
-    <section className="today" aria-labelledby="today-title">
-      <div className="today-head">
-        <h2 id="today-title">Today</h2>
-        <p className="muted">Learn opens these in order. Readiness, your project, your drills, the Debugging gym and your mock interviews steer it, but only towards lessons whose prerequisites you have already mastered.</p>
-      </div>
-      <ol className="today-list">
-        {queue.map((item, i) => {
-          const d = describe(item);
-          return (
-            <li key={`${item.kind}-${i}`} className={i === 0 ? "is-next" : undefined}>
-              <span className="mono-tag">{KIND_LABEL[item.kind]}</span>
-              <span className="today-body">
-                <Link href={d.href} className="today-title">{d.title}</Link>
-                {d.meta && <span className="today-why">{d.meta}</span>}
-              </span>
-            </li>
-          );
-        })}
-      </ol>
-    </section>
   );
 }
