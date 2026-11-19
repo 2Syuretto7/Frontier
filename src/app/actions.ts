@@ -61,7 +61,7 @@ export async function afterReviewAction() {
 }
 
 /**
- * Opens the first item of today's queue: a lesson, Review, a drill or a project step. Leaving a review session
+ * Opens the first item of today's queue: a lesson, Review, a drill, a gym case or a project step. Leaving a review session
  * opens the first lesson in it instead, never another review. If the queue can't be built, Learn falls back to
  * the scheduler on its own.
  */
@@ -84,6 +84,7 @@ async function goToNextStep(afterReview: boolean) {
     }
     if (item?.kind === "review") redirect("/review");
     if (item?.kind === "drill") redirect(`/drills/${item.drillId}`);
+    if (item?.kind === "gym") redirect(`/gym/${item.caseId}`);
     if (item?.kind === "project") redirect(`/projects/${item.projectId}`);
     redirect("/map");
   }
