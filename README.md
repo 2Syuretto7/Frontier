@@ -64,11 +64,11 @@ Every lesson can carry runnable code. Nothing runs on Frontier's servers: Python
   records the result. `npm test` runs every solution and starter against its tests with the local `python3`, so a broken
   exercise fails the build checks. Parton sees the learner's current code, output and error when asked for a hint.
 
-## When practice sections appear
+## When practice sections unlock
 
-Drills, the Debugging gym, Interview, Projects and Readiness stay out of the navigation, Home and the daily queue until
-you have mastered, through Learn, a concrete set of lessons that gives each one real work to do, and they appear the
-moment that set is mastered (`src/lib/sections.ts`, `src/lib/sections-store.ts`). Each set is closed under
+Drills, the Debugging gym, Interview, Projects and Readiness always show in the navigation, marked with a lock, but stay
+locked, and out of Home and the daily queue, until you have mastered, through Learn, a concrete set of lessons that
+gives each one real work to do. They unlock the moment that set is mastered (`src/lib/sections.ts`, `src/lib/sections-store.ts`). Each set is closed under
 prerequisites, so it is the same set whether you take the three tracks one at a time, side by side or mixed, and none
 can open on one track alone. Today's sets, out of 797 written lessons:
 
@@ -84,7 +84,7 @@ can open on one track alone. Today's sets, out of 797 written lessons:
   `tests/sections.test.ts` fails if any section could open with fewer than 300 lessons mastered, or fewer than 40 in
   any one track. It also walks learners through the curriculum in six orders and checks every section opens for each.
 - An interview question that rests on no lessons (such as "why this lab") never opens Interview on its own.
-- Before a section opens it steers nothing in Learn and adds nothing to the queue. A direct link shows what it waits
+- While a section is locked it steers nothing in Learn and adds nothing to the queue. Opening it shows what it waits
   for. Nothing already saved is lost.
 - Once open, a section stays open.
 

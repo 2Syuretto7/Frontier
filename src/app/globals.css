@@ -184,6 +184,8 @@ button { font-family: inherit; }
 }
 .topnav-link:hover { color: var(--text); }
 .topnav-link.is-on { color: var(--text); background: var(--overlay); }
+.topnav-link.is-locked, .menu-item.is-locked { gap: 4px; }
+.topnav-link.is-locked svg, .menu-item.is-locked svg { opacity: 0.7; flex: none; }
 .topbar-end { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 .menu-mobile { display: none; }
 @media (max-width: 640px) {

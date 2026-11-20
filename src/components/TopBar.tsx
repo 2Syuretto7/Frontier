@@ -5,7 +5,7 @@ import { UserMenu } from "@/components/UserMenu";
 import { sectionState } from "@/lib/sections-store";
 import type { SectionId } from "@/lib/sections";
 
-/** The top bar. Practice sections appear in it only once they have opened (see `src/lib/sections.ts`). */
+/** The top bar. Practice sections show in it locked until they open (see `src/lib/sections.ts`). */
 export async function TopBar() {
   const open = await openNow();
   return (
