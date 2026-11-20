@@ -37,7 +37,7 @@ export const lesson: LessonContent = {
   minutes: 50,
   links: {
     requires: ["l10.5.3", "l0.1.3"],
-    revisits: ["l1.5.1", "e11.4.1", "l10.1.3"],
+    revisits: ["l1.5.1", "l8.1.2", "l10.1.3"],
     foreshadows: ["l10.6.2", "l10.6.3", "l11.1.1"],
   },
 
@@ -106,7 +106,7 @@ export const lesson: LessonContent = {
           (<C>is_extracted</C>). Carlini et al. (2023) found the extractable fraction grows roughly linearly in the logarithm of model
           size, of the number of times a string is duplicated in the training data, and of the prompt length. Grouping strings by
           duplicate count (<C>extraction_by_dup</C>) and fitting the rate against log count (<C>log_slope</C>) measures the duplication
-          effect. Deduplication (e11.4.1) reduces both memorisation and contamination (l10.1.3), and memorised personal data is a privacy
+          effect. Deduplication (l8.1.2) reduces both memorisation and contamination (l10.1.3), and memorised personal data is a privacy
           risk in its own right.
         </p>
         <Code>{EXTRACT}</Code>
