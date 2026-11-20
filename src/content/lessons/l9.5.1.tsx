@@ -99,9 +99,8 @@ export const lesson: LessonContent = {
       </Definition>
 
       <Theorem title="the gradient">
-        <p>
-          <MD>{"\\nabla_\\theta\\mathcal{L} = -\\beta\\,\\sigma(\\hat r_\\theta(y_l) - \\hat r_\\theta(y_w))\\big[\\nabla_\\theta\\log\\pi_\\theta(y_w) - \\nabla_\\theta\\log\\pi_\\theta(y_l)\\big]"}</MD>
-        </p>
+        <p>The gradient of the DPO loss for one pair is</p>
+        <MD>{"\\nabla_\\theta\\mathcal{L} = -\\beta\\,\\sigma(\\hat r_\\theta(y_l) - \\hat r_\\theta(y_w))\\big[\\nabla_\\theta\\log\\pi_\\theta(y_w) - \\nabla_\\theta\\log\\pi_\\theta(y_l)\\big]"}</MD>
       </Theorem>
       <Proof>
         <p>
