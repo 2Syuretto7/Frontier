@@ -51,47 +51,37 @@ export async function changePassphraseAction(_: FormState, form: FormData): Prom
 
 export async function learnAction() {
   await requireOwner();
-  await goToNextStep(false);
-}
-
-/** Leaving a review session: open a lesson, never another review session. */
-export async function afterReviewAction() {
-  await requireOwner();
-  await goToNextStep(true);
+  await goToNextStep();
 }
 
 /**
- * Opens the first item of today's queue: a lesson, Review, a drill, a gym case, a mock interview or a project step. Leaving a review session
- * opens the first lesson in it instead, never another review. If the queue can't be built, Learn falls back to
- * the scheduler on its own.
+ * Opens the first item of today's queue: a lesson, a drill, a gym case, a mock interview or a project step. If the
+ * queue can't be built, Learn falls back to the scheduler on its own.
  */
-async function goToNextStep(afterReview: boolean) {
+async function goToNextStep() {
   const { nextStep, startLesson } = await import("@/lib/learning");
   let queue: import("@/lib/guide/core").TodayItem[] | null = null;
   try {
     const { today } = await import("@/lib/guide/store");
-    queue = await today({ afterReview });
+    queue = await today();
   } catch (error) {
     console.error("Today's queue unavailable:", error);
   }
   if (queue) {
-    const { isLessonItem } = await import("@/lib/guide/core");
-    const item = afterReview ? queue.find(isLessonItem) : queue[0];
+    const item = queue[0];
     if (item?.kind === "continue" || item?.kind === "revisit") redirect(`/learn/${item.lessonId}`);
     if (item?.kind === "begin") {
       await startLesson(item.lessonId, item.guided ?? null);
       redirect(`/learn/${item.lessonId}`);
     }
-    if (item?.kind === "review") redirect("/review");
     if (item?.kind === "drill") redirect(`/drills/${item.drillId}`);
     if (item?.kind === "gym") redirect(`/gym/${item.caseId}`);
     if (item?.kind === "interview") redirect(item.sessionId ? `/interview/${item.sessionId}` : `/interview?mode=${item.mode}`);
     if (item?.kind === "project") redirect(`/projects/${item.projectId}`);
     redirect("/map");
   }
-  const step = await nextStep({ afterReview });
+  const step = await nextStep();
   if (step.kind === "continue") redirect(`/learn/${step.lesson.id}`);
-  if (step.kind === "review") redirect("/review");
   if (step.kind === "begin") {
     await startLesson(step.lesson.id, step.guided ?? null);
     redirect(`/learn/${step.lesson.id}`);
@@ -108,7 +98,7 @@ export type CheckResponse = {
 export async function checkExerciseAction(
   exerciseId: string,
   input: string,
-  context: "lesson" | "recall" | "review",
+  context: "lesson" | "recall",
   attemptInSession: number,
 ): Promise<CheckResponse> {
   await requireOwner();

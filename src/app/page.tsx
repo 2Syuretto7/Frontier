@@ -3,7 +3,6 @@ import { requireOwner } from "@/lib/auth";
 import { GRAPH } from "@/lib/curriculum";
 import { COURSES } from "@/lib/graph";
 import { nextStep, overallStats } from "@/lib/learning";
-import { reviewCount } from "@/lib/parton/recall";
 import type { TodayItem } from "@/lib/guide/core";
 import { learnAction } from "./actions";
 import { TopBar } from "@/components/TopBar";
@@ -77,7 +76,6 @@ async function todayQueue(): Promise<TodayItem[]> {
     console.error("Today's queue unavailable:", error);
     const step = await nextStep();
     if (step.kind === "continue") return [{ kind: "continue", lessonId: step.lesson.id, title: step.lesson.title, why: null }];
-    if (step.kind === "review") return [{ kind: "review", count: step.count }];
     if (step.kind === "begin") return [{ kind: "begin", lessonId: step.lesson.id, title: step.lesson.title, why: step.why ?? null, pastPace: step.pastPace }];
     return [];
   }
@@ -94,13 +92,6 @@ function describe(item: TodayItem): { title: string; meta: string; code: string 
       if (item.kind === "begin" && item.pastPace) meta += " You have reached today's suggested pace; carry on whenever you like.";
       return { title: item.title, meta, code: n ? `${n.course} / ${n.id}` : item.lessonId };
     }
-    case "review":
-      // A review session is three to five new questions, however many ideas are due.
-      return {
-        title: `${reviewCount(item.count)} new questions to review`,
-        meta: "Fresh questions on earlier ideas, just before you would forget them.",
-        code: "review / spaced",
-      };
     case "drill":
       return { title: `${item.title} drill`, meta: item.why, code: `drills / ${item.drillId}` };
     case "gym":
@@ -119,7 +110,6 @@ function NextPanel({ item }: { item: TodayItem | null }) {
     !item ? <Pill tone="muted">Resting</Pill> :
     item.kind === "begin" ? <Pill tone="accent" icon="dot">New lesson</Pill> :
     item.kind === "continue" ? <Pill tone="success" icon="dot">In progress</Pill> :
-    item.kind === "review" ? <Pill tone="accent" icon="clock">Review due</Pill> :
     item.kind === "revisit" ? <Pill tone="accent" icon="dot">Revisit</Pill> :
     item.kind === "drill" ? <Pill tone="accent" icon="clock">Drill</Pill> :
     item.kind === "gym" ? <Pill tone="accent" icon="dot">Debugging gym</Pill> :

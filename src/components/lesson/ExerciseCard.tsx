@@ -30,7 +30,7 @@ export function askParton(exerciseId: string, label: string) {
 
 export function ExerciseCard({ view, context, children, index }: {
   view: ExerciseView;
-  context: "lesson" | "recall" | "review";
+  context: "lesson" | "recall";
   children: ReactNode;
   index?: number;
 }) {

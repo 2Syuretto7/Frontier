@@ -61,27 +61,3 @@ test("the request lists what was already asked and what must not be reused", () 
   assert.match(text, /found hard/);
   assert.match(text, /m0\.1\.1, m0\.1\.2/);
 });
-
-test("a review session is three to five questions, however many ideas are due", async () => {
-  const { reviewCount } = await import("../src/lib/parton/recall.ts");
-  assert.deepEqual([1, 2, 3, 4, 5, 6, 40].map(reviewCount), [3, 3, 3, 4, 5, 5, 5]);
-});
-
-test("each review question rates one due card from its own lesson, and extras rate none", async () => {
-  const { assignCards } = await import("../src/lib/parton/recall.ts");
-  const due = [
-    { exercise_id: "m0.1.1:a", lesson_id: "m0.1.1" },
-    { exercise_id: "m0.1.2:b", lesson_id: "m0.1.2" },
-    { exercise_id: "m0.1.1:c", lesson_id: "m0.1.1" },
-  ];
-  const drafts = ["m0.1.1", "m0.1.1", "m0.1.1", "m0.1.2"].map((sourceLessonId) => ({ sourceLessonId }));
-  assert.deepEqual(assignCards(drafts, due).map((d) => d.card), ["m0.1.1:a", "m0.1.1:c", null, "m0.1.2:b"]);
-});
-
-test("a review request lists the due ideas and says it is review, not a lesson start", () => {
-  const text = recallRequest({ review: true, sources, asked: [], hard: [], due: ["In m0.1.1: What is $S(S(0))$?"], count: 4 });
-  assert.match(text, /spaced review/);
-  assert.match(text, /Write 4 new review questions/);
-  assert.match(text, /Ideas due for review[\s\S]*What is \$S\(S\(0\)\)\$\?/);
-  assert.doesNotMatch(text, /about to start the lesson/);
-});

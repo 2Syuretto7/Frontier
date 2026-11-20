@@ -101,7 +101,7 @@ function walk(pick: (options: LessonNode[], lastTrack: Track | null) => LessonNo
 
 test("the parallel approach: Learn rotates the tracks and never hands out a lesson early", () => {
   const learn = (options: LessonNode[], lastTrack: Track | null) => {
-    const step = chooseNextStep({ openLesson: null, dueReviews: 0, frontier: options, lastTrack, newLessonsToday: 0, pace: 1e9 });
+    const step = chooseNextStep({ openLesson: null, frontier: options, lastTrack, newLessonsToday: 0, pace: 1e9 });
     return step.kind === "begin" ? step.lesson : null;
   };
   assert.equal(walk(learn).size, LESSONS.length);
@@ -141,7 +141,7 @@ test("the mixed approach, and any order a learner can take through the map", () 
     const mixed = (options: LessonNode[], lastTrack: Track | null) => {
       if (!options.length) return null;
       if (random() < followLearn) {
-        const step = chooseNextStep({ openLesson: null, dueReviews: 0, frontier: options, lastTrack, newLessonsToday: 0, pace: 1e9 });
+        const step = chooseNextStep({ openLesson: null, frontier: options, lastTrack, newLessonsToday: 0, pace: 1e9 });
         if (step.kind === "begin") return step.lesson;
       }
       return options[Math.floor(random() * options.length)];
