@@ -1,9 +1,10 @@
 /**
- * When the practice sections (Drills, the Debugging gym, Interview, Projects and Readiness) appear. Pure functions,
+ * When the practice sections (Drills, the Debugging gym, Interview, Projects and Readiness) unlock. Pure functions,
  * so they can be tested without a database.
  *
- * Each section stays out of the navigation, Home and the daily queue until the learner has mastered, through Learn,
- * a concrete set of lessons that gives it real work to do, and appears the moment that set is mastered. Every set
+ * Each section always shows in the navigation, but stays locked, and out of Home's daily queue, until the learner has
+ * mastered, through Learn, a concrete set of lessons that gives it real work to do. It unlocks the moment that set is
+ * mastered. Every set
  * is closed under prerequisites, so it is the same set of lessons whichever order the learner takes the three tracks
  * in (one at a time, side by side or mixed), and no section can open on one track's progress alone.
  *

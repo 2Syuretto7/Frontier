@@ -14,7 +14,7 @@ const WAITS_FOR: Record<SectionId, string> = {
 };
 
 /**
- * Renders a practice section only once it has opened (see `src/lib/sections.ts`). Before then, a direct link shows
+ * Renders a practice section only once it has opened (see `src/lib/sections.ts`). Before then, it shows
  * what it waits for instead.
  */
 export async function SectionGate({ section, children }: { section: SectionId; children: ReactNode }) {
@@ -23,8 +23,8 @@ export async function SectionGate({ section, children }: { section: SectionId; c
   return (
     <AuthFrame>
       <div className="card">
-        <p className="eyebrow"><span className="mono-meta">{SECTION_TITLES[section].toLowerCase()} / not open yet</span></p>
-        <h1>Not open yet</h1>
+        <p className="eyebrow"><span className="mono-meta">{SECTION_TITLES[section].toLowerCase()} / locked</span></p>
+        <h1>Locked</h1>
         <p className="lede">{WAITS_FOR[section]}</p>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           <Link href="/" className="btn btn-primary">Go home</Link>
