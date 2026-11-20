@@ -44,7 +44,7 @@ export function symEigs(A0: number[][]) {
 export function jacobianSpectrum(act: Act, orthogonal: boolean, depth: number, seed: number) {
   const r = rand(seed);
   const normal = () => Math.sqrt(-2 * Math.log(1 - r())) * Math.cos(2 * Math.PI * r());
-  let J = Array.from({ length: N }, (_, i) => Array.from({ length: N }, (_, j) => (i === j ? 1 : 0)));
+  let J: number[][] = Array.from({ length: N }, (_, i) => Array.from({ length: N }, (_, j) => (i === j ? 1 : 0)));
   for (let l = 0; l < depth; l++) {
     const W = Array.from({ length: N }, () => Array.from({ length: N }, () => normal() / Math.sqrt(N)));
     if (orthogonal) {
