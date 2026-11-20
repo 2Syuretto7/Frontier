@@ -120,7 +120,7 @@ export function MupStepViz() {
           <g key={k}>
             <path d={ys.map((y, i) => `${i ? "L" : "M"}${px(lx[i]).toFixed(1)},${py(y).toFixed(1)}`).join(" ")} fill="none" stroke={PARAMS[k][2]} strokeWidth={2} />
             {ys.map((y, i) => <circle key={i} cx={px(lx[i])} cy={py(y)} r={2.5} fill={PARAMS[k][2]} />)}
-            <text x={X0 + PW + 2} y={py(ys[ys.length - 1]) + 4} className="viz-label" fill={PARAMS[k][2]}>{PARAMS[k][1]}</text>
+            <text x={X0 + PW + 2} y={py(ys[ys.length - 1]) + 4} className="viz-label" style={{ fill: PARAMS[k][2] }}>{PARAMS[k][1]}</text>
           </g>
         ))}
         <text x={X0 + PW / 2} y={H - 2} textAnchor="middle" className="viz-label">width n (log scale)</text>
