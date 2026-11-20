@@ -17,7 +17,6 @@ export function circuitLogits(a: number, b: number, ks: number[]) {
 }
 
 export function GrokkingViz() {
-  const [tab, setTab] = useState<"run" | "circuit">("run");
   const [wd, setWd] = useState(true);
   const [a, setA] = useState(17);
   const [b, setB] = useState(20);
@@ -37,67 +36,58 @@ export function GrokkingViz() {
   return (
     <figure className="viz">
       <div className="viz-controls" style={{ marginTop: 0, flexWrap: "wrap", gap: 8 }}>
-        <div className="segmented" role="group" aria-label="View">
-          <button className="seg" aria-pressed={tab === "run"} onClick={() => setTab("run")}>training run</button>
-          <button className="seg" aria-pressed={tab === "circuit"} onClick={() => setTab("circuit")}>Fourier circuit</button>
+        <div className="segmented" role="group" aria-label="Weight decay">
+          <button className="seg" aria-pressed={wd} onClick={() => setWd(true)}>weight decay 0.5</button>
+          <button className="seg" aria-pressed={!wd} onClick={() => setWd(false)}>no weight decay</button>
         </div>
-        {tab === "run" ? (
-          <div className="segmented" role="group" aria-label="Weight decay">
-            <button className="seg" aria-pressed={wd} onClick={() => setWd(true)}>weight decay 0.5</button>
-            <button className="seg" aria-pressed={!wd} onClick={() => setWd(false)}>no weight decay</button>
-          </div>
-        ) : (
-          <>
-            <label className="viz-label" style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              a = {a}
-              <input type="range" min={0} max={P - 1} value={a} onChange={(e) => setA(Number(e.target.value))} aria-label="First summand" />
-            </label>
-            <label className="viz-label" style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              b = {b}
-              <input type="range" min={0} max={P - 1} value={b} onChange={(e) => setB(Number(e.target.value))} aria-label="Second summand" />
-            </label>
-            <div className="segmented" role="group" aria-label="Number of frequencies">
-              {[1, 2, 3, 5].map((k) => (
-                <button key={k} className="seg" aria-pressed={K === k} onClick={() => setK(k)}>{k} freq.</button>
-              ))}
-            </div>
-          </>
-        )}
       </div>
-      {tab === "run" ? (
-        <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: 460, display: "block", margin: "0 auto" }} role="img" aria-label="Train and test accuracy and parameter norm against training step on a log scale">
-          <line x1={X0} x2={X0 + PW} y1={Y0} y2={Y0} stroke="var(--border)" />
-          <line x1={X0} x2={X0} y1={Y0} y2={Y0 - PH} stroke="var(--border)" />
-          {[0, 0.5, 1].map((v) => <text key={v} x={X0 - 4} y={py(v) + 4} textAnchor="end" className="viz-label">{v * 100}%</text>)}
-          {[1, 10, 100, 1000].map((s, i) => <text key={s} x={px(s)} y={Y0 + 13} textAnchor="middle" className="viz-label">10{"⁰¹²³"[i]}</text>)}
-          <path d={run.map((r, i) => `${i ? "L" : "M"}${px(r[0]).toFixed(1)},${py(r[5] / normMax).toFixed(1)}`).join(" ")} fill="none" stroke="var(--text-muted)" strokeWidth={1.5} strokeDasharray="4 3" />
-          <path d={run.map((r, i) => `${i ? "L" : "M"}${px(r[0]).toFixed(1)},${py(r[1]).toFixed(1)}`).join(" ")} fill="none" stroke="var(--code-function)" strokeWidth={2} />
-          <path d={run.map((r, i) => `${i ? "L" : "M"}${px(r[0]).toFixed(1)},${py(r[2]).toFixed(1)}`).join(" ")} fill="none" stroke="var(--accent)" strokeWidth={2} />
-          <text x={X0 + 4} y={14} className="viz-label" style={{ fill: "var(--code-function)" }}>train</text>
-          <text x={X0 + 44} y={14} className="viz-label" style={{ fill: "var(--accent)" }}>test</text>
-          <text x={X0 + 78} y={14} className="viz-label">dashed: parameter norm</text>
-          <text x={X0 + PW} y={H - 2} textAnchor="end" className="viz-label">training step (log scale)</text>
-        </svg>
-      ) : (
-        <svg viewBox={`0 0 ${W} 110`} style={{ width: "100%", maxWidth: 460, display: "block", margin: "0 auto" }} role="img" aria-label="Logits over all answers c from the Fourier circuit">
-          <line x1={X0} x2={X0 + PW} y1={ly(0)} y2={ly(0)} stroke="var(--border)" />
-          {logits.map((v, c) => (
-            <rect key={c} x={bx(c)} y={Math.min(ly(v), ly(0))} width={bw - 1} height={Math.abs(ly(v) - ly(0))} fill={c === best ? "var(--accent)" : "var(--code-function)"} opacity={c === best ? 1 : 0.6} />
-          ))}
-          {[0, 10, 20, 30].map((c) => <text key={c} x={bx(c) + bw / 2} y={104} textAnchor="middle" className="viz-label">{c}</text>)}
-        </svg>
-      )}
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: 460, display: "block", margin: "0 auto" }} role="img" aria-label="Train and test accuracy and parameter norm against training step on a log scale">
+        <line x1={X0} x2={X0 + PW} y1={Y0} y2={Y0} stroke="var(--border)" />
+        <line x1={X0} x2={X0} y1={Y0} y2={Y0 - PH} stroke="var(--border)" />
+        {[0, 0.5, 1].map((v) => <text key={v} x={X0 - 4} y={py(v) + 4} textAnchor="end" className="viz-label">{v * 100}%</text>)}
+        {[1, 10, 100, 1000].map((s, i) => <text key={s} x={px(s)} y={Y0 + 13} textAnchor="middle" className="viz-label">10{"⁰¹²³"[i]}</text>)}
+        <path d={run.map((r, i) => `${i ? "L" : "M"}${px(r[0]).toFixed(1)},${py(r[5] / normMax).toFixed(1)}`).join(" ")} fill="none" stroke="var(--text-muted)" strokeWidth={1.5} strokeDasharray="4 3" />
+        <path d={run.map((r, i) => `${i ? "L" : "M"}${px(r[0]).toFixed(1)},${py(r[1]).toFixed(1)}`).join(" ")} fill="none" stroke="var(--code-function)" strokeWidth={2} />
+        <path d={run.map((r, i) => `${i ? "L" : "M"}${px(r[0]).toFixed(1)},${py(r[2]).toFixed(1)}`).join(" ")} fill="none" stroke="var(--accent)" strokeWidth={2} />
+        <text x={X0 + 4} y={14} className="viz-label" style={{ fill: "var(--code-function)" }}>train</text>
+        <text x={X0 + 44} y={14} className="viz-label" style={{ fill: "var(--accent)" }}>test</text>
+        <text x={X0 + 78} y={14} className="viz-label">dashed: parameter norm</text>
+        <text x={X0 + PW} y={H - 2} textAnchor="end" className="viz-label">training step (log scale)</text>
+      </svg>
       <div className="mono" style={{ fontSize: 12, margin: "6px 0" }} aria-live="polite">
-        {tab === "run"
-          ? `after 8000 steps: test accuracy ${(100 * run[run.length - 1][2]).toFixed(1)}%, parameter norm ${run[run.length - 1][5]}; mean share of each unit's input power in its top frequency ${(wd ? CONC.wd : CONC.nowd).toFixed(2)}`
-          : `logits peak at c = ${best}; (a + b) mod ${P} = ${(a + b) % P}; margin over the runner-up ${(logits[best] - runner).toFixed(3)}`}
+        after 8000 steps: test accuracy {(100 * run[run.length - 1][2]).toFixed(1)}%, parameter norm {run[run.length - 1][5]}; mean share of each unit&apos;s input power in its top frequency {(wd ? CONC.wd : CONC.nowd).toFixed(2)}
+      </div>
+      <div className="viz-controls" style={{ flexWrap: "wrap", gap: 8 }}>
+        <label className="viz-label" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          a = {a}
+          <input type="range" min={0} max={P - 1} value={a} onChange={(e) => setA(Number(e.target.value))} aria-label="First summand" />
+        </label>
+        <label className="viz-label" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          b = {b}
+          <input type="range" min={0} max={P - 1} value={b} onChange={(e) => setB(Number(e.target.value))} aria-label="Second summand" />
+        </label>
+        <div className="segmented" role="group" aria-label="Number of frequencies">
+          {[1, 2, 3, 5].map((k) => (
+            <button key={k} className="seg" aria-pressed={K === k} onClick={() => setK(k)}>{k} freq.</button>
+          ))}
+        </div>
+      </div>
+      <svg viewBox={`0 0 ${W} 110`} style={{ width: "100%", maxWidth: 460, display: "block", margin: "0 auto" }} role="img" aria-label="Logits over all answers c from the Fourier circuit">
+        <line x1={X0} x2={X0 + PW} y1={ly(0)} y2={ly(0)} stroke="var(--border)" />
+        {logits.map((v, c) => (
+          <rect key={c} x={bx(c)} y={Math.min(ly(v), ly(0))} width={bw - 1} height={Math.abs(ly(v) - ly(0))} fill={c === best ? "var(--accent)" : "var(--code-function)"} opacity={c === best ? 1 : 0.6} />
+        ))}
+        {[0, 10, 20, 30].map((c) => <text key={c} x={bx(c) + bw / 2} y={104} textAnchor="middle" className="viz-label">{c}</text>)}
+      </svg>
+      <div className="mono" style={{ fontSize: 12, margin: "6px 0" }} aria-live="polite">
+        circuit logits peak at c = {best}; (a + b) mod {P} = {(a + b) % P}; margin over the runner-up {(logits[best] - runner).toFixed(3)}
       </div>
       <figcaption className="viz-caption">
-        Training run: a small network learning a + b mod 31 from 40% of the table, recorded offline. Train accuracy hits
-        100% within a few hundred steps, by memorising; test accuracy stays near chance and then, with weight decay, climbs
-        to almost 100% thousands of steps later, as the parameter norm turns down. Without weight decay it never generalises.
-        Fourier circuit: the algorithm the generalising network implements, scoring each answer c by Σ cos(2πk(a + b − c)/31)
-        over a few frequencies k; every term peaks at c = a + b mod 31.
+        Top: a small network learning a + b mod 31 from 40% of the table, recorded offline. Train accuracy hits 100% within
+        a few hundred steps, by memorising; test accuracy stays near chance and then, with weight decay, climbs to almost
+        100% thousands of steps later, as the parameter norm turns down. Without weight decay it never generalises. Bottom:
+        the algorithm the generalising network implements, scoring each answer c by Σ cos(2πk(a + b − c)/31) over a few
+        frequencies k; every term peaks at c = a + b mod 31.
       </figcaption>
     </figure>
   );
