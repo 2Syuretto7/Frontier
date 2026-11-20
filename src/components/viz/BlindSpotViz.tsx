@@ -72,9 +72,10 @@ export function BlindSpotViz() {
       </div>
       <figcaption className="viz-caption">
         Stacking 3 by 3 masked convolutions grows the region a pixel can see, but never into a wedge above and to the right:
-        each layer adds one row above and one column to each side of what it already sees, except to the right of the current
-        row, so the hidden wedge grows with depth. The gated PixelCNN splits the network into a vertical stack that sees whole
-        rows above and a horizontal stack that sees the current row to the left, removing the blind spot.
+        the only kernel position that reaches right also reaches up, so a pixel b columns to the right is visible only if it is
+        at least b rows above. The hidden wedge holds 10 pixels after 5 layers and 28 after 8. The gated PixelCNN splits the
+        network into a vertical stack that sees whole rows above and a horizontal stack that sees the current row to the left,
+        removing the blind spot.
       </figcaption>
     </figure>
   );
