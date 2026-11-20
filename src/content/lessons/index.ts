@@ -1054,6 +1054,28 @@ import { lesson as e9_5_1 } from "./e9.5.1";
 import { lesson as e9_5_2 } from "./e9.5.2";
 import { lesson as e9_6_1 } from "./e9.6.1";
 import { lesson as e9_6_2 } from "./e9.6.2";
+import { lesson as e10_1_1 } from "./e10.1.1";
+import { lesson as e10_1_2 } from "./e10.1.2";
+import { lesson as e10_2_1 } from "./e10.2.1";
+import { lesson as e10_2_2 } from "./e10.2.2";
+import { lesson as e10_2_3 } from "./e10.2.3";
+import { lesson as e10_3_1 } from "./e10.3.1";
+import { lesson as e10_3_2 } from "./e10.3.2";
+import { lesson as e10_4_1 } from "./e10.4.1";
+import { lesson as e10_4_2 } from "./e10.4.2";
+import { lesson as e10_4_3 } from "./e10.4.3";
+import { lesson as e10_5_1 } from "./e10.5.1";
+import { lesson as e10_5_2 } from "./e10.5.2";
+import { lesson as e10_5_3 } from "./e10.5.3";
+import { lesson as e10_6_1 } from "./e10.6.1";
+import { lesson as e10_6_2 } from "./e10.6.2";
+import { lesson as e10_7_1 } from "./e10.7.1";
+import { lesson as e10_7_2 } from "./e10.7.2";
+import { lesson as e10_7_3 } from "./e10.7.3";
+import { lesson as e10_8_1 } from "./e10.8.1";
+import { lesson as e10_8_2 } from "./e10.8.2";
+import { lesson as e10_8_3 } from "./e10.8.3";
+import { lesson as e10_8_4 } from "./e10.8.4";
 
 export const LESSONS: readonly LessonContent[] = [
   m0_1_1,
@@ -2111,4 +2133,26 @@ export const LESSONS: readonly LessonContent[] = [
   e9_5_2,
   e9_6_1,
   e9_6_2,
+  e10_1_1,
+  e10_1_2,
+  e10_2_1,
+  e10_2_2,
+  e10_2_3,
+  e10_3_1,
+  e10_3_2,
+  e10_4_1,
+  e10_4_2,
+  e10_4_3,
+  e10_5_1,
+  e10_5_2,
+  e10_5_3,
+  e10_6_1,
+  e10_6_2,
+  e10_7_1,
+  e10_7_2,
+  e10_7_3,
+  e10_8_1,
+  e10_8_2,
+  e10_8_3,
+  e10_8_4,
 ];
