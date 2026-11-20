@@ -913,6 +913,26 @@ import { lesson as m18_5_4 } from "./m18.5.4";
 import { lesson as m18_6_1 } from "./m18.6.1";
 import { lesson as m18_6_2 } from "./m18.6.2";
 import { lesson as m18_6_3 } from "./m18.6.3";
+import { lesson as m17_1_1 } from "./m17.1.1";
+import { lesson as m17_1_2 } from "./m17.1.2";
+import { lesson as m17_1_3 } from "./m17.1.3";
+import { lesson as m17_2_1 } from "./m17.2.1";
+import { lesson as m17_2_2 } from "./m17.2.2";
+import { lesson as m17_2_3 } from "./m17.2.3";
+import { lesson as m17_2_4 } from "./m17.2.4";
+import { lesson as m17_3_1 } from "./m17.3.1";
+import { lesson as m17_3_2 } from "./m17.3.2";
+import { lesson as m17_3_3 } from "./m17.3.3";
+import { lesson as m17_4_1 } from "./m17.4.1";
+import { lesson as m17_4_2 } from "./m17.4.2";
+import { lesson as m17_4_3 } from "./m17.4.3";
+import { lesson as m17_5_1 } from "./m17.5.1";
+import { lesson as m17_5_2 } from "./m17.5.2";
+import { lesson as m17_5_3 } from "./m17.5.3";
+import { lesson as m17_6_1 } from "./m17.6.1";
+import { lesson as m17_6_2 } from "./m17.6.2";
+import { lesson as m17_6_3 } from "./m17.6.3";
+import { lesson as m17_6_4 } from "./m17.6.4";
 
 export const LESSONS: readonly LessonContent[] = [
   m0_1_1,
@@ -1829,4 +1849,24 @@ export const LESSONS: readonly LessonContent[] = [
   m18_6_1,
   m18_6_2,
   m18_6_3,
+  m17_1_1,
+  m17_1_2,
+  m17_1_3,
+  m17_2_1,
+  m17_2_2,
+  m17_2_3,
+  m17_2_4,
+  m17_3_1,
+  m17_3_2,
+  m17_3_3,
+  m17_4_1,
+  m17_4_2,
+  m17_4_3,
+  m17_5_1,
+  m17_5_2,
+  m17_5_3,
+  m17_6_1,
+  m17_6_2,
+  m17_6_3,
+  m17_6_4,
 ];
