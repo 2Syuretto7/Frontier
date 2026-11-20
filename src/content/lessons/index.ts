@@ -987,6 +987,7 @@ import { lesson as l9_7_2 } from "./l9.7.2";
 import { lesson as l9_7_3 } from "./l9.7.3";
 import { lesson as l9_7_4 } from "./l9.7.4";
 import { lesson as l9_8_1 } from "./l9.8.1";
+import { lesson as l9_8_2 } from "./l9.8.2";
 
 export const LESSONS: readonly LessonContent[] = [
   m0_1_1,
@@ -1977,4 +1978,5 @@ export const LESSONS: readonly LessonContent[] = [
   l9_7_3,
   l9_7_4,
   l9_8_1,
+  l9_8_2,
 ];
