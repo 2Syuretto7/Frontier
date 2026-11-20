@@ -2,56 +2,61 @@
 
 import { useState } from "react";
 
-const S_MIN = 1000, E_MIN = 1e5;
+const SMIN = 1, EMIN = 1;
+const MULTS = [0.125, 0.25, 0.5, 1, 2, 4, 8];
 
-/** Steps and examples needed to reach a target loss as the batch size grows, around the critical batch size. */
+/** Steps and tokens to reach a fixed loss at batch size B, relative to their minima, given the critical batch size. */
+export function tradeoff(B: number, Bcrit: number) {
+  return { S: SMIN * (1 + Bcrit / B), E: EMIN * (1 + B / Bcrit) };
+}
+
 export function BatchTradeoffViz() {
-  const [bExp, setBExp] = useState(2.5);
-  const [nExp, setNExp] = useState(3);
-  const B = 10 ** bExp, Bn = 10 ** nExp;
-  const steps = (b: number) => S_MIN * (1 + Bn / b);
-  const ex = (b: number) => E_MIN * (1 + b / Bn);
-  const W = 320, H = 180, bLo = 0, bHi = 6, yLo = 3, yHi = 10;
-  const px = (e: number) => 38 + ((e - bLo) / (bHi - bLo)) * (W - 48);
-  const py = (v: number) => 10 + ((yHi - Math.max(yLo, Math.min(yHi, Math.log10(v)))) / (yHi - yLo)) * (H - 34);
-  const curve = (f: (b: number) => number) => {
-    const pts: string[] = [];
-    for (let e = bLo; e <= bHi + 1e-9; e += 0.05) pts.push(`${px(e).toFixed(1)},${py(f(10 ** e)).toFixed(1)}`);
-    return pts.join(" ");
-  };
+  const [mult, setMult] = useState(1);
+  const [late, setLate] = useState(false);
+  const base = 1;
+  const Bcrit = late ? 4 * base : base;
+  const B = mult * base;
+  const { S, E } = tradeoff(B, Bcrit);
+  const W = 330, H = 170, X0 = 34, PW = 286, Y0 = 8, PH = 130;
+  const lmax = Math.log10(40);
+  const px = (e: number) => X0 + (Math.log10(e) / lmax) * PW;
+  const py = (s: number) => Y0 + PH - (Math.log10(s) / lmax) * PH;
+  const curve = (bc: number) => Array.from({ length: 121 }, (_, i) => Math.pow(10, -2 + (4.5 * i) / 120)).map((b) => tradeoff(b, bc)).filter((p) => p.E <= 40 && p.S <= 40).map((p) => `${px(p.E).toFixed(1)},${py(p.S).toFixed(1)}`).join(" ");
   return (
     <figure className="viz">
-      <div className="viz-controls" style={{ marginTop: 0, flexWrap: "wrap", gap: 12 }}>
-        <label className="mono" style={{ fontSize: 13, display: "flex", gap: 6, alignItems: "center" }}>
-          batch {Math.round(B)}
-          <input type="range" min={bLo} max={bHi} step={0.1} value={bExp} onChange={(e) => setBExp(Number(e.target.value))} aria-label="batch size, log scale" style={{ width: 100 }} />
-        </label>
-        <label className="mono" style={{ fontSize: 13, display: "flex", gap: 6, alignItems: "center" }}>
-          B_noise {Math.round(Bn)}
-          <input type="range" min={1} max={5} step={0.1} value={nExp} onChange={(e) => setNExp(Number(e.target.value))} aria-label="critical batch size, log scale" style={{ width: 100 }} />
-        </label>
+      <div className="viz-controls" style={{ marginTop: 0, flexWrap: "wrap", gap: 8 }}>
+        <div className="segmented" role="group" aria-label="Batch size">
+          {MULTS.map((m) => (
+            <button key={m} className="seg" aria-pressed={mult === m} onClick={() => setMult(m)}>{m < 1 ? `1/${1 / m}` : m}×</button>
+          ))}
+        </div>
+        <div className="segmented" role="group" aria-label="Stage of training">
+          {[false, true].map((v) => (
+            <button key={String(v)} className="seg" aria-pressed={late === v} onClick={() => setLate(v)}>{v ? "late (lower loss)" : "early"}</button>
+          ))}
+        </div>
       </div>
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: 440, display: "block", margin: "0 auto" }} role="img" aria-label="Steps and examples to target against batch size, log-log">
-        {[4, 6, 8, 10].map((e) => (
-          <g key={e}>
-            <line x1={38} x2={W - 10} y1={py(10 ** e)} y2={py(10 ** e)} stroke="var(--border)" />
-            <text x={34} y={py(10 ** e) + 4} textAnchor="end" className="viz-label">1e{e}</text>
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: 460, display: "block", margin: "0 auto" }} role="img" aria-label="Steps against tokens needed to reach a fixed loss, for different batch sizes">
+        {[1, 2, 5, 10, 20].map((v) => (
+          <g key={v}>
+            <line x1={X0} x2={X0 + PW} y1={py(v)} y2={py(v)} stroke="var(--border)" strokeWidth={0.5} />
+            <text x={X0 - 4} y={py(v) + 3} textAnchor="end" className="viz-label">{v}</text>
+            <text x={px(v)} y={Y0 + PH + 12} textAnchor="middle" className="viz-label">{v}</text>
           </g>
         ))}
-        {[0, 2, 4, 6].map((e) => <text key={e} x={px(e)} y={H - 8} textAnchor="middle" className="viz-label">B=1e{e}</text>)}
-        <line x1={px(nExp)} x2={px(nExp)} y1={10} y2={H - 24} stroke="var(--text-muted)" strokeDasharray="3 3" />
-        <polyline fill="none" stroke="var(--accent)" strokeWidth={2} points={curve(steps)} />
-        <polyline fill="none" stroke="var(--danger)" strokeWidth={2} points={curve(ex)} />
-        <circle cx={px(bExp)} cy={py(steps(B))} r={4} fill="var(--accent)" />
-        <circle cx={px(bExp)} cy={py(ex(B))} r={4} fill="var(--danger)" />
+        <polyline points={curve(base)} fill="none" stroke="var(--code-function)" strokeWidth={2} />
+        <circle cx={px(E)} cy={py(S)} r={4.5} fill="var(--accent)" />
+        <text x={X0} y={H - 2} className="viz-label">tokens ÷ minimum (log) →; up: steps ÷ minimum</text>
       </svg>
-      <div className="mono" style={{ fontSize: 13, margin: "6px 0" }}>
-        steps {Math.round(steps(B)).toLocaleString("en-IN")} (blue), examples {Math.round(ex(B)).toLocaleString("en-IN")} (red)
+      <div className="mono" style={{ fontSize: 12, margin: "6px 0" }} aria-live="polite">
+        batch {mult < 1 ? `1/${1 / mult}` : mult}× the early critical size, {late ? "late" : "early"} in training: {S.toFixed(2)}× the minimum steps, {E.toFixed(2)}× the minimum tokens
       </div>
-      <figcaption className="viz-caption" aria-live="polite">
-        The model S = S_min(1 + B_noise/B), E = E_min(1 + B/B_noise). Below the critical batch size B_noise (dashed),
-        doubling the batch nearly halves the steps at almost no extra data: gradient noise was the bottleneck. Above it,
-        steps stop falling and the data used grows in proportion to the batch: each step is already nearly noise-free.
+      <figcaption className="viz-caption">
+        To reach a given loss, a small batch needs the fewest tokens but many steps, a large batch the fewest steps but many
+        tokens; the curve between is the hyperbola (S/S_min − 1)(E/E_min − 1) = 1. At the critical batch size both are twice
+        their minimum, the usual compromise. Later in training, at lower loss, gradients are noisier relative to their mean and
+        the critical batch size grows, so the same batch slides along the curve towards fewer wasted tokens: hence batch-size
+        ramps that start small and grow.
       </figcaption>
     </figure>
   );
