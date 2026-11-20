@@ -41,8 +41,8 @@ export const lesson: LessonContent = {
   minutes: 50,
   links: {
     requires: ["l8.6.1", "m14.6.2", "m14.6.3"],
-    revisits: ["m14.6.1", "l8.2.3", "l8.5.3"],
-    foreshadows: ["l8.6.3", "e10.2.1"],
+    revisits: ["m14.6.1", "l8.2.3", "e6.3.3"],
+    foreshadows: ["l8.6.3", "e10.8.1", "e13.4.2"],
   },
 
   puzzle: (
