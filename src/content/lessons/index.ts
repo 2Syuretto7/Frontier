@@ -995,6 +995,7 @@ import { lesson as l10_1_3 } from "./l10.1.3";
 import { lesson as l10_1_4 } from "./l10.1.4";
 import { lesson as l10_2_1 } from "./l10.2.1";
 import { lesson as l10_2_2 } from "./l10.2.2";
+import { lesson as l10_2_3 } from "./l10.2.3";
 
 export const LESSONS: readonly LessonContent[] = [
   m0_1_1,
@@ -1993,4 +1994,5 @@ export const LESSONS: readonly LessonContent[] = [
   l10_1_4,
   l10_2_1,
   l10_2_2,
+  l10_2_3,
 ];
