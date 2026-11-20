@@ -13,7 +13,7 @@ export const target = (x: number) => Math.sin(3 * x) + 0.5 * Math.abs(x);
 const XS = Array.from({ length: 241 }, (_, i) => -1 + i / 120);
 
 /** Solve (AᵀA + λI) c = Aᵀy by Gaussian elimination. */
-function lstsq(A: number[][], y: number[], lam = 1e-9) {
+export function lstsq(A: number[][], y: number[], lam = 1e-9) {
   const k = A[0].length;
   const M = Array.from({ length: k }, (_, i) => Array.from({ length: k + 1 }, (_, j) => {
     if (j === k) return A.reduce((s, r, t) => s + r[i] * y[t], 0);
