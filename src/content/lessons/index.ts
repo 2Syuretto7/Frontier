@@ -828,6 +828,23 @@ import { lesson as l6_8_1 } from "./l6.8.1";
 import { lesson as l6_8_2 } from "./l6.8.2";
 import { lesson as l6_8_3 } from "./l6.8.3";
 import { lesson as l6_8_4 } from "./l6.8.4";
+import { lesson as e8_1_1 } from "./e8.1.1";
+import { lesson as e8_1_2 } from "./e8.1.2";
+import { lesson as e8_1_3 } from "./e8.1.3";
+import { lesson as e8_2_1 } from "./e8.2.1";
+import { lesson as e8_2_2 } from "./e8.2.2";
+import { lesson as e8_2_3 } from "./e8.2.3";
+import { lesson as e8_2_4 } from "./e8.2.4";
+import { lesson as e8_2_5 } from "./e8.2.5";
+import { lesson as e8_3_1 } from "./e8.3.1";
+import { lesson as e8_3_2 } from "./e8.3.2";
+import { lesson as e8_3_3 } from "./e8.3.3";
+import { lesson as e8_4_1 } from "./e8.4.1";
+import { lesson as e8_4_2 } from "./e8.4.2";
+import { lesson as e8_4_3 } from "./e8.4.3";
+import { lesson as e8_5_1 } from "./e8.5.1";
+import { lesson as e8_5_2 } from "./e8.5.2";
+import { lesson as e8_5_3 } from "./e8.5.3";
 
 export const LESSONS: readonly LessonContent[] = [
   m0_1_1,
@@ -1659,4 +1676,21 @@ export const LESSONS: readonly LessonContent[] = [
   l6_8_2,
   l6_8_3,
   l6_8_4,
+  e8_1_1,
+  e8_1_2,
+  e8_1_3,
+  e8_2_1,
+  e8_2_2,
+  e8_2_3,
+  e8_2_4,
+  e8_2_5,
+  e8_3_1,
+  e8_3_2,
+  e8_3_3,
+  e8_4_1,
+  e8_4_2,
+  e8_4_3,
+  e8_5_1,
+  e8_5_2,
+  e8_5_3,
 ];
