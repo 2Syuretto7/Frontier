@@ -1,61 +1,156 @@
 "use client";
 
 import { useState } from "react";
+import { rand } from "./RandomWalkMcViz";
 
-export const VARS = [5, 2.5, 1.2, 0.6, 0.3, 0.15], SIG2 = 0.25;
-const BETAS = [0.25, 0.5, 1, 2, 4];
+const NS = [10, 50, 200];
+const GENS = 100;
+const CHAINS = 5;
 
-/** Optimum of the beta-ELBO of a linear Gaussian VAE, per data dimension of variance v: rate (nats) and distortion. */
-export function optimum(beta: number) {
-  const c = beta * SIG2;
-  return VARS.map((v) => (v > c ? { rate: 0.5 * Math.log(v / c), dist: c } : { rate: 0, dist: v }));
+/** Variance of the fitted Gaussian over generations; "replace" refits on fresh samples only, "accumulate" on all data so far. */
+export function collapseRun(n: number, accumulate: boolean, seed: number) {
+  const rng = rand(seed);
+  const normal = () =>
+    Math.sqrt(-2 * Math.log(1 - rng())) * Math.cos(2 * Math.PI * rng());
+  let mu = 0,
+    v = 1;
+  let cnt = 0,
+    s = 0,
+    ss = 0;
+  const out = [v];
+  for (let g = 0; g < GENS; g++) {
+    if (!accumulate) {
+      cnt = 0;
+      s = 0;
+      ss = 0;
+    }
+    for (let i = 0; i < n; i++) {
+      const x = mu + Math.sqrt(v) * normal();
+      cnt++;
+      s += x;
+      ss += x * x;
+    }
+    mu = s / cnt;
+    v = Math.max(ss / cnt - mu * mu, 1e-12);
+    out.push(v);
+  }
+  return out;
 }
 
 export function CollapseViz() {
-  const [bi, setBi] = useState(2);
-  const beta = BETAS[bi], c = beta * SIG2;
-  const opt = optimum(beta);
-  const R = opt.reduce((a, o) => a + o.rate, 0), D = opt.reduce((a, o) => a + o.dist, 0), act = opt.filter((o) => o.rate > 0).length;
-  const W = 330, H = 190, X0 = 34, Y0 = 22, PH = 120, bw = 34, gap = (W - X0 - 10 - VARS.length * bw) / (VARS.length - 1), YM = 5;
-  const sy = (v: number) => Y0 + PH - (Math.sqrt(v) / Math.sqrt(YM)) * PH;
+  const [ni, setNi] = useState(0);
+  const [acc, setAcc] = useState(false);
+  const n = NS[ni];
+  const runs = Array.from({ length: CHAINS }, (_, c) =>
+    collapseRun(n, acc, 900 + 17 * c + ni),
+  );
+  const finals = runs.map((r) => r[GENS]).sort((a, b) => a - b);
+  const W = 330,
+    X0 = 38,
+    Y0 = 8,
+    PW = 282,
+    PH = 130,
+    LO = -12,
+    HI = 1;
+  const x = (g: number) => X0 + (g / GENS) * PW;
+  const y = (v: number) =>
+    Y0 + ((HI - Math.min(HI, Math.max(LO, Math.log10(v)))) / (HI - LO)) * PH;
+  const fmt = (v: number) => (v < 0.01 ? v.toExponential(1) : v.toFixed(2));
   return (
     <figure className="viz">
-      <div className="viz-controls" style={{ marginTop: 0, flexWrap: "wrap", gap: 8 }}>
-        <span className="viz-label">β</span>
-        <div className="segmented" role="group" aria-label="Weight of the KL term">
-          {BETAS.map((b, i) => <button key={b} type="button" className="seg" aria-pressed={bi === i} onClick={() => setBi(i)}>{b}</button>)}
+      <div className="viz-controls" style={{ marginTop: 0, flexWrap: "wrap" }}>
+        <div
+          className="segmented"
+          role="group"
+          aria-label="Samples per generation"
+        >
+          {NS.map((v, j) => (
+            <button
+              key={v}
+              type="button"
+              className="seg"
+              aria-pressed={ni === j}
+              onClick={() => setNi(j)}
+            >{`n = ${v}`}</button>
+          ))}
+        </div>
+        <div className="segmented" role="group" aria-label="Data policy">
+          {[false, true].map((a) => (
+            <button
+              key={String(a)}
+              type="button"
+              className="seg"
+              aria-pressed={acc === a}
+              onClick={() => setAcc(a)}
+            >
+              {a ? "accumulate" : "replace"}
+            </button>
+          ))}
         </div>
       </div>
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: 440, display: "block", margin: "0 auto" }} role="img" aria-label="Rate and distortion per latent dimension">
-        <line x1={X0} x2={W - 10} y1={sy(c)} y2={sy(c)} stroke="var(--danger)" strokeDasharray="4 3" />
-        <text x={X0 - 4} y={sy(c) + 4} textAnchor="end" className="viz-label">βσ²</text>
-        {VARS.map((v, j) => {
-          const x = X0 + j * (bw + gap), o = opt[j];
-          return (
-            <g key={j}>
-              <rect x={x} y={sy(v)} width={bw} height={Y0 + PH - sy(v)} fill="none" stroke="var(--border-strong)" />
-              <rect x={x} y={sy(o.dist)} width={bw} height={Y0 + PH - sy(o.dist)} fill={o.rate > 0 ? "var(--accent)" : "var(--text-muted)"} fillOpacity={0.45} />
-              <text x={x + bw / 2} y={sy(v) - 4} textAnchor="middle" className="viz-label">{o.rate > 0 ? o.rate.toFixed(2) : "0"}</text>
-              <text x={x + bw / 2} y={Y0 + PH + 14} textAnchor="middle" className="viz-label">{v}</text>
-            </g>
-          );
-        })}
-        <text x={W / 2} y={H - 8} textAnchor="middle" className="viz-label">data variance per dimension (square-root scale)</text>
+      <svg
+        viewBox={`0 0 ${W} ${Y0 + PH + 18}`}
+        style={{
+          width: "100%",
+          maxWidth: 460,
+          display: "block",
+          margin: "0 auto",
+        }}
+        role="img"
+        aria-label="Fitted variance over generations"
+      >
+        {[-12, -8, -4, 0].map((e) => (
+          <g key={e}>
+            <line
+              x1={X0}
+              x2={X0 + PW}
+              y1={y(10 ** e)}
+              y2={y(10 ** e)}
+              stroke="var(--border)"
+            />
+            <text
+              x={X0 - 5}
+              y={y(10 ** e) + 4}
+              textAnchor="end"
+              className="viz-label"
+            >
+              {e === 0 ? "1" : `1e${e}`}
+            </text>
+          </g>
+        ))}
+        {runs.map((r, c) => (
+          <polyline
+            key={c}
+            points={r.map((v, g) => `${x(g)},${y(v)}`).join(" ")}
+            fill="none"
+            stroke="var(--accent)"
+            strokeWidth={1.4}
+            opacity={0.75}
+          />
+        ))}
+        <text
+          x={X0 + PW}
+          y={Y0 + PH + 13}
+          textAnchor="end"
+          className="viz-label"
+        >
+          generation
+        </text>
       </svg>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 14px", justifyContent: "center", fontSize: 13 }}>
-        <span>outline: data variance</span>
-        <span><span style={{ color: "var(--accent)" }}>■</span> distortion, active dimension</span>
-        <span><span style={{ color: "var(--text-muted)" }}>■</span> collapsed dimension</span>
-        <span>numbers: KL in nats</span>
-      </div>
-      <div className="mono" style={{ fontSize: 13, margin: "6px 0" }} aria-live="polite">
-        {`active ${act} of ${VARS.length}; rate ${R.toFixed(3)} nats; distortion ${D.toFixed(3)}`}
+      <div
+        className="mono"
+        style={{ fontSize: 12, margin: "6px 0" }}
+        aria-live="polite"
+      >
+        variance after {GENS} generations: median {fmt(finals[2])}, range{" "}
+        {fmt(finals[0])} to {fmt(finals[CHAINS - 1])}
       </div>
       <figcaption className="viz-caption">
-        A linear VAE fitted at its optimum. A latent dimension whose data variance is below βσ² collapses: its code carries no
-        information (KL zero) and the decoder treats that direction as noise, so its distortion is the whole variance. Above the
-        line, a dimension&apos;s distortion is exactly βσ² and its rate is half the log of the ratio, the reverse water-filling of
-        rate-distortion theory. At β = 1 one of the six dimensions collapses; at β = 4 three do.
+        Five chains that start from a standard normal and, each generation, fit
+        a Gaussian to n samples drawn from the previous fit. Replacing the data
+        with each generation&apos;s samples lets the variance drift towards
+        zero, faster for small n; accumulating all generations&apos; data keeps
+        it from collapsing. The vertical axis is logarithmic.
       </figcaption>
     </figure>
   );
