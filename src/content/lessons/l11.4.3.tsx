@@ -78,21 +78,22 @@ export const lesson: LessonContent = {
 
       <Theorem title="a better frontier does not imply better features">
         <p>
-          There exist data and two dictionaries such that the first has lower reconstruction error at the same L0 while the second
-          recovers the true generating features and the first recovers none.
+          There exist data and two dictionaries, both reconstructing every input exactly, such that the first has strictly lower L0
+          while only the second recovers all of the true generating features.
         </p>
       </Theorem>
       <Proof>
         <p>
-          Let activations be sums of two sparse features with orthogonal unit directions <M>{"u_1, u_2"}</M> in a plane, each active
-          independently with probability p &lt; 1/2. Dictionary B has directions <M>{"u_1, u_2"}</M>: its L0 is 2p and its reconstruction is
-          exact. Dictionary A has directions <M>{"u_1 + u_2"}</M> normalised, <M>{"u_1"}</M> and <M>{"u_2"}</M>, and encodes inputs where both
-          features are active using the first direction alone when their magnitudes are equal; with continuous magnitudes it uses the
-          combined direction plus a small correction, so its reconstruction is also exact and its L0 is lower than 2p, since joint
-          occurrences cost one latent instead of two. Now remove <M>{"u_1"}</M> and <M>{"u_2"}</M> from A and add two directions at 45 degrees
-          to them: A still reconstructs exactly, with every input using at most two latents, but no direction of A matches a true
-          feature. Reconstruction and sparsity constrain the span and the count of active latents, not which directions are chosen. The
-          visualisation shows the same effect in trained autoencoders.
+          Let <M>{"u_1, u_2"}</M> be orthogonal unit vectors. Feature 1 is active with probability p and magnitude c; feature 2 is active
+          only when feature 1 is, with probability q given that, and then with the same magnitude c, so inputs are 0, <M>{"c u_1"}</M> or{" "}
+          <M>{"c(u_1 + u_2)"}</M>. Dictionary B has directions <M>{"u_1, u_2"}</M>: it reconstructs exactly, using one latent on inputs of
+          the second kind and two on inputs of the third, so its L0 is <M>{"p(1 + q)"}</M>. Dictionary A has directions <M>{"u_1"}</M> and{" "}
+          <M>{"(u_1 + u_2)/\\sqrt{2}"}</M>, coding <M>{"c u_1"}</M> with the first and <M>{"c(u_1 + u_2)"}</M> with the second alone at
+          coefficient <M>{"c\\sqrt{2}"}</M>. It also reconstructs exactly, and its L0 is p, strictly lower when q &gt; 0. Yet A has no latent
+          for feature 2: its second direction has cosine <M>{"1/\\sqrt{2}"}</M> with <M>{"u_2"}</M>, and its <M>{"u_1"}</M> latent stops
+          firing whenever feature 2 is present, so as a detector of feature 1 its recall is only 1 - q. The objective rewarded merging a
+          frequent co-occurrence into one latent, which is exactly what makes A worse as an account of the features. The visualisation
+          shows the same tension in trained autoencoders.
         </p>
       </Proof>
 
