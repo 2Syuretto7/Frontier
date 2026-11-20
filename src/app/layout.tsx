@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Source_Serif_4 } from "next/font/google";
 import "katex/dist/katex.min.css";
 import "./globals.css";
 import { ClearRemovedDrafts } from "@/components/ClearRemovedDrafts";
+import { UpdateOnDeploy } from "@/components/UpdateOnDeploy";
 
 const sans = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a href="#main" className="skip-link">Skip to content</a>
         {children}
         <ClearRemovedDrafts />
+        <UpdateOnDeploy />
       </body>
     </html>
   );
