@@ -1,42 +1,47 @@
 "use client";
 
 import { useState } from "react";
-import { scales, type View } from "./Plot";
 
-/** Locality-sensitive hashing with b bands of r rows: the chance two documents become candidates is an S-shaped function of their similarity. */
+const CONFIGS: [number, number][] = [[32, 2], [16, 4], [14, 8], [8, 16]];
+
+/** Probability that two documents with Jaccard similarity s share at least one of b bands of r MinHash rows. */
+export function pCand(s: number, b: number, r: number) {
+  return 1 - (1 - s ** r) ** b;
+}
+
 export function LshCurveViz() {
-  const [b, setB] = useState(20);
-  const [r, setR] = useState(5);
-  const V: View = { xmin: 0, xmax: 1, ymin: 0, ymax: 1, w: 480, h: 240 };
-  const { X, Y } = scales(V);
-  const P = (j: number) => 1 - (1 - j ** r) ** b;
-  let d = "";
-  for (let i = 0; i <= 200; i++) { const j = i / 200; d += `${i ? "L" : "M"}${X(j).toFixed(1)} ${Y(P(j)).toFixed(1)} `; }
-  const t = (1 / b) ** (1 / r);
+  const [ci, setCi] = useState(2);
+  const [b, r] = CONFIGS[ci];
+  const W = 330, X0 = 34, Y0 = 8, PW = 284, PH = 130;
+  const x = (s: number) => X0 + s * PW;
+  const y = (p: number) => Y0 + PH - p * PH;
+  const curve = (bb: number, rr: number) => Array.from({ length: 101 }, (_, i) => `${x(i / 100)},${y(pCand(i / 100, bb, rr))}`).join(" ");
+  const thr = (1 / b) ** (1 / r);
   return (
     <figure className="viz">
-      <svg viewBox={`-36 -8 ${V.w + 50} ${V.h + 40}`} className="plot" role="img" aria-label={`Probability of becoming a candidate pair against Jaccard similarity, for ${b} bands of ${r} rows`}>
-        {[0, 0.25, 0.5, 0.75, 1].map((v) => (
-          <g key={v}>
-            <line x1={0} x2={V.w} y1={Y(v)} y2={Y(v)} className="plot-grid" />
-            <text x={-6} y={Y(v) + 4} textAnchor="end" className="plot-tick">{v}</text>
-            <text x={X(v)} y={V.h + 16} textAnchor="middle" className="plot-tick">{v}</text>
-          </g>
-        ))}
-        <line x1={X(t)} x2={X(t)} y1={0} y2={V.h} className="plot-line" />
-        <path d={d} className="plot-curve" />
-        <text x={V.w} y={V.h + 32} textAnchor="end" className="plot-tick">Jaccard similarity J</text>
-      </svg>
-      <div className="viz-sliders">
-        <label><span>Bands <span className="mono">b = {b}</span></span><input type="range" min={1} max={50} value={b} onChange={(e) => setB(Number(e.target.value))} /></label>
-        <label><span>Rows per band <span className="mono">r = {r}</span></span><input type="range" min={1} max={12} value={r} onChange={(e) => setR(Number(e.target.value))} /></label>
+      <div className="viz-controls" style={{ marginTop: 0 }}>
+        <span className="viz-label">bands × rows</span>
+        <div className="segmented" role="group" aria-label="Bands and rows">
+          {CONFIGS.map(([bb, rr], j) => <button key={j} type="button" className="seg" aria-pressed={ci === j} onClick={() => setCi(j)}>{`${bb}×${rr}`}</button>)}
+        </div>
       </div>
-      <figcaption className="viz-caption" aria-live="polite">
-        A signature of <span className="mono">{b * r}</span> MinHashes is cut into {b} bands of {r}. Two documents become a candidate pair if any band matches
-        exactly, with probability 1 − (1 − J<sup>{r}</sup>)<sup>{b}</sup>. The curve rises steeply near J ≈ (1/b)<sup>1/r</sup> ={" "}
-        <span className="mono">{t.toFixed(2)}</span> (the vertical line): pairs at J = 0.3 are caught with probability{" "}
-        <span className="mono">{P(0.3).toFixed(3)}</span>, and pairs at J = 0.9 with probability <span className="mono">{P(0.9).toFixed(3)}</span>. More rows
-        sharpen and shift the step right; more bands shift it left.
+      <svg viewBox={`0 0 ${W} ${Y0 + PH + 18}`} style={{ width: "100%", maxWidth: 460, display: "block", margin: "0 auto" }} role="img" aria-label="Probability of becoming a candidate pair against similarity">
+        <line x1={X0} x2={X0 + PW} y1={y(0)} y2={y(0)} stroke="var(--border)" />
+        <line x1={X0} x2={X0} y1={y(0)} y2={y(1)} stroke="var(--border)" />
+        {CONFIGS.map(([bb, rr], j) => j !== ci && <polyline key={j} points={curve(bb, rr)} fill="none" stroke="var(--text-muted)" strokeWidth={1} opacity={0.5} />)}
+        <polyline points={curve(b, r)} fill="none" stroke="var(--accent)" strokeWidth={2} />
+        <line x1={x(thr)} x2={x(thr)} y1={y(0)} y2={y(1)} stroke="var(--text)" strokeDasharray="4 3" />
+        {[0, 0.25, 0.5, 0.75, 1].map((s) => <text key={s} x={x(s)} y={Y0 + PH + 13} textAnchor="middle" className="viz-label">{s}</text>)}
+        {[0, 0.5, 1].map((p) => <text key={p} x={X0 - 5} y={y(p) + 4} textAnchor="end" className="viz-label">{p}</text>)}
+      </svg>
+      <div className="mono" style={{ fontSize: 12, margin: "6px 0" }} aria-live="polite">
+        {b * r} hashes; threshold ≈ {thr.toFixed(2)}; P(candidate) at similarity 0.5: {pCand(0.5, b, r).toFixed(3)}, at 0.85:{" "}
+        {pCand(0.85, b, r).toFixed(3)}
+      </div>
+      <figcaption className="viz-caption">
+        The chance that two documents become a candidate pair, against their Jaccard similarity, when signatures are cut into b bands
+        of r rows each. More rows per band make the step steeper and move it to the right; the dashed line marks the approximate
+        threshold (1/b) to the power 1/r. Pairs left of the step are rarely compared, pairs right of it are almost always found.
       </figcaption>
     </figure>
   );
