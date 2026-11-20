@@ -90,7 +90,7 @@ export const lesson: LessonContent = {
 
       <Theorem title="spectral form">
         <p>
-          If <M>{"K = \\sum_j \\mu_j u_j u_j^\\top"}</M> with orthonormal <M>{"u_j"}</M> (m6.5.1), then
+          If <M>{"K = \\sum_j \\mu_j u_j u_j^\\top"}</M> with orthonormal <M>{"u_j"}</M> (m6.3.3), then
         </p>
         <MD>{"\\hat y = \\sum_j \\frac{\\mu_j}{\\mu_j + \\lambda m} \\langle u_j, y\\rangle u_j, \\qquad \\operatorname{df}(\\lambda) = \\operatorname{tr} S = \\sum_j \\frac{\\mu_j}{\\mu_j + \\lambda m},"}</MD>
         <p>where <M>{"S = K(K + \\lambda m I)^{-1}"}</M> is the smoother matrix.</p>
