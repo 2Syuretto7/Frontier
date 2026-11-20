@@ -989,6 +989,32 @@ import { lesson as l9_7_4 } from "./l9.7.4";
 import { lesson as l9_8_1 } from "./l9.8.1";
 import { lesson as l9_8_2 } from "./l9.8.2";
 import { lesson as l9_8_3 } from "./l9.8.3";
+import { lesson as l10_1_1 } from "./l10.1.1";
+import { lesson as l10_1_2 } from "./l10.1.2";
+import { lesson as l10_1_3 } from "./l10.1.3";
+import { lesson as l10_1_4 } from "./l10.1.4";
+import { lesson as l10_2_1 } from "./l10.2.1";
+import { lesson as l10_2_2 } from "./l10.2.2";
+import { lesson as l10_2_3 } from "./l10.2.3";
+import { lesson as l10_2_4 } from "./l10.2.4";
+import { lesson as l10_3_1 } from "./l10.3.1";
+import { lesson as l10_3_2 } from "./l10.3.2";
+import { lesson as l10_3_3 } from "./l10.3.3";
+import { lesson as l10_3_4 } from "./l10.3.4";
+import { lesson as l10_4_1 } from "./l10.4.1";
+import { lesson as l10_4_2 } from "./l10.4.2";
+import { lesson as l10_4_3 } from "./l10.4.3";
+import { lesson as l10_5_1 } from "./l10.5.1";
+import { lesson as l10_5_2 } from "./l10.5.2";
+import { lesson as l10_5_3 } from "./l10.5.3";
+import { lesson as l10_6_1 } from "./l10.6.1";
+import { lesson as l10_6_2 } from "./l10.6.2";
+import { lesson as l10_6_3 } from "./l10.6.3";
+import { lesson as l10_6_4 } from "./l10.6.4";
+import { lesson as l10_7_1 } from "./l10.7.1";
+import { lesson as l10_7_2 } from "./l10.7.2";
+import { lesson as l10_7_3 } from "./l10.7.3";
+import { lesson as l10_7_4 } from "./l10.7.4";
 
 export const LESSONS: readonly LessonContent[] = [
   m0_1_1,
@@ -1981,4 +2007,30 @@ export const LESSONS: readonly LessonContent[] = [
   l9_8_1,
   l9_8_2,
   l9_8_3,
+  l10_1_1,
+  l10_1_2,
+  l10_1_3,
+  l10_1_4,
+  l10_2_1,
+  l10_2_2,
+  l10_2_3,
+  l10_2_4,
+  l10_3_1,
+  l10_3_2,
+  l10_3_3,
+  l10_3_4,
+  l10_4_1,
+  l10_4_2,
+  l10_4_3,
+  l10_5_1,
+  l10_5_2,
+  l10_5_3,
+  l10_6_1,
+  l10_6_2,
+  l10_6_3,
+  l10_6_4,
+  l10_7_1,
+  l10_7_2,
+  l10_7_3,
+  l10_7_4,
 ];

@@ -3,91 +3,68 @@
 import { useState } from "react";
 
 /*
- * Recorded offline: a one-hidden-layer network with 128 quadratic units, f(a, b) = V (e_a + e'_b)², trained by AdamW
- * (learning rate 0.003) with cross-entropy on 40% of the 961 pairs of addition mod 31, for 8000 full-batch steps.
- * Columns: step, train accuracy, test accuracy, train loss, test loss, parameter norm.
+ * Results of real training runs, recorded offline: a two-layer network with quadratic activation and 256 hidden units learns
+ * (a + b) mod 31 from one-hot inputs, trained full batch with Adam (learning rate 0.003, betas 0.9 and 0.98) and decoupled weight
+ * decay, on a random fraction of the 961 pairs, for 20,000 steps. Accuracy is measured at log-spaced steps.
  */
-const RUN_WD = [[0, 0.0208, 0.0277, 3.4779, 3.4798, 89.49], [1, 0.026, 0.0277, 3.452, 3.4839, 89.34], [2, 0.0365, 0.0277, 3.4274, 3.489, 89.19], [3, 0.0521, 0.026, 3.404, 3.495, 89.05], [4, 0.0599, 0.0243, 3.3815, 3.5015, 88.91], [5, 0.0625, 0.0243, 3.3598, 3.5084, 88.78], [6, 0.0729, 0.0173, 3.3388, 3.5156, 88.66], [7, 0.0833, 0.0156, 3.3184, 3.5229, 88.53], [8, 0.0911, 0.0156, 3.2985, 3.5302, 88.41], [10, 0.1068, 0.0139, 3.2597, 3.5444, 88.19], [11, 0.1198, 0.0139, 3.2406, 3.5511, 88.09], [13, 0.1406, 0.0139, 3.2031, 3.5638, 87.89], [16, 0.1797, 0.0139, 3.1478, 3.581, 87.63], [18, 0.2109, 0.0087, 3.1114, 3.5914, 87.47], [21, 0.2474, 0.0087, 3.0574, 3.6064, 87.27], [25, 0.2995, 0.0087, 2.9863, 3.6264, 87.06], [29, 0.3516, 0.0087, 2.9159, 3.6478, 86.91], [33, 0.4062, 0.0069, 2.8456, 3.6711, 86.81], [39, 0.4922, 0.0069, 2.7394, 3.7094, 86.75], [45, 0.5573, 0.0069, 2.6317, 3.7503, 86.79], [52, 0.6276, 0.0069, 2.5037, 3.8003, 86.94], [61, 0.7188, 0.0069, 2.335, 3.8678, 87.27], [71, 0.7943, 0.0052, 2.1427, 3.9476, 87.76], [83, 0.8698, 0.0035, 1.9081, 4.0497, 88.51], [97, 0.9167, 0.0035, 1.6352, 4.1756, 89.53], [112, 0.9635, 0.0069, 1.3539, 4.3147, 90.72], [131, 0.987, 0.0052, 1.0318, 4.4899, 92.27], [152, 0.9948, 0.0052, 0.7391, 4.6709, 93.89], [178, 0.9974, 0.0052, 0.4791, 4.8614, 95.59], [207, 1.0, 0.0069, 0.3024, 5.0179, 96.99], [241, 1.0, 0.0069, 0.1906, 5.1307, 98.03], [280, 1.0, 0.0069, 0.1235, 5.1981, 98.71], [326, 1.0, 0.0052, 0.0798, 5.2344, 99.24], [380, 1.0, 0.0087, 0.0499, 5.2473, 99.8], [443, 1.0, 0.0104, 0.0297, 5.2354, 100.52], [516, 1.0, 0.0104, 0.0166, 5.1912, 101.47], [600, 1.0, 0.0156, 0.0087, 5.1082, 102.68], [699, 1.0, 0.0208, 0.0041, 4.9767, 104.24], [814, 1.0, 0.0329, 0.0017, 4.7856, 106.14], [948, 1.0, 0.0589, 0.0007, 4.5149, 108.36], [1104, 1.0, 0.0919, 0.0002, 4.1496, 110.86], [1286, 1.0, 0.156, 0.0001, 3.6997, 113.47], [1498, 1.0, 0.2149, 0.0, 3.2115, 115.64], [1744, 1.0, 0.2998, 0.0, 2.7116, 116.26], [2031, 1.0, 0.4021, 0.0, 2.1623, 114.85], [2365, 1.0, 0.5442, 0.0, 1.6173, 112.9], [2754, 1.0, 0.6707, 0.0, 1.1258, 111.24], [3207, 1.0, 0.8111, 0.0, 0.7236, 109.83], [3735, 1.0, 0.9012, 0.0, 0.4327, 108.61], [4350, 1.0, 0.9532, 0.0, 0.2446, 107.53], [5066, 1.0, 0.9809, 0.0, 0.1349, 106.57], [5899, 1.0, 0.9913, 0.0, 0.0756, 105.7], [6870, 1.0, 0.9965, 0.0, 0.0435, 104.93], [8000, 1.0, 0.9983, 0.0, 0.0263, 104.27]];
-const RUN_NOWD = [[0, 0.0208, 0.0277, 3.4779, 3.4798, 89.49], [1, 0.026, 0.0277, 3.4523, 3.4843, 89.47], [2, 0.0365, 0.0277, 3.4278, 3.4898, 89.46], [3, 0.0521, 0.026, 3.4042, 3.4962, 89.45], [4, 0.0599, 0.0243, 3.3815, 3.5032, 89.45], [5, 0.0625, 0.026, 3.3594, 3.5107, 89.45], [6, 0.0729, 0.0173, 3.3379, 3.5185, 89.46], [7, 0.0833, 0.0156, 3.3168, 3.5264, 89.47], [8, 0.0911, 0.0156, 3.2961, 3.5344, 89.48], [10, 0.1068, 0.0139, 3.2552, 3.5501, 89.52], [11, 0.1198, 0.0139, 3.235, 3.5577, 89.55], [13, 0.1458, 0.0156, 3.1946, 3.5722, 89.61], [16, 0.1771, 0.0121, 3.1339, 3.5922, 89.74], [18, 0.2083, 0.0087, 3.0933, 3.6046, 89.85], [21, 0.2526, 0.0104, 3.032, 3.6229, 90.03], [25, 0.3047, 0.0087, 2.9494, 3.648, 90.34], [29, 0.3646, 0.0087, 2.8655, 3.6757, 90.7], [33, 0.4297, 0.0087, 2.7798, 3.7069, 91.12], [39, 0.5078, 0.0052, 2.6474, 3.7599, 91.84], [45, 0.5781, 0.0069, 2.5097, 3.819, 92.64], [52, 0.6615, 0.0052, 2.3425, 3.8943, 93.68], [61, 0.7552, 0.0035, 2.1178, 4.002, 95.14], [71, 0.8307, 0.0052, 1.8588, 4.1379, 96.89], [83, 0.9089, 0.0052, 1.5435, 4.3231, 99.1], [97, 0.9505, 0.0069, 1.1875, 4.5656, 101.76], [112, 0.9844, 0.0069, 0.8464, 4.8495, 104.6], [131, 0.9974, 0.0069, 0.5098, 5.226, 108.02], [152, 1.0, 0.0069, 0.2754, 5.6294, 111.38], [178, 1.0, 0.0069, 0.133, 6.0612, 114.79], [207, 1.0, 0.0087, 0.067, 6.4454, 117.69], [241, 1.0, 0.0087, 0.0346, 6.8072, 120.31], [280, 1.0, 0.0087, 0.0181, 7.1562, 122.72], [326, 1.0, 0.0104, 0.0092, 7.5194, 125.13], [380, 1.0, 0.0104, 0.0044, 7.9092, 127.61], [443, 1.0, 0.0104, 0.002, 8.3359, 130.2], [516, 1.0, 0.0104, 0.0008, 8.8086, 132.95], [600, 1.0, 0.0104, 0.0003, 9.3349, 135.88], [699, 1.0, 0.0104, 0.0001, 9.939, 139.07], [814, 1.0, 0.0104, 0.0, 10.6241, 142.5], [948, 1.0, 0.0104, 0.0, 11.4012, 146.13], [1104, 1.0, 0.0121, 0.0, 12.2611, 149.75], [1286, 1.0, 0.0121, 0.0, 13.127, 152.84], [1498, 1.0, 0.0104, 0.0, 13.8164, 154.85], [1744, 1.0, 0.0104, 0.0, 14.2552, 156.0], [2031, 1.0, 0.0104, 0.0, 14.5462, 156.74], [2365, 1.0, 0.0104, 0.0, 14.7669, 157.3], [2754, 1.0, 0.0087, 0.0, 14.9498, 157.75], [3207, 1.0, 0.0087, 0.0, 15.1093, 158.15], [3735, 1.0, 0.0087, 0.0, 15.2532, 158.51], [4350, 1.0, 0.0087, 0.0, 15.3858, 158.84], [5066, 1.0, 0.0087, 0.0, 15.51, 159.15], [5899, 1.0, 0.0087, 0.0, 15.6278, 159.44], [6870, 1.0, 0.0087, 0.0, 15.7407, 159.72], [8000, 1.0, 0.0087, 0.0, 15.8497, 159.99]];
-const CONC = { wd: 0.7705, nowd: 0.2761 };
-const P = 31;
+const STEPS = [1, 2, 3, 4, 5, 6, 8, 10, 13, 16, 20, 25, 32, 40, 50, 63, 79, 100, 126, 158, 200, 251, 316, 398, 501, 631, 794, 1000, 1259, 1585, 1995, 2512, 3162, 3981, 5012, 6310, 7943, 10000, 12589, 15849, 19953];
 
-export function circuitLogits(a: number, b: number, ks: number[]) {
-  return Array.from({ length: P }, (_, c) => ks.reduce((s, k) => s + Math.cos((2 * Math.PI * k * (a + b - c)) / P), 0));
-}
+/** Train and test accuracy recorded during the runs, keyed by weight decay and training fraction. */
+const RUNS: Record<string, { tr: number[]; te: number[] }> = {
+  "0.0_0.3": { tr: [0.066, 0.09, 0.132, 0.174, 0.198, 0.219, 0.247, 0.267, 0.309, 0.368, 0.413, 0.5, 0.691, 0.865, 0.99, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], te: [0.024, 0.027, 0.018, 0.018, 0.016, 0.015, 0.016, 0.016, 0.016, 0.016, 0.013, 0.01, 0.007, 0.003, 0.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001, 0.001, 0.003, 0.003, 0.004, 0.004, 0.004, 0.006, 0.004, 0.003, 0.003, 0.003, 0.003, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] },
+  "0.0_0.5": { tr: [0.077, 0.096, 0.115, 0.138, 0.158, 0.196, 0.252, 0.315, 0.392, 0.452, 0.54, 0.617, 0.746, 0.898, 0.992, 0.998, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], te: [0.019, 0.012, 0.01, 0.006, 0.006, 0.006, 0.008, 0.008, 0.008, 0.008, 0.006, 0.004, 0.006, 0.002, 0.0, 0.0, 0.0, 0.004, 0.004, 0.006, 0.01, 0.012, 0.015, 0.017, 0.029, 0.033, 0.04, 0.048, 0.054, 0.06, 0.06, 0.06, 0.064, 0.064, 0.064, 0.071, 0.071, 0.071, 0.071, 0.071, 0.071] },
+  "0.0_0.7": { tr: [0.051, 0.067, 0.082, 0.106, 0.124, 0.143, 0.174, 0.198, 0.235, 0.298, 0.36, 0.452, 0.673, 0.872, 0.978, 0.997, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], te: [0.028, 0.014, 0.01, 0.007, 0.007, 0.007, 0.007, 0.007, 0.003, 0.003, 0.0, 0.0, 0.0, 0.0, 0.003, 0.003, 0.014, 0.035, 0.042, 0.055, 0.062, 0.09, 0.121, 0.159, 0.239, 0.315, 0.415, 0.547, 0.623, 0.644, 0.668, 0.685, 0.696, 0.706, 0.713, 0.716, 0.73, 0.737, 0.744, 0.751, 0.751] },
+  "0.3_0.3": { tr: [0.066, 0.09, 0.132, 0.174, 0.198, 0.219, 0.247, 0.267, 0.309, 0.358, 0.41, 0.497, 0.688, 0.847, 0.986, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], te: [0.024, 0.027, 0.018, 0.018, 0.016, 0.015, 0.016, 0.016, 0.016, 0.016, 0.015, 0.01, 0.007, 0.003, 0.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.003, 0.004, 0.004, 0.007, 0.009, 0.012, 0.009, 0.006, 0.006, 0.007, 0.006, 0.006, 0.009, 0.015, 0.037, 0.071, 0.108, 0.143, 0.196, 0.236, 0.253] },
+  "0.3_0.5": { tr: [0.077, 0.096, 0.115, 0.138, 0.158, 0.196, 0.252, 0.315, 0.392, 0.452, 0.537, 0.61, 0.735, 0.887, 0.983, 0.998, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], te: [0.019, 0.012, 0.01, 0.006, 0.006, 0.006, 0.008, 0.008, 0.008, 0.008, 0.006, 0.004, 0.006, 0.004, 0.0, 0.0, 0.002, 0.004, 0.006, 0.01, 0.017, 0.029, 0.044, 0.077, 0.175, 0.258, 0.443, 0.628, 0.813, 0.933, 0.985, 0.998, 0.998, 0.998, 0.996, 0.996, 0.994, 0.998, 0.998, 1.0, 1.0] },
+  "0.3_0.7": { tr: [0.051, 0.067, 0.082, 0.106, 0.124, 0.143, 0.174, 0.198, 0.237, 0.299, 0.359, 0.448, 0.653, 0.865, 0.975, 0.996, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], te: [0.028, 0.014, 0.01, 0.007, 0.007, 0.007, 0.007, 0.003, 0.003, 0.003, 0.0, 0.0, 0.0, 0.0, 0.003, 0.003, 0.014, 0.038, 0.062, 0.09, 0.156, 0.284, 0.488, 0.74, 0.91, 0.997, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] },
+  "1.0_0.3": { tr: [0.066, 0.09, 0.132, 0.174, 0.198, 0.219, 0.247, 0.267, 0.306, 0.351, 0.41, 0.462, 0.656, 0.812, 0.969, 0.997, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], te: [0.024, 0.027, 0.018, 0.018, 0.016, 0.015, 0.016, 0.016, 0.016, 0.015, 0.016, 0.012, 0.007, 0.004, 0.0, 0.0, 0.001, 0.001, 0.001, 0.001, 0.003, 0.007, 0.007, 0.01, 0.013, 0.025, 0.039, 0.061, 0.11, 0.132, 0.235, 0.395, 0.605, 0.788, 0.874, 0.924, 0.954, 0.964, 0.967, 0.976, 0.976] },
+  "1.0_0.5": { tr: [0.077, 0.096, 0.115, 0.138, 0.158, 0.198, 0.252, 0.315, 0.394, 0.448, 0.537, 0.602, 0.713, 0.86, 0.975, 0.998, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], te: [0.019, 0.012, 0.01, 0.006, 0.006, 0.006, 0.008, 0.01, 0.01, 0.01, 0.008, 0.006, 0.006, 0.004, 0.002, 0.0, 0.002, 0.006, 0.015, 0.029, 0.052, 0.139, 0.287, 0.557, 0.811, 0.96, 0.99, 0.998, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] },
+  "1.0_0.7": { tr: [0.051, 0.067, 0.083, 0.106, 0.124, 0.143, 0.176, 0.198, 0.237, 0.295, 0.347, 0.436, 0.615, 0.83, 0.972, 0.996, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], te: [0.028, 0.014, 0.01, 0.007, 0.007, 0.007, 0.007, 0.003, 0.007, 0.003, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.021, 0.066, 0.142, 0.308, 0.63, 0.882, 0.99, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] },
+};
+
+const WDS = ["0.0", "0.3", "1.0"];
+const FRACS = ["0.3", "0.5", "0.7"];
 
 export function GrokkingViz() {
-  const [wd, setWd] = useState(true);
-  const [a, setA] = useState(17);
-  const [b, setB] = useState(20);
-  const [K, setK] = useState(3);
-  const run = wd ? RUN_WD : RUN_NOWD;
-  const W = 330, H = 178, X0 = 40, PW = 280, Y0 = 146, PH = 118;
-  const lmax = Math.log10(8000);
-  const px = (s: number) => X0 + (Math.log10(Math.max(1, s)) / lmax) * PW;
-  const py = (v: number) => Y0 - v * PH;
-  const normMax = 170;
-  const ks = [1, 4, 9, 13, 6].slice(0, K);
-  const logits = circuitLogits(a, b, ks);
-  const best = logits.indexOf(Math.max(...logits));
-  const runner = Math.max(...logits.filter((_, c) => c !== best));
-  const bx = (c: number) => X0 + (c / P) * PW, bw = PW / P;
-  const ly = (v: number) => 74 - (v / Math.max(1, K)) * 60;
+  const [w, setW] = useState(2);
+  const [f, setF] = useState(1);
+  const run = RUNS[`${WDS[w]}_${FRACS[f]}`];
+  const W = 330, H = 180, X0 = 30, PW = 290, Y0 = 10, PH = 140;
+  const px = (s: number) => X0 + (Math.log10(s) / Math.log10(20000)) * PW;
+  const py = (y: number) => Y0 + PH - y * PH;
+  const line = (ys: number[]) => ys.map((y, i) => `${i ? "L" : "M"}${px(STEPS[i]).toFixed(1)},${py(y).toFixed(1)}`).join(" ");
+  const fin = run.te[run.te.length - 1];
+  const at = run.te.findIndex((x) => x >= 0.9);
   return (
     <figure className="viz">
-      <div className="viz-controls" style={{ marginTop: 0, flexWrap: "wrap", gap: 8 }}>
+      <div className="viz-controls" style={{ marginTop: 0 }}>
         <div className="segmented" role="group" aria-label="Weight decay">
-          <button className="seg" aria-pressed={wd} onClick={() => setWd(true)}>weight decay 0.5</button>
-          <button className="seg" aria-pressed={!wd} onClick={() => setWd(false)}>no weight decay</button>
+          {WDS.map((v, i) => <button key={v} type="button" className="seg" aria-pressed={w === i} onClick={() => setW(i)}>decay {Number(v)}</button>)}
+        </div>
+        <div className="segmented" role="group" aria-label="Fraction of pairs used for training">
+          {FRACS.map((v, i) => <button key={v} type="button" className="seg" aria-pressed={f === i} onClick={() => setF(i)}>train on {Math.round(Number(v) * 100)}%</button>)}
         </div>
       </div>
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: 460, display: "block", margin: "0 auto" }} role="img" aria-label="Train and test accuracy and parameter norm against training step on a log scale">
-        <line x1={X0} x2={X0 + PW} y1={Y0} y2={Y0} stroke="var(--border)" />
-        <line x1={X0} x2={X0} y1={Y0} y2={Y0 - PH} stroke="var(--border)" />
-        {[0, 0.5, 1].map((v) => <text key={v} x={X0 - 4} y={py(v) + 4} textAnchor="end" className="viz-label">{v * 100}%</text>)}
-        {[1, 10, 100, 1000].map((s, i) => <text key={s} x={px(s)} y={Y0 + 13} textAnchor="middle" className="viz-label">10{"⁰¹²³"[i]}</text>)}
-        <path d={run.map((r, i) => `${i ? "L" : "M"}${px(r[0]).toFixed(1)},${py(r[5] / normMax).toFixed(1)}`).join(" ")} fill="none" stroke="var(--text-muted)" strokeWidth={1.5} strokeDasharray="4 3" />
-        <path d={run.map((r, i) => `${i ? "L" : "M"}${px(r[0]).toFixed(1)},${py(r[1]).toFixed(1)}`).join(" ")} fill="none" stroke="var(--code-function)" strokeWidth={2} />
-        <path d={run.map((r, i) => `${i ? "L" : "M"}${px(r[0]).toFixed(1)},${py(r[2]).toFixed(1)}`).join(" ")} fill="none" stroke="var(--accent)" strokeWidth={2} />
-        <text x={X0 + 4} y={14} className="viz-label" style={{ fill: "var(--code-function)" }}>train</text>
-        <text x={X0 + 44} y={14} className="viz-label" style={{ fill: "var(--accent)" }}>test</text>
-        <text x={X0 + 78} y={14} className="viz-label">dashed: parameter norm</text>
-        <text x={X0 + PW} y={H - 2} textAnchor="end" className="viz-label">training step (log scale)</text>
-      </svg>
-      <div className="mono" style={{ fontSize: 12, margin: "6px 0" }} aria-live="polite">
-        after 8000 steps: test accuracy {(100 * run[run.length - 1][2]).toFixed(1)}%, parameter norm {run[run.length - 1][5]}; mean share of each unit&apos;s input power in its top frequency {(wd ? CONC.wd : CONC.nowd).toFixed(2)}
-      </div>
-      <div className="viz-controls" style={{ flexWrap: "wrap", gap: 8 }}>
-        <label className="viz-label" style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          a = {a}
-          <input type="range" min={0} max={P - 1} value={a} onChange={(e) => setA(Number(e.target.value))} aria-label="First summand" />
-        </label>
-        <label className="viz-label" style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          b = {b}
-          <input type="range" min={0} max={P - 1} value={b} onChange={(e) => setB(Number(e.target.value))} aria-label="Second summand" />
-        </label>
-        <div className="segmented" role="group" aria-label="Number of frequencies">
-          {[1, 2, 3, 5].map((k) => (
-            <button key={k} className="seg" aria-pressed={K === k} onClick={() => setK(k)}>{k} freq.</button>
-          ))}
-        </div>
-      </div>
-      <svg viewBox={`0 0 ${W} 110`} style={{ width: "100%", maxWidth: 460, display: "block", margin: "0 auto" }} role="img" aria-label="Logits over all answers c from the Fourier circuit">
-        <line x1={X0} x2={X0 + PW} y1={ly(0)} y2={ly(0)} stroke="var(--border)" />
-        {logits.map((v, c) => (
-          <rect key={c} x={bx(c)} y={Math.min(ly(v), ly(0))} width={bw - 1} height={Math.abs(ly(v) - ly(0))} fill={c === best ? "var(--accent)" : "var(--code-function)"} opacity={c === best ? 1 : 0.6} />
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: 460, display: "block", margin: "0 auto" }} role="img" aria-label="Training and test accuracy against training steps">
+        {[0, 0.5, 1].map((y) => (
+          <g key={y}>
+            <line x1={X0} x2={X0 + PW} y1={py(y)} y2={py(y)} stroke="var(--border)" strokeDasharray={y ? "2 3" : undefined} />
+            <text x={X0 - 4} y={py(y) + 4} textAnchor="end" className="viz-label">{y}</text>
+          </g>
         ))}
-        {[0, 10, 20, 30].map((c) => <text key={c} x={bx(c) + bw / 2} y={104} textAnchor="middle" className="viz-label">{c}</text>)}
+        <path d={line(run.tr)} fill="none" stroke="var(--text-muted)" strokeWidth={1.5} />
+        <path d={line(run.te)} fill="none" stroke="var(--accent)" strokeWidth={2} />
+        {[1, 10, 100, 1000, 10000].map((s) => <text key={s} x={px(s)} y={Y0 + PH + 13} textAnchor={s === 1 ? "start" : "middle"} className="viz-label">{s.toLocaleString("en-IN")}</text>)}
+        <text x={X0 + PW / 2} y={H - 4} textAnchor="middle" className="viz-label">training step (log scale); grey: train, coloured: test</text>
       </svg>
       <div className="mono" style={{ fontSize: 12, margin: "6px 0" }} aria-live="polite">
-        circuit logits peak at c = {best}; (a + b) mod {P} = {(a + b) % P}; margin over the runner-up {(logits[best] - runner).toFixed(3)}
+        test accuracy at step 20,000: {fin.toFixed(2)}; reaches 0.9 {at >= 0 ? `by step ${STEPS[at].toLocaleString("en-IN")}` : "never in this run"}
       </div>
       <figcaption className="viz-caption">
-        Top: a small network learning a + b mod 31 from 40% of the table, recorded offline. Train accuracy hits 100% within
-        a few hundred steps, by memorising; test accuracy stays near chance and then, with weight decay, climbs to almost
-        100% thousands of steps later, as the parameter norm turns down. Without weight decay it never generalises. Bottom:
-        the algorithm the generalising network implements, scoring each answer c by Σ cos(2πk(a + b − c)/31) over a few
-        frequencies k; every term peaks at c = a + b mod 31.
+        Real training runs of a small network learning addition modulo 31 from part of the table. Training accuracy reaches 100%
+        within about a hundred steps, by memorising. Test accuracy stays near chance and then, much later, climbs to 100%: the
+        network has switched to a general rule. Weight decay drives the switch, and more training data makes it come sooner;
+        without decay and with little data it never comes.
       </figcaption>
     </figure>
   );
