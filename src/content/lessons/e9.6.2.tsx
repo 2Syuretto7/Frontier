@@ -332,7 +332,7 @@ def deterministic(kernel, x, runs):
     <>
       <p>
         This course has gone from threads and warps to tiled matrix multiplication, Triton, FlashAttention, low-precision kernels and the
-        engineering that makes them usable. The next course scales out instead of in: many GPUs, the collectives that connect them, and
+        engineering that makes them usable. The distributed training course scales out instead of in: many GPUs, the collectives that connect them, and
         the parallelism strategies that keep each one as busy as the kernels here keep a single SM.
       </p>
     </>
