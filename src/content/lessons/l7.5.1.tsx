@@ -37,7 +37,7 @@ export const lesson: LessonContent = {
   minutes: 45,
   links: {
     requires: ["l7.1.2", "m12.2.5"],
-    revisits: ["m12.2.1", "l2.2.1"],
+    revisits: ["m12.2.1", "l2.2.3"],
     foreshadows: ["l7.5.2", "l7.5.3", "l7.3.4"],
   },
 
@@ -78,7 +78,7 @@ export const lesson: LessonContent = {
         </p>
         <MD>{"V(D, G) = \\mathbb{E}_{x \\sim p_d}[\\log D(x)] + \\mathbb{E}_{z \\sim p_z}[\\log(1 - D(G(z)))],"}</MD>
         <p>
-          the log-likelihood of a logistic classifier (l2.2.1) labelling data as 1 and samples as 0. The GAN solves{" "}
+          the log-likelihood of a logistic classifier (l2.2.3) labelling data as 1 and samples as 0. The GAN solves{" "}
           <M>{"\\min_G \\max_D V(D, G)"}</M> (<C>gan_value</C>).
         </p>
       </Definition>
