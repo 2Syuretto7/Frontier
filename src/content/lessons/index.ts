@@ -868,6 +868,29 @@ import { lesson as l7_7_1 } from "./l7.7.1";
 import { lesson as l7_7_2 } from "./l7.7.2";
 import { lesson as l7_7_3 } from "./l7.7.3";
 import { lesson as l7_7_4 } from "./l7.7.4";
+import { lesson as m16_1_1 } from "./m16.1.1";
+import { lesson as m16_1_2 } from "./m16.1.2";
+import { lesson as m16_1_3 } from "./m16.1.3";
+import { lesson as m16_2_1 } from "./m16.2.1";
+import { lesson as m16_2_2 } from "./m16.2.2";
+import { lesson as m16_2_3 } from "./m16.2.3";
+import { lesson as m16_3_1 } from "./m16.3.1";
+import { lesson as m16_3_2 } from "./m16.3.2";
+import { lesson as m16_3_3 } from "./m16.3.3";
+import { lesson as m16_4_1 } from "./m16.4.1";
+import { lesson as m16_4_2 } from "./m16.4.2";
+import { lesson as m16_5_1 } from "./m16.5.1";
+import { lesson as m16_5_2 } from "./m16.5.2";
+import { lesson as m16_5_3 } from "./m16.5.3";
+import { lesson as m16_5_4 } from "./m16.5.4";
+import { lesson as m16_6_1 } from "./m16.6.1";
+import { lesson as m16_6_2 } from "./m16.6.2";
+import { lesson as m16_6_3 } from "./m16.6.3";
+import { lesson as m16_6_4 } from "./m16.6.4";
+import { lesson as m16_7_1 } from "./m16.7.1";
+import { lesson as m16_7_2 } from "./m16.7.2";
+import { lesson as m16_7_3 } from "./m16.7.3";
+import { lesson as m16_7_4 } from "./m16.7.4";
 
 export const LESSONS: readonly LessonContent[] = [
   m0_1_1,
@@ -1739,4 +1762,27 @@ export const LESSONS: readonly LessonContent[] = [
   l7_7_2,
   l7_7_3,
   l7_7_4,
+  m16_1_1,
+  m16_1_2,
+  m16_1_3,
+  m16_2_1,
+  m16_2_2,
+  m16_2_3,
+  m16_3_1,
+  m16_3_2,
+  m16_3_3,
+  m16_4_1,
+  m16_4_2,
+  m16_5_1,
+  m16_5_2,
+  m16_5_3,
+  m16_5_4,
+  m16_6_1,
+  m16_6_2,
+  m16_6_3,
+  m16_6_4,
+  m16_7_1,
+  m16_7_2,
+  m16_7_3,
+  m16_7_4,
 ];
