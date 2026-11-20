@@ -2,59 +2,72 @@
 
 import { useState } from "react";
 
-const npdf = (x: number, m: number, s: number) => Math.exp(-0.5 * ((x - m) / s) * ((x - m) / s)) / (s * Math.sqrt(2 * Math.PI));
-const GX = Array.from({ length: 241 }, (_, i) => -3 + (7 * i) / 240);
-const XOBS = 2, NOISE = 1;
-const PM = XOBS / (1 + NOISE), PS = Math.sqrt(NOISE / (1 + NOISE));
-const LOGEV = -0.5 * Math.log(2 * Math.PI * (1 + NOISE)) - (XOBS * XOBS) / (2 * (1 + NOISE));
+/** Linear-Gaussian model z ~ N(0, 1), x | z ~ N(W z, SIG^2), observed at x = X. */
+const W = 1.5, SIG = 0.5, X = 2;
+export const POST_M = (W * X) / (W * W + SIG * SIG), POST_V = (SIG * SIG) / (W * W + SIG * SIG);
+export const LOGPX = -0.5 * Math.log(2 * Math.PI * (W * W + SIG * SIG)) - (X * X) / (2 * (W * W + SIG * SIG));
 
-/** The evidence lower bound for a Gaussian model with one observation: the gap between log p(x) and the ELBO of a Gaussian q is exactly KL(q ‖ posterior). */
+/** ELBO of q = N(m, s^2) in closed form. */
+export function elbo(m: number, s: number) {
+  const lik = -0.5 * Math.log(2 * Math.PI * SIG * SIG) - ((X - W * m) ** 2 + W * W * s * s) / (2 * SIG * SIG);
+  const prior = -0.5 * Math.log(2 * Math.PI) - (m * m + s * s) / 2;
+  const ent = 0.5 * Math.log(2 * Math.PI * Math.E * s * s);
+  return lik + prior + ent;
+}
+
+/** KL(N(m, s^2) || N(POST_M, POST_V)). */
+export const klPost = (m: number, s: number) => Math.log(Math.sqrt(POST_V) / s) + (s * s + (m - POST_M) ** 2) / (2 * POST_V) - 0.5;
+
+const SHIFTS = [-0.6, -0.3, 0, 0.3], RATIOS = [0.5, 1, 2];
+const pdf = (z: number, m: number, v: number) => Math.exp(-((z - m) ** 2) / (2 * v)) / Math.sqrt(2 * Math.PI * v);
+
 export function ElboGapViz() {
-  const [mi, setMi] = useState(0);
-  const [si, setSi] = useState(100);
-  const m = mi / 100, s = si / 100;
-  const expLik = -0.5 * Math.log(2 * Math.PI * NOISE) - ((XOBS - m) * (XOBS - m) + s * s) / (2 * NOISE);
-  const klPrior = 0.5 * (m * m + s * s - 1) - Math.log(s);
-  const elbo = expLik - klPrior;
-  const W = 330, H = 150;
-  const X = (z: number) => 12 + ((z + 3) / 7) * (W - 24);
-  const Y = (v: number) => H - 14 - (Math.min(v, 1.4) / 1.4) * (H - 22);
-  const line = (f: (z: number) => number) => GX.map((z) => `${X(z).toFixed(1)},${Y(f(z)).toFixed(1)}`).join(" ");
-  const BW = 330, BH = 70;
-  const lo = -6, hi = -1.5;
-  const BX = (v: number) => 20 + ((Math.max(lo, v) - lo) / (hi - lo)) * (BW - 40);
+  const [si, setSi] = useState(1), [ri, setRi] = useState(2);
+  const m = POST_M + SHIFTS[si], s = Math.sqrt(POST_V) * RATIOS[ri];
+  const e = elbo(m, s), gap = klPost(m, s);
+  const Wd = 330, H = 170, X0 = 10, PW = Wd - 20, Y0 = 8, PH = H - Y0 - 30, ZL = -2.5, ZH = 3, YM = 1.6;
+  const sx = (z: number) => X0 + ((z - ZL) / (ZH - ZL)) * PW, sy = (y: number) => Y0 + PH - (Math.min(y, YM) / YM) * PH;
+  const grid = Array.from({ length: 301 }, (_, i) => ZL + (i * (ZH - ZL)) / 300);
+  const curve = (f: (z: number) => number) => grid.map((z, i) => `${i ? "L" : "M"}${sx(z).toFixed(1)},${sy(f(z)).toFixed(1)}`).join(" ");
+  const bar = (v: number) => Math.max(0, (v / 6) * 100);
   return (
     <figure className="viz">
-      <div className="viz-controls" style={{ marginTop: 0, flexWrap: "wrap", gap: 12 }}>
-        <label className="mono" style={{ fontSize: 13, display: "flex", gap: 6, alignItems: "center" }}>
-          q mean m = {m.toFixed(2)}
-          <input type="range" min={-150} max={250} value={mi} onChange={(e) => setMi(Number(e.target.value))} aria-label="mean of q" style={{ width: 110 }} />
-        </label>
-        <label className="mono" style={{ fontSize: 13, display: "flex", gap: 6, alignItems: "center" }}>
-          q sd s = {s.toFixed(2)}
-          <input type="range" min={20} max={200} value={si} onChange={(e) => setSi(Number(e.target.value))} aria-label="standard deviation of q" style={{ width: 110 }} />
-        </label>
+      <div className="viz-controls" style={{ marginTop: 0, flexWrap: "wrap", gap: 8 }}>
+        <span className="viz-label">shift of q&apos;s mean</span>
+        <div className="segmented" role="group" aria-label="Shift of the mean of q">
+          {SHIFTS.map((v, i) => <button key={v} type="button" className="seg" aria-pressed={si === i} onClick={() => setSi(i)}>{v > 0 ? `+${v}` : v}</button>)}
+        </div>
+        <span className="viz-label">width of q</span>
+        <div className="segmented" role="group" aria-label="Width of q relative to the posterior">
+          {RATIOS.map((v, i) => <button key={v} type="button" className="seg" aria-pressed={ri === i} onClick={() => setRi(i)}>{`${v}×`}</button>)}
+        </div>
       </div>
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: 460, display: "block", margin: "0 auto" }} role="img" aria-label="Prior, posterior and the approximating distribution q">
-        <polyline fill="none" stroke="var(--text-muted)" strokeDasharray="4 3" strokeWidth={1.2} points={line((z) => npdf(z, 0, 1))} />
-        <polyline fill="none" stroke="var(--text)" strokeWidth={1.8} points={line((z) => npdf(z, PM, PS))} />
-        <polyline fill="none" stroke="var(--accent)" strokeWidth={2} points={line((z) => npdf(z, m, s))} />
-        <line x1={X(XOBS)} x2={X(XOBS)} y1={8} y2={Y(0)} stroke="var(--danger)" strokeDasharray="2 3" />
-        <line x1={12} x2={W - 12} y1={Y(0)} y2={Y(0)} stroke="var(--border)" />
-        <text x={X(XOBS) + 4} y={16} className="viz-label">x = 2</text>
+      <svg viewBox={`0 0 ${Wd} ${H}`} style={{ width: "100%", maxWidth: 440, display: "block", margin: "0 auto" }} role="img" aria-label="Prior, posterior and approximate posterior">
+        <line x1={X0} x2={X0 + PW} y1={sy(0)} y2={sy(0)} stroke="var(--border-strong)" />
+        <path d={curve((z) => pdf(z, 0, 1))} fill="none" stroke="var(--text-muted)" strokeDasharray="4 3" strokeWidth={1.5} />
+        <path d={curve((z) => pdf(z, POST_M, POST_V))} fill="none" stroke="var(--success)" strokeWidth={2} />
+        <path d={curve((z) => pdf(z, m, s * s))} fill="none" stroke="var(--accent)" strokeWidth={2} />
+        {[-2, -1, 0, 1, 2, 3].map((t) => <text key={t} x={sx(t)} y={Y0 + PH + 16} textAnchor="middle" className="viz-label">{t}</text>)}
+        <text x={X0 + PW / 2} y={H - 2} textAnchor="middle" className="viz-label">latent z</text>
       </svg>
-      <svg viewBox={`0 0 ${BW} ${BH}`} style={{ width: "100%", maxWidth: 460, display: "block", margin: "0 auto" }} role="img" aria-label="Log evidence, the ELBO and the gap between them">
-        <rect x={BX(lo)} y={14} width={BX(elbo) - BX(lo)} height={16} fill="var(--accent)" opacity={0.7} />
-        <rect x={BX(elbo)} y={14} width={Math.max(0, BX(LOGEV) - BX(elbo))} height={16} fill="var(--danger)" opacity={0.5} />
-        <line x1={BX(LOGEV)} x2={BX(LOGEV)} y1={8} y2={36} stroke="var(--text)" strokeWidth={1.5} />
-        <text x={BX(LOGEV)} y={50} textAnchor="middle" className="viz-label">log p(x) = {LOGEV.toFixed(3)}</text>
-        <text x={20} y={64} className="viz-label">ELBO {elbo.toFixed(3)}, gap = KL(q ‖ posterior) {(LOGEV - elbo).toFixed(3)}</text>
-      </svg>
-      <figcaption className="viz-caption" aria-live="polite">
-        The model is z ~ N(0, 1) (dashed) and x | z ~ N(z, 1), with x = 2 observed; the exact posterior (dark curve) is
-        N(1, ½). The coloured curve is a Gaussian q you control. The bar shows log p(x), which does not depend on q, split
-        into the ELBO and the gap. The gap is the KL divergence from q to the posterior, so it is never negative and it
-        vanishes only when q equals the posterior, at m = 1 and s ≈ 0.71.
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 14px", justifyContent: "center", fontSize: 13 }}>
+        <span><span style={{ color: "var(--text-muted)" }}>●</span> prior p(z) (dashed)</span>
+        <span><span style={{ color: "var(--success)" }}>●</span> true posterior p(z | x)</span>
+        <span><span style={{ color: "var(--accent)" }}>●</span> approximation q(z)</span>
+      </div>
+      <div style={{ maxWidth: 360, margin: "8px auto 0", fontSize: 13 }}>
+        <div style={{ display: "flex", height: 14, border: "1px solid var(--border)", borderRadius: 3, overflow: "hidden" }} aria-hidden="true">
+          <div style={{ width: `${bar(gap)}%`, background: "var(--danger)" }} />
+        </div>
+      </div>
+      <div className="mono" style={{ fontSize: 13, margin: "6px 0" }} aria-live="polite">
+        {`log p(x) = ${LOGPX.toFixed(3)} = ELBO ${e.toFixed(3)} + gap ${gap.toFixed(3)}`}
+      </div>
+      <figcaption className="viz-caption">
+        For a model whose posterior is known exactly, the log-likelihood splits into the ELBO and a gap equal to the KL
+        divergence from q to the true posterior (the red bar, on a scale of 6 nats). Only q = posterior closes the gap. A q
+        twice as wide costs 0.81 nats, half as wide 0.32: the KL divergence penalises spreading mass where the posterior has
+        none more than missing some of it. Shifting the mean by 0.6, six-tenths of the prior&apos;s width, costs 1.80 nats.
       </figcaption>
     </figure>
   );
