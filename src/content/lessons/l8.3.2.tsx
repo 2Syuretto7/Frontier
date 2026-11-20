@@ -266,7 +266,7 @@ def router_z_loss(logit_rows):
         solution: AUX,
         tests: [
           { name: "fractions", code: `assert dispatch_fractions([[2, 1], [1, 0]], 4) == [0.25, 0.5, 0.25, 0.0] and abs(aux_loss([0.5, 0.5], [0.9, 0.1]) - 1.0) < 1e-12` },
-          { name: "z", code: `assert abs(router_z_loss([[0.0, 0.0], [1.0, 1.0]]) - (math.log(2) ** 2 + (1 + math.log(2)) ** 2) / 2) < 1e-12 and abs(router_z_loss([[1000.0, 1000.0]]) - (1000 + math.log(2)) ** 2) < 1e-6` },
+          { name: "z", code: `assert abs(router_z_loss([[0.0, 0.0, 0.0], [2.0, 2.0, 2.0]]) - (math.log(3) ** 2 + (2 + math.log(3)) ** 2) / 2) < 1e-12 and abs(router_z_loss([[1000.0, 1000.0]]) - (1000 + math.log(2)) ** 2) < 1e-6` },
         ],
       },
     },

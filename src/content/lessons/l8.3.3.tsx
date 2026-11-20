@@ -283,7 +283,7 @@ def expected_drop_rate(T, k, E, cf):
         solution: OVERFLOW,
         tests: [
           { name: "pmf", code: `assert abs(binom_pmf(5, 0.2, 2) - 10 * 0.04 * 0.512) < 1e-12 and abs(expected_overflow(4, 0.5, 2) - 0.375) < 1e-12` },
-          { name: "rate", code: `assert abs(expected_drop_rate(64, 1, 8, 1.0) - 0.13054695972) < 1e-9 and expected_drop_rate(8, 1, 2, 1.0) > expected_drop_rate(8, 1, 2, 1.5)` },
+          { name: "rate", code: `assert abs(expected_drop_rate(4, 1, 2, 1.0) - 0.1875) < 1e-12 and expected_drop_rate(8, 1, 2, 1.0) > expected_drop_rate(8, 1, 2, 1.5)` },
         ],
       },
     },

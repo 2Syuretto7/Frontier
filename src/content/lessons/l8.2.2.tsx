@@ -264,7 +264,7 @@ def kv_group(head, n_heads, n_kv_heads):
 `,
         solution: CACHE,
         tests: [
-          { name: "bytes", code: `assert kv_cache_bytes(80, 8, 128, 1) == 327680 and kv_cache_bytes(1, 2, 3, 4, 5, 1) == 240 and mla_cache_bytes(60, 512, 64, 1) == 69120` },
+          { name: "bytes", code: `assert kv_cache_bytes(40, 4, 64, 1) == 40960 and kv_cache_bytes(1, 2, 3, 4, 5, 1) == 240 and mla_cache_bytes(60, 512, 64, 1) == 69120` },
           { name: "groups", code: `assert [kv_group(h, 6, 3) for h in range(6)] == [0, 0, 1, 1, 2, 2] and [kv_group(h, 4, 1) for h in range(4)] == [0, 0, 0, 0]` },
         ],
       },

@@ -290,7 +290,7 @@ def minhash(sh, n):
 `,
         solution: DEDUP,
         tests: [
-          { name: "jaccard", code: `a = shingles("the cat sat on the mat", 2)\nb = shingles("the cat sat on a mat", 2)\nassert a == {"the cat", "cat sat", "sat on", "on the", "the mat"} and abs(jaccard(a, b) - 3 / 7) < 1e-12` },
+          { name: "jaccard", code: `a = shingles("a dog ran to the park", 2)\nb = shingles("a dog ran to a park", 2)\nassert a == {"a dog", "dog ran", "ran to", "to the", "the park"} and abs(jaccard(a, b) - 3 / 7) < 1e-12` },
           { name: "minhash", code: `h = lambda s, x: int(hashlib.md5(f"{s}:{x}".encode()).hexdigest()[:8], 16)\nassert minhash({"p", "q"}, 2) == [min(h(0, "p"), h(0, "q")), min(h(1, "p"), h(1, "q"))]\nA = shingles(" ".join(map(str, range(200))), 3)\nB = shingles(" ".join(map(str, range(50, 250))), 3)\nest = sum(x == y for x, y in zip(minhash(A, 200), minhash(B, 200))) / 200\nassert abs(est - jaccard(A, B)) < 0.08` },
         ],
       },

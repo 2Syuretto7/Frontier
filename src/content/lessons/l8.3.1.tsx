@@ -262,7 +262,7 @@ def sigmoid_topk_gates(logits, k):
 `,
         solution: GATES,
         tests: [
-          { name: "softmax", code: `g = softmax_topk_gates([2.0, 1.0, 0.0, -1.0], 2)\nassert top_k([0.5, -1.0, 4.0], 2) == [2, 0] and abs(g[0] - 1 / (1 + math.exp(-1))) < 1e-12 and abs(softmax_topk_gates([0.0, 0.0], 1, False)[0] - 0.5) < 1e-12` },
+          { name: "softmax", code: `g = softmax_topk_gates([3.0, 1.0, 0.0, -1.0], 2)\nassert top_k([0.5, -1.0, 4.0], 2) == [2, 0] and abs(g[0] - 1 / (1 + math.exp(-2))) < 1e-12 and abs(softmax_topk_gates([0.0, 0.0], 1, False)[0] - 0.5) < 1e-12` },
           { name: "sigmoid", code: `g = sigmoid_topk_gates([1.0, 0.0, -0.5, 2.0], 2)\ns = lambda v: 1 / (1 + math.exp(-v))\nassert set(g) == {3, 0} and abs(g[3] - s(2.0) / (s(2.0) + s(1.0))) < 1e-12` },
         ],
       },

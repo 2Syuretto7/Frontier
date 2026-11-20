@@ -260,7 +260,7 @@ def moe_params(d, h, n_routed, n_shared, k):
         solution: GRAIN,
         tests: [
           { name: "split", code: `assert routing_combinations(64, 16) == 488526937079580 and split_experts(16, 2, 4096, 4) == (64, 8, 1024)` },
-          { name: "params", code: `assert moe_params(7168, 2048, 256, 1, 8) == (11320164352, 398196736) and moe_params(10, 20, 4, 2, 1) == (3640, 1840)` },
+          { name: "params", code: `assert moe_params(4096, 1024, 64, 2, 6) == (830734336, 100925440) and moe_params(10, 20, 4, 2, 1) == (3640, 1840)` },
         ],
       },
     },

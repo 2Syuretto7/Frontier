@@ -266,7 +266,7 @@ def fit_offset(xs, ys, grid):
 `,
         solution: FIT,
         tests: [
-          { name: "line", code: `s, c = linfit([0, 1, 2, 3], [1, 2, 2, 4])\nassert abs(s - 0.9) < 1e-12 and abs(c - 0.9) < 1e-12\nA, alpha = fit_power([10, 1000], [3.0, 1.5], 1.0)\nassert abs(alpha - math.log10(4) / 2) < 1e-12 and abs(A - 2 * 10 ** alpha) < 1e-9` },
+          { name: "line", code: `s, c = linfit([0, 1, 2, 3], [1, 2, 2, 4])\nassert abs(s - 0.9) < 1e-12 and abs(c - 0.9) < 1e-12\nA, alpha = fit_power([10, 1000], [5.0, 1.5], 1.0)\nassert abs(alpha - math.log10(8) / 2) < 1e-12 and abs(A - 4 * 10 ** alpha) < 1e-9` },
           { name: "offset", code: `xs = [1, 3, 10, 30, 100]\nys = [2.0 + 3.0 * x ** -0.4 for x in xs]\nE, A, alpha, err = fit_offset(xs, ys, [1.0, 1.5, 2.0, 2.5, 6.0])\nassert E == 2.0 and abs(alpha - 0.4) < 1e-9 and err < 1e-20` },
         ],
       },
