@@ -105,8 +105,8 @@ export const lesson: LessonContent = {
           Training memory is roughly the frozen weights at their storage precision plus, for trainable parameters only, gradients,
           optimiser moments and any higher-precision copy, about 16 bytes each with Adam in mixed precision (<C>training_memory</C>).
           QLoRA stores the frozen weights in 4-bit NormalFloat, quantises the quantisation constants too, and pages optimiser state
-          to CPU memory under pressure. The scale <M>{"\\alpha/r"}</M> shrinks updates as r grows, so higher ranks learn more slowly; rank-
-          stabilised LoRA uses <M>{"\\alpha/\\sqrt r"}</M> instead (<C>lora_scale</C>).
+          to CPU memory under pressure. The scale <M>{"\\alpha/r"}</M> shrinks updates as r grows, so higher ranks learn more slowly;
+          rank-stabilised LoRA uses <M>{"\\alpha/\\sqrt r"}</M> instead (<C>lora_scale</C>).
         </p>
         <Code>{BUDGET}</Code>
       </Definition>
