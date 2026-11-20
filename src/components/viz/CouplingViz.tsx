@@ -60,7 +60,7 @@ export function CouplingViz() {
         {out.map((p, i) => <circle key={i} cx={c + s * p[0]} cy={c - s * p[1]} r={1.3} fill="var(--accent)" fillOpacity={0.55} />)}
       </svg>
       <div className="mono" style={{ fontSize: 13, margin: "6px 0" }} aria-live="polite">
-        {`mean log-determinant ${meanLd.toFixed(3)}; largest inversion error ${err.toExponential(1)}`}
+        {`mean log-determinant ${meanLd.toFixed(3)}; largest inversion error ${err < 1e-12 ? "below 1e-12" : err.toExponential(1)}`}
       </div>
       <figcaption className="viz-caption">
         Samples from a standard normal and a square grid, pushed through affine coupling layers that alternate which
