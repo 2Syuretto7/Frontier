@@ -166,7 +166,7 @@ export const lesson: LessonContent = {
       answer: { kind: "numeric", value: 9.8, tolerance: 0.01 },
     },
     {
-      key: "reads",
+      key: "pieces",
       rung: "check",
       prompt: <p>A tensor of 10 elements saved by 4 ranks is loaded on 3, both split as evenly as possible with the larger pieces first. How many reads are needed in total?</p>,
       answer: { kind: "numeric", value: 6, tolerance: 0 },
