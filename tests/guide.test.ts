@@ -47,7 +47,7 @@ test("projects outrank drills, which outrank the weekly plan", () => {
 });
 
 test("the scheduler begins a pulled frontier lesson, says why, and keeps the rest of its order", () => {
-  const base = { openLesson: null, dueReviews: 0, frontier: frontier(g, none), lastTrack: null, newLessonsToday: 0, pace: 2 };
+  const base = { openLesson: null, frontier: frontier(g, none), lastTrack: null, newLessonsToday: 0, pace: 2 };
   const step = chooseNextStep({ ...base, pulls: [pull("e0.1.1", "readiness")] });
   assert.equal(step.kind === "begin" && step.lesson.id, "e0.1.1");
   assert.equal(step.kind === "begin" && step.guided, "readiness");
@@ -55,10 +55,6 @@ test("the scheduler begins a pulled frontier lesson, says why, and keeps the res
   const plain = chooseNextStep({ ...base, pulls: [pull("m0.1.3", "project")] });
   assert.equal(plain.kind === "begin" && plain.lesson.id, "m0.1.1");
   assert.equal(plain.kind === "begin" && plain.guided, undefined);
-  // An open lesson and due reviews still come first.
-  assert.equal(chooseNextStep({ ...base, dueReviews: 3, pulls: [pull("e0.1.1", "project")] }).kind, "review");
-  // After a review session comes a lesson, never another review.
-  assert.equal(chooseNextStep({ ...base, dueReviews: 3, reviewedSinceLesson: true, pulls: [pull("e0.1.1", "project")] }).kind, "begin");
 });
 
 test("weeks run Monday to Sunday in India time", () => {
@@ -154,18 +150,17 @@ test("a blocked drill is never up next, but an attempt under way still is", () =
   assert.equal(planDrills(D, open, [], Date.now(), new Map([["a", "x"]])).next?.kind, "open");
 });
 
-test("the day's queue puts what is open and Review first, then weaves the drill and project into the lessons", () => {
+test("the day's queue puts what is open first, then weaves the drill and project into the lessons", () => {
   const lesson = (id: string): TodayItem => ({ kind: "begin", lessonId: id, title: id, why: null, pastPace: false });
   const queue = buildToday({
-    head: [{ kind: "continue", lessonId: "c", title: "c", why: null }, { kind: "review", count: 3 }],
+    head: [{ kind: "continue", lessonId: "c", title: "c", why: null }],
     revisits: [{ kind: "revisit", lessonId: "r", title: "r", why: "w" }],
     lessons: [lesson("x"), lesson("y")],
     drill: { kind: "drill", drillId: "d", title: "D", why: "w" },
     project: { kind: "project", projectId: 1, title: "P", why: "w" },
   });
-  assert.deepEqual(queue.map((i) => i.kind), ["continue", "review", "revisit", "begin", "drill", "project", "begin"]);
-  // After Review, Learn goes to the first lesson in the queue.
-  assert.equal(queue.filter((i) => i.kind !== "review").find(isLessonItem)?.kind, "continue");
+  assert.deepEqual(queue.map((i) => i.kind), ["continue", "revisit", "begin", "drill", "project", "begin"]);
+  assert.equal(queue.find(isLessonItem)?.kind, "continue");
   assert.deepEqual(buildToday({ head: [], revisits: [], lessons: [], drill: null, project: null }), []);
 });
 

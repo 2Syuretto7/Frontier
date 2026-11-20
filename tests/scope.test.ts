@@ -77,7 +77,7 @@ function walk(pick: (options: ReturnType<typeof frontier>, lastTrack: Track | nu
 }
 
 const learn = (options: ReturnType<typeof frontier>, lastTrack: Track | null) => {
-  const step = chooseNextStep({ openLesson: null, dueReviews: 0, frontier: options, lastTrack, newLessonsToday: 0, pace: 1e9 });
+  const step = chooseNextStep({ openLesson: null, frontier: options, lastTrack, newLessonsToday: 0, pace: 1e9 });
   return step.kind === "begin" ? step.lesson.id : null;
 };
 

@@ -8,7 +8,6 @@ import { Lock } from "@/components/ui/Icons";
 const LINKS: { href: string; label: string; match: (p: string) => boolean; section?: SectionId }[] = [
   { href: "/", label: "Home", match: (p) => p === "/" },
   { href: "/map", label: "Map", match: (p) => p.startsWith("/map") },
-  { href: "/review", label: "Review", match: (p) => p.startsWith("/review") },
   { href: "/drills", label: "Drills", match: (p) => p.startsWith("/drills"), section: "drills" },
   { href: "/gym", label: "Gym", match: (p) => p.startsWith("/gym"), section: "gym" },
   { href: "/interview", label: "Interview", match: (p) => p.startsWith("/interview"), section: "interview" },

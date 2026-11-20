@@ -417,19 +417,18 @@ export async function guidePulls(mastered: ReadonlySet<string>, pace: number): P
 }
 
 /**
- * The day's queue: what is open, Review, lessons a failed drill, gym case or weak interview answer sent the learner
+ * The day's queue: what is open, lessons a failed drill, gym case or weak interview answer sent the learner
  * back to, the day's new lessons at their pace, one drill, one gym case, a mock interview every other day and one
  * project step. The Learn button opens its first item.
  */
-export async function today({ afterReview = false }: { afterReview?: boolean } = {}): Promise<TodayItem[]> {
+export async function today(): Promise<TodayItem[]> {
   const { learnInputs } = await import("@/lib/learning");
-  const input = await learnInputs({ afterReview });
+  const input = await learnInputs();
 
   const head: TodayItem[] = [];
   if (input.openLesson) {
     head.push({ kind: "continue", lessonId: input.openLesson.id, title: input.openLesson.title, why: null });
   }
-  if (!input.reviewedSinceLesson && input.dueReviews >= 1) head.push({ kind: "review", count: input.dueReviews });
 
   // New lessons up to today's pace, picked one after another as Learn would pick them.
   const lessons: TodayItem[] = [];
@@ -437,7 +436,7 @@ export async function today({ afterReview = false }: { afterReview?: boolean } =
   let lastTrack = input.lastTrack;
   const slots = Math.max(0, input.pace - input.newLessonsToday - (input.openLesson ? 1 : 0));
   for (let k = 0; k < slots; k++) {
-    const step = chooseNextStep({ ...input, openLesson: null, dueReviews: 0, frontier: remaining, lastTrack, newLessonsToday: input.newLessonsToday + k });
+    const step = chooseNextStep({ ...input, openLesson: null, frontier: remaining, lastTrack, newLessonsToday: input.newLessonsToday + k });
     if (step.kind !== "begin") break;
     lessons.push({ kind: "begin", lessonId: step.lesson.id, title: step.lesson.title, why: step.why ?? null, pastPace: false });
     remaining = remaining.filter((n) => n.id !== step.lesson.id);
@@ -510,7 +509,7 @@ export async function today({ afterReview = false }: { afterReview?: boolean } =
   const queue = buildToday({ head, revisits, lessons, drill, gym, interview, project: step });
   if (queue.length === 0) {
     // Everything for today is done. Learn never stops at the pace: offer the next lesson anyway.
-    const next = chooseNextStep({ ...input, openLesson: null, dueReviews: 0 });
+    const next = chooseNextStep({ ...input, openLesson: null });
     if (next.kind === "begin") queue.push({ kind: "begin", lessonId: next.lesson.id, title: next.lesson.title, why: next.why ?? null, pastPace: true });
   }
   return queue.map((i) => (i.kind === "begin" ? { ...i, guided: guidedOf(i, input.pulls ?? []) } : i));

@@ -253,7 +253,6 @@ export const gymPulls = (open: readonly Remedy[], titleOf: (caseId: string) => s
 
 export type TodayItem =
   | { kind: "continue"; lessonId: string; title: string; why: string | null }
-  | { kind: "review"; count: number }
   | { kind: "revisit"; lessonId: string; title: string; why: string }
   | { kind: "begin"; lessonId: string; title: string; why: string | null; pastPace: boolean; guided?: string | null }
   | { kind: "drill"; drillId: string; title: string; why: string }
@@ -261,11 +260,11 @@ export type TodayItem =
   | { kind: "interview"; sessionId: number | null; mode: string; title: string; why: string }
   | { kind: "project"; projectId: number; title: string; why: string };
 
-/** Items that open a lesson, which is where the learner goes after a Review session. */
+/** Items that open a lesson. */
 export const isLessonItem = (i: TodayItem) => i.kind === "continue" || i.kind === "revisit" || i.kind === "begin";
 
 /**
- * One queue for the day: whatever is open first, then Review, then lessons a failed drill, gym case or weak interview
+ * One queue for the day: whatever is open first, then lessons a failed drill, gym case or weak interview
  * answer sent the learner back to, then new lessons with the day's drill, gym case, mock interview and project step
  * woven in after the first of them.
  */

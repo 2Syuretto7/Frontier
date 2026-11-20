@@ -8,10 +8,6 @@ import {
   RECALL_COUNT,
   RECALL_SCHEMA,
   RECALL_SYSTEM,
-  REVIEW_MAX,
-  REVIEW_MIN,
-  assignCards,
-  reviewCount,
   acceptRecall,
   recallRequest,
   type RecallAnswer,
@@ -25,11 +21,9 @@ const SITTING_HOURS = 2;
 const SOURCE_CHARS = 12000;
 const ASKED_SHOWN = 150;
 
-export { REVIEW_MAX, REVIEW_MIN };
-
 export const RECALL_PREFIX = "recall:";
 
-type Purpose = "recall" | "review";
+type Purpose = "recall";
 
 export type RecallItem = { id: string; prompt: string; sourceTitle: string; sourceCourse: string; answer: RecallAnswer };
 export type RecallSet = { questions: RecallItem[]; error?: string };
@@ -82,13 +76,13 @@ async function generate(kind: string, write: () => Promise<Row[]>): Promise<Reca
   }
 }
 
-async function save(purpose: Purpose, lessonId: string | null, drafts: (RecallDraft & { card?: string | null })[]): Promise<Row[]> {
+async function save(purpose: Purpose, lessonId: string | null, drafts: RecallDraft[]): Promise<Row[]> {
   const saved: Row[] = [];
   for (const d of drafts) {
     const rows = await query<Row>(
       `INSERT INTO recall_questions (lesson_id, source_lesson_id, prompt, answer, purpose, card_exercise_id)
        VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, source_lesson_id, prompt, answer`,
-      [lessonId ?? d.sourceLessonId, d.sourceLessonId, d.prompt, JSON.stringify(d.answer), purpose, d.card ?? null],
+      [lessonId ?? d.sourceLessonId, d.sourceLessonId, d.prompt, JSON.stringify(d.answer), purpose, null],
     );
     saved.push(rows[0]);
   }
@@ -111,34 +105,6 @@ export async function recallFor(lessonId: string, mastered: Set<string>): Promis
   );
 }
 
-/**
- * A spaced-review session: three to five questions Parton has just written on the ideas that are due.
- * FSRS still decides which ideas are due; each question stands in for one due card, and the learner's
- * first answer to it rates that card. Like recall, no question is ever shown twice or repeats an earlier one.
- */
-export async function reviewSession(): Promise<RecallSet> {
-  // Keep the current sitting only while at least three of its questions are untried. Otherwise the
-  // leftovers are retired, never to be shown again, and a new session is written.
-  const open = await openSet("review", null);
-  if (open.length >= REVIEW_MIN) return { questions: open.slice(0, REVIEW_MAX).map(toItem) };
-  if (open.length > 0) await query("UPDATE recall_questions SET retired = true WHERE id = ANY($1)", [open.map((r) => r.id)]);
-  const due = (
-    await query<{ exercise_id: string; lesson_id: string }>(
-      "SELECT exercise_id, lesson_id FROM review_cards WHERE due <= now() ORDER BY due LIMIT $1",
-      [REVIEW_MAX],
-    )
-  ).filter((c) => LESSON_BY_ID.has(c.lesson_id) && EXERCISES.has(c.exercise_id));
-  if (due.length === 0) return { questions: [] };
-
-  const count = reviewCount(due.length);
-  const sourceIds = [...new Set(due.map((c) => c.lesson_id))];
-  const ideas = due.map((c) => `In ${c.lesson_id}: ${toPlainText(EXERCISES.get(c.exercise_id)!.exercise.prompt)}`);
-  return generate("review", async () => {
-    const drafts = await writeQuestions({ sourceIds, count, request: { review: true, due: ideas } });
-    return save("review", null, assignCards(drafts, due));
-  });
-}
-
 async function writeQuestions({
   sourceIds,
   count,
@@ -146,7 +112,7 @@ async function writeQuestions({
 }: {
   sourceIds: string[];
   count: number;
-  request: { lessonTitle?: string; review?: boolean; due?: string[] };
+  request: { lessonTitle?: string };
 }): Promise<RecallDraft[]> {
   const sources: RecallSource[] = sourceIds.map((id) => {
     const lesson = LESSON_BY_ID.get(id)!;
@@ -201,22 +167,15 @@ async function writeQuestions({
   return kept;
 }
 
-/**
- * Checks an answer to a recall or review question and records it. For a review question, the first
- * answer also returns the due card it stands in for, so the caller can rate it.
- */
-export async function recallAttempt(id: string, input: string, context: Purpose): Promise<CheckResult & { card?: string }> {
+/** Checks an answer to a recall question and records it. */
+export async function recallAttempt(id: string, input: string, context: Purpose): Promise<CheckResult> {
   const n = Number(id.slice(RECALL_PREFIX.length));
   if (!Number.isInteger(n)) return { correct: false, message: "Unknown question." };
-  const rows = await query<{ answer: RecallAnswer; purpose: Purpose }>("SELECT answer, purpose FROM recall_questions WHERE id = $1", [n]);
+  const rows = await query<{ answer: RecallAnswer; purpose: string }>("SELECT answer, purpose FROM recall_questions WHERE id = $1", [n]);
   if (!rows[0] || rows[0].purpose !== context) return { correct: false, message: "Unknown question." };
   const result = checkAnswer(rows[0].answer, input);
   if (result.message && !result.correct) return result;
-  const updated = await query<{ attempts: number; card_exercise_id: string | null }>(
-    "UPDATE recall_questions SET attempts = attempts + 1, solved = solved OR $2 WHERE id = $1 RETURNING attempts, card_exercise_id",
-    [n, result.correct],
-  );
+  await query("UPDATE recall_questions SET attempts = attempts + 1, solved = solved OR $2 WHERE id = $1", [n, result.correct]);
   await query("INSERT INTO attempt_log (exercise_id, response, correct, context) VALUES ($1, $2, $3, $4)", [id, input.slice(0, 4000), result.correct, context]);
-  const first = updated[0]?.attempts === 1;
-  return { correct: result.correct, message: result.message, card: first ? updated[0].card_exercise_id ?? undefined : undefined };
+  return { correct: result.correct, message: result.message };
 }

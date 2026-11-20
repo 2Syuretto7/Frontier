@@ -8,14 +8,10 @@ const node = (id: string, track: Track): LessonNode => ({
   id, title: id, course: "X", courseTitle: "X", chapter: 1, chapterTitle: "c", index: 0, track, tier: 0, authored: true,
 });
 const m = node("m", "mathematics"), l = node("l", "machine-learning"), e = node("e", "engineering");
-const base = { openLesson: null, dueReviews: 0, frontier: [m, l, e], lastTrack: null, newLessonsToday: 0, pace: 2 };
+const base = { openLesson: null, frontier: [m, l, e], lastTrack: null, newLessonsToday: 0, pace: 2 };
 
-test("an open lesson comes first, even with reviews due", () => {
-  assert.equal(chooseNextStep({ ...base, openLesson: m, dueReviews: 5 }).kind, "continue");
-});
-
-test("due reviews come before new lessons", () => {
-  assert.deepEqual(chooseNextStep({ ...base, dueReviews: 3 }), { kind: "review", count: 3 });
+test("an open lesson comes first", () => {
+  assert.equal(chooseNextStep({ ...base, openLesson: m }).kind, "continue");
 });
 
 test("rotates through the three tracks", () => {
@@ -48,15 +44,4 @@ test("the daily pace never stops Learn, it only notes that it was passed", () =>
 
 test("waits when nothing is unlocked", () => {
   assert.deepEqual(chooseNextStep({ ...base, frontier: [] }), { kind: "rest", reason: "waiting" });
-});
-
-test("after a review session comes a lesson, never a second review session", () => {
-  const step = chooseNextStep({ ...base, dueReviews: 7, reviewedSinceLesson: true });
-  assert.equal(step.kind, "begin");
-  assert.equal(chooseNextStep({ ...base, dueReviews: 7, reviewedSinceLesson: true, openLesson: l }).kind, "continue");
-  assert.equal(chooseNextStep({ ...base, dueReviews: 7, reviewedSinceLesson: false }).kind, "review");
-});
-
-test("after a review session with no lesson unlocked, Learn waits rather than reviewing again", () => {
-  assert.deepEqual(chooseNextStep({ ...base, frontier: [], dueReviews: 4, reviewedSinceLesson: true }), { kind: "rest", reason: "waiting" });
 });

@@ -31,29 +31,18 @@ export async function setPace(pace: number) {
   );
 }
 
-export async function dueReviewCount(): Promise<number> {
-  const rows = await query<{ n: number }>("SELECT count(*)::int AS n FROM review_cards WHERE due <= now()");
-  return rows[0]?.n ?? 0;
-}
-
 /**
- * Everything the Learn scheduler reads: what is open, due and unlocked, today's pace, and the lessons that
- * Readiness, Projects and Drills want favoured. `afterReview` is set when the learner leaves a review session.
+ * Everything the Learn scheduler reads: what is open and unlocked, today's pace, and the lessons that
+ * Readiness, Projects and Drills want favoured.
  */
-export async function learnInputs({ afterReview = false }: { afterReview?: boolean } = {}): Promise<LearnInputs> {
-  const [progress, due, pace, today, last, reviewed] = await Promise.all([
+export async function learnInputs(): Promise<LearnInputs> {
+  const [progress, pace, today, last] = await Promise.all([
     loadProgress(),
-    dueReviewCount(),
     getPace(),
     query<{ n: number }>(
       `SELECT count(*)::int AS n FROM progress WHERE (started_at AT TIME ZONE '${TZ}')::date = (now() AT TIME ZONE '${TZ}')::date`,
     ),
     query<{ lesson_id: string }>("SELECT lesson_id FROM progress ORDER BY started_at DESC LIMIT 1"),
-    // Has a review question been answered since the most recent lesson was begun?
-    query<{ reviewed: boolean }>(
-      `SELECT COALESCE((SELECT max(at) FROM attempt_log WHERE context = 'review')
-                       > COALESCE((SELECT max(started_at) FROM progress), '-infinity'::timestamptz), false) AS reviewed`,
-    ),
   ]);
   const mastered = new Set(progress.filter((p) => p.status === "mastered").map((p) => p.lesson_id));
   // The most recent lesson still in progress whose prerequisites are all mastered. A lesson started before
@@ -66,8 +55,6 @@ export async function learnInputs({ afterReview = false }: { afterReview?: boole
   const lastTrack: Track | null = last[0] ? GRAPH.nodes.get(last[0].lesson_id)?.track ?? null : null;
   return {
     openLesson: openNode,
-    dueReviews: due,
-    reviewedSinceLesson: afterReview || (reviewed[0]?.reviewed ?? false),
     frontier: frontier(GRAPH, mastered),
     lastTrack,
     newLessonsToday: today[0]?.n ?? 0,
@@ -87,12 +74,9 @@ async function guidance(mastered: Set<string>, pace: number) {
   }
 }
 
-/**
- * The next lesson or review session, by the scheduler alone. `afterReview` is set when the learner leaves a
- * review session: they go on to a lesson, never straight into another review.
- */
-export async function nextStep({ afterReview = false }: { afterReview?: boolean } = {}): Promise<LearnStep> {
-  return chooseNextStep(await learnInputs({ afterReview }));
+/** The next lesson, by the scheduler alone. */
+export async function nextStep(): Promise<LearnStep> {
+  return chooseNextStep(await learnInputs());
 }
 
 export async function masteredSet(): Promise<Set<string>> {
@@ -126,22 +110,18 @@ export async function exerciseStates(lessonIds: string[]): Promise<Map<string, E
   return new Map(rows.map((r) => [r.exercise_id, r]));
 }
 
-export type Context = "lesson" | "recall" | "review";
+export type Context = "lesson" | "recall";
 
 export type AttemptResult = CheckResult & { lessonMastered?: boolean };
 
 /**
  * Checks an answer, records it, and updates mastery and the review schedule.
- * In review, the first attempt of the session decides the review rating.
  */
 export async function attempt(id: string, input: string, context: Context, attemptInSession: number): Promise<AttemptResult> {
-  // Recall and review questions are written fresh by Parton, so they live in their own table rather than the curriculum.
-  // A review question stands in for a due card: the first answer to it rates that card.
+  // Recall questions are written fresh by Parton, so they live in their own table rather than the curriculum.
   if (id.startsWith(RECALL_PREFIX)) {
     if (context === "lesson") return { correct: false, message: "Unknown exercise." };
-    const { card, ...result } = await recallAttempt(id, input, context);
-    if (card) await rateCard(card, result.correct ? Rating.Good : Rating.Again);
-    return result;
+    return recallAttempt(id, input, context);
   }
   const ref = EXERCISES.get(id);
   if (!ref) return { correct: false, message: "Unknown exercise." };
