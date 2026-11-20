@@ -1076,6 +1076,34 @@ import { lesson as e10_8_1 } from "./e10.8.1";
 import { lesson as e10_8_2 } from "./e10.8.2";
 import { lesson as e10_8_3 } from "./e10.8.3";
 import { lesson as e10_8_4 } from "./e10.8.4";
+import { lesson as e11_1_1 } from "./e11.1.1";
+import { lesson as e11_1_2 } from "./e11.1.2";
+import { lesson as e11_1_3 } from "./e11.1.3";
+import { lesson as e11_1_4 } from "./e11.1.4";
+import { lesson as e11_2_1 } from "./e11.2.1";
+import { lesson as e11_2_2 } from "./e11.2.2";
+import { lesson as e11_2_3 } from "./e11.2.3";
+import { lesson as e11_3_1 } from "./e11.3.1";
+import { lesson as e11_3_2 } from "./e11.3.2";
+import { lesson as e11_3_3 } from "./e11.3.3";
+import { lesson as e11_4_1 } from "./e11.4.1";
+import { lesson as e11_4_2 } from "./e11.4.2";
+import { lesson as e11_4_3 } from "./e11.4.3";
+import { lesson as e11_5_1 } from "./e11.5.1";
+import { lesson as e11_5_2 } from "./e11.5.2";
+import { lesson as e11_5_3 } from "./e11.5.3";
+import { lesson as e11_5_4 } from "./e11.5.4";
+import { lesson as e11_6_1 } from "./e11.6.1";
+import { lesson as e11_6_2 } from "./e11.6.2";
+import { lesson as e11_6_3 } from "./e11.6.3";
+import { lesson as e11_6_4 } from "./e11.6.4";
+import { lesson as e11_7_1 } from "./e11.7.1";
+import { lesson as e11_7_2 } from "./e11.7.2";
+import { lesson as e11_7_3 } from "./e11.7.3";
+import { lesson as e11_8_1 } from "./e11.8.1";
+import { lesson as e11_8_2 } from "./e11.8.2";
+import { lesson as e11_8_3 } from "./e11.8.3";
+import { lesson as e11_8_4 } from "./e11.8.4";
 
 export const LESSONS: readonly LessonContent[] = [
   m0_1_1,
@@ -2155,4 +2183,32 @@ export const LESSONS: readonly LessonContent[] = [
   e10_8_2,
   e10_8_3,
   e10_8_4,
+  e11_1_1,
+  e11_1_2,
+  e11_1_3,
+  e11_1_4,
+  e11_2_1,
+  e11_2_2,
+  e11_2_3,
+  e11_3_1,
+  e11_3_2,
+  e11_3_3,
+  e11_4_1,
+  e11_4_2,
+  e11_4_3,
+  e11_5_1,
+  e11_5_2,
+  e11_5_3,
+  e11_5_4,
+  e11_6_1,
+  e11_6_2,
+  e11_6_3,
+  e11_6_4,
+  e11_7_1,
+  e11_7_2,
+  e11_7_3,
+  e11_8_1,
+  e11_8_2,
+  e11_8_3,
+  e11_8_4,
 ];
