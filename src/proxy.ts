@@ -9,6 +9,8 @@ export async function proxy(request: NextRequest) {
   if (PUBLIC.some((p) => pathname === p)) return NextResponse.next();
   // Scheduled jobs carry Vercel's cron secret instead of a session; the route checks it.
   if (pathname.startsWith("/api/cron/")) return NextResponse.next();
+  // Every page, signed in or not, asks which version is live; the answer names a deployment and nothing else.
+  if (pathname === "/api/version") return NextResponse.next();
   const session = await readSession(request.cookies.get(SESSION_COOKIE)?.value);
   if (session) return NextResponse.next();
   const url = request.nextUrl.clone();

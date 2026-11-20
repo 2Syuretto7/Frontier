@@ -796,6 +796,38 @@ import { lesson as m15_4_3 } from "./m15.4.3";
 import { lesson as m15_5_1 } from "./m15.5.1";
 import { lesson as m15_5_2 } from "./m15.5.2";
 import { lesson as m15_5_3 } from "./m15.5.3";
+import { lesson as l6_1_1 } from "./l6.1.1";
+import { lesson as l6_1_2 } from "./l6.1.2";
+import { lesson as l6_1_3 } from "./l6.1.3";
+import { lesson as l6_1_4 } from "./l6.1.4";
+import { lesson as l6_2_1 } from "./l6.2.1";
+import { lesson as l6_2_2 } from "./l6.2.2";
+import { lesson as l6_2_3 } from "./l6.2.3";
+import { lesson as l6_2_4 } from "./l6.2.4";
+import { lesson as l6_3_1 } from "./l6.3.1";
+import { lesson as l6_3_2 } from "./l6.3.2";
+import { lesson as l6_3_3 } from "./l6.3.3";
+import { lesson as l6_4_1 } from "./l6.4.1";
+import { lesson as l6_4_2 } from "./l6.4.2";
+import { lesson as l6_4_3 } from "./l6.4.3";
+import { lesson as l6_4_4 } from "./l6.4.4";
+import { lesson as l6_4_5 } from "./l6.4.5";
+import { lesson as l6_5_1 } from "./l6.5.1";
+import { lesson as l6_5_2 } from "./l6.5.2";
+import { lesson as l6_5_3 } from "./l6.5.3";
+import { lesson as l6_6_1 } from "./l6.6.1";
+import { lesson as l6_6_2 } from "./l6.6.2";
+import { lesson as l6_6_3 } from "./l6.6.3";
+import { lesson as l6_6_4 } from "./l6.6.4";
+import { lesson as l6_6_5 } from "./l6.6.5";
+import { lesson as l6_7_1 } from "./l6.7.1";
+import { lesson as l6_7_2 } from "./l6.7.2";
+import { lesson as l6_7_3 } from "./l6.7.3";
+import { lesson as l6_7_4 } from "./l6.7.4";
+import { lesson as l6_8_1 } from "./l6.8.1";
+import { lesson as l6_8_2 } from "./l6.8.2";
+import { lesson as l6_8_3 } from "./l6.8.3";
+import { lesson as l6_8_4 } from "./l6.8.4";
 import { lesson as e8_1_1 } from "./e8.1.1";
 import { lesson as e8_1_2 } from "./e8.1.2";
 import { lesson as e8_1_3 } from "./e8.1.3";
@@ -1600,6 +1632,38 @@ export const LESSONS: readonly LessonContent[] = [
   m15_5_1,
   m15_5_2,
   m15_5_3,
+  l6_1_1,
+  l6_1_2,
+  l6_1_3,
+  l6_1_4,
+  l6_2_1,
+  l6_2_2,
+  l6_2_3,
+  l6_2_4,
+  l6_3_1,
+  l6_3_2,
+  l6_3_3,
+  l6_4_1,
+  l6_4_2,
+  l6_4_3,
+  l6_4_4,
+  l6_4_5,
+  l6_5_1,
+  l6_5_2,
+  l6_5_3,
+  l6_6_1,
+  l6_6_2,
+  l6_6_3,
+  l6_6_4,
+  l6_6_5,
+  l6_7_1,
+  l6_7_2,
+  l6_7_3,
+  l6_7_4,
+  l6_8_1,
+  l6_8_2,
+  l6_8_3,
+  l6_8_4,
   e8_1_1,
   e8_1_2,
   e8_1_3,
