@@ -2,10 +2,10 @@
 
 import { useMemo, useState } from "react";
 
-const ROWS = 4, COLS = 5, WALL = 6, GOAL = 4, PIT = 9, SLIP = 0.2, GAMMA = 0.95, COSTS = [0.04, 0.4, 2];
-const MOVES = [[-1, 0], [0, 1], [1, 0], [0, -1]], ARROWS = ["↑", "→", "↓", "←"];
+export const ROWS = 4, COLS = 5, WALL = 6, GOAL = 4, PIT = 9, SLIP = 0.2, GAMMA = 0.95, COSTS = [0.04, 0.4, 2];
+export const MOVES = [[-1, 0], [0, 1], [1, 0], [0, -1]], ARROWS = ["↑", "→", "↓", "←"];
 
-const isTerm = (s: number) => s === GOAL || s === PIT;
+export const isTerm = (s: number) => s === GOAL || s === PIT;
 function move(s: number, a: number) {
   const r = Math.floor(s / COLS) + MOVES[a][0], c = (s % COLS) + MOVES[a][1], t = r * COLS + c;
   return r < 0 || r >= ROWS || c < 0 || c >= COLS || t === WALL ? s : t;
@@ -16,7 +16,7 @@ function outcomes(s: number, a: number): [number, number][] {
 }
 const reward = (s2: number, cost: number) => -cost + (s2 === GOAL ? 1 : s2 === PIT ? -1 : 0);
 
-function q(v: number[], s: number, a: number, cost: number) {
+export function q(v: number[], s: number, a: number, cost: number) {
   return outcomes(s, a).reduce((acc, [p, s2]) => acc + p * (reward(s2, cost) + (isTerm(s2) ? 0 : GAMMA * v[s2])), 0);
 }
 
