@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { C, Code } from "@/components/lesson/Code";
-import { CapacityViz } from "@/components/viz/CapacityViz";
+import { ExpertCapacityViz } from "@/components/viz/ExpertCapacityViz";
 import type { LessonContent } from "@/lib/types";
 
 const DISPATCH = `import math
@@ -64,7 +64,7 @@ export const lesson: LessonContent = {
         Dropped tokens are not lost entirely, since the residual connection carries them past the layer, but they miss the
         computation they were routed to.
       </p>
-      <CapacityViz />
+      <ExpertCapacityViz />
     </>
   ),
 

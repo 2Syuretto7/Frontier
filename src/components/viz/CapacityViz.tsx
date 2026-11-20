@@ -1,76 +1,64 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { rand } from "./RandomWalkMcViz";
+import { useState } from "react";
 
-const T = 512, E = 16;
+const CHANNELS = ["symmetric", "erasure", "Z"] as const;
 
-/** Top-1 expert of each token: uniform, or skewed towards low-numbered experts. */
-export function assign(skew: number) {
-  const r = rand(53);
-  const w = Array.from({ length: E }, (_, i) => Math.exp(-skew * i));
-  const s = w.reduce((a, b) => a + b, 0);
-  const cum: number[] = [];
-  w.reduce((acc, v, i) => ((cum[i] = acc + v / s), acc + v / s), 0);
-  return Array.from({ length: T }, () => {
-    const u = r();
-    const i = cum.findIndex((c) => u < c);
-    return i < 0 ? E - 1 : i;
-  });
+export function channel(kind: number, e: number): number[][] {
+  if (kind === 0) return [[1 - e, e], [e, 1 - e]];
+  if (kind === 1) return [[1 - e, e, 0], [0, e, 1 - e]];
+  return [[1, 0], [e, 1 - e]];
 }
 
+export function info(a: number, W: number[][]) {
+  const px = [1 - a, a];
+  const py = W[0].map((_, j) => px[0] * W[0][j] + px[1] * W[1][j]);
+  let s = 0;
+  for (let i = 0; i < 2; i++) for (let j = 0; j < py.length; j++) {
+    if (px[i] > 0 && W[i][j] > 0) s += px[i] * W[i][j] * Math.log2(W[i][j] / py[j]);
+  }
+  return s;
+}
+
+/** Mutual information between input and output as a function of the input distribution; capacity is its maximum. */
 export function CapacityViz() {
-  const [cf, setCf] = useState(1.25);
-  const [skew, setSkew] = useState(0);
-  const choice = useMemo(() => assign(skew), [skew]);
-  const cap = Math.ceil((cf * T) / E);
-  const counts = new Array<number>(E).fill(0);
-  choice.forEach((e) => counts[e]++);
-  const dropped = counts.reduce((s, c) => s + Math.max(0, c - cap), 0);
-  const used = counts.reduce((s, c) => s + Math.min(c, cap), 0);
-  const W = 330, H = 160, X0 = 26, PW = 296, Y0 = 8, PH = 125, YM = 90;
-  const bw = PW / E;
-  const py = (v: number) => Y0 + PH - (Math.min(v, YM) / YM) * PH;
+  const [kind, setKind] = useState(2);
+  const [e100, setE100] = useState(50);
+  const e = e100 / 100;
+  const W = channel(kind, e);
+  const G = 200;
+  const pts = Array.from({ length: G + 1 }, (_, i) => ({ a: i / G, v: info(i / G, W) }));
+  const best = pts.reduce((b, p) => (p.v > b.v ? p : b), pts[0]);
+  const VW = 330, VH = 170, X0 = 30, PW = VW - 50, PH = 130;
+  const sx = (a: number) => X0 + a * PW, sy = (v: number) => 10 + (1 - v) * PH;
   return (
     <figure className="viz">
       <div className="viz-controls" style={{ marginTop: 0, flexWrap: "wrap", gap: 8 }}>
-        <div className="segmented" role="group" aria-label="Capacity factor">
-          {[1, 1.25, 1.5, 2].map((v) => (
-            <button key={v} className="seg" aria-pressed={cf === v} onClick={() => setCf(v)}>CF {v}</button>
-          ))}
-        </div>
-        <div className="segmented" role="group" aria-label="Router skew">
-          {[0, 0.05, 0.12].map((v, i) => (
-            <button key={v} className="seg" aria-pressed={skew === v} onClick={() => setSkew(v)}>{["balanced", "mild skew", "strong skew"][i]}</button>
-          ))}
-        </div>
+        {CHANNELS.map((c, i) => (
+          <button key={c} type="button" className="seg" aria-pressed={i === kind} onClick={() => setKind(i)}>{c}</button>
+        ))}
+        <label className="mono" style={{ fontSize: 13, display: "flex", gap: 6, alignItems: "center" }}>
+          ε {e.toFixed(2)}
+          <input type="range" min={0} max={100} value={e100} onChange={(ev) => setE100(Number(ev.target.value))} aria-label="noise level epsilon" style={{ width: 120 }} />
+        </label>
       </div>
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", maxWidth: 460, display: "block", margin: "0 auto" }} role="img" aria-label="Tokens per expert against the capacity limit">
-        {[0, 30, 60, 90].map((v) => (
-          <g key={v}>
-            <line x1={X0} x2={X0 + PW} y1={py(v)} y2={py(v)} stroke="var(--border)" strokeWidth={0.5} />
-            <text x={X0 - 4} y={py(v) + 3} textAnchor="end" className="viz-label">{v}</text>
-          </g>
-        ))}
-        {counts.map((c, i) => (
-          <g key={i}>
-            <rect x={X0 + i * bw + 2} y={py(Math.min(c, cap))} width={bw - 4} height={py(0) - py(Math.min(c, cap))} fill="var(--code-function)" />
-            {c > cap ? <rect x={X0 + i * bw + 2} y={py(c)} width={bw - 4} height={py(cap) - py(c)} style={{ fill: "var(--danger)" }} /> : null}
-            {c < cap ? <rect x={X0 + i * bw + 2} y={py(cap)} width={bw - 4} height={py(c) - py(cap)} fill="none" stroke="var(--text-muted)" strokeDasharray="2 2" /> : null}
-          </g>
-        ))}
-        <line x1={X0} x2={X0 + PW} y1={py(cap)} y2={py(cap)} stroke="var(--text)" strokeWidth={1.2} />
-        <text x={X0} y={H - 2} className="viz-label">tokens per expert; red: dropped; dashed: padding</text>
+      <svg viewBox={`0 0 ${VW} ${VH}`} style={{ width: "100%", maxWidth: 460, display: "block", margin: "0 auto" }} role="img" aria-label="Mutual information against the probability of sending a 1">
+        <line x1={X0} y1={sy(0)} x2={X0 + PW} y2={sy(0)} stroke="var(--border)" />
+        <line x1={X0} y1={sy(0)} x2={X0} y2={sy(1)} stroke="var(--border)" />
+        <text x={X0 - 4} y={sy(1) + 4} textAnchor="end" className="viz-label">1</text>
+        <text x={X0 - 4} y={sy(0) + 4} textAnchor="end" className="viz-label">0</text>
+        <text x={X0 + PW / 2} y={VH - 8} textAnchor="middle" className="viz-label">P(X = 1)</text>
+        <polyline fill="none" stroke="var(--accent)" strokeWidth={2} points={pts.map((p) => `${sx(p.a)},${sy(p.v)}`).join(" ")} />
+        <line x1={sx(best.a)} y1={sy(0)} x2={sx(best.a)} y2={sy(best.v)} stroke="var(--danger)" strokeDasharray="3 3" />
+        <circle cx={sx(best.a)} cy={sy(best.v)} r={4} fill="var(--danger)" />
       </svg>
-      <div className="mono" style={{ fontSize: 12, margin: "6px 0" }} aria-live="polite">
-        capacity {cap} per expert: {dropped} of {T} tokens dropped ({((100 * dropped) / T).toFixed(1)}%), {(100 * (1 - used / (cap * E))).toFixed(1)}% of
-        slots wasted on padding
+      <div className="mono" style={{ fontSize: 13, margin: "6px 0" }}>
+        capacity ≈ {best.v.toFixed(3)} bits per use, at P(X = 1) = {best.a.toFixed(3)}
       </div>
-      <figcaption className="viz-caption">
-        512 tokens routed top-1 to 16 experts, each with a fixed buffer of capacity factor × 512/16 slots. Tokens beyond an
-        expert&apos;s capacity skip the layer and pass through only on the residual stream; unused slots are still computed as
-        padding. Even with a perfectly balanced router, random fluctuations overflow some experts at a capacity factor of 1, and
-        a skewed router makes the trade far worse: raising the factor cuts drops only by paying for more padding.
+      <figcaption className="viz-caption" aria-live="polite">
+        The curve is I(X; Y) for each input distribution. It is concave, so it has a single peak, the capacity. For the
+        symmetric and erasure channels the peak is at ½, unless the channel is useless and the curve is flat at 0. The Z channel never corrupts a 0 but turns a 1 into a 0 with
+        probability ε, so 1s are less reliable and the best input sends them less than half the time.
       </figcaption>
     </figure>
   );

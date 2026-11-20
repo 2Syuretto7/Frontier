@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { C, Code } from "@/components/lesson/Code";
-import { BatchTradeoffViz } from "@/components/viz/BatchTradeoffViz";
+import { StepTokenViz } from "@/components/viz/StepTokenViz";
 import type { LessonContent } from "@/lib/types";
 
 const TRADEOFF = `import math
@@ -55,7 +55,7 @@ export const lesson: LessonContent = {
         gradient shrinks relative to the noise, and the critical batch size rises. So batches start smaller and grow, and the
         learning rate is set together with them.
       </p>
-      <BatchTradeoffViz />
+      <StepTokenViz />
     </>
   ),
 
