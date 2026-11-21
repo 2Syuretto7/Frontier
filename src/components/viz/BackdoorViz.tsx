@@ -49,7 +49,7 @@ function cov() {
   // X = B X + U with V in causal order, so solve column by column
   const n = V.length;
   const idx = (v: string) => V.indexOf(v);
-  const T = Array.from({ length: n }, (_, i) =>
+  const T: number[][] = Array.from({ length: n }, (_, i) =>
     Array.from({ length: n }, (_, j) => (i === j ? 1 : 0)),
   ); // T = (I - B)^{-1}, built row by row
   for (let i = 0; i < n; i++)
