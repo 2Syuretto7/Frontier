@@ -1223,6 +1223,22 @@ import { lesson as l13_4_3 } from "./l13.4.3";
 import { lesson as l13_5_1 } from "./l13.5.1";
 import { lesson as l13_5_2 } from "./l13.5.2";
 import { lesson as l13_5_3 } from "./l13.5.3";
+import { lesson as l14_1_1 } from "./l14.1.1";
+import { lesson as l14_1_2 } from "./l14.1.2";
+import { lesson as l14_1_3 } from "./l14.1.3";
+import { lesson as l14_2_1 } from "./l14.2.1";
+import { lesson as l14_2_2 } from "./l14.2.2";
+import { lesson as l14_2_3 } from "./l14.2.3";
+import { lesson as l14_3_1 } from "./l14.3.1";
+import { lesson as l14_3_2 } from "./l14.3.2";
+import { lesson as l14_3_3 } from "./l14.3.3";
+import { lesson as l14_3_4 } from "./l14.3.4";
+import { lesson as l14_4_1 } from "./l14.4.1";
+import { lesson as l14_4_2 } from "./l14.4.2";
+import { lesson as l14_4_3 } from "./l14.4.3";
+import { lesson as l14_5_1 } from "./l14.5.1";
+import { lesson as l14_5_2 } from "./l14.5.2";
+import { lesson as l14_5_3 } from "./l14.5.3";
 
 export const LESSONS: readonly LessonContent[] = [
   m0_1_1,
@@ -2449,4 +2465,20 @@ export const LESSONS: readonly LessonContent[] = [
   l13_5_1,
   l13_5_2,
   l13_5_3,
+  l14_1_1,
+  l14_1_2,
+  l14_1_3,
+  l14_2_1,
+  l14_2_2,
+  l14_2_3,
+  l14_3_1,
+  l14_3_2,
+  l14_3_3,
+  l14_3_4,
+  l14_4_1,
+  l14_4_2,
+  l14_4_3,
+  l14_5_1,
+  l14_5_2,
+  l14_5_3,
 ];
