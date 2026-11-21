@@ -120,7 +120,7 @@ export function BucketPaddingViz() {
               strokeWidth={1}
             />
           ))}
-        <line x1={x0} x2={x1} y1={yb} y2={yb} stroke="var(--muted)" />
+        <line x1={x0} x2={x1} y1={yb} y2={yb} stroke="var(--text-muted)" />
         {[0, 128, 256, 384, 512].map((v) => (
           <text
             key={v}

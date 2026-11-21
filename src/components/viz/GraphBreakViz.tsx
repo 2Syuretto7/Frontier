@@ -77,7 +77,7 @@ export function GraphBreakViz() {
               width={s.len * cw - 2}
               height={26}
               rx={4}
-              fill={s.graph ? "var(--accent)" : "var(--muted)"}
+              fill={s.graph ? "var(--accent)" : "var(--text-muted)"}
               opacity={s.graph ? 0.8 : 0.5}
             />
             <text
