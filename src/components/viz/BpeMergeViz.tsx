@@ -2,88 +2,121 @@
 
 import { useMemo, useState } from "react";
 
-const CORPUS: [string, number][] = [["low", 5], ["lower", 2], ["newest", 6], ["widest", 3], ["lowest", 1]];
-const UNSEEN = ["slowest", "newer", "wide"];
-const MAX = 10;
+const CORPUS: [string, number][] = [
+  ["hug", 10],
+  ["pug", 5],
+  ["pun", 12],
+  ["bun", 4],
+  ["hugs", 5],
+  ["bunny", 3],
+];
+const MAX = 8;
 
-/** Byte-pair encoding on characters: merge the most frequent adjacent pair, ties to the smallest pair. */
-export function trainBpe(corpus: [string, number][], k: number) {
-  let words = corpus.map(([w, f]) => ({ toks: w.split(""), f }));
-  const merges: [string, string][] = [];
-  for (let step = 0; step < k; step++) {
-    const counts = new Map<string, number>();
-    for (const { toks, f } of words) for (let i = 0; i + 1 < toks.length; i++) {
-      const key = toks[i] + "\u0000" + toks[i + 1];
-      counts.set(key, (counts.get(key) ?? 0) + f);
-    }
-    if (!counts.size) break;
-    let best = "", bestC = -1;
-    for (const [key, c] of counts) {
-      if (c > bestC || (c === bestC && key.split("\u0000").join("\u0001") < best.split("\u0000").join("\u0001"))) { best = key; bestC = c; }
-    }
-    const [a, b] = best.split("\u0000") as [string, string];
-    merges.push([a, b]);
+function run() {
+  let words = CORPUS.map(([w, f]) => ({ toks: w.split(""), f }));
+  const steps = [words];
+  const merges: string[] = [];
+  for (let k = 0; k < MAX; k++) {
+    const c = new Map<string, number>();
+    for (const { toks, f } of words)
+      for (let i = 0; i + 1 < toks.length; i++) {
+        const key = toks[i] + "\u0000" + toks[i + 1];
+        c.set(key, (c.get(key) ?? 0) + f);
+      }
+    if (!c.size) break;
+    const best = [...c.entries()].sort(
+      (a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1),
+    )[0][0];
+    const [a, b] = best.split("\u0000");
+    merges.push(`${a} + ${b}`);
     words = words.map(({ toks, f }) => {
       const out: string[] = [];
-      for (let i = 0; i < toks.length; i++) {
-        if (i + 1 < toks.length && toks[i] === a && toks[i + 1] === b) { out.push(a + b); i++; } else out.push(toks[i]);
-      }
+      for (let i = 0; i < toks.length; i++)
+        if (i + 1 < toks.length && toks[i] === a && toks[i + 1] === b) {
+          out.push(a + b);
+          i++;
+        } else out.push(toks[i]);
       return { toks: out, f };
     });
+    steps.push(words);
   }
-  return merges;
-}
-
-/** Encode by repeatedly merging the adjacent pair with the lowest merge rank. */
-export function encode(word: string, merges: [string, string][]) {
-  const rank = new Map(merges.map(([a, b], r) => [a + "\u0000" + b, r]));
-  const toks = word.split("");
-  for (;;) {
-    let bi = -1, br = Infinity;
-    for (let i = 0; i + 1 < toks.length; i++) {
-      const r = rank.get(toks[i] + "\u0000" + toks[i + 1]);
-      if (r !== undefined && r < br) { br = r; bi = i; }
-    }
-    if (bi < 0) return toks;
-    toks.splice(bi, 2, toks[bi] + toks[bi + 1]);
-  }
+  return { steps, merges };
 }
 
 export function BpeMergeViz() {
-  const [k, setK] = useState(4);
-  const all = useMemo(() => trainBpe(CORPUS, MAX), []);
-  const merges = all.slice(0, k);
-  const total = CORPUS.reduce((s, [w, f]) => s + f * encode(w, merges).length, 0);
-  const chars = CORPUS.reduce((s, [w, f]) => s + f * w.length, 0);
-  const seg = (w: string) => (
-    <span className="mono">
-      {encode(w, merges).map((t, i) => (
-        <span key={i} style={{ border: "1px solid var(--border)", borderRadius: 4, padding: "0 3px", marginRight: 2, background: t.length > 1 ? "var(--accent-soft)" : "transparent" }}>{t}</span>
-      ))}
-    </span>
-  );
+  const [k, setK] = useState(2);
+  const { steps, merges } = useMemo(run, []);
+  const words = steps[k];
+  const total = words.reduce((s, w) => s + w.toks.length * w.f, 0);
+  const bytes = CORPUS.reduce((s, [w, f]) => s + w.length * f, 0);
   return (
     <figure className="viz">
-      <div className="viz-controls" style={{ marginTop: 0, flexWrap: "wrap", gap: 8 }}>
-        <label className="viz-label" htmlFor="bpe-k">merges learned: {k}</label>
-        <input id="bpe-k" type="range" min={0} max={MAX} value={k} onChange={(e) => setK(Number(e.target.value))} style={{ flex: "1 1 160px" }} />
+      <div className="viz-controls" style={{ marginTop: 0, flexWrap: "wrap" }}>
+        <label className="viz-label">
+          merges: {k}{" "}
+          <input
+            type="range"
+            min={0}
+            max={steps.length - 1}
+            step={1}
+            value={k}
+            onChange={(e) => setK(+e.target.value)}
+          />
+        </label>
       </div>
-      <div style={{ display: "grid", gap: 6, fontSize: 14 }}>
-        {CORPUS.map(([w, f]) => (
-          <div key={w}>{seg(w)} <span className="viz-label">× {f}</span></div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 6,
+          marginTop: 8,
+        }}
+      >
+        {words.map((w, i) => (
+          <div
+            key={i}
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 4,
+              alignItems: "center",
+            }}
+          >
+            <span className="viz-label" style={{ width: 44 }}>
+              ×{w.f}
+            </span>
+            {w.toks.map((t, j) => (
+              <span
+                key={j}
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 14,
+                  padding: "2px 8px",
+                  border: "1px solid var(--border)",
+                  borderRadius: 4,
+                  background:
+                    t.length > 1 ? "var(--accent-soft)" : "var(--surface)",
+                  color: "var(--text)",
+                }}
+              >
+                {t}
+              </span>
+            ))}
+          </div>
         ))}
-        <div className="viz-label" style={{ marginTop: 4 }}>words not in the corpus</div>
-        {UNSEEN.map((w) => <div key={w}>{seg(w)}</div>)}
       </div>
-      <div className="mono" style={{ fontSize: 13, margin: "8px 0", overflowWrap: "anywhere" }}>
-        <div>{`merges: ${merges.length ? merges.map(([a, b]) => `${a}+${b}`).join(", ") : "none"}`}</div>
-        <div>{`corpus tokens ${total} for ${chars} characters, ${(chars / total).toFixed(2)} characters per token; vocabulary ${new Set(CORPUS.flatMap(([w]) => w.split(""))).size + k}`}</div>
-      </div>
-      <figcaption className="viz-caption" aria-live="polite">
-        Byte-pair encoding on a corpus of five words with the counts shown. Each merge joins the most frequent adjacent pair
-        into one new token, so the total number of tokens falls by exactly the number of places the pair was merged. Common
-        endings such as &quot;est&quot; are learned first; frequent whole words follow. New words are cut into pieces the
-        tokeniser has learned, falling back to single characters, so nothing is ever out of vocabulary.
+      <p className="viz-label" style={{ textAlign: "center" }}>
+        merges so far: {merges.slice(0, k).join(", ") || "none"}
+        <br />
+        {total} tokens for {bytes} bytes, {(bytes / total).toFixed(2)} bytes per
+        token
+      </p>
+      <figcaption className="viz-caption">
+        Byte-pair encoding starts from single characters and repeatedly merges
+        the adjacent pair that occurs most often, counting each word as often as
+        it appears. Each merge adds one token to the vocabulary and shortens the
+        corpus; frequent words soon become single tokens while rare ones stay in
+        pieces.
       </figcaption>
     </figure>
   );
