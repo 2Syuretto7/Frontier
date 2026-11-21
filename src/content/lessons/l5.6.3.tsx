@@ -75,8 +75,11 @@ export const lesson: LessonContent = {
       <Theorem title="recall and crosstalk">
         <p>
           If the keys are orthonormal, <M>{"Wk_j = v_j"}</M> exactly, which allows at most d facts. If instead the keys are
-          independent and uniform on the unit sphere, the expected crosstalk is{" "}
-          <MD>{"\\mathbb E\\|Wk_j - v_j\\|^2 = \\frac1d\\sum_{i \\ne j}\\|v_i\\|^2,"}</MD> which is (n − 1)/d for unit values.
+          independent and uniform on the unit sphere, the expected crosstalk is
+        </p>
+        <MD>{"\\mathbb E\\|Wk_j - v_j\\|^2 = \\frac1d\\sum_{i \\ne j}\\|v_i\\|^2,"}</MD>
+        <p>
+          which is (n − 1)/d for unit values.
         </p>
       </Theorem>
       <Proof>

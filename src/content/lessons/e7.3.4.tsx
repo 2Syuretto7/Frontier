@@ -92,8 +92,10 @@ export const lesson: LessonContent = {
       <Theorem title="hiding latency">
         <p>
           Suppose each warp alternates c cycles of issuing instructions with a wait of L cycles for memory, and the SM issues
-          one instruction per cycle. With W warps, the fraction of cycles in which the SM issues is at most{" "}
-          <MD>{"\\min\\Bigl(1,\\ \\frac{Wc}{c + L}\\Bigr),"}</MD>
+          one instruction per cycle. With W warps, the fraction of cycles in which the SM issues is at most
+        </p>
+        <MD>{"\\min\\Bigl(1,\\ \\frac{Wc}{c + L}\\Bigr),"}</MD>
+        <p>
           and a round-robin schedule reaches it; full use needs <M>{"W \\ge \\lceil (c + L)/c \\rceil"}</M>.
         </p>
       </Theorem>

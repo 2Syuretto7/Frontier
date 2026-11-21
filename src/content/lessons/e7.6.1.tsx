@@ -105,8 +105,10 @@ export const lesson: LessonContent = {
 
       <Theorem title="prefill">
         <p>
-          Processing a prompt of s tokens with causal attention, where token t attends to t positions, takes{" "}
-          <MD>{"sF_0 + 4Ld\\,\\frac{s(s + 1)}{2}"}</MD>
+          Processing a prompt of s tokens with causal attention, where token t attends to t positions, takes
+        </p>
+        <MD>{"sF_0 + 4Ld\\,\\frac{s(s + 1)}{2}"}</MD>
+        <p>
           FLOPs, where <M>{"F_0"}</M> is the per-token count without attention.
         </p>
       </Theorem>

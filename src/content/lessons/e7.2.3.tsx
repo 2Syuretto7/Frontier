@@ -81,8 +81,10 @@ export const lesson: LessonContent = {
 
       <Theorem title="sets reached by a stride">
         <p>
-          Accesses at addresses <M>{"0, kL, 2kL, \\dots"}</M> for a whole number k reach exactly{" "}
-          <MD>{"\\frac{S}{\\gcd(k, S)}"}</MD>
+          Accesses at addresses <M>{"0, kL, 2kL, \\dots"}</M> for a whole number k reach exactly
+        </p>
+        <MD>{"\\frac{S}{\\gcd(k, S)}"}</MD>
+        <p>
           different sets, once there are at least that many accesses. When S is a power of two and k is a multiple of S,
           they all land in one set.
         </p>

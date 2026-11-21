@@ -102,9 +102,15 @@ export const lesson: LessonContent = {
       <Theorem title="what the cache saves">
         <p>
           With <M>{"N_{\\text{mm}}"}</M> weights in matrix products, L layers and width d, a step whose token attends to t
-          positions costs <M>{"2N_{\\text{mm}} + 4Ldt"}</M> FLOPs. Generating n tokens from nothing costs{" "}
-          <MD>{"2N_{\\text{mm}}n + 2Ld\\,n(n+1)"}</MD> with a cache, and{" "}
-          <MD>{"N_{\\text{mm}}n(n+1) + \\tfrac23Ld\\,n(n+1)(n+2)"}</MD> without.
+          positions costs <M>{"2N_{\\text{mm}} + 4Ldt"}</M> FLOPs. Generating n tokens from nothing costs
+        </p>
+        <MD>{"2N_{\\text{mm}}n + 2Ld\\,n(n+1)"}</MD>
+        <p>
+          with a cache, and
+        </p>
+        <MD>{"N_{\\text{mm}}n(n+1) + \\tfrac23Ld\\,n(n+1)(n+2)"}</MD>
+        <p>
+          without.
         </p>
       </Theorem>
       <Proof>

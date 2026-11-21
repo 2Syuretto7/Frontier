@@ -109,8 +109,10 @@ export const lesson: LessonContent = {
 
       <Theorem title="cost of a divergent branch">
         <p>
-          Let a warp run <C>if c: A else: B</C>, with A costing a cycles and B costing b. The warp issues{" "}
-          <MD>{"a\\,[\\text{some lane has } c] + b\\,[\\text{some lane lacks } c]"}</MD>
+          Let a warp run <C>if c: A else: B</C>, with A costing a cycles and B costing b. The warp issues
+        </p>
+        <MD>{"a\\,[\\text{some lane has } c] + b\\,[\\text{some lane lacks } c]"}</MD>
+        <p>
           cycles. If each of the 32 lanes takes A independently with probability q, the expected cost is{" "}
           <M>{"a(1 - (1-q)^{32}) + b(1 - q^{32})"}</M>.
         </p>
