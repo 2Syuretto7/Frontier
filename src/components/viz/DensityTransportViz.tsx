@@ -102,7 +102,7 @@ export function DensityTransportViz() {
             y={sy(h)}
             width={Math.max(0, sx(LO + bw) - sx(LO) - 1)}
             height={Y1 - sy(h)}
-            fill="var(--muted)"
+            fill="var(--text-muted)"
             fillOpacity={0.35}
           />
         ))}
