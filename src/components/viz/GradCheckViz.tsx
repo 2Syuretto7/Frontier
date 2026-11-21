@@ -2,61 +2,161 @@
 
 import { useState } from "react";
 
-const X = 1;
-const TRUE = Math.cos(X);
-const fwd = (h: number) => (Math.sin(X + h) - Math.sin(X)) / h;
-const cen = (h: number) => (Math.sin(X + h) - Math.sin(X - h)) / (2 * h);
-const err = (v: number) => Math.max(Math.abs(v - TRUE), 1e-17);
+const X0 = [0.7, -1.3];
 
-const W = 520, H = 260, PAD = 40;
-const LH0 = -14, LH1 = 0, LE0 = -13, LE1 = 0;
-const px = (lh: number) => PAD + ((lh - LH0) / (LH1 - LH0)) * (W - PAD - 10);
-const py = (le: number) => 10 + ((LE1 - Math.max(LE0, Math.min(LE1, le))) / (LE1 - LE0)) * (H - 10 - PAD);
-const curve = (g: (h: number) => number) => {
-  const pts: string[] = [];
-  for (let lh = LH0; lh <= LH1 + 1e-9; lh += 0.1) pts.push(`${px(lh).toFixed(1)},${py(Math.log10(err(g(10 ** lh)))).toFixed(1)}`);
-  return pts.join(" ");
-};
-const FWD = curve(fwd);
-const CEN = curve(cen);
+function f(x: number[]) {
+  return Math.sin(x[0]) * x[1] * x[1] + Math.exp(0.5 * x[0]);
+}
 
-/** Error of forward and central differences for d/dx sin x at x = 1, as the step h shrinks. */
+function grad(x: number[], bug: boolean) {
+  const dx = Math.cos(x[0]) * x[1] * x[1] + 0.5 * Math.exp(0.5 * x[0]);
+  const dy = (bug ? 1 : 2) * Math.sin(x[0]) * x[1];
+  return [dx, dy];
+}
+
+/** Largest coordinate-wise relative error between an analytic and a central-difference gradient. */
+export function gradCheckError(eps: number, bug: boolean) {
+  const g = grad(X0, bug);
+  let worst = 0;
+  for (let i = 0; i < 2; i++) {
+    const up = [...X0],
+      dn = [...X0];
+    up[i] += eps;
+    dn[i] -= eps;
+    const num = (f(up) - f(dn)) / (2 * eps);
+    const rel =
+      Math.abs(g[i] - num) / Math.max(Math.abs(g[i]) + Math.abs(num), 1e-300);
+    worst = Math.max(worst, rel);
+  }
+  return worst;
+}
+
 export function GradCheckViz() {
-  const [lh, setLh] = useState(-4);
-  const h = 10 ** lh;
-  const ef = err(fwd(h));
-  const ec = err(cen(h));
+  const [ei, setE] = useState(-3);
+  const [bug, setBug] = useState(false);
+  const eps = 10 ** ei;
+  const err = gradCheckError(eps, bug);
+  const pass = err < 1e-6;
+  const W = 330,
+    H = 190,
+    x0 = 40,
+    y0 = 10,
+    pw = 275,
+    ph = 150;
+  const sx = (e: number) => x0 + ((e + 14) / 14) * pw;
+  const sy = (l: number) =>
+    y0 + ((0 - Math.max(-16, Math.min(0, l))) / 16) * ph;
+  const curve = (b: boolean) => {
+    const pts: string[] = [];
+    for (let e = -14; e <= 0.001; e += 0.1) {
+      const v = gradCheckError(10 ** e, b);
+      pts.push(`${sx(e)},${sy(Math.log10(Math.max(v, 1e-16)))}`);
+    }
+    return pts.join(" ");
+  };
   return (
     <figure className="viz">
-      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Error against step size, both on log scales">
-        <line x1={PAD} y1={H - PAD} x2={W - 10} y2={H - PAD} stroke="var(--border)" />
-        <line x1={PAD} y1={10} x2={PAD} y2={H - PAD} stroke="var(--border)" />
-        {[-14, -12, -10, -8, -6, -4, -2, 0].map((t) => (
-          <text key={`x${t}`} x={px(t)} y={H - PAD + 16} textAnchor="middle" className="viz-label">1e{t}</text>
+      <div
+        className="viz-controls"
+        style={{ marginTop: 0, flexWrap: "wrap", gap: 12 }}
+      >
+        <label className="viz-label">
+          step: 1e{ei}{" "}
+          <input
+            type="range"
+            min={-14}
+            max={0}
+            value={ei}
+            onChange={(e) => setE(+e.target.value)}
+          />
+        </label>
+        <button
+          type="button"
+          className={bug ? "btn btn-primary" : "btn"}
+          aria-pressed={bug}
+          onClick={() => setBug(!bug)}
+        >
+          {bug ? "gradient has a bug" : "gradient is correct"}
+        </button>
+      </div>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        style={{
+          width: "100%",
+          maxWidth: 460,
+          display: "block",
+          margin: "0 auto",
+        }}
+        role="img"
+        aria-label="Relative error of a gradient check against the finite-difference step, on log scales"
+      >
+        <rect
+          x={x0}
+          y={y0}
+          width={pw}
+          height={ph}
+          fill="none"
+          stroke="var(--border)"
+        />
+        {[0, -4, -8, -12, -16].map((l) => (
+          <g key={l}>
+            <line
+              x1={x0}
+              x2={x0 + pw}
+              y1={sy(l)}
+              y2={sy(l)}
+              stroke="var(--grid-line)"
+            />
+            <text
+              x={x0 - 4}
+              y={sy(l) + 4}
+              textAnchor="end"
+              className="viz-label"
+            >
+              1e{l}
+            </text>
+          </g>
         ))}
-        {[-12, -9, -6, -3, 0].map((t) => (
-          <text key={`y${t}`} x={PAD - 4} y={py(t) + 4} textAnchor="end" className="viz-label">1e{t}</text>
-        ))}
-        <text x={(W + PAD) / 2} y={H - 4} textAnchor="middle" className="viz-label">step h</text>
-        <polyline points={FWD} fill="none" stroke="var(--danger)" strokeWidth={2} />
-        <polyline points={CEN} fill="none" stroke="var(--accent)" strokeWidth={2} />
-        <line x1={px(lh)} y1={10} x2={px(lh)} y2={H - PAD} stroke="var(--text-faint)" strokeDasharray="4 4" />
-        <circle cx={px(lh)} cy={py(Math.log10(ef))} r={5} fill="var(--danger)" />
-        <circle cx={px(lh)} cy={py(Math.log10(ec))} r={5} fill="var(--accent)" />
+        <line
+          x1={x0}
+          x2={x0 + pw}
+          y1={sy(-6)}
+          y2={sy(-6)}
+          stroke="var(--danger)"
+          strokeDasharray="4 3"
+        />
+        <polyline
+          points={curve(bug)}
+          fill="none"
+          stroke="var(--accent)"
+          strokeWidth={2}
+        />
+        <circle
+          cx={sx(ei)}
+          cy={sy(Math.log10(Math.max(err, 1e-16)))}
+          r={5}
+          fill={pass ? "var(--success)" : "var(--danger)"}
+        />
+        <text
+          x={x0 + pw / 2}
+          y={H - 4}
+          textAnchor="middle"
+          className="viz-label"
+        >
+          finite-difference step, 1e-14 to 1
+        </text>
       </svg>
-      <label className="viz-controls" style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <span className="mono">h = 1e{lh.toFixed(1)}</span>
-        <input type="range" min={LH0} max={-0.5} step={0.1} value={lh} onChange={(e) => setLh(Number(e.target.value))} style={{ flex: 1, minWidth: 0 }} />
-      </label>
-      <figcaption className="viz-caption" aria-live="polite">
-        Error of the <span style={{ color: "var(--danger)" }}>forward difference</span>{" "}
-        <span className="mono">{ef.toExponential(1)}</span>, of the <span style={{ color: "var(--accent)" }}>central difference</span>{" "}
-        <span className="mono">{ec.toExponential(1)}</span>.{" "}
-        {lh > -3
-          ? "Large steps: the error is the truncation of the Taylor series, falling as h shrinks."
-          : lh < -9
-            ? "Tiny steps: f(x + h) and f(x) agree in almost every digit, and rounding error divided by h takes over."
-            : "Near the bottom of the V. Smaller is not always better."}
+      <p style={{ textAlign: "center", fontSize: 13, margin: "6px 0 0" }}>
+        Relative error {err.toExponential(2)}: {pass ? "passes" : "fails"} a
+        tolerance of 1e-6.
+      </p>
+      <figcaption className="viz-caption">
+        The curve is computed in double precision. Large steps suffer from
+        truncation error, which shrinks like the step squared; tiny steps suffer
+        from rounding error, which grows like one over the step. A correct
+        gradient passes only near the bottom of the V, so a check run with a bad
+        step can fail a correct gradient. A real bug leaves the error high at
+        every step.
       </figcaption>
     </figure>
   );
