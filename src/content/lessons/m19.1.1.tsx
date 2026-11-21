@@ -1,7 +1,7 @@
 import { M, MD } from "@/components/Math";
 import { Definition, Example, Proof, Remark, Theorem } from "@/components/lesson/Blocks";
 import { C, Code } from "@/components/lesson/Code";
-import { BrownianRefineViz } from "@/components/viz/BrownianRefineViz";
+import { LevyConstructionViz } from "@/components/viz/LevyConstructionViz";
 import type { LessonContent } from "@/lib/types";
 
 const WALK = `import numpy as np
@@ -62,7 +62,7 @@ export const lesson: LessonContent = {
         about <M>{"2^{-n/2}"}</M>, and even the largest of the <M>{"2^{n}"}</M> corrections shrinks fast enough to sum, so the
         piecewise linear paths converge uniformly and the limit is continuous.
       </p>
-      <BrownianRefineViz />
+      <LevyConstructionViz />
     </>
   ),
 
