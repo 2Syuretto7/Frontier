@@ -96,7 +96,9 @@ export const lesson: LessonContent = {
           Let <M>{"\\ell_{ij}"}</M> be the log-likelihood of frame j under phoneme i, for L phonemes and T frames. Among
           alignments that assign frames to phonemes in order, each phoneme at least one frame, the one maximising{" "}
           <M>{"\\sum_j \\ell_{a(j), j}"}</M> is found in O(LT) time by
-          <MD>{"Q_{i,j} = \\ell_{ij} + \\max(Q_{i,j-1},\\ Q_{i-1,j-1})"}</MD>
+        </p>
+        <MD>{"Q_{i,j} = \\ell_{ij} + \\max(Q_{i,j-1},\\ Q_{i-1,j-1})"}</MD>
+        <p>
           and backtracking from <M>{"Q_{L-1,T-1}"}</M> (<C>mas</C>), out of <M>{"\\binom{T-1}{L-1}"}</M> alignments in all.
         </p>
       </Theorem>

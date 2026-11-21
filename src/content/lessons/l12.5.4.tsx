@@ -86,8 +86,10 @@ export const lesson: LessonContent = {
         <p>
           Transfusion keeps images continuous. An image is encoded by a VAE into latent patches, noised to a random level,
           and placed in the sequence between begin and end markers. The same transformer predicts the next token at text
-          positions and the noise at image positions, with total loss{" "}
-          <MD>{"\\mathcal{L} = \\mathcal{L}_{\\text{LM}} + \\lambda\\, \\mathcal{L}_{\\text{diffusion}}"}</MD>
+          positions and the noise at image positions, with total loss
+        </p>
+        <MD>{"\\mathcal{L} = \\mathcal{L}_{\\text{LM}} + \\lambda\\, \\mathcal{L}_{\\text{diffusion}}"}</MD>
+        <p>
           (<C>transfusion_loss</C>; the paper used <M>{"\\lambda = 5"}</M>). The attention mask is causal, except that the
           patches of one image attend to each other in both directions (<C>transfusion_mask</C>). At generation time, text
           is sampled token by token; when the model emits the begin-image marker, it runs a full diffusion sampler on a block
@@ -98,8 +100,10 @@ export const lesson: LessonContent = {
 
       <Theorem title="size of the mixed mask">
         <p>
-          For a sequence of N positions containing images of <M>{"n_1, \\dots, n_m"}</M> patches, the Transfusion mask allows{" "}
-          <MD>{"\\frac{N(N+1)}{2} + \\sum_{k=1}^m \\frac{n_k (n_k - 1)}{2}"}</MD>
+          For a sequence of N positions containing images of <M>{"n_1, \\dots, n_m"}</M> patches, the Transfusion mask allows
+        </p>
+        <MD>{"\\frac{N(N+1)}{2} + \\sum_{k=1}^m \\frac{n_k (n_k - 1)}{2}"}</MD>
+        <p>
           query-key pairs (<C>n_pairs</C>), and every text position attends to exactly the same keys as under the causal mask.
         </p>
       </Theorem>

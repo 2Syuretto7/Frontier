@@ -69,7 +69,9 @@ export const lesson: LessonContent = {
           giving <M>{"f_s / h"}</M> frames per second; at 24 kHz with h = 320 that is 75. Each frame is quantised by residual
           vector quantisation with <M>{"n_q"}</M> codebooks of K entries (<C>rvq_encode</C>, <C>rvq_decode</C>), and a
           convolutional decoder rebuilds the waveform. The bitrate is
-          <MD>{"\\frac{f_s}{h}\\, n_q \\log_2 K"}</MD>
+        </p>
+        <MD>{"\\frac{f_s}{h}\\, n_q \\log_2 K"}</MD>
+        <p>
           (<C>bitrate</C>): eight codebooks of 1024 at 75 Hz give 6 kbps. Training combines reconstruction losses on the
           waveform and on spectrograms at several resolutions with adversarial and feature-matching losses, for the same
           reason as in image tokenisers: plausible detail rather than an average.

@@ -89,7 +89,9 @@ export const lesson: LessonContent = {
           Given per-frame distributions <M>{"p_t(\\cdot)"}</M> over a vocabulary with a blank, a path <M>{"\\pi"}</M> of
           length T collapses to a label sequence by merging repeated symbols and then deleting blanks (<C>ctc_collapse</C>).
           CTC defines
-          <MD>{"p(y \\mid x) = \\sum_{\\pi : \\mathcal{B}(\\pi) = y} \\prod_{t=1}^{T} p_t(\\pi_t)"}</MD>
+        </p>
+        <MD>{"p(y \\mid x) = \\sum_{\\pi : \\mathcal{B}(\\pi) = y} \\prod_{t=1}^{T} p_t(\\pi_t)"}</MD>
+        <p>
           and trains by minimising <M>{"-\\log p(y \\mid x)"}</M>. It assumes the frames&apos; outputs are independent given
           the audio, so the network itself must carry all context.
         </p>
@@ -100,7 +102,9 @@ export const lesson: LessonContent = {
           Insert blanks around and between the L labels to get an extended sequence <M>{"z"}</M> of length 2L + 1, and let{" "}
           <M>{"\\alpha_t(s)"}</M> be the total probability of path prefixes of length t that are consistent with the first s
           + 1 symbols of z and end at symbol s. Then
-          <MD>{"\\alpha_t(s) = \\big(\\alpha_{t-1}(s) + \\alpha_{t-1}(s-1) + [\\,z_s \\ne \\text{blank},\\ z_s \\ne z_{s-2}\\,]\\, \\alpha_{t-1}(s-2)\\big)\\, p_t(z_s),"}</MD>
+        </p>
+        <MD>{"\\alpha_t(s) = \\big(\\alpha_{t-1}(s) + \\alpha_{t-1}(s-1) + [\\,z_s \\ne \\text{blank},\\ z_s \\ne z_{s-2}\\,]\\, \\alpha_{t-1}(s-2)\\big)\\, p_t(z_s),"}</MD>
+        <p>
           and <M>{"p(y \\mid x) = \\alpha_T(2L) + \\alpha_T(2L - 1)"}</M> (<C>ctc_forward</C>), computed in O(TL) time.
         </p>
       </Theorem>

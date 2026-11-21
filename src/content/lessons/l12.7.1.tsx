@@ -84,7 +84,9 @@ export const lesson: LessonContent = {
         <p>
           For s &lt; t, given <M>{"x"}</M> and <M>{"z_t"}</M>, a token that is unmasked in <M>{"z_t"}</M> is unchanged in{" "}
           <M>{"z_s"}</M>, and a masked token is revealed as its true value with probability
-          <MD>{"\\frac{\\alpha_s - \\alpha_t}{1 - \\alpha_t}"}</MD>
+        </p>
+        <MD>{"\\frac{\\alpha_s - \\alpha_t}{1 - \\alpha_t}"}</MD>
+        <p>
           and otherwise stays masked (<C>unmask_prob</C>).
         </p>
       </Theorem>
@@ -103,7 +105,9 @@ export const lesson: LessonContent = {
       <Theorem title="the training loss is a weighted masked language model loss">
         <p>
           In the limit of continuous time, the negative ELBO of masked diffusion is
-          <MD>{"\\int_0^1 \\frac{-\\alpha_t'}{1 - \\alpha_t}\\, \\mathbb{E}_{z_t}\\Big[ \\sum_{i : z_t^i = \\text{mask}} -\\log p_\\theta(x^i \\mid z_t) \\Big]\\, dt,"}</MD>
+        </p>
+        <MD>{"\\int_0^1 \\frac{-\\alpha_t'}{1 - \\alpha_t}\\, \\mathbb{E}_{z_t}\\Big[ \\sum_{i : z_t^i = \\text{mask}} -\\log p_\\theta(x^i \\mid z_t) \\Big]\\, dt,"}</MD>
+        <p>
           which for the linear schedule <M>{"\\alpha_t = 1 - t"}</M> weights the masked-token loss at mask ratio t by 1/t
           (<C>masked_loss</C>).
         </p>

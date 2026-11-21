@@ -67,8 +67,10 @@ export const lesson: LessonContent = {
       <Definition title="the rate of a tokeniser">
         <p>
           A tokeniser that downsamples an H × W image by a factor f gives <M>{"(H/f)(W/f)"}</M> tokens, each an index into a
-          codebook of K entries. It can describe at most{" "}
-          <MD>{"n \\log_2 K"}</MD>
+          codebook of K entries. It can describe at most
+        </p>
+        <MD>{"n \\log_2 K"}</MD>
+        <p>
           bits per image (<C>bits_per_image</C>), or that divided by HW bits per pixel (<C>bpp</C>). The vector-quantised
           autoencoder of the earlier lesson is the basic instance: nearest-neighbour lookup in a learned codebook with a
           straight-through gradient and commitment loss.
@@ -121,8 +123,10 @@ export const lesson: LessonContent = {
       <Theorem title="the entropy of independent bits adds">
         <p>
           If the d bits of an LFQ code are independent with probabilities <M>{"p_1, \\dots, p_d"}</M> of being positive, the
-          entropy of the code over all <M>{"2^d"}</M> values is{" "}
-          <MD>{"H = \\sum_{i=1}^d h(p_i), \\quad h(p) = -p \\log_2 p - (1-p) \\log_2 (1-p)"}</MD>
+          entropy of the code over all <M>{"2^d"}</M> values is
+        </p>
+        <MD>{"H = \\sum_{i=1}^d h(p_i), \\quad h(p) = -p \\log_2 p - (1-p) \\log_2 (1-p)"}</MD>
+        <p>
           (<C>bit_entropy</C>). It equals d, full use of the codebook, exactly when every <M>{"p_i = 1/2"}</M>.
         </p>
       </Theorem>
