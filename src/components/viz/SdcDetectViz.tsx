@@ -46,12 +46,12 @@ export function SdcDetectViz() {
         <div
           role="group"
           aria-label="Where the fault strikes"
-          style={{ display: "flex", gap: 6 }}
+          style={{ display: "flex", gap: 6, flexWrap: "wrap" }}
         >
           {(
             [
-              ["memory", "fault in parameters"],
-              ["gradient", "fault in a gradient"],
+              ["memory", "parameter fault"],
+              ["gradient", "gradient fault"],
             ] as [Where, string][]
           ).map(([w, label]) => (
             <button

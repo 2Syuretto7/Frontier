@@ -53,11 +53,11 @@ export function LayerTraceViz() {
         <div
           role="group"
           aria-label="Softmax"
-          style={{ display: "flex", gap: 6 }}
+          style={{ display: "flex", gap: 6, flexWrap: "wrap" }}
         >
           {[
             [false, "naive softmax"],
-            [true, "max-subtracted softmax"],
+            [true, "subtract the max"],
           ].map(([s, label]) => (
             <button
               key={String(s)}
