@@ -1156,6 +1156,21 @@ import { lesson as m20_4_2 } from "./m20.4.2";
 import { lesson as m20_5_1 } from "./m20.5.1";
 import { lesson as m20_5_2 } from "./m20.5.2";
 import { lesson as m20_5_3 } from "./m20.5.3";
+import { lesson as m21_1_1 } from "./m21.1.1";
+import { lesson as m21_1_2 } from "./m21.1.2";
+import { lesson as m21_1_3 } from "./m21.1.3";
+import { lesson as m21_2_1 } from "./m21.2.1";
+import { lesson as m21_2_2 } from "./m21.2.2";
+import { lesson as m21_2_3 } from "./m21.2.3";
+import { lesson as m21_3_1 } from "./m21.3.1";
+import { lesson as m21_3_2 } from "./m21.3.2";
+import { lesson as m21_3_3 } from "./m21.3.3";
+import { lesson as m21_3_4 } from "./m21.3.4";
+import { lesson as m21_4_1 } from "./m21.4.1";
+import { lesson as m21_4_2 } from "./m21.4.2";
+import { lesson as m21_4_3 } from "./m21.4.3";
+import { lesson as m21_5_1 } from "./m21.5.1";
+import { lesson as m21_5_2 } from "./m21.5.2";
 
 export const LESSONS: readonly LessonContent[] = [
   m0_1_1,
@@ -2315,4 +2330,19 @@ export const LESSONS: readonly LessonContent[] = [
   m20_5_1,
   m20_5_2,
   m20_5_3,
+  m21_1_1,
+  m21_1_2,
+  m21_1_3,
+  m21_2_1,
+  m21_2_2,
+  m21_2_3,
+  m21_3_1,
+  m21_3_2,
+  m21_3_3,
+  m21_3_4,
+  m21_4_1,
+  m21_4_2,
+  m21_4_3,
+  m21_5_1,
+  m21_5_2,
 ];
