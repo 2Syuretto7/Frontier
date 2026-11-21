@@ -108,8 +108,11 @@ export const lesson: LessonContent = {
       <Definition title="the language-modelling loss">
         <p>
           For a training sequence <M>{"t_1, \\dots, t_{T+1}"}</M>, feed <M>{"t_1, \\dots, t_T"}</M> and use{" "}
-          <M>{"t_2, \\dots, t_{T+1}"}</M> as targets:{" "}
-          <MD>{"\\mathcal L = -\\frac1T\\sum_{i=1}^T\\log\\operatorname{softmax}(z_i)_{t_{i+1}}."}</MD> By the theorem, the
+          <M>{"t_2, \\dots, t_{T+1}"}</M> as targets:
+        </p>
+        <MD>{"\\mathcal L = -\\frac1T\\sum_{i=1}^T\\log\\operatorname{softmax}(z_i)_{t_{i+1}}."}</MD>
+        <p>
+          By the theorem, the
           i-th term scores a prediction of <M>{"t_{i+1}"}</M> made from <M>{"t_1, \\dots, t_i"}</M>, so the T terms are T honest
           next-token predictions sharing one forward pass.
         </p>

@@ -100,8 +100,10 @@ export const lesson: LessonContent = {
 
       <Theorem title="lane-wise summation changes the order">
         <p>
-          Summing with w lane accumulators computes{" "}
-          <MD>{"\\sum_{\\ell=0}^{w-1} \\Bigl(\\sum_{j} x_{jw + \\ell}\\Bigr)"}</MD>
+          Summing with w lane accumulators computes
+        </p>
+        <MD>{"\\sum_{\\ell=0}^{w-1} \\Bigl(\\sum_{j} x_{jw + \\ell}\\Bigr)"}</MD>
+        <p>
           which equals the sequential sum in exact arithmetic but in general not in floating point, because floating-point
           addition is not associative.
         </p>

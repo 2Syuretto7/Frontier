@@ -107,9 +107,9 @@ export const lesson: LessonContent = {
         <p>
           If each access goes to a uniformly random line of a working set of W lines, independently of the past, then a
           cache holding C of them hits with probability <M>{"\\min(1, C/W)"}</M>, whatever its replacement policy. For nested
-          levels with capacities <M>{"C_1 < C_2 < \\cdots"}</M> and latencies <M>{"\\ell_k"}</M>, the mean latency is{" "}
-          <MD>{"\\sum_k(h_k - h_{k-1})\\ell_k + (1 - h_K)\\ell_{\\text{mem}}, \\qquad h_k = \\min(1, C_k/W),\\ h_0 = 0."}</MD>
+          levels with capacities <M>{"C_1 < C_2 < \\cdots"}</M> and latencies <M>{"\\ell_k"}</M>, the mean latency is
         </p>
+        <MD>{"\\sum_k(h_k - h_{k-1})\\ell_k + (1 - h_K)\\ell_{\\text{mem}}, \\qquad h_k = \\min(1, C_k/W),\\ h_0 = 0."}</MD>
       </Theorem>
       <Proof>
         <p>

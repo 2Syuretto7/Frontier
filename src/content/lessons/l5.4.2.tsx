@@ -94,8 +94,11 @@ export const lesson: LessonContent = {
       <Theorem title="the decoder models a conditional distribution">
         <p>
           The decoder&apos;s output at target position i depends on the whole source and on <M>{"y_1, \\dots, y_i"}</M> only, so
-          its next-token predictions define{" "}
-          <MD>{"p(y \\mid x) = \\prod_ip(y_{i+1} \\mid y_{\\le i}, x),"}</MD> a proper distribution over outputs that can be
+          its next-token predictions define
+        </p>
+        <MD>{"p(y \\mid x) = \\prod_ip(y_{i+1} \\mid y_{\\le i}, x),"}</MD>
+        <p>
+          a proper distribution over outputs that can be
           sampled one token at a time.
         </p>
       </Theorem>

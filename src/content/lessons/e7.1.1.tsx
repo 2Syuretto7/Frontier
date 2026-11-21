@@ -73,7 +73,11 @@ export const lesson: LessonContent = {
 
       <Theorem title="the half-power size">
         <p>
-          The effective bandwidth is <MD>{"\\frac{n}{T(n)} = \\beta\\,\\frac{n}{n + \\alpha\\beta},"}</MD> which reaches half the
+          The effective bandwidth is
+        </p>
+        <MD>{"\\frac{n}{T(n)} = \\beta\\,\\frac{n}{n + \\alpha\\beta},"}</MD>
+        <p>
+          which reaches half the
           peak at <M>{"n_{1/2} = \\alpha\\beta"}</M> and a fraction f of the peak at{" "}
           <M>{"n = \\frac{f}{1 - f}\\alpha\\beta"}</M>.
         </p>
