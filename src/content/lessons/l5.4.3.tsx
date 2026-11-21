@@ -98,8 +98,11 @@ export const lesson: LessonContent = {
 
       <Theorem title="every task is a conditional likelihood">
         <p>
-          For a prompt x and answer <M>{"a_1, \\dots, a_m"}</M>, the model&apos;s{" "}
-          <MD>{"\\log p(a \\mid x) = \\sum_{k=1}^m\\log p(a_k \\mid x, a_{<k})"}</MD> is computed by one forward pass over x
+          For a prompt x and answer <M>{"a_1, \\dots, a_m"}</M>, the model&apos;s
+        </p>
+        <MD>{"\\log p(a \\mid x) = \\sum_{k=1}^m\\log p(a_k \\mid x, a_{<k})"}</MD>
+        <p>
+          is computed by one forward pass over x
           followed by a, reading the log-probability of each answer token at the position before it.
         </p>
       </Theorem>

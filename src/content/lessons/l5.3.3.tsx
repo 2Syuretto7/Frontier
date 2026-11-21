@@ -69,7 +69,9 @@ export const lesson: LessonContent = {
           Ignoring biases and norm gains, which add a few d per block, a block has <M>{"4d^2"}</M> attention parameters (
           <M>{"W_Q, W_K, W_V, W_O"}</M>) and <M>{"2\\,\\text{ff}\\,d^2"}</M> MLP parameters, <M>{"12d^2"}</M> for ff = 4. With
           vocabulary V, context T and L blocks, a GPT with a tied unembedding has
-          <MD>{"N = Vd + Td + 12Ld^2"}</MD>
+        </p>
+        <MD>{"N = Vd + Td + 12Ld^2"}</MD>
+        <p>
           parameters, and Vd more if the unembedding is separate. In practice one counts the arrays themselves.
         </p>
         <Code>{PARAMS}</Code>
@@ -78,8 +80,10 @@ export const lesson: LessonContent = {
       <Theorem title="FLOPs of a forward pass">
         <p>
           Let <M>{"N_{\\text{mm}}"}</M> be the number of weights used in matrix products: the blocks&apos; matrices and the
-          unembedding, but not the lookup tables. A forward pass over a context of T tokens costs, per token,{" "}
-          <MD>{"2N_{\\text{mm}} + 4LTd"}</MD>
+          unembedding, but not the lookup tables. A forward pass over a context of T tokens costs, per token,
+        </p>
+        <MD>{"2N_{\\text{mm}} + 4LTd"}</MD>
+        <p>
           FLOPs, when the attention scores are computed for all T keys.
         </p>
       </Theorem>
