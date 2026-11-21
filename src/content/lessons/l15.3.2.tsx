@@ -149,11 +149,12 @@ export const lesson: LessonContent = {
       rung: "check",
       prompt: (
         <p>
-          Two means have equal standard errors. At the smallest gap for which their difference is significant at 5%, what
-          fraction of one 95% interval&apos;s half-width do the two intervals overlap by? Give four decimals.
+          Two means have equal standard errors and are plotted with 95% intervals. At the smallest gap for which their
+          difference is significant at the 1% level (z = 2.576), what fraction of one interval&apos;s half-width do the
+          two intervals overlap by? Give four decimals.
         </p>
       ),
-      answer: { kind: "numeric", value: 0.5858, tolerance: 0.0005 },
+      answer: { kind: "numeric", value: 0.1413, tolerance: 0.0005 },
     },
     {
       key: "slope",
