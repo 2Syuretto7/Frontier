@@ -36,7 +36,7 @@ export const lesson: LessonContent = {
   minutes: 55,
   links: {
     requires: ["m22.1.3", "m7.6.1"],
-    revisits: ["m9.2.3", "m7.4.1"],
+    revisits: ["m9.2.3", "m7.4.2"],
     foreshadows: ["m22.5.2"],
   },
 
@@ -100,7 +100,7 @@ export const lesson: LessonContent = {
       <Definition title="risk attitude">
         <p>
           For money outcomes, the certainty equivalent of L is the sure amount c with <M>{"u(c) = \\mathbb{E}_L[u(X)]"}</M>{" "}
-          (<C>certainty_equivalent</C>), and the risk premium is <M>{"\\mathbb{E}_L[X] - c"}</M>. By Jensen&apos;s inequality, a
+          (<C>certainty_equivalent</C>), and the risk premium is <M>{"\\mathbb{E}_L[X] - c"}</M>. By Jensen&apos;s inequality (m7.4.2), a
           concave u gives a nonnegative premium for every lottery, and a convex u a nonpositive one. Near a point, the premium
           for a small risk of variance <M>{"\\sigma^2"}</M> is about <M>{"\\tfrac12\\sigma^2(-u''/u')"}</M>, the Arrow–Pratt
           measure of risk aversion. In the puzzle, <M>{"u = \\sqrt{x}"}</M> gives expected utility 2 and certainty equivalent 4,
