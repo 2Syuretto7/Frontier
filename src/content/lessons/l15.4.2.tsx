@@ -289,7 +289,7 @@ def bisect_changes(base, changes, is_bad_cfg):
         solution: BISECT,
         tests: [
           { name: "apply", code: `b = {"x": 0}\nc = apply_first(b, [("x", 1), ("y", 2)], 2)\nassert c == {"x": 1, "y": 2} and b == {"x": 0} and bisect(8, lambda k: k >= 7) == (7, 3) and bisect(1, lambda k: k >= 1) == (1, 0)` },
-          { name: "changes", code: `ch = [("a", 1), ("b", 1), ("c", 1), ("d", 1), ("e", 1)]\nassert bisect_changes({}, ch, lambda cfg: "d" in cfg) == (("d", 1), 3) and bisect(37, lambda k: k >= 37)[1] == 6` },
+          { name: "changes", code: `ch = [("a", 1), ("b", 1), ("c", 1), ("d", 1), ("e", 1)]\nassert bisect_changes({}, ch, lambda cfg: "d" in cfg) == (("d", 1), 3) and bisect(20, lambda k: k >= 20)[1] == 5` },
         ],
       },
     },
