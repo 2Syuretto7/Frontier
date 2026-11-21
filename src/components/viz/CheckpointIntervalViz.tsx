@@ -2,43 +2,145 @@
 
 import { useState } from "react";
 
-const C = 1, R = 10;                                  // minutes to checkpoint and to restart
-const MS = [60, 180, 600];
-
-export const wasteAt = (tau: number, M: number) => C / tau + (tau / 2 + R) / M;
-export const youngDaly = (M: number) => Math.sqrt(2 * C * M);
+const RESTART_S = 600;
 
 export function CheckpointIntervalViz() {
-  const [i, setI] = useState(1);
-  const M = MS[i];
-  const W = 330, H = 130, X0 = 40, Y0 = 8, PW = 270, PH = 100, TMAX = 120, WMAX = 0.4;
-  const px = (t: number) => X0 + (t / TMAX) * PW;
-  const py = (w: number) => Y0 + PH - (Math.min(w, WMAX) / WMAX) * PH;
-  const pts = Array.from({ length: 119 }, (_, k) => 1 + k).map((t) => `${px(t).toFixed(1)},${py(wasteAt(t, M)).toFixed(1)}`).join(" ");
-  const opt = youngDaly(M);
+  const [delta, setDelta] = useState(50);
+  const [mtbfH, setMtbfH] = useState(6);
+  const M = mtbfH * 3600;
+  const lo = Math.log10(60),
+    hi = Math.log10(6 * 3600);
+  const taus = Array.from(
+    { length: 120 },
+    (_, i) => 10 ** (lo + ((hi - lo) * i) / 119),
+  );
+  const ck = (t: number) => delta / t;
+  const lost = (t: number) => (t / 2 + RESTART_S) / M;
+  const tot = (t: number) => ck(t) + lost(t);
+  const best = Math.sqrt(2 * delta * M);
+  const W = 330,
+    H = 175,
+    x0 = 34,
+    y0 = 10,
+    pw = 286,
+    ph = 130,
+    top = 0.4;
+  const sx = (t: number) => x0 + ((Math.log10(t) - lo) / (hi - lo)) * pw;
+  const sy = (v: number) => y0 + ph - (Math.min(top, v) / top) * ph;
+  const path = (f: (t: number) => number) =>
+    taus.map((t) => `${sx(t)},${sy(f(t))}`).join(" ");
   return (
     <figure className="viz">
-      <div className="viz-controls" style={{ marginTop: 0 }}>
-        <div className="segmented" role="group" aria-label="Mean time between failures">
-          {MS.map((m, j) => <button key={m} type="button" className="seg" aria-pressed={i === j} onClick={() => setI(j)}>failure every {m / 60} h</button>)}
-        </div>
+      <div
+        className="viz-controls"
+        style={{ marginTop: 0, flexWrap: "wrap", gap: 12 }}
+      >
+        <label className="viz-label">
+          checkpoint pause: {delta} s{" "}
+          <input
+            type="range"
+            min={10}
+            max={290}
+            step={20}
+            value={delta}
+            onChange={(e) => setDelta(+e.target.value)}
+          />
+        </label>
+        <label className="viz-label">
+          job MTBF: {mtbfH} h{" "}
+          <input
+            type="range"
+            min={1}
+            max={24}
+            step={1}
+            value={mtbfH}
+            onChange={(e) => setMtbfH(+e.target.value)}
+          />
+        </label>
       </div>
-      <svg viewBox={`0 0 ${W} ${H + 8}`} style={{ width: "100%", maxWidth: 460, display: "block", margin: "0 auto" }} role="img" aria-label="Wasted fraction of time against checkpoint interval">
-        <line x1={X0} x2={X0 + PW} y1={Y0 + PH} y2={Y0 + PH} stroke="var(--border)" />
-        <line x1={X0} x2={X0} y1={Y0} y2={Y0 + PH} stroke="var(--border)" />
-        <polyline points={pts} fill="none" stroke="var(--accent)" strokeWidth={2} />
-        <line x1={px(opt)} x2={px(opt)} y1={Y0} y2={Y0 + PH} stroke="var(--text)" strokeDasharray="3 2" />
-        {[0, 30, 60, 90, 120].map((t) => <text key={t} x={px(t)} y={Y0 + PH + 14} textAnchor="middle" className="viz-label">{t}</text>)}
-        {[0, 0.2, 0.4].map((w) => <text key={w} x={X0 - 4} y={py(w) + 4} textAnchor="end" className="viz-label">{w * 100}%</text>)}
-        <text x={X0 + PW} y={Y0 + PH - 4} textAnchor="end" className="viz-label">interval, minutes</text>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        style={{
+          width: "100%",
+          maxWidth: 460,
+          display: "block",
+          margin: "0 auto",
+        }}
+        role="img"
+        aria-label="Wasted fraction of time against checkpoint interval"
+      >
+        <rect
+          x={x0}
+          y={y0}
+          width={pw}
+          height={ph}
+          fill="none"
+          stroke="var(--border)"
+        />
+        {[0, 0.2, 0.4].map((v) => (
+          <text
+            key={v}
+            x={x0 - 4}
+            y={sy(v) + 4}
+            textAnchor="end"
+            className="viz-label"
+          >
+            {Math.round(v * 100)}%
+          </text>
+        ))}
+        {[
+          [60, "1 min"],
+          [600, "10 min"],
+          [3600, "1 h"],
+        ].map(([t, l]) => (
+          <text
+            key={l}
+            x={sx(t as number)}
+            y={y0 + ph + 17}
+            textAnchor="middle"
+            className="viz-label"
+          >
+            {l}
+          </text>
+        ))}
+        <polyline
+          points={path(ck)}
+          fill="none"
+          stroke="var(--text-muted)"
+          strokeDasharray="4 3"
+        />
+        <polyline
+          points={path(lost)}
+          fill="none"
+          stroke="var(--danger)"
+          strokeDasharray="4 3"
+        />
+        <polyline
+          points={path(tot)}
+          fill="none"
+          stroke="var(--accent)"
+          strokeWidth={1.6}
+        />
+        {best >= 60 && best <= 6 * 3600 && (
+          <circle
+            cx={sx(best)}
+            cy={sy(tot(best))}
+            r={3.5}
+            fill="var(--accent)"
+          />
+        )}
       </svg>
-      <div className="mono" style={{ fontSize: 12, margin: "6px 0" }} aria-live="polite">
-        best interval ≈ {opt.toFixed(1)} min, wasting {(100 * wasteAt(opt, M)).toFixed(1)}% of the run
-      </div>
+      <p className="viz-label" style={{ textAlign: "center" }}>
+        best interval {(best / 60).toFixed(0)} min; waste there{" "}
+        {(100 * tot(best)).toFixed(1)}%, of which restarts{" "}
+        {((100 * RESTART_S) / M).toFixed(1)}%
+      </p>
       <figcaption className="viz-caption">
-        Checkpointing takes 1 minute and restarting 10. Frequent checkpoints waste time writing them; rare ones waste the work lost at
-        each failure, half an interval on average. The minimum sits at the square root of twice the checkpoint cost times the time
-        between failures, and the restart cost sets a floor that no interval removes.
+        Fraction of time wasted against the interval between checkpoints, on a
+        log axis. The grey dashed curve is time spent paused for checkpoints,
+        which falls as they become rarer; the red dashed curve is work lost to
+        failures plus a ten-minute restart, which grows with the interval. Their
+        sum, in blue, has a minimum where the two slopes balance.
       </figcaption>
     </figure>
   );
