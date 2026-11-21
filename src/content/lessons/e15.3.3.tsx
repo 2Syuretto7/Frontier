@@ -95,8 +95,8 @@ export const lesson: LessonContent = {
         </p>
       </Theorem>
       <Proof>
+        <MD>{"\\theta'_i = (b')^{-2i/d} = b^{-2i/d}\\, s^{-\\frac{d}{d-2}\\cdot\\frac{2i}{d}} = \\theta_i\\, s^{-2i/(d-2)}"}</MD>
         <p>
-          <MD>{"\\theta'_i = (b')^{-2i/d} = b^{-2i/d}\\, s^{-\\frac{d}{d-2}\\cdot\\frac{2i}{d}} = \\theta_i\\, s^{-2i/(d-2)}"}</MD>
           For i = 0 the factor is 1. For the slowest pair, i = d/2 − 1, the exponent is{" "}
           <M>{"-2(d/2-1)/(d-2) = -1"}</M>, so its frequency is divided by s and its wavelength multiplied by s, matching a
           context s times longer. Pairs in between are stretched by intermediate factors. The fast pairs, which encode

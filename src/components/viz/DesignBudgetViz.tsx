@@ -22,7 +22,7 @@ export function DesignBudgetViz() {
   const [d, setD] = useState(768);
   const [layers, setLayers] = useState(12);
   const [kv, setKv] = useState(4);
-  const kvMax = d / 64;
+  const kvMax = 2 ** Math.floor(Math.log2(d / 64));
   const k = Math.min(kv, kvMax);
   const s = stats(d, layers, k);
   const bars: [string, number, number, string][] = [

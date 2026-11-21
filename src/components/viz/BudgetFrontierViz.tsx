@@ -15,7 +15,10 @@ export function BudgetFrontierViz() {
     const D = (BUDGET - 2 * N * S) / (6 * N);
     if (D > 1e8) pts.push({ N, L: loss(N, D) });
   }
-  const best = pts.reduce((a, b) => (b.L < a.L ? b : a));
+  const best = pts.reduce(
+    (a, b) => (b.L < a.L ? b : a),
+    pts[0] ?? { N: 1e8, L: 3 },
+  );
   const W = 340,
     H = 200,
     x0 = 44,
@@ -38,8 +41,8 @@ export function BudgetFrontierViz() {
           <input
             type="range"
             min={0}
-            max={2000}
-            step={50}
+            max={500}
+            step={25}
             value={served}
             onChange={(e) => setServed(+e.target.value)}
           />
